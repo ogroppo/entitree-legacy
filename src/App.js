@@ -52,9 +52,6 @@ function App() {
           <Route exact path="/">
             <HomePage showError={showError} showInfo={showInfo} />
           </Route>
-          <Route path="/test">
-            <TestPage showError={showError} showInfo={showInfo} />
-          </Route>
         </Switch>
       </div>
     </Router>
