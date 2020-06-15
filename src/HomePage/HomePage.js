@@ -159,7 +159,7 @@ export default function HomePage({ showError, showInfo }) {
               </Form.Group>
             </Col>
             <Col sm={1}>
-              <Button disabled={!searchId || !prop} type="submit">
+              <Button disabled={!searchId || !prop.id} type="submit">
                 GO!
               </Button>
             </Col>

@@ -211,12 +211,12 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
         zoomOut={{ step: 100 }}
         options={{ limitToBounds: false, minScale: 0.2, maxScale: 2 }}
         scalePadding={{ disabled: true, size: 1 }}
-        positionX={positionX}
-        positionY={positionY}
-        onPanning={({ positionX, positionY }) => {
-          setPositionX(positionX);
-          setPositionY(positionY);
-        }}
+        // positionX={positionX}
+        // positionY={positionY}
+        // onPanning={({ positionX, positionY }) => {
+        //   setPositionX(positionX);
+        //   setPositionY(positionY);
+        // }}
       >
         <TransformComponent>
           <div className="center">
