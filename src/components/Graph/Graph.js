@@ -18,6 +18,10 @@ treeLayout.nodeSize([CARD_OUTER_WIDTH, CARD_VERTICAL_SPACING]);
 treeLayout.separation((a, b) => (a.parent === b.parent ? 1 : 1.2));
 
 export default function Graph({ showError, currentEntityId, currentPropId }) {
+  const [positionX, setPositionX] = React.useState(0);
+  const [positionY, setPositionY] = React.useState(0);
+  const [maxX, setMaxX] = React.useState(CARD_OUTER_WIDTH);
+  const [maxY, setMaxY] = React.useState(CARD_HEIGHT);
   const [childTreeVersion, setChildTreeVersion] = React.useState(0);
   const [parentTreeVersion, setParentTreeVersion] = React.useState(0);
   const [root, setRoot] = React.useState();
@@ -37,17 +41,8 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
     if (childTreeVersion > 0) {
       treeLayout(childTree);
       let nodes = childTree.descendants().slice(1);
-      let maxX = CARD_OUTER_WIDTH,
-        maxY = CARD_HEIGHT;
-      nodes.forEach((node) => {
-        maxX = Math.max(Math.abs(node.x), maxX);
-        maxY = Math.max(Math.abs(node.y), maxY);
-      });
-      setContainerStyle({
-        width: 2 * maxX,
-        height: 2 * maxY,
-      });
       let rels = childTree.links();
+      checkMax(nodes);
       setChildNodes(nodes);
       setChildRels(rels);
     }
@@ -58,25 +53,34 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
     if (parentTreeVersion > 0) {
       treeLayout(parentTree);
       let nodes = parentTree.descendants().slice(1);
-      let maxX = CARD_OUTER_WIDTH,
-        maxY = CARD_HEIGHT;
-      nodes.forEach((node) => {
-        maxX = Math.max(Math.abs(node.x), maxX);
-        maxY = Math.max(Math.abs(node.y), maxY);
-      });
-      setContainerStyle({
-        width: 2 * maxX,
-        height: 2 * maxY,
-      });
       let rels = parentTree.links();
+      checkMax(nodes);
       setParentNodes(nodes);
       setParentRels(rels);
     }
   }, [parentTreeVersion]);
 
+  //CONTAINER BOUNDARIES
+  const checkMax = (nodes) => {
+    let _maxX = maxX;
+    let _maxY = maxY;
+    nodes.forEach((node) => {
+      _maxX = Math.max(Math.abs(node.x), _maxX);
+      _maxY = Math.max(Math.abs(node.y), _maxY);
+    });
+    setMaxX(_maxX);
+    setMaxY(_maxY);
+    setContainerStyle({
+      width: 2 * _maxX,
+      height: 2 * _maxY,
+    });
+  };
+
   React.useEffect(() => {
     if (currentEntityId && currentPropId) {
       setRoot(null);
+      setPositionY(0);
+      setPositionX(0);
       setChildNodes([]);
       setParentNodes([]);
       setChildRels([]);
@@ -121,10 +125,7 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
           node.children.push(childNode);
           node.data.children.push(childNode.data);
         });
-        node._childrenExpanded = true;
-
-        console.log("HERE", node);
-        setChildTreeVersion(childTreeVersion + 1);
+        expandChildren(node);
       })
       .catch((e) => showError(e));
   };
@@ -140,9 +141,14 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
 
   const expandChildren = (node) => {
     node._childrenExpanded = true;
-    node.children = node._children;
-    node._children = null;
+    //was expanded previously
+    if (!node.children && node._children) {
+      node.children = node._children;
+      node._children = null;
+    }
     setChildTreeVersion(childTreeVersion + 1);
+    setPositionX(-node.x);
+    setPositionY(-node.y);
   };
 
   const toggleParents = (node) => {
@@ -172,9 +178,7 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
           node.children.push(parentNode);
           node.data.children.push(parentNode.data);
         });
-        node._parentsExpanded = true;
-
-        setParentTreeVersion(parentTreeVersion + 1);
+        expandParents(node);
       })
       .catch((e) => showError(e));
   };
@@ -190,9 +194,14 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
 
   const expandParents = (node) => {
     node._parentsExpanded = true;
-    node.children = node._parents;
-    node._parents = null;
+    //was expanded previously
+    if (!node.children && node._parents) {
+      node.children = node._parents;
+      node._parents = null;
+    }
     setParentTreeVersion(parentTreeVersion + 1);
+    setPositionX(-node.x);
+    setPositionY(-node.y);
   };
 
   return (
@@ -201,6 +210,13 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
         zoomIn={{ step: 100 }}
         zoomOut={{ step: 100 }}
         options={{ limitToBounds: false, minScale: 0.2, maxScale: 2 }}
+        scalePadding={{ disabled: true, size: 1 }}
+        positionX={positionX}
+        positionY={positionY}
+        onPanning={({ positionX, positionY }) => {
+          setPositionX(positionX);
+          setPositionY(positionY);
+        }}
       >
         <TransformComponent>
           <div className="center">

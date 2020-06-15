@@ -10,6 +10,10 @@
     border: 1px solid #ced4da;
     border-radius: 0.25rem;
   }
+  .dropdown-menu {
+    max-height: 32 * 8px + 8px !important;
+    overflow-y: auto;
+  }
   .Suggestions {
     position: absolute;
     top: 42px;

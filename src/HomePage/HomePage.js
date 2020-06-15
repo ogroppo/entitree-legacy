@@ -62,7 +62,7 @@ export default function HomePage({ showError, showInfo }) {
     let qPromise;
     let pPromise;
     if (q) {
-      showInfo({ message: "Loading entity" });
+      //showInfo({ message: "Loading entity" });
       qPromise = getItem(q)
         .then((entity) => {
           setFromKeyboard(false);
@@ -72,7 +72,7 @@ export default function HomePage({ showError, showInfo }) {
         .catch((e) => showError(e));
     }
     if (p) {
-      showInfo({ message: "Loading property" });
+      //showInfo({ message: "Loading property" });
       pPromise = getItem(p)
         .then((entity) => {
           setProp({
