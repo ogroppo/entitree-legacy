@@ -143,7 +143,7 @@ export default function HomePage({ showError, showInfo }) {
                     variant="none"
                     id="dropdown-props"
                   >
-                    {prop ? prop.label : "Choose a property"}
+                    {prop.label ? prop.label : "Choose a property"}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     {availableProps.map((prop) => (
