@@ -22,6 +22,7 @@ export function getItemProps(id) {
   }
   ?item ?p ?statement.
   ?claim wikibase:claim ?p.
+  ?claim wikibase:propertyType wikibase:WikibaseItem .
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
 }`;
   const url = wdk.sparqlQuery(query);
@@ -35,11 +36,11 @@ export function getItemProps(id) {
       let props = [];
       bindings.forEach((row) => {
         const propLabel = row.claimLabel.value;
+        console.log(row);
         const propId = row.claim.value.replace(
           "http://www.wikidata.org/entity/",
           ""
         );
-        if (!propLabel.endsWith("ID"))
           props.push({ id: propId, label: propLabel });
       });
       return props;
