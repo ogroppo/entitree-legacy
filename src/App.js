@@ -1,25 +1,64 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Navbar, Container, Form, Alert } from "react-bootstrap";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { createBrowserHistory } from "history";
+import HomePage from "./HomePage/HomePage";
+import "./App.scss";
+import TestPage from "./TestPage/TestPage";
+const browserHistory = createBrowserHistory();
 
 function App() {
+  const [errors, setErrors] = React.useState([]);
+  const [infos, setInfos] = React.useState([]);
+  const showError = (error) => {
+    console.error(error);
+    setErrors((errors) => errors.concat(error));
+    setTimeout(() => {
+      setErrors(errors.slice(1));
+    }, 2500);
+  };
+
+  const showInfo = ({ id, message }) => {
+    setInfos((infos) => infos.concat({ id, message }));
+    setTimeout(() => {
+      setInfos(infos.slice(1));
+    }, 2500);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router history={browserHistory}>
+      <div className="App">
+        <Navbar bg="dark" variant="dark" expand="lg">
+          <Container>
+            <Navbar.Brand href="/">Wiki trees</Navbar.Brand>
+            <div className="ml-auto">
+              <Navbar.Toggle aria-controls="navbar-nav" />
+              <Navbar.Collapse id="navbar-nav"></Navbar.Collapse>
+            </div>
+          </Container>
+        </Navbar>
+        <div className="messages">
+          {errors.map((error) => (
+            <Alert key={JSON.stringify(error)} variant="danger">
+              {error.message}
+            </Alert>
+          ))}
+          {infos.map(({ id, message }) => (
+            <Alert key={id || message} variant="info">
+              {message}
+            </Alert>
+          ))}
+        </div>
+        <Switch>
+          <Route exact path="/">
+            <HomePage showError={showError} showInfo={showInfo} />
+          </Route>
+          <Route path="/test">
+            <TestPage showError={showError} showInfo={showInfo} />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   );
 }
 

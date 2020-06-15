@@ -1,0 +1,10 @@
+.App {
+  .messages {
+    position: fixed;
+    z-index: 999;
+    top: 62px;
+    max-width: 90%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
