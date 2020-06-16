@@ -1,21 +1,31 @@
 import React from "react";
 import { getItem, getItems } from "../../lib/api";
-import { Badge, Button } from "react-bootstrap";
 import "./Graph.scss";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import getPathD from "../../lib/getPathD";
 import { tree as d3Tree, hierarchy } from "d3-hierarchy";
-const CARD_WIDTH = 220;
-const CARD_GAP = 10;
-const CARD_PADDING = 5;
-const CARD_INNER_WIDTH = CARD_WIDTH - 2 * CARD_PADDING - 2; //borderrrr
-const IMAGE_HEIGHT = 80;
-const CARD_HEIGHT = IMAGE_HEIGHT + 2 * CARD_PADDING;
-const CARD_VERTICAL_SPACING = CARD_HEIGHT + 100;
-const CARD_OUTER_WIDTH = CARD_WIDTH + CARD_GAP;
+import {
+  CARD_OUTER_WIDTH,
+  CARD_VERTICAL_SPACING,
+  CARD_HEIGHT,
+  CARD_WIDTH,
+} from "../../constants/tree";
+import Node from "../Node/Node";
+import Rel from "../Rel/Rel";
+import { CHILD_ID } from "../../constants/properties";
+
 const treeLayout = d3Tree();
 treeLayout.nodeSize([CARD_OUTER_WIDTH, CARD_VERTICAL_SPACING]);
-treeLayout.separation((a, b) => (a.parent === b.parent ? 1 : 1.2));
+treeLayout.separation((a, b) => {
+  if (!b.isSpouse && a.isSpouse) return 1.05;
+  if (a.isSpouse && b.isSpouse) return 0.5;
+
+  if (!a.isSibling && b.isSibling) return 1.05;
+  if (a.isSibling && b.isSibling) return 0.5;
+
+  if (a.parent === b.parent) return 1.1;
+
+  if (a.parent !== b.parent) return 1.4;
+});
 
 export default function Graph({ showError, currentEntityId, currentPropId }) {
   const [positionX, setPositionX] = React.useState(0);
@@ -76,8 +86,10 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
     });
   };
 
+  //GET ROOT
   React.useEffect(() => {
     if (currentEntityId && currentPropId) {
+      //reset graph
       setRoot(null);
       setPositionY(0);
       setPositionX(0);
@@ -88,12 +100,17 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
       getItem(currentEntityId, { withParents: true, propId: currentPropId })
         .then(async (entity) => {
           let root = hierarchy(entity);
+          root.treeId = "root";
+          root.x = 0;
+          root.y = 0;
           setRoot(root);
 
           let childTree = hierarchy(entity);
+          childTree.treeId = "root";
           setChildTree(childTree);
 
           let parentTree = hierarchy(entity);
+          parentTree.treeId = "root";
           setParentTree(parentTree);
 
           setChildTreeVersion(childTreeVersion + 1);
@@ -113,18 +130,28 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
 
     getItems(node.data.childrenIds, { propId: currentPropId })
       .then((entities) => {
-        entities.forEach((entity, index) => {
+        entities.forEach((entity) => {
           const childNode = hierarchy(entity);
           childNode.depth = node.depth + 1;
-          childNode.height = node.height - 1;
           childNode.parent = node;
+          childNode.treeId = childNode.data.id + "_child_" + childNode.depth;
+          childNode.isChild = true;
           if (!node.children) {
             node.children = [];
-            node.data.children = [];
           }
           node.children.push(childNode);
-          node.data.children.push(childNode.data);
         });
+        if (currentPropId === CHILD_ID) {
+          //Remove spouses that are in the tree already
+          node.children.forEach((childNode) => {
+            childNode.extraSpouseIds = childNode.data.spouseIds.filter(
+              (spouseId) => !node.children.find((c) => spouseId === c.data.id)
+            );
+            childNode.extraSiblingIds = childNode.data.siblingIds.filter(
+              (siblingId) => !node.children.find((c) => siblingId === c.data.id) //optimise with a map?
+            );
+          });
+        }
         expandChildren(node);
       })
       .catch((e) => showError(e));
@@ -169,15 +196,25 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
           const parentNode = hierarchy(entity);
           parentNode.isParent = true;
           parentNode.depth = node.depth - 1;
-          parentNode.height = node.height + 1;
+          parentNode.treeId =
+            parentNode.data.id + "_parent_" + parentNode.depth;
           parentNode.parent = node;
           if (!node.children) {
             node.children = [];
-            node.data.children = [];
           }
           node.children.push(parentNode);
-          node.data.children.push(parentNode.data);
         });
+        if (currentPropId === CHILD_ID) {
+          //Remove spouses and siblings that are in the tree already
+          node.children.forEach((parentNode) => {
+            parentNode.extraSpouseIds = parentNode.data.spouseIds.filter(
+              (spouseId) => !node.children.find((p) => spouseId === p.data.id) //optimise with a map?
+            );
+            parentNode.extraSiblingIds = parentNode.data.siblingIds.filter(
+              (siblingId) => !node.children.find((p) => siblingId === p.data.id) //optimise with a map?
+            );
+          });
+        }
         expandParents(node);
       })
       .catch((e) => showError(e));
@@ -202,6 +239,104 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
     setParentTreeVersion(parentTreeVersion + 1);
     setPositionX(-node.x);
     setPositionY(-node.y);
+  };
+
+  const toggleSpouses = (node) => {
+    if (node._spousesExpanded) {
+      return collapseSpouses(node);
+    }
+    if (node._spouses) {
+      return expandSpouses(node);
+    }
+
+    getItems(node.extraSpouseIds)
+      .then((entities) => {
+        entities.forEach((entity) => {
+          const childNode = hierarchy(entity);
+          childNode.depth = node.depth;
+          childNode.isSpouse = true;
+          childNode.treeId = childNode.data.id + "_spouse_" + childNode.depth;
+          childNode.virtualParent = node;
+          if (node.parent) {
+            childNode.parent = node.parent;
+            const childIndex = node.parent.children.indexOf(node) + 1;
+            node.parent.children.splice(childIndex, 0, childNode);
+          } else {
+            //root
+            childNode.parent = node;
+            childNode.isRootSpouse = true;
+            if (!node.children) node.children = [];
+            node.children.push(childNode);
+          }
+        });
+        expandSpouses(node);
+      })
+      .catch((e) => showError(e));
+  };
+
+  const expandSpouses = (node) => {
+    node._spousesExpanded = true;
+    if (node.isChild) setChildTreeVersion(childTreeVersion + 1);
+    else setParentTreeVersion(parentTreeVersion + 1);
+  };
+
+  const collapseSpouses = (node) => {
+    node._spousesExpanded = false;
+    node.parent.children = node.parent.children.filter(
+      (child) =>
+        !(child.isSpouse && child.virtualParent.data.id === node.data.id)
+    );
+    if (node.isChild) setChildTreeVersion(childTreeVersion + 1);
+    else setParentTreeVersion(parentTreeVersion + 1);
+  };
+
+  const toggleSiblings = (node) => {
+    if (node._siblingsExpanded) {
+      return collapseSiblings(node);
+    }
+    if (node._siblings) {
+      return expandSiblings(node);
+    }
+
+    getItems(node.extraSiblingIds)
+      .then((entities) => {
+        entities.forEach((entity) => {
+          const childNode = hierarchy(entity);
+          childNode.depth = node.depth;
+          childNode.isSibling = true;
+          childNode.treeId = childNode.data.id + "_sibling_" + childNode.depth;
+          childNode.virtualParent = node;
+          if (node.parent) {
+            childNode.parent = node.parent;
+            const childIndex = node.parent.children.indexOf(node);
+            node.parent.children.splice(childIndex, 0, childNode);
+          } else {
+            //root
+            childNode.parent = node;
+            childNode.isRootSibling = true;
+            if (!node.children) node.children = [];
+            node.children.push(childNode); //heh
+          }
+        });
+        expandSiblings(node);
+      })
+      .catch((e) => showError(e));
+  };
+
+  const expandSiblings = (node) => {
+    node._siblingsExpanded = true;
+    if (node.isChild) setChildTreeVersion(childTreeVersion + 1);
+    else setParentTreeVersion(parentTreeVersion + 1);
+  };
+
+  const collapseSiblings = (node) => {
+    node._siblingsExpanded = false;
+    node.parent.children = node.parent.children.filter(
+      (child) =>
+        !(child.isSibling && child.virtualParent.data.id === node.data.id)
+    );
+    if (node.isChild) setChildTreeVersion(childTreeVersion + 1);
+    else setParentTreeVersion(parentTreeVersion + 1);
   };
 
   return (
@@ -229,13 +364,14 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
                 <g className="rels">
                   {childRels.map((rel) => (
                     <Rel
-                      key={rel.source.data.id + rel.target.data.id}
+                      key={rel.source.treeId + rel.target.treeId}
                       rel={rel}
+                      isChild
                     />
                   ))}
                   {parentRels.map((rel) => (
                     <Rel
-                      key={rel.source.data.id + rel.target.data.id}
+                      key={rel.source.treeId + rel.target.treeId}
                       rel={rel}
                       isParent
                     />
@@ -254,24 +390,27 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
                 <div className="nodes">
                   {root && (
                     <Node
-                      key={root.data.id}
                       toggleChildren={() => toggleChildren(childTree)}
                       toggleParents={() => toggleParents(parentTree)}
+                      //toggleSpouses={() => toggleSpouses(childTree)}
+                      //toggleSiblings={() => toggleSiblings(parentTree)}
                       node={root}
                     />
                   )}
                   {childNodes.map((node) => (
                     <Node
-                      key={node.data.id}
+                      key={node.treeId}
                       toggleChildren={toggleChildren}
-                      toggleParents={() => {}}
+                      toggleSpouses={toggleSpouses}
+                      toggleSiblings={toggleSiblings}
                       node={node}
                     />
                   ))}
                   {parentNodes.map((node) => (
                     <Node
-                      key={node.data.id}
-                      toggleChildren={() => {}}
+                      key={node.treeId}
+                      toggleSpouses={toggleSpouses}
+                      toggleSiblings={toggleSiblings}
                       toggleParents={toggleParents}
                       node={node}
                     />
@@ -282,70 +421,6 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
           </div>
         </TransformComponent>
       </TransformWrapper>
-    </div>
-  );
-}
-
-function Rel({ rel, isParent }) {
-  return (
-    <path
-      className="relPath"
-      d={getPathD(rel.source, rel.target, {
-        offsetStartY: isParent ? -40 : 40,
-      })}
-    />
-  );
-}
-
-function Node({ node, toggleParents, toggleChildren }) {
-  return (
-    <div
-      style={{ left: node.x, top: node.y, width: CARD_WIDTH }}
-      className="node"
-    >
-      <div
-        className="img"
-        style={{ height: IMAGE_HEIGHT, width: IMAGE_HEIGHT }}
-      >
-        {node.data.images[0] && (
-          <img alt={node.data.images[0].alt} src={node.data.images[0].url} />
-        )}
-        {!node.data.images[0] && (
-          <img src={`https://via.placeholder.com/${IMAGE_HEIGHT}`} />
-        )}
-      </div>
-      <div
-        className="content"
-        style={{ width: CARD_INNER_WIDTH - IMAGE_HEIGHT }}
-      >
-        <div className="label">
-          <a
-            target="_blank"
-            href={`https://www.wikidata.org/wiki/${node.data.id}`}
-          >
-            {node.data.label}
-          </a>
-        </div>
-        <div className="description">{node.data.description}</div>
-      </div>
-      {node.data.parentIds && !!node.data.parentIds.length && (
-        <Button
-          className="parentCount"
-          variant={"info"}
-          onClick={() => toggleParents(node)}
-        >
-          {node.data.parentIds.length}
-        </Button>
-      )}
-      {node.data.childrenIds && !!node.data.childrenIds.length && (
-        <Button
-          className="childrenCount"
-          variant={"info"}
-          onClick={() => toggleChildren(node)}
-        >
-          {node.data.childrenIds.length}
-        </Button>
-      )}
     </div>
   );
 }

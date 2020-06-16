@@ -46,29 +46,45 @@
       .content {
         float: left;
         padding-left: 4px;
-        line-height: 16px;
-        font-size: 13px;
         .label {
+          font-size: 13px;
+          line-height: 15px;
           font-weight: bold;
-          max-height: 32px; //line h * 2
+          max-height: 30px; //line h * 2
           overflow: hidden;
         }
         .description {
           margin-top: 2px;
+          font-size: 12px;
+          line-height: 14px;
           color: gray;
-          max-height: 48px; //line h *3
+          max-height: 42px; //line h *3
           overflow: hidden;
         }
       }
-      .parentCount,
-      .childrenCount {
+      .counter {
         border-radius: 20px;
         padding: 2px 6px;
         font-size: 12px;
         position: absolute;
+        min-width: 27px;
+        z-index: 99;
+      }
+      .siblingCount {
+        left: -20px;
+      }
+      .spouseCount {
+        right: -20px;
+      }
+      .siblingCount,
+      .spouseCount {
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .parentCount,
+      .childrenCount {
         left: 50%;
         transform: translateX(-50%);
-        min-width: 27px;
       }
       .parentCount {
         top: -20px;

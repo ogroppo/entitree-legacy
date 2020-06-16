@@ -1,6 +1,6 @@
 import axios from "axios";
 import wdk from "wikidata-sdk";
-import getChildrenFromPropId from "./getChildrenFromPropId";
+import formatEntity from "./formatEntity";
 
 export function search(term) {
   //const url = wbk.searchEntities('Ingmar Bergman')
@@ -36,12 +36,11 @@ export function getItemProps(id) {
       let props = [];
       bindings.forEach((row) => {
         const propLabel = row.claimLabel.value;
-        console.log(row);
         const propId = row.claim.value.replace(
           "http://www.wikidata.org/entity/",
           ""
         );
-          props.push({ id: propId, label: propLabel });
+        props.push({ id: propId, label: propLabel });
       });
       return props;
     }
@@ -152,36 +151,11 @@ export async function getItems(ids, options = {}) {
   }
 
   return Promise.all(promises).then(([entities, ...multiParents]) => {
-    entities.forEach((entity, index) => {
-      entity.parentIds = multiParents[index];
-    });
+    if (options.withParents) {
+      entities.forEach((entity, index) => {
+        entity.parentIds = multiParents[index];
+      });
+    }
     return entities;
   });
-}
-
-function formatEntity(entity, options = {}) {
-  if (entity.missing !== undefined)
-    throw new Error(`Entity ${entity.id} not found`);
-
-  if (options.propId && options.withChildren !== false) {
-    entity.childrenIds = getChildrenFromPropId(entity, options.propId);
-  }
-
-  const languages = options.languages || ["en"];
-  entity.label = languages
-    .map((lang) => (entity.labels[lang] ? entity.labels[lang].value : null))
-    .filter((l) => l)
-    .join(", ");
-  entity.description = languages
-    .map((lang) =>
-      entity.descriptions[lang] ? entity.descriptions[lang].value : null
-    )
-    .filter((l) => l)
-    .join(", ");
-
-  const images = entity.claims["P18"] || [];
-  entity.images = images.map(({ mainsnak: { datavalue: { value } } }) => ({
-    alt: value, //a lot of things could be done here from the qualifiers
-    url: `http://commons.wikimedia.org/wiki/Special:FilePath/${value}?width=80px`,
-  }));
 }
