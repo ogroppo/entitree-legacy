@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useReducer } from "react";
 import { getItem, getItems } from "../../lib/api";
 import "./Graph.scss";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
@@ -8,21 +8,24 @@ import {
   CARD_VERTICAL_SPACING,
   CARD_HEIGHT,
   CARD_WIDTH,
+  SIBLING_SPOUSE_SEPARATION,
+  SAME_GROUP_SEPARATION,
 } from "../../constants/tree";
 import Node from "../Node/Node";
 import Rel from "../Rel/Rel";
 import { CHILD_ID } from "../../constants/properties";
+import rootReducer from "./rootReducer";
 
 const treeLayout = d3Tree();
 treeLayout.nodeSize([CARD_OUTER_WIDTH, CARD_VERTICAL_SPACING]);
 treeLayout.separation((a, b) => {
-  if (!b.isSpouse && a.isSpouse) return 1.05;
-  if (a.isSpouse && b.isSpouse) return 0.5;
+  if (!b.isSpouse && a.isSpouse) return SIBLING_SPOUSE_SEPARATION;
+  //if (a.isSpouse && b.isSpouse) return 0.5;
 
-  if (!a.isSibling && b.isSibling) return 1.05;
-  if (a.isSibling && b.isSibling) return 0.5;
+  if (!a.isSibling && b.isSibling) return SIBLING_SPOUSE_SEPARATION;
+  //if (a.isSibling && b.isSibling) return 0.5;
 
-  if (a.parent === b.parent) return 1.1;
+  if (a.parent === b.parent) return SAME_GROUP_SEPARATION;
 
   if (a.parent !== b.parent) return 1.4;
 });
@@ -34,7 +37,7 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
   const [maxY, setMaxY] = React.useState(CARD_HEIGHT);
   const [childTreeVersion, setChildTreeVersion] = React.useState(0);
   const [parentTreeVersion, setParentTreeVersion] = React.useState(0);
-  const [root, setRoot] = React.useState();
+  const [root, dispatchRoot] = useReducer(rootReducer);
   const [childNodes, setChildNodes] = React.useState([]);
   const [childRels, setChildRels] = React.useState([]);
   const [childTree, setChildTree] = React.useState({});
@@ -90,7 +93,7 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
   React.useEffect(() => {
     if (currentEntityId && currentPropId) {
       //reset graph
-      setRoot(null);
+      dispatchRoot({ type: "set", root: null });
       setPositionY(0);
       setPositionX(0);
       setChildNodes([]);
@@ -101,10 +104,13 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
         .then(async (entity) => {
           let root = hierarchy(entity);
           root.treeId = "root";
+          root.extraSpouseIds = root.data.spouseIds; //because this is read straight away
+          root.extraSiblingIds = root.data.siblingIds; //because this is read straight away
           root.x = 0;
           root.y = 0;
-          setRoot(root);
+          dispatchRoot({ type: "set", root });
 
+          //annoying but correct
           let childTree = hierarchy(entity);
           childTree.treeId = "root";
           setChildTree(childTree);
@@ -257,17 +263,9 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
           childNode.isSpouse = true;
           childNode.treeId = childNode.data.id + "_spouse_" + childNode.depth;
           childNode.virtualParent = node;
-          if (node.parent) {
-            childNode.parent = node.parent;
-            const childIndex = node.parent.children.indexOf(node) + 1;
-            node.parent.children.splice(childIndex, 0, childNode);
-          } else {
-            //root
-            childNode.parent = node;
-            childNode.isRootSpouse = true;
-            if (!node.children) node.children = [];
-            node.children.push(childNode);
-          }
+          childNode.parent = node.parent;
+          const childIndex = node.parent.children.indexOf(node) + 1;
+          node.parent.children.splice(childIndex, 0, childNode);
         });
         expandSpouses(node);
       })
@@ -277,7 +275,7 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
   const expandSpouses = (node) => {
     node._spousesExpanded = true;
     if (node.isChild) setChildTreeVersion(childTreeVersion + 1);
-    else setParentTreeVersion(parentTreeVersion + 1);
+    if (node.isParent) setParentTreeVersion(parentTreeVersion + 1);
   };
 
   const collapseSpouses = (node) => {
@@ -287,7 +285,7 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
         !(child.isSpouse && child.virtualParent.data.id === node.data.id)
     );
     if (node.isChild) setChildTreeVersion(childTreeVersion + 1);
-    else setParentTreeVersion(parentTreeVersion + 1);
+    if (node.isParent) setParentTreeVersion(parentTreeVersion + 1);
   };
 
   const toggleSiblings = (node) => {
@@ -306,17 +304,10 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
           childNode.isSibling = true;
           childNode.treeId = childNode.data.id + "_sibling_" + childNode.depth;
           childNode.virtualParent = node;
-          if (node.parent) {
-            childNode.parent = node.parent;
-            const childIndex = node.parent.children.indexOf(node);
-            node.parent.children.splice(childIndex, 0, childNode);
-          } else {
-            //root
-            childNode.parent = node;
-            childNode.isRootSibling = true;
-            if (!node.children) node.children = [];
-            node.children.push(childNode); //heh
-          }
+
+          childNode.parent = node.parent;
+          const childIndex = node.parent.children.indexOf(node);
+          node.parent.children.splice(childIndex, 0, childNode);
         });
         expandSiblings(node);
       })
@@ -326,7 +317,7 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
   const expandSiblings = (node) => {
     node._siblingsExpanded = true;
     if (node.isChild) setChildTreeVersion(childTreeVersion + 1);
-    else setParentTreeVersion(parentTreeVersion + 1);
+    if (node.isParent) setParentTreeVersion(parentTreeVersion + 1);
   };
 
   const collapseSiblings = (node) => {
@@ -336,7 +327,59 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
         !(child.isSibling && child.virtualParent.data.id === node.data.id)
     );
     if (node.isChild) setChildTreeVersion(childTreeVersion + 1);
-    else setParentTreeVersion(parentTreeVersion + 1);
+    if (node.isParent) setParentTreeVersion(parentTreeVersion + 1);
+  };
+
+  const toggleRootSpouses = () => {
+    if (root._spousesExpanded) {
+      return dispatchRoot({ type: "collapseRootSpouses", root });
+    }
+    if (root._spouses) {
+      return dispatchRoot({ type: "expandRootSpouses", root });
+    }
+
+    getItems(root.extraSpouseIds)
+      .then((entities) => {
+        entities.forEach((entity, index) => {
+          const spouseNode = hierarchy(entity);
+          spouseNode.isSpouse = true;
+          spouseNode.x =
+            CARD_WIDTH * SAME_GROUP_SEPARATION +
+            CARD_OUTER_WIDTH * SIBLING_SPOUSE_SEPARATION * index;
+          spouseNode.y = 0;
+          spouseNode.treeId = spouseNode.data.id + "_spouse_root";
+          if (!root.spouses) root.spouses = [];
+          root.spouses.push(spouseNode);
+        });
+        dispatchRoot({ type: "expandRootSpouses", root });
+      })
+      .catch((e) => showError(e));
+  };
+
+  const toggleRootSiblings = () => {
+    if (root._siblingsExpanded) {
+      return dispatchRoot({ type: "collapseRootSiblings", root });
+    }
+    if (root._spouses) {
+      return dispatchRoot({ type: "expandRootSiblings", root });
+    }
+
+    getItems(root.data.siblingIds)
+      .then((entities) => {
+        entities.forEach((entity, index, { length }) => {
+          const siblingNode = hierarchy(entity);
+          siblingNode.isSibling = true;
+          siblingNode.x =
+            -SAME_GROUP_SEPARATION -
+            CARD_OUTER_WIDTH * SIBLING_SPOUSE_SEPARATION * (length - index);
+          siblingNode.y = 0;
+          siblingNode.treeId = siblingNode.data.id + "_sibling_root";
+          if (!root.siblings) root.siblings = [];
+          root.siblings.push(siblingNode);
+        });
+        dispatchRoot({ type: "expandRootSiblings", root });
+      })
+      .catch((e) => showError(e));
   };
 
   return (
@@ -388,15 +431,25 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
                 }}
               >
                 <div className="nodes">
+                  {root &&
+                    root.siblings &&
+                    root.siblings.map((node) => (
+                      <Node key={node.treeId} node={node} />
+                    ))}
                   {root && (
                     <Node
                       toggleChildren={() => toggleChildren(childTree)}
                       toggleParents={() => toggleParents(parentTree)}
-                      //toggleSpouses={() => toggleSpouses(childTree)}
-                      //toggleSiblings={() => toggleSiblings(parentTree)}
+                      toggleSpouses={toggleRootSpouses}
+                      toggleSiblings={toggleRootSiblings}
                       node={root}
                     />
                   )}
+                  {root &&
+                    root.spouses &&
+                    root.spouses.map((node) => (
+                      <Node key={node.treeId} node={node} />
+                    ))}
                   {childNodes.map((node) => (
                     <Node
                       key={node.treeId}

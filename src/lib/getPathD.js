@@ -6,6 +6,9 @@ export default function getPathD(
   if (options.offsetStartY) {
     startY += options.offsetStartY;
   }
+  if (options.offsetEndY) {
+    endY += options.offsetEndY;
+  }
   const xDiff = endX - startX;
   const yDiff = endY - startY;
 

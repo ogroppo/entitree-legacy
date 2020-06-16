@@ -7,6 +7,7 @@ export default function Rel({ rel, isParent }) {
       className="relPath"
       d={getPathD(rel.source, rel.target, {
         offsetStartY: isParent ? -40 : 40,
+        offsetEndY: isParent ? 40 : -40,
       })}
     />
   );

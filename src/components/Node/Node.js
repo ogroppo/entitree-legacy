@@ -13,11 +13,14 @@ export default function Node({
   toggleChildren,
   toggleSiblings,
   toggleSpouses,
+  debug,
 }) {
+  if (debug) console.log(node);
+
   return (
     <div
       style={{
-        left: node.x + (node.isRootSpouse ? CARD_OUTER_WIDTH * 1.1 : 0),
+        left: node.x,
         top: node.y,
         width: CARD_WIDTH,
       }}
