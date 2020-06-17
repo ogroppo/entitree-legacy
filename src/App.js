@@ -3,6 +3,7 @@ import { Navbar, Container, Form, Alert } from "react-bootstrap";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import HomePage from "./HomePage/HomePage";
+import { GiTreeBranch } from "react-icons/gi";
 import "./App.scss";
 const browserHistory = createBrowserHistory();
 
@@ -29,7 +30,9 @@ function App() {
       <div className="App">
         <Navbar bg="dark" variant="dark" expand="lg">
           <Container>
-            <Navbar.Brand href="/">Wiki trees</Navbar.Brand>
+            <Navbar.Brand href="/">
+              <GiTreeBranch /> WikiForest
+            </Navbar.Brand>
             <div className="ml-auto">
               <Navbar.Toggle aria-controls="navbar-nav" />
               <Navbar.Collapse id="navbar-nav"></Navbar.Collapse>
