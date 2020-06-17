@@ -1,4 +1,4 @@
-export const CARD_WIDTH = 240;
+export const CARD_WIDTH = 250;
 export const CARD_GAP = 10;
 export const CARD_PADDING = 5;
 export const CARD_INNER_WIDTH = CARD_WIDTH - 2 * CARD_PADDING - 2; //borderrrr
