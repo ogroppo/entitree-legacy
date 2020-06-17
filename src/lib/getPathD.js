@@ -9,12 +9,25 @@ export default function getPathD(
   if (options.offsetEndY) {
     endY += options.offsetEndY;
   }
-  const xDiff = endX - startX;
   const yDiff = endY - startY;
 
-  const c1Y = yDiff / 3 + startY;
-  const c2Y = (yDiff / 3) * 2 + startY;
+  const thirdY = yDiff / 3 + startY;
+  const twoThirdsY = (yDiff / 3) * 2 + startY;
+  const halfY = yDiff / 2 + startY;
 
-  const d = `M${startX},${startY} C${startX},${c1Y} ${endX},${c2Y} ${endX},${endY}`;
+  const r = Math.abs(halfY - thirdY);
+
+  const isLeft = startX > endX;
+  const isDown = startY > endY;
+
+  const ax1 = isLeft ? startX - r : startX + r;
+  const ay1 = isDown ? thirdY - r : thirdY + r;
+  const hEnd = isLeft ? endX + r : endX - r;
+
+  const d = `M${startX},${startY} V${thirdY} A${r} ${r} 0 0 ${
+    isLeft ? (isDown ? 0 : 1) : isDown ? 1 : 0
+  } ${ax1} ${ay1} H${hEnd} A${r} ${r} 0 0 ${
+    isLeft ? (isDown ? 1 : 0) : isDown ? 0 : 1
+  } ${endX} ${twoThirdsY} V${endY}`;
   return d;
 }

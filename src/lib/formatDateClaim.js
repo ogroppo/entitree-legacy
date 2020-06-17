@@ -1,10 +1,25 @@
 import moment from "moment";
 export default function formatDateClaim(claim) {
-  if (!claim || !claim[0].mainsnak.datavalue) return;
+  if (
+    !claim ||
+    !claim[0].mainsnak.datavalue ||
+    !claim[0].mainsnak.datavalue.value
+  )
+    return;
 
   const dateValue = claim[0].mainsnak.datavalue.value;
+
+  let { time } = dateValue;
+  if (time.startsWith("+")) time = time.substr(1);
   //julian dates?!?!?!
-  const mm = moment(dateValue.time);
+  const mm = moment(time);
+  if (!mm.isValid()) {
+    return;
+  }
+
+  // if (dateValue.precision === 8)
+  // //dacade?
+  //    return mm.format("YYYY");
 
   if (dateValue.precision === 9)
     //year

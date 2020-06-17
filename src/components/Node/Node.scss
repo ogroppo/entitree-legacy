@@ -1,0 +1,73 @@
+.Node {
+  position: absolute;
+  transition: all ease-in-out 0.2s;
+  background-color: #eee;
+  border: 1px solid grey;
+  border-radius: 5px;
+  padding: 5px;
+  transform: translate(-50%, -50%);
+  .img {
+    float: left;
+    border-radius: 5px;
+    overflow: hidden;
+    img {
+      width: 100%;
+      vertical-align: middle;
+      object-fit: cover;
+    }
+  }
+  .content {
+    float: left;
+    padding-left: 4px;
+    .label {
+      font-size: 13px;
+      line-height: 15px;
+      font-weight: bold;
+      max-height: 30px; //line h * 2
+      overflow: hidden;
+    }
+    .description {
+      margin-top: 2px;
+      font-size: 12px;
+      line-height: 14px;
+      color: gray;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .date {
+      font-size: 12px;
+      color: grey;
+    }
+  }
+  .counter {
+    border-radius: 20px;
+    padding: 2px 6px;
+    font-size: 12px;
+    position: absolute;
+    min-width: 27px;
+    z-index: 99;
+  }
+  .siblingCount {
+    left: -20px;
+  }
+  .spouseCount {
+    right: -20px;
+  }
+  .siblingCount,
+  .spouseCount {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .parentCount,
+  .childrenCount {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .parentCount {
+    top: -20px;
+  }
+  .childrenCount {
+    bottom: -20px;
+  }
+}

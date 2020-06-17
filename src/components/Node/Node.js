@@ -6,6 +6,8 @@ import {
   CARD_OUTER_WIDTH,
 } from "../../constants/tree";
 import { Button } from "react-bootstrap";
+import { FaUsers } from "react-icons/fa";
+import "./Node.scss";
 
 export default function Node({
   node,
@@ -24,7 +26,7 @@ export default function Node({
         top: node.y,
         width: CARD_WIDTH,
       }}
-      className="node"
+      className="Node"
     >
       <div
         className="img"
@@ -50,6 +52,10 @@ export default function Node({
           </a>
         </div>
         <div className="description">{node.data.description}</div>
+        <div className="date">
+          {node.data.birthDate}
+          {node.data.deathDate ? " - " + node.data.deathDate : ""}
+        </div>
       </div>
       <Counter
         ids={node.extraSiblingIds}
@@ -79,7 +85,7 @@ export default function Node({
   );
 }
 
-function Counter({ ids, node, toggleFn, className }) {
+function Counter({ ids, node, toggleFn, className, Icon }) {
   const [disabled, setDisabled] = React.useState(false);
   if (!ids || !ids.length) return null;
   return (
@@ -89,7 +95,7 @@ function Counter({ ids, node, toggleFn, className }) {
       disabled={disabled}
       onClick={async () => {
         setDisabled(true);
-        await toggleFn(node); //TODO promise-fy
+        await toggleFn(node);
         setDisabled(false);
       }}
     >
