@@ -5,89 +5,24 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { hierarchy } from "d3-hierarchy";
 import {
   CARD_OUTER_WIDTH,
-  CARD_VERTICAL_SPACING,
   CARD_HEIGHT,
   CARD_WIDTH,
   SIBLING_SPOUSE_SEPARATION,
   SAME_GROUP_SEPARATION,
-  COUSINS_SEPARATION,
 } from "../../constants/tree";
 import Node from "../Node/Node";
 import Rel from "../Rel/Rel";
 import { CHILD_ID } from "../../constants/properties";
-import rootReducer from "./rootReducer";
-import treeLayout from "./../../lib/getTreeLayout";
+import graphReducer, { initialState } from "./graphReducer";
 
 export default function Graph({ showError, currentEntityId, currentPropId }) {
-  const [positionX, setPositionX] = React.useState(0);
-  const [positionY, setPositionY] = React.useState(0);
-  const [maxX, setMaxX] = React.useState(CARD_OUTER_WIDTH);
-  const [maxY, setMaxY] = React.useState(CARD_HEIGHT);
-  const [childTreeVersion, setChildTreeVersion] = React.useState(0);
-  const [parentTreeVersion, setParentTreeVersion] = React.useState(0);
-  const [root, dispatchRoot] = useReducer(rootReducer);
-  const [childNodes, setChildNodes] = React.useState([]);
-  const [childRels, setChildRels] = React.useState([]);
-  const [childTree, setChildTree] = React.useState({});
-  const [parentNodes, setParentNodes] = React.useState([]);
-  const [parentRels, setParentRels] = React.useState([]);
-  const [parentTree, setParentTree] = React.useState({});
-  const [containerStyle, setContainerStyle] = React.useState({
-    width: CARD_OUTER_WIDTH,
-    height: CARD_HEIGHT,
-  });
-
-  //UPDATE CHILD TREE
-  React.useEffect(() => {
-    if (childTreeVersion > 0) {
-      treeLayout(childTree);
-      let nodes = childTree.descendants().slice(1);
-      let rels = childTree.links();
-      checkMax(nodes);
-      setChildNodes(nodes);
-      setChildRels(rels);
-    }
-  }, [childTreeVersion]);
-
-  //UPDATE PARENT TREE
-  React.useEffect(() => {
-    if (parentTreeVersion > 0) {
-      treeLayout(parentTree);
-      let nodes = parentTree.descendants().slice(1);
-      let rels = parentTree.links();
-      checkMax(nodes);
-      setParentNodes(nodes);
-      setParentRels(rels);
-    }
-  }, [parentTreeVersion]);
-
-  //CONTAINER BOUNDARIES
-  const checkMax = (nodes) => {
-    let _maxX = maxX;
-    let _maxY = maxY;
-    nodes.forEach((node) => {
-      _maxX = Math.max(Math.abs(node.x), _maxX);
-      _maxY = Math.max(Math.abs(node.y), _maxY);
-    });
-    setMaxX(_maxX);
-    setMaxY(_maxY);
-    setContainerStyle({
-      width: 2 * _maxX + CARD_WIDTH,
-      height: 2 * _maxY + CARD_HEIGHT,
-    });
-  };
+  const [graph, dispatchGraph] = useReducer(graphReducer, initialState);
 
   //GET ROOT
   React.useEffect(() => {
     if (currentEntityId && currentPropId) {
       //reset graph
-      dispatchRoot({ type: "set", root: null });
-      setPositionY(0);
-      setPositionX(0);
-      setChildNodes([]);
-      setParentNodes([]);
-      setChildRels([]);
-      setParentRels([]);
+      dispatchGraph({ type: "reset" });
       getItem(currentEntityId, { withParents: true, propId: currentPropId })
         .then(async (entity) => {
           let root = hierarchy(entity);
@@ -96,122 +31,74 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
           root.extraSiblingIds = root.data.siblingIds; //because this is read straight away
           root.x = 0;
           root.y = 0;
-          dispatchRoot({ type: "set", root });
 
           //annoyingly a repetition but correct
           let childTree = hierarchy(entity);
           childTree.treeId = "root";
-          setChildTree(childTree);
-          expandChildren(childTree);
 
           let parentTree = hierarchy(entity);
           parentTree.treeId = "root";
-          setParentTree(parentTree);
-          expandParents(parentTree);
+
+          dispatchGraph({ type: "set", root, childTree, parentTree });
         })
         .catch((e) => showError(e));
     }
   }, [currentEntityId, currentPropId]);
 
-  const toggleChildren = (node) => {
+  const toggleChildren = async (node) => {
     if (node._childrenExpanded) {
-      return collapseChildren(node);
+      return dispatchGraph({ type: "collapseChildren", node });
     }
-    if (!node._childrenExpanded) {
-      return expandChildren(node);
+    //has cached children
+    if (node._children) {
+      return dispatchGraph({ type: "expandChildren", node });
     }
-  };
-
-  const collapseChildren = (node) => {
-    if (!node._childrenExpanded) return;
-    collapseChild(node);
-    setChildTreeVersion(childTreeVersion + 1);
-  };
-
-  const collapseChild = (node) => {
-    if (!node._childrenExpanded) return;
-    node._childrenExpanded = false;
-    node._children = node.children;
-    node._children.forEach(collapseChild);
-    node.children = null;
-  };
-
-  const expandChildren = async (node) => {
     try {
-      if (node._childrenExpanded) return;
+      if (!node.data.childrenIds || !node.data.childrenIds.length) return;
 
-      node._childrenExpanded = true;
-      //has cached children
-      if (node._children) {
-        node.children = node._children;
-        node._children = null;
-      } else {
-        if (!node.data.childrenIds || !node.data.childrenIds.length) return;
-        const entities = await getItems(node.data.childrenIds, {
-          propId: currentPropId,
-        });
-        entities.forEach((entity) => {
-          const childNode = hierarchy(entity);
-          childNode.depth = node.depth + 1;
-          childNode.parent = node;
-          childNode.treeId = childNode.data.id + "_child_" + childNode.depth;
-          childNode.isChild = true;
-          if (!node.children) {
-            node.children = [];
-          }
-          node.children.push(childNode);
-        });
-        if (currentPropId === CHILD_ID) {
-          //Remove spouses and siblings that are in the tree already
-          node.children.forEach((childNode) => {
-            childNode.extraSpouseIds = childNode.data.spouseIds.filter(
-              (spouseId) => !node.children.find((c) => spouseId === c.data.id)
-            );
-            childNode.extraSiblingIds = childNode.data.siblingIds.filter(
-              (siblingId) => !node.children.find((c) => siblingId === c.data.id) //optimise with a map?
-            );
-          });
+      const entities = await getItems(node.data.childrenIds, {
+        propId: currentPropId,
+      });
+      entities.forEach((entity) => {
+        const childNode = hierarchy(entity);
+        childNode.depth = node.depth + 1;
+        childNode.parent = node;
+        childNode.treeId = childNode.data.id + "_child_" + childNode.depth;
+        childNode.isChild = true;
+        if (!node.children) {
+          node.children = [];
         }
+        node.children.push(childNode);
+      });
+      if (currentPropId === CHILD_ID) {
+        //Remove spouses and siblings that are in the tree already
+        node.children.forEach((childNode) => {
+          childNode.extraSpouseIds = childNode.data.spouseIds.filter(
+            (spouseId) => !node.children.find((c) => spouseId === c.data.id)
+          );
+          childNode.extraSiblingIds = childNode.data.siblingIds.filter(
+            (siblingId) => !node.children.find((c) => siblingId === c.data.id) //optimise with a map?
+          );
+        });
       }
-      setChildTreeVersion(childTreeVersion + 1);
-      setPositionX(-node.x);
-      setPositionY(-node.y);
+
+      dispatchGraph({ type: "expandChildren", node });
     } catch (error) {
       showError(error);
     }
   };
 
-  const toggleParents = (node) => {
+  const toggleParents = async (node) => {
     if (node._parentsExpanded) {
-      return collapseParents(node);
+      dispatchGraph({ type: "collapseParents", node });
     }
-    if (!node._parentsExpanded) {
-      return expandParents(node);
-    }
-  };
-
-  const collapseParents = (node) => {
-    if (!node._parentsExpanded) return;
-    collapseParent(node);
-    setParentTreeVersion(parentTreeVersion + 1);
-  };
-
-  const collapseParent = (node) => {
-    if (!node._parentsExpanded) return;
-    node._parentsExpanded = false;
-    node._parents = node.children;
-    node._parents.forEach(collapseParent);
-    node.children = null;
-  };
-
-  const expandParents = async (node) => {
-    if (node._parentsExpanded) return;
-    node._parentsExpanded = true;
     //has cached parents
     if (node._parents) {
-      node.children = node._parents;
-      node._parents = null;
-    } else {
+      dispatchGraph({ type: "expandParents", node });
+      return;
+    }
+
+    try {
       if (!node.data.parentIds || !node.data.parentIds.length) return;
       const entities = await getItems(node.data.parentIds, {
         withChildren: false,
@@ -240,159 +127,153 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
           );
         });
       }
+      dispatchGraph({ type: "expandParents", node });
+    } catch (error) {
+      showError(error);
     }
-    setParentTreeVersion(parentTreeVersion + 1);
-    setPositionX(-node.x);
-    setPositionY(-node.y);
   };
 
-  const toggleSpouses = (node) => {
+  const toggleSpouses = async (node) => {
     if (node._spousesExpanded) {
-      return collapseSpouses(node);
+      return dispatchGraph({ type: "collapseSpouses", node });
     }
     if (node._spouses) {
-      return expandSpouses(node);
+      return dispatchGraph({ type: "expandSpouses", node });
     }
-
-    getItems(node.extraSpouseIds)
-      .then((entities) => {
-        entities.forEach((entity) => {
-          const childNode = hierarchy(entity);
-          childNode.depth = node.depth;
-          childNode.isSpouse = true;
-          childNode.treeId = childNode.data.id + "_spouse_" + childNode.depth;
-          childNode.virtualParent = node;
-          childNode.parent = node.parent;
-          const childIndex = node.parent.children.indexOf(node) + 1;
-          node.parent.children.splice(childIndex, 0, childNode);
-        });
-        expandSpouses(node);
-      })
-      .catch((e) => showError(e));
+    try {
+      const entities = await getItems(node.extraSpouseIds);
+      entities.forEach((entity) => {
+        const childNode = hierarchy(entity);
+        childNode.depth = node.depth;
+        childNode.isSpouse = true;
+        childNode.treeId = childNode.data.id + "_spouse_" + childNode.depth;
+        childNode.virtualParent = node;
+        childNode.parent = node.parent;
+        const childIndex = node.parent.children.indexOf(node) + 1;
+        node.parent.children.splice(childIndex, 0, childNode);
+      });
+      dispatchGraph({ type: "expandSpouses", node });
+    } catch (error) {
+      showError(error);
+    }
   };
 
-  const expandSpouses = (node) => {
-    node._spousesExpanded = true;
-    if (node.isChild) setChildTreeVersion(childTreeVersion + 1);
-    if (node.isParent) setParentTreeVersion(parentTreeVersion + 1);
-  };
-
-  const collapseSpouses = (node) => {
-    node._spousesExpanded = false;
-    node.parent.children = node.parent.children.filter(
-      (child) =>
-        !(child.isSpouse && child.virtualParent.data.id === node.data.id)
-    );
-    if (node.isChild) setChildTreeVersion(childTreeVersion + 1);
-    if (node.isParent) setParentTreeVersion(parentTreeVersion + 1);
-  };
-
-  const toggleSiblings = (node) => {
+  const toggleSiblings = async (node) => {
     if (node._siblingsExpanded) {
-      return collapseSiblings(node);
+      return dispatchGraph({ type: "collapseSiblings", node });
     }
+
     if (node._siblings) {
-      return expandSiblings(node);
+      return dispatchGraph({ type: "expandSiblings", node });
     }
 
-    getItems(node.extraSiblingIds)
-      .then((entities) => {
-        entities.forEach((entity) => {
-          const childNode = hierarchy(entity);
-          childNode.depth = node.depth;
-          childNode.isSibling = true;
-          childNode.treeId = childNode.data.id + "_sibling_" + childNode.depth;
-          childNode.virtualParent = node;
-          childNode.parent = node.parent;
-          const childIndex = node.parent.children.indexOf(node);
-          node.parent.children.splice(childIndex, 0, childNode);
-        });
-        expandSiblings(node);
-      })
-      .catch((e) => showError(e));
+    try {
+      const entities = await getItems(node.extraSiblingIds);
+      entities.forEach((entity) => {
+        const childNode = hierarchy(entity);
+        childNode.depth = node.depth;
+        childNode.isSibling = true;
+        childNode.treeId = childNode.data.id + "_sibling_" + childNode.depth;
+        childNode.virtualParent = node;
+        childNode.parent = node.parent;
+        const childIndex = node.parent.children.indexOf(node);
+        node.parent.children.splice(childIndex, 0, childNode);
+      });
+      dispatchGraph({ type: "expandSiblings", node });
+    } catch (error) {
+      showError(error);
+    }
   };
 
-  const expandSiblings = (node) => {
-    node._siblingsExpanded = true;
-    if (node.isChild) setChildTreeVersion(childTreeVersion + 1);
-    if (node.isParent) setParentTreeVersion(parentTreeVersion + 1);
-  };
-
-  const collapseSiblings = (node) => {
-    node._siblingsExpanded = false;
-    node.parent.children = node.parent.children.filter(
-      (child) =>
-        !(child.isSibling && child.virtualParent.data.id === node.data.id)
-    );
-    if (node.isChild) setChildTreeVersion(childTreeVersion + 1);
-    if (node.isParent) setParentTreeVersion(parentTreeVersion + 1);
-  };
-
-  const toggleRootSpouses = () => {
+  const toggleRootSpouses = async () => {
+    const { root } = graph;
     if (root._spousesExpanded) {
-      return dispatchRoot({ type: "collapseRootSpouses", root });
+      return dispatchGraph({ type: "collapseRootSpouses", root });
     }
     if (root._spouses) {
-      return dispatchRoot({ type: "expandRootSpouses", root });
+      return dispatchGraph({ type: "expandRootSpouses", root });
     }
 
-    getItems(root.extraSpouseIds)
-      .then((entities) => {
-        entities.forEach((entity, index) => {
-          const spouseNode = hierarchy(entity);
-          spouseNode.isSpouse = true;
-          spouseNode.x =
-            CARD_WIDTH * SAME_GROUP_SEPARATION +
-            CARD_OUTER_WIDTH * SIBLING_SPOUSE_SEPARATION * index;
-          spouseNode.y = 0;
-          spouseNode.treeId = spouseNode.data.id + "_spouse_root";
-          if (!root.spouses) root.spouses = [];
-          root.spouses.push(spouseNode);
-        });
-        dispatchRoot({ type: "expandRootSpouses", root });
-      })
-      .catch((e) => showError(e));
+    try {
+      const entities = await getItems(root.extraSpouseIds);
+      entities.forEach((entity, index) => {
+        const spouseNode = hierarchy(entity);
+        spouseNode.isSpouse = true;
+        spouseNode.x =
+          CARD_WIDTH * SAME_GROUP_SEPARATION +
+          CARD_OUTER_WIDTH * SIBLING_SPOUSE_SEPARATION * index;
+        spouseNode.y = 0;
+        spouseNode.treeId = spouseNode.data.id + "_spouse_root";
+        if (!root.spouses) root.spouses = [];
+        root.spouses.push(spouseNode);
+      });
+      dispatchGraph({ type: "expandRootSpouses", root });
+    } catch (error) {
+      showError(error);
+    }
   };
 
-  const toggleRootSiblings = () => {
+  const toggleRootSiblings = async () => {
+    const { root } = graph;
     if (root._siblingsExpanded) {
-      return dispatchRoot({ type: "collapseRootSiblings", root });
+      return dispatchGraph({ type: "collapseRootSiblings", root });
     }
-    if (root._spouses) {
-      return dispatchRoot({ type: "expandRootSiblings", root });
+    if (root._siblings) {
+      return dispatchGraph({ type: "expandRootSiblings", root });
     }
 
-    getItems(root.data.siblingIds)
-      .then((entities) => {
-        entities.forEach((entity, index, { length }) => {
-          const siblingNode = hierarchy(entity);
-          siblingNode.isSibling = true;
-          siblingNode.x =
-            -SAME_GROUP_SEPARATION -
-            CARD_OUTER_WIDTH * SIBLING_SPOUSE_SEPARATION * (length - index);
-          siblingNode.y = 0;
-          siblingNode.treeId = siblingNode.data.id + "_sibling_root";
-          if (!root.siblings) root.siblings = [];
-          root.siblings.push(siblingNode);
-        });
-        dispatchRoot({ type: "expandRootSiblings", root });
-      })
-      .catch((e) => showError(e));
+    try {
+      const entities = await getItems(root.data.siblingIds);
+      entities.forEach((entity, index, { length }) => {
+        const siblingNode = hierarchy(entity);
+        siblingNode.isSibling = true;
+        siblingNode.x =
+          -SAME_GROUP_SEPARATION -
+          CARD_OUTER_WIDTH * SIBLING_SPOUSE_SEPARATION * (length - index);
+        siblingNode.y = 0;
+        siblingNode.treeId = siblingNode.data.id + "_sibling_root";
+        if (!root.siblings) root.siblings = [];
+        root.siblings.push(siblingNode);
+      });
+      dispatchGraph({ type: "expandRootSiblings", root });
+    } catch (error) {
+      showError(error);
+    }
   };
+
+  const {
+    root,
+    childTree,
+    parentTree,
+    containerStyle,
+    parentNodes,
+    childNodes,
+    parentRels,
+    childRels,
+    positionX,
+    positionY,
+    scale,
+  } = graph;
 
   return (
     <div className="Graph">
       <TransformWrapper
         zoomIn={{ step: 100 }}
         zoomOut={{ step: 100 }}
+        wheel={{ step: 25 }}
         options={{ limitToBounds: false, minScale: 0.2, maxScale: 2 }}
         scalePadding={{ disabled: true, size: 1 }}
-        // positionX={positionX}
-        // positionY={positionY}
-        // onPanning={({ positionX, positionY }) => {
-        //   setPositionX(positionX);
-        //   setPositionY(positionY);
-        // }}
+        positionX={positionX}
+        positionY={positionY}
+        scale={scale}
+        onWheel={({ positionX, positionY, scale, ...rest }) => {
+          if (scale >= 0.2 && scale <= 2)
+            dispatchGraph({ type: "set", scale, positionX, positionY });
+        }}
+        onPanning={({ positionX, positionY }) => {
+          dispatchGraph({ type: "set", positionX });
+          dispatchGraph({ type: "set", positionY });
+        }}
       >
         <TransformComponent>
           <div className="center">
