@@ -1,5 +1,7 @@
 import getClaimIds from "./getClaimIds";
 import formatDateClaim from "./formatDateClaim";
+import addImagesFromClaims from "./../wikidata/images";
+
 import {
   SIBLINGS_ID,
   SPOUSE_ID,
@@ -42,9 +44,11 @@ export default function formatEntity(entity, options = {}) {
     entity.siblingIds = getClaimIds(entity, SIBLINGS_ID);
   }
 
-  const images = entity.claims["P18"] || [];
-  entity.images = images.map(({ mainsnak: { datavalue: { value } } }) => ({
-    alt: value, //a lot of things could be done here from the qualifiers
-    url: `http://commons.wikimedia.org/wiki/Special:FilePath/${value}?width=80px`,
+  // const images = entity.claims["P18"] || [];
+  var images = addImagesFromClaims(claims);
+  //({ mainsnak: { datavalue: { value } } }) =>
+  entity.images = images.map( ({url, source}) => ({
+    alt: url, //a lot of things could be done here from the qualifiers
+    url: url,
   }));
 }

@@ -18,6 +18,11 @@ export default function Node({
   debug,
 }) {
   if (debug) console.log(node);
+  var imageState = 0;
+  function toggleImage(){
+    console.log("changeIMG");
+    imageState++;
+  }
 
   return (
     <div
@@ -33,7 +38,7 @@ export default function Node({
         style={{ height: IMAGE_HEIGHT, width: IMAGE_HEIGHT }}
       >
         {node.data.images[0] && (
-          <img alt={node.data.images[0].alt} src={node.data.images[0].url} />
+          <img alt={node.data.images[0].alt} src={node.data.images[imageState].url} />
         )}
         {!node.data.images[0] && (
           <img src={`https://via.placeholder.com/${IMAGE_HEIGHT}`} />
