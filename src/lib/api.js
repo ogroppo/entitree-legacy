@@ -34,6 +34,8 @@ export function getItemProps(id) {
       },
     }) => {
       let props = [];
+      console.log();
+
       bindings.forEach((row) => {
         const propLabel = row.claimLabel.value;
         const propId = row.claim.value.replace(
@@ -43,6 +45,35 @@ export function getItemProps(id) {
         props.push({ id: propId, label: propLabel });
       });
       return props;
+    }
+  );
+}
+
+export async function getItemTypes(id, options = {}) {
+  const query = `SELECT DISTINCT ?type ?typeLabel WHERE {
+    BIND(wd:${id} as ?item)
+    ?item wdt:P31 ?type.
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+  }`;
+  const url = wdk.sparqlQuery(query);
+
+  return axios.get(url).then(
+    ({
+      data: {
+        results: { bindings },
+      },
+    }) => {
+      let types = [];
+
+      bindings.forEach((row) => {
+        const typeLabel = row.typeLabel.value;
+        const typeId = row.type.value.replace(
+          "http://www.wikidata.org/entity/",
+          ""
+        );
+        types.push({ id: typeId, label: typeLabel });
+      });
+      return types;
     }
   );
 }

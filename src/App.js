@@ -1,8 +1,8 @@
 import React from "react";
-import { Navbar, Container, Form, Alert } from "react-bootstrap";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Navbar, Container, Alert } from "react-bootstrap";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
-import HomePage from "./HomePage/HomePage";
+import HomePage from "./pages/HomePage/HomePage";
 import { GiTreeBranch } from "react-icons/gi";
 import "./App.scss";
 const browserHistory = createBrowserHistory();

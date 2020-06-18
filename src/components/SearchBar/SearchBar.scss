@@ -1,7 +1,5 @@
-.HomePage {
-  form {
-    background-color: #eee;
-  }
+.SearchBar {
+  background-color: #eee;
   .searchBox {
     position: relative;
     color: #212529;
@@ -9,10 +7,15 @@
   .dropdown-toggle {
     border: 1px solid #ced4da;
     border-radius: 0.25rem;
+    width: 100%;
   }
   .dropdown-menu {
     max-height: 32 * 8px + 8px !important;
     overflow-y: auto;
+  }
+  .submitButton {
+    margin-bottom: 1rem;
+    width: 100%;
   }
   .Suggestions {
     position: absolute;
