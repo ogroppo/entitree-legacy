@@ -7,6 +7,8 @@ import {
   DEATH_DATE_ID,
   CHILD_ID,
 } from "../constants/properties";
+import wbk from "wikidata-sdk";
+import getSocialMediaIcons from "./../wikidata/socialMediaIcons";
 
 export default function formatEntity(entity, options = {}) {
   if (entity.missing !== undefined)
@@ -31,6 +33,9 @@ export default function formatEntity(entity, options = {}) {
 
   entity.birthDate = formatDateClaim(entity.claims[BIRTH_DATE_ID]);
   entity.deathDate = formatDateClaim(entity.claims[DEATH_DATE_ID]);
+
+  var claims = wbk.simplify.claims(entity.claims, { keepQualifiers: true});
+  entity.html = getSocialMediaIcons(claims);
 
   if (options.propId === CHILD_ID) {
     entity.spouseIds = getClaimIds(entity, SPOUSE_ID);

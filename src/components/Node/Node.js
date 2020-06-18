@@ -56,6 +56,7 @@ export default function Node({
           {node.data.birthDate}
           {node.data.deathDate ? " - " + node.data.deathDate : ""}
         </div>
+        <div className="rest" dangerouslySetInnerHTML={{__html: node.data.html}}></div>
       </div>
       <Counter
         ids={node.extraSiblingIds}
