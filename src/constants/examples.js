@@ -8,7 +8,7 @@ export const EXAMPLES = [
     href: `?q=Q9682&p=P40&l=9`,
   },
   {
-    name: "Dhirendra of Nepal's familiy",
+    name: "Dhirendra of Nepal's family",
     href: `?q=Q5269611&p=P40&l=9`,
   },
   {
@@ -17,6 +17,10 @@ export const EXAMPLES = [
   },
   {
     name: "Pan Pan's family",
+    href: `?q=Q15928745&p=P40&l=9`,
+  },
+  {
+    name: "Jesus Christ's family",
     href: `?q=Q15928745&p=P40&l=9`,
   },
 ];
