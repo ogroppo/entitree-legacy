@@ -137,43 +137,48 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
   };
 
   const expandChildren = async (node) => {
-    if (node._childrenExpanded) return;
+    try {
+      if (node._childrenExpanded) return;
 
-    node._childrenExpanded = true;
-    //has cached children
-    if (node._children) {
-      node.children = node._children;
-      node._children = null;
-    } else {
-      const entities = await getItems(node.data.childrenIds, {
-        propId: currentPropId,
-      });
-      entities.forEach((entity) => {
-        const childNode = hierarchy(entity);
-        childNode.depth = node.depth + 1;
-        childNode.parent = node;
-        childNode.treeId = childNode.data.id + "_child_" + childNode.depth;
-        childNode.isChild = true;
-        if (!node.children) {
-          node.children = [];
-        }
-        node.children.push(childNode);
-      });
-      if (currentPropId === CHILD_ID) {
-        //Remove spouses and siblings that are in the tree already
-        node.children.forEach((childNode) => {
-          childNode.extraSpouseIds = childNode.data.spouseIds.filter(
-            (spouseId) => !node.children.find((c) => spouseId === c.data.id)
-          );
-          childNode.extraSiblingIds = childNode.data.siblingIds.filter(
-            (siblingId) => !node.children.find((c) => siblingId === c.data.id) //optimise with a map?
-          );
+      node._childrenExpanded = true;
+      //has cached children
+      if (node._children) {
+        node.children = node._children;
+        node._children = null;
+      } else {
+        if (!node.data.childrenIds || !node.data.childrenIds.length) return;
+        const entities = await getItems(node.data.childrenIds, {
+          propId: currentPropId,
         });
+        entities.forEach((entity) => {
+          const childNode = hierarchy(entity);
+          childNode.depth = node.depth + 1;
+          childNode.parent = node;
+          childNode.treeId = childNode.data.id + "_child_" + childNode.depth;
+          childNode.isChild = true;
+          if (!node.children) {
+            node.children = [];
+          }
+          node.children.push(childNode);
+        });
+        if (currentPropId === CHILD_ID) {
+          //Remove spouses and siblings that are in the tree already
+          node.children.forEach((childNode) => {
+            childNode.extraSpouseIds = childNode.data.spouseIds.filter(
+              (spouseId) => !node.children.find((c) => spouseId === c.data.id)
+            );
+            childNode.extraSiblingIds = childNode.data.siblingIds.filter(
+              (siblingId) => !node.children.find((c) => siblingId === c.data.id) //optimise with a map?
+            );
+          });
+        }
       }
+      setChildTreeVersion(childTreeVersion + 1);
+      setPositionX(-node.x);
+      setPositionY(-node.y);
+    } catch (error) {
+      showError(error);
     }
-    setChildTreeVersion(childTreeVersion + 1);
-    setPositionX(-node.x);
-    setPositionY(-node.y);
   };
 
   const toggleParents = (node) => {
@@ -207,6 +212,7 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
       node.children = node._parents;
       node._parents = null;
     } else {
+      if (!node.data.parentIds || !node.data.parentIds.length) return;
       const entities = await getItems(node.data.parentIds, {
         withChildren: false,
         withParents: true,
