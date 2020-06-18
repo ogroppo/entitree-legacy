@@ -9,12 +9,12 @@ import {
   Row,
   Col,
   Container,
-  Alert,
 } from "react-bootstrap";
 import { search, getItem, getItemTypes, getItemProps } from "../../lib/api";
 import qs from "query-string";
 import { useHistory, useLocation } from "react-router-dom";
 import { preferredProps } from "../../config/preferredProps";
+import { propLabelMap } from "../../constants/properties";
 
 export default function SearchBar({
   setCurrentEntityId,
@@ -45,14 +45,11 @@ export default function SearchBar({
         }
         if (p) {
           //showInfo({ message: "Loading property" });
-          const entity = await getItem(p);
+          const prop = await getItem(p);
           setProp({
-            id: entity.id,
-            label: entity.labels.en.value,
+            id: prop.id,
+            label: prop.labels.en.value,
           });
-        }
-        if (p && q) {
-          showGraph();
         }
       } catch (error) {
         showError(error);
@@ -77,6 +74,7 @@ export default function SearchBar({
 
   //Get new props on entity change
   React.useEffect(() => {
+    setProp({});
     if (entityId) {
       (async () => {
         const types = await getItemTypes(entityId);
@@ -93,27 +91,27 @@ export default function SearchBar({
     }
   }, [entityId]);
 
+  React.useEffect(() => {
+    submit();
+  }, [prop.id]);
+
   const history = useHistory();
-  const onSubmit = (e) => {
-    e.preventDefault();
+  const submit = (e) => {
+    if (!prop.id || !entityId) return;
     const query = { q: entityId, p: prop.id };
     const searchString = qs.stringify(query);
     history.push({
       search: "?" + searchString,
     });
-    showGraph();
-  };
-
-  const showGraph = () => {
     setCurrentEntityId(entityId);
     setCurrentPropId(prop.id);
   };
 
   return (
-    <Form className="SearchBar" onSubmit={onSubmit}>
+    <Form className="SearchBar">
       <Container>
         <Row className="pt-4">
-          <Col md={6} lg={5}>
+          <Col md={6} lg={8}>
             <Form.Group className="searchBox" controlId="searchBox">
               <Form.Control
                 onKeyPress={() => setFromKeyboard(true)}
@@ -145,26 +143,23 @@ export default function SearchBar({
                   variant="none"
                   id="dropdown-props"
                 >
-                  {prop.label ? prop.label : "Choose Tree type"}
+                  {prop.id
+                    ? propLabelMap[prop.id]
+                      ? propLabelMap[prop.id]
+                      : prop.label
+                    : "Choose Tree type"}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   {availableProps.map((prop) => (
                     <Dropdown.Item key={prop.id} onClick={() => setProp(prop)}>
-                      {prop.label}
+                      {propLabelMap[prop.id]
+                        ? propLabelMap[prop.id]
+                        : prop.label}
                     </Dropdown.Item>
                   ))}
                 </Dropdown.Menu>
               </Dropdown>
             </Form.Group>
-          </Col>
-          <Col md={12} lg={3}>
-            <Button
-              className="submitButton"
-              disabled={!entityId || !prop.id}
-              type="submit"
-            >
-              SHOW TREE
-            </Button>
           </Col>
         </Row>
       </Container>

@@ -40,9 +40,13 @@ function App() {
             <Navbar.Brand href="/">
               <GiTreeBranch /> WikiForest
             </Navbar.Brand>
-            <DropdownButton id="dropdown-basic-button" title="Examples">
-              {EXAMPLES.map(({ name, id, property }) => (
-                <Dropdown.Item key={id} href={`?q=${id}&p=${property}`}>
+            <DropdownButton
+              title="Examples"
+              variant="info"
+              className="examplesButton"
+            >
+              {EXAMPLES.map(({ name, href }) => (
+                <Dropdown.Item key={name} href={href}>
                   {name}
                 </Dropdown.Item>
               ))}
