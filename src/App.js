@@ -1,10 +1,11 @@
 import React from "react";
-import { Navbar, Container, Form, Alert } from "react-bootstrap";
+import { Navbar, Container, Form, Alert, DropdownButton, Dropdown } from "react-bootstrap";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import HomePage from "./HomePage/HomePage";
 import { GiTreeBranch } from "react-icons/gi";
 import "./App.scss";
+import { EXAMPLES } from "./constants/examples";
 const browserHistory = createBrowserHistory();
 
 function App() {
@@ -33,6 +34,11 @@ function App() {
             <Navbar.Brand href="/">
               <GiTreeBranch /> WikiForest
             </Navbar.Brand>
+            <DropdownButton id="dropdown-basic-button" title="Examples">
+              { EXAMPLES.map(({name, id , property}) => (
+                <Dropdown.Item href={`?q=${id}&p=${property}`}>{name}</Dropdown.Item>
+              ))}
+            </DropdownButton>
             <div className="ml-auto">
               <Navbar.Toggle aria-controls="navbar-nav" />
               <Navbar.Collapse id="navbar-nav"></Navbar.Collapse>
