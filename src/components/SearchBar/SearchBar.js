@@ -13,8 +13,7 @@ import {
 import { search, getItem, getItemTypes, getItemProps } from "../../lib/api";
 import qs from "query-string";
 import { useHistory, useLocation } from "react-router-dom";
-import { preferredProps } from "../../config/preferredProps";
-import { propLabelMap } from "../../constants/properties";
+import { propLabelMap, preferredProps } from "../../constants/properties";
 
 export default function SearchBar({
   setCurrentEntityId,

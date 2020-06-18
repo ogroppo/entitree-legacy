@@ -5,6 +5,7 @@ import {
   Alert,
   DropdownButton,
   Dropdown,
+  Nav,
 } from "react-bootstrap";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
@@ -12,6 +13,7 @@ import HomePage from "./pages/HomePage/HomePage";
 import { GiTreeBranch } from "react-icons/gi";
 import "./App.scss";
 import { EXAMPLES } from "./constants/examples";
+import AboutPage from "./pages/AboutPage/AboutPage";
 const browserHistory = createBrowserHistory();
 
 function App() {
@@ -53,7 +55,11 @@ function App() {
             </DropdownButton>
             <div className="ml-auto">
               <Navbar.Toggle aria-controls="navbar-nav" />
-              <Navbar.Collapse id="navbar-nav"></Navbar.Collapse>
+              <Navbar.Collapse id="navbar-nav">
+                <Nav>
+                  <Nav.Link href="/about">About</Nav.Link>
+                </Nav>
+              </Navbar.Collapse>
             </div>
           </Container>
         </Navbar>
@@ -72,6 +78,9 @@ function App() {
         <Switch>
           <Route exact path="/">
             <HomePage showError={showError} showInfo={showInfo} />
+          </Route>
+          <Route exact path="/about">
+            <AboutPage showError={showError} showInfo={showInfo} />
           </Route>
         </Switch>
       </div>
