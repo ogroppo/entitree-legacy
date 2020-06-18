@@ -5,6 +5,7 @@ import { createBrowserHistory } from "history";
 import HomePage from "./pages/HomePage/HomePage";
 import { GiTreeBranch } from "react-icons/gi";
 import "./App.scss";
+import { EXAMPLES } from "./constants/examples";
 const browserHistory = createBrowserHistory();
 
 function App() {
@@ -33,6 +34,13 @@ function App() {
             <Navbar.Brand href="/">
               <GiTreeBranch /> WikiForest
             </Navbar.Brand>
+            <DropdownButton id="dropdown-basic-button" title="Examples">
+              {EXAMPLES.map(({ name, id, property }) => (
+                <Dropdown.Item href={`?q=${id}&p=${property}`}>
+                  {name}
+                </Dropdown.Item>
+              ))}
+            </DropdownButton>
             <div className="ml-auto">
               <Navbar.Toggle aria-controls="navbar-nav" />
               <Navbar.Collapse id="navbar-nav"></Navbar.Collapse>
