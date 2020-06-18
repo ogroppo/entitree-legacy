@@ -38,14 +38,14 @@ export default function SearchBar({
         let { q, p } = qs.parse(location.search);
         if (q) {
           //showInfo({ message: "Loading entity" });
-          const entity = getItem(q);
+          const entity = await getItem(q);
           setFromKeyboard(false);
           setSearchTerm(entity.labels.en.value);
           setEntityId(entity.id);
         }
         if (p) {
           //showInfo({ message: "Loading property" });
-          const entity = getItem(p);
+          const entity = await getItem(p);
           setProp({
             id: entity.id,
             label: entity.labels.en.value,
@@ -68,7 +68,6 @@ export default function SearchBar({
       search(debouncedSearchTerm).then(({ data: { search } }) => {
         setLoadingSuggestions(false);
         setSearchResults(search);
-        console.log(search);
       });
     } else {
       setLoadingSuggestions(false);

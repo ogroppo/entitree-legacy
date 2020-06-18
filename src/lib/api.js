@@ -34,8 +34,6 @@ export function getItemProps(id) {
       },
     }) => {
       let props = [];
-      console.log();
-
       bindings.forEach((row) => {
         const propLabel = row.claimLabel.value;
         const propId = row.claim.value.replace(

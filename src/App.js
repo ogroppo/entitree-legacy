@@ -42,7 +42,7 @@ function App() {
             </Navbar.Brand>
             <DropdownButton id="dropdown-basic-button" title="Examples">
               {EXAMPLES.map(({ name, id, property }) => (
-                <Dropdown.Item href={`?q=${id}&p=${property}`}>
+                <Dropdown.Item key={id} href={`?q=${id}&p=${property}`}>
                   {name}
                 </Dropdown.Item>
               ))}

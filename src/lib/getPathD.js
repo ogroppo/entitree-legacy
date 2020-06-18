@@ -9,7 +9,6 @@ export default function getPathD(
   if (options.offsetEndY) {
     endY += options.offsetEndY;
   }
-  console.log(startX, endY);
 
   if (startX === endX) return `M${startX},${startY} V${endY}`;
   if (startY === endY) return `M${startX},${startY} H${endX}`;
