@@ -20,6 +20,11 @@ export default function getPathD(
 
   const r = Math.abs(halfY - thirdY);
 
+  //if there is not enough space for arc use cubic line
+  if (Math.abs(startX - endX) < 2 * r) {
+    return `M${startX},${startY} C${startX},${thirdY} ${endX},${twoThirdsY} ${endX},${endY}`;
+  }
+
   const isLeft = startX > endX;
   const isDown = startY > endY;
 
