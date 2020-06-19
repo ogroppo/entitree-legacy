@@ -59,6 +59,7 @@ export default function Node({
         <div className="label">
           <a
             target="_blank"
+            title={node.data.label}
             href={`https://www.wikidata.org/wiki/${node.data.id}`}
           >
             {node.data.label}

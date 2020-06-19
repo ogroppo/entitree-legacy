@@ -14,14 +14,7 @@ export const STUDENT_OF_ID = "P1066";
 export const STUDENT_ID = "P802";
 export const LOCATED_IN_ID = "P131";
 
-export const propLabelMap = {
-  [CHILD_ID]: "family",
-  [STUDENT_OF_ID]: "student",
-  [STUDENT_ID]: "student",
-  [LOCATED_IN_ID]: "location",
-};
-
-const businessProps = [
+export const BUSINESS_PROPS = [
   {
     id: "P355",
     label: "Subsidiaries",
@@ -47,16 +40,12 @@ export const preferredProps = {
       label: "family",
     },
     {
-      id: STUDENT_OF_ID,
-      label: "student of",
-    },
-    {
       id: STUDENT_ID,
       label: "student",
     },
   ],
-  [ORGANIZATION_ID]: businessProps,
-  [BUSINESS_ID]: businessProps,
+  [ORGANIZATION_ID]: BUSINESS_PROPS,
+  [BUSINESS_ID]: BUSINESS_PROPS,
   [HUMAN_SETTLEMENT_ID]: [
     {
       id: LOCATED_IN_ID,

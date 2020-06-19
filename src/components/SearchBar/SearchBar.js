@@ -13,8 +13,7 @@ import {
 import { search, getItem, getItemTypes, getItemProps } from "../../lib/api";
 import qs from "query-string";
 import { useHistory, useLocation } from "react-router-dom";
-import { propLabelMap, preferredProps } from "../../constants/properties";
-import { LANGS } from "../../constants/langs";
+import { preferredProps } from "../../constants/properties";
 import { AppContext } from "../../App";
 
 export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
@@ -87,6 +86,7 @@ export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
           if (preferredProps[type.id])
             props = props.concat(preferredProps[type.id]);
         });
+        //not in mapping, get them all
         if (!props.length) props = await getItemProps(entityId);
 
         setAvailableProps(props);
@@ -146,18 +146,12 @@ export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
                   variant="none"
                   id="dropdown-props"
                 >
-                  {prop.id
-                    ? propLabelMap[prop.id]
-                      ? propLabelMap[prop.id]
-                      : prop.label
-                    : "Choose Tree type"}
+                  {prop.id ? prop.label : "Choose the tree property"}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   {availableProps.map((prop) => (
                     <Dropdown.Item key={prop.id} onClick={() => setProp(prop)}>
-                      {propLabelMap[prop.id]
-                        ? propLabelMap[prop.id]
-                        : prop.label}
+                      {prop.label}
                     </Dropdown.Item>
                   ))}
                 </Dropdown.Menu>
