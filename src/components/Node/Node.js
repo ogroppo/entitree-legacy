@@ -18,10 +18,12 @@ export default function Node({
   debug,
 }) {
   if (debug) console.log(node);
-  var imageState = 0;
   function toggleImage(){
-    console.log("changeIMG");
-    imageState++;
+    node.data.imageState++;
+    if(node.data.imageState >= node.data.images.length){
+      node.data.imageState = 0;//reset counter
+    }
+    console.log(node.data.images[node.data.imageState].url);//works
   }
 
   return (
@@ -36,9 +38,11 @@ export default function Node({
       <div
         className="img"
         style={{ height: IMAGE_HEIGHT, width: IMAGE_HEIGHT }}
+        onClick={() => { toggleImage();}}
       >
         {node.data.images[0] && (
-          <img alt={node.data.images[0].alt} src={node.data.images[imageState].url} />
+          <img alt={node.data.images[0].alt} src={node.data.images[node.data.imageState].url}
+               title={node.data.images[node.data.imageState].source} />
         )}
         {!node.data.images[0] && (
           <img src={`https://via.placeholder.com/${IMAGE_HEIGHT}`} />
@@ -56,7 +60,7 @@ export default function Node({
             {node.data.label}
           </a>
         </div>
-        <div className="description">{node.data.description}</div>
+        <div className="description" title={node.data.description}>{node.data.description}</div>
         <div className="date">
           {node.data.birthDate}
           {node.data.deathDate ? " - " + node.data.deathDate : ""}
