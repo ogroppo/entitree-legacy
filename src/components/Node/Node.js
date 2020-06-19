@@ -18,12 +18,11 @@ export default function Node({
   debug,
 }) {
   if (debug) console.log(node);
-  function toggleImage(){
+  function toggleImage() {
     node.data.imageState++;
-    if(node.data.imageState >= node.data.images.length){
-      node.data.imageState = 0;//reset counter
+    if (node.data.imageState >= node.data.images.length) {
+      node.data.imageState = 0; //reset counter
     }
-    console.log(node.data.images[node.data.imageState].url);//works
   }
 
   return (
@@ -38,11 +37,16 @@ export default function Node({
       <div
         className="img"
         style={{ height: IMAGE_HEIGHT, width: IMAGE_HEIGHT }}
-        onClick={() => { toggleImage();}}
+        onClick={() => {
+          toggleImage();
+        }}
       >
         {node.data.images[0] && (
-          <img alt={node.data.images[0].alt} src={node.data.images[node.data.imageState].url}
-               title={node.data.images[node.data.imageState].source} />
+          <img
+            alt={node.data.images[0].alt}
+            src={node.data.images[node.data.imageState].url}
+            title={node.data.images[node.data.imageState].source}
+          />
         )}
         {!node.data.images[0] && (
           <img src={`https://via.placeholder.com/${IMAGE_HEIGHT}`} />
@@ -60,12 +64,18 @@ export default function Node({
             {node.data.label}
           </a>
         </div>
-        <div className="description" title={node.data.description}>{node.data.description}</div>
-        <div className="date">
-          {node.data.birthDate}
-          {node.data.deathDate ? " - " + node.data.deathDate : ""}
+        <div className="description" title={node.data.description}>
+          {node.data.description}
         </div>
-        <div className="rest" dangerouslySetInnerHTML={{__html: node.data.html}}></div>
+        <div className="dates">
+          {node.data.birthDate}
+          {node.data.birthDate && node.data.deathDate && " - "}
+          {node.data.deathDate && node.data.deathDate}
+        </div>
+        <div
+          className="rest"
+          dangerouslySetInnerHTML={{ __html: node.data.html }}
+        ></div>
       </div>
       <Counter
         ids={node.extraSiblingIds}

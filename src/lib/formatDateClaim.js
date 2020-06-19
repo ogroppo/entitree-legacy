@@ -1,42 +1,36 @@
 import moment from "moment";
 import wbk from "wikidata-sdk";
+import ordinalize from "ordinalize";
 
 export default function formatDateClaim(claim) {
-  if (
-    !claim ||
-    !claim[0].mainsnak.datavalue ||
-    !claim[0].mainsnak.datavalue.value
-  )
-    return;
+  if (!claim) return;
 
-  const dateValue = claim[0].mainsnak.datavalue.value;
-  return parseDate(dateValue).output;
+  let cleanClaims = [];
+  claim.forEach((c) => {
+    if (
+      c.mainsnak &&
+      c.mainsnak.datavalue &&
+      c.mainsnak.datavalue.value &&
+      c.mainsnak.datavalue.value.time
+    ) {
+      if (c.rank === "normal") cleanClaims.push(c);
+      if (c.rank === "preferred") cleanClaims.unshift(c);
 
-  // let { time } = dateValue;
-  // if (time.startsWith("+")) time = time.substr(1);
-  // //julian dates?!?!?!
-  // const mm = moment(time);
-  // if (!mm.isValid()) {
-  //   return;
-  // }
-  //
-  // // if (dateValue.precision === 8)
-  // // //dacade?
-  // //    return mm.format("YYYY");
-  //
-  // if (dateValue.precision === 9)
-  //   //year
-  //   return mm.format("YYYY");
-  //
-  // if (dateValue.precision === 10)
-  //   //month
-  //   return mm.format("MMM YYYY");
-  //
-  // if (dateValue.precision === 11)
-  //   //day
-  //   return mm.format("DD MMM YYYY");
-  //
-  // return mm.format();
+      //What about the deprecated ones?
+    }
+  });
+  const firstDate = cleanClaims[0];
+  if (!firstDate) return;
+
+  const {
+    mainsnak: {
+      datavalue: { value },
+    },
+  } = firstDate;
+
+  //console.log(JSON.stringify(claim));
+
+  return parseDate(value);
 }
 
 /**
@@ -44,11 +38,10 @@ export default function formatDateClaim(claim) {
  * @param wikidatatime
  * @returns {{output: null, dateObject: null}|{output: string, dateObject: number}|{output: *, dateObject: null}}
  */
-function parseDate(wikidatatime){
-  //check if an object
+function parseDate(wikidatatime) {
   //example of  valid object {time: "+1500-07-07T00:00:00Z" ,precision:8}
-  if (wikidatatime instanceof Object){
-    /*
+
+  /*
     0 - billion years
     3 - million years
     4 - hundred thousand years
@@ -59,52 +52,45 @@ function parseDate(wikidatatime){
     10 - month (only month);
     11 - day
     */
-    var momentFormat = {
-      6: "y [millennium]",
-      7: "y[th century]",
-      8: "y[s]",
-      9: "y",
-      10: "Y-MM",
-      11: "Y-MM-DD"
-    };
-    var parsedDate;
-    //check moment js validity
-    //Moment year date range valid -271820 - 275760
-    parsedDate = moment(wbk.wikibaseTimeToISOString(wikidatatime.time+''));
-    if (parsedDate.isValid()){
-      var year = parsedDate.year();
-      if (year<0){
-        return {
-          'output' : parsedDate.format(" y N"),
-          'dateObject' : moment(wbk.wikibaseTimeToISOString(wikidatatime.time+'')).valueOf()
-        }
-      }else{
-        var precision = wikidatatime.precision;
-        if (precision == 6){
-          parsedDate.set({'year':(year/1000)});
-        }else if (precision == 7){
-          parsedDate.set({'year':(year/100)});
-        }else if (!precision){
-          precision = 9;
-        }
-        return {
-          'output' : parsedDate.format(momentFormat[wikidatatime.precision]),
-          'dateObject' : moment(wbk.wikibaseTimeToISOString(wikidatatime.time+'')).valueOf()
-        }
-      }
+  const momentFormat = {
+    6: "y [millennium]",
+    7: "y[th century]",
+    8: "y[s]",
+    9: "y",
+    10: "Y-MM",
+    11: "Y-MM-DD",
+  };
+  const { precision, time } = wikidatatime;
 
-    } else {
-      //if not covered with momentjs, try using simpleday
-      return {
-        'output' : wbk.wikibaseTimeToSimpleDay(wikidatatime),
-        'dateObject' : null
-      }
-    }
-  }else{
-    return {
-      'output' : null,
-      'dateObject' : null
-    }
+  const dateISOString = wbk.wikibaseTimeToISOString(time);
+  const dateOnly = dateISOString.split("T")[0];
+  let parsedDate = moment(dateOnly);
+
+  //if not covered with momentjs, try using simpleday
+  //example?!?!?
+  if (!parsedDate.isValid()) return wbk.wikibaseTimeToSimpleDay(wikidatatime);
+
+  const year = parsedDate.year();
+  let eraSuffix = ""; //moment has only BC
+  if (year <= 0) {
+    parsedDate.add(1, "year"); //adjust moment wrong year formatting for BCE
+    eraSuffix = " BCE";
   }
 
+  switch (precision) {
+    case 6:
+      return parsedDate
+        .set({ year: year / 1000 })
+        .format(momentFormat[precision]);
+    case 7:
+      let centuryIndex = Math.abs(Math.floor(year / 100));
+      let centuryNumber = year > 0 ? centuryIndex + 1 : centuryIndex;
+      return ordinalize(centuryNumber) + " century" + eraSuffix;
+    case 10:
+      return parsedDate.format("MMM y") + eraSuffix;
+    case 11:
+      return parsedDate.format("D MMM y") + eraSuffix;
+    case 9:
+      return parsedDate.format("y") + eraSuffix;
+  }
 }

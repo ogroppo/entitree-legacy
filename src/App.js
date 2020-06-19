@@ -1,6 +1,6 @@
 import React from "react";
 import { Alert } from "react-bootstrap";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { Router, Switch, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import HomePage from "./pages/HomePage/HomePage";
 import "./App.scss";
@@ -26,7 +26,6 @@ export default function App() {
   }, []);
 
   React.useEffect(() => {
-    console.log("here");
     localStorage.setItem("userLangCode", lang.code);
   }, [lang.code]);
 
