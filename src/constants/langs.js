@@ -431,3 +431,5 @@ export const LANGS = Object.keys(LANG_MAP).map((code) => {
     disambPageDesc: DISAMBIGUATION_PAGE_DESC[code],
   };
 });
+
+export const DEFAULT_LANG = LANGS.find(({ code }) => code === "en");

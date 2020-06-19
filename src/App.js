@@ -6,7 +6,7 @@ import HomePage from "./pages/HomePage/HomePage";
 import "./App.scss";
 import AboutPage from "./pages/AboutPage/AboutPage";
 import Footer from "./layout/Footer/Footer";
-import { LANGS } from "./constants/langs";
+import { LANGS, DEFAULT_LANG } from "./constants/langs";
 import Header from "./layout/Header/Header";
 const browserHistory = createBrowserHistory();
 
@@ -15,7 +15,7 @@ export const AppContext = React.createContext();
 export default function App() {
   const [errors, setErrors] = React.useState([]);
   const [infos, setInfos] = React.useState([]);
-  const [currentLang, setCurrentLang] = React.useState(LANGS[0]);
+  const [currentLang, setCurrentLang] = React.useState(DEFAULT_LANG);
 
   React.useEffect(() => {
     const userLangCode = localStorage.getItem("userLangCode");
