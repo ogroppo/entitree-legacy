@@ -22,13 +22,15 @@ export default function formatEntity(entity, options = {}) {
 
   const languages = options.languages || ["en"];
   entity.label = languages
-    .map((lang) => (entity.labels[lang] ? entity.labels[lang].value : null))
+    .map((langCode) =>
+      entity.labels[langCode] ? entity.labels[langCode].value : null
+    )
     .filter((l) => l)
     .join(", ");
 
   entity.description = languages
-    .map((lang) =>
-      entity.descriptions[lang] ? entity.descriptions[lang].value : null
+    .map((langCode) =>
+      entity.descriptions[langCode] ? entity.descriptions[langCode].value : null
     )
     .filter((l) => l)
     .join(", ");
@@ -36,7 +38,7 @@ export default function formatEntity(entity, options = {}) {
   entity.birthDate = formatDateClaim(entity.claims[BIRTH_DATE_ID]);
   entity.deathDate = formatDateClaim(entity.claims[DEATH_DATE_ID]);
 
-  var claims = wbk.simplify.claims(entity.claims, { keepQualifiers: true});
+  var claims = wbk.simplify.claims(entity.claims, { keepQualifiers: true });
   entity.html = getSocialMediaIcons(claims);
 
   if (options.propId === CHILD_ID) {
@@ -48,7 +50,7 @@ export default function formatEntity(entity, options = {}) {
   var images = addImagesFromClaims(claims);
   //({ mainsnak: { datavalue: { value } } }) =>
   entity.imageState = 0;
-  entity.images = images.map( ({url, source}) => ({
+  entity.images = images.map(({ url, source }) => ({
     alt: url, //a lot of things could be done here from the qualifiers
     url: url,
   }));

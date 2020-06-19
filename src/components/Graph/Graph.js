@@ -27,7 +27,6 @@ export default function Graph({ currentEntityId, currentPropId }) {
       getItem(currentEntityId, {
         withParents: true,
         propId: currentPropId,
-        lang,
       })
         .then(async (entity) => {
           let root = hierarchy(entity);

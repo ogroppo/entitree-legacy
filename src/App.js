@@ -1,22 +1,13 @@
 import React from "react";
-import {
-  Navbar,
-  Container,
-  Alert,
-  DropdownButton,
-  Dropdown,
-  Nav,
-  NavDropdown,
-} from "react-bootstrap";
+import { Alert } from "react-bootstrap";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import HomePage from "./pages/HomePage/HomePage";
-import { GiTreeBranch } from "react-icons/gi";
 import "./App.scss";
-import { EXAMPLES } from "./constants/examples";
 import AboutPage from "./pages/AboutPage/AboutPage";
 import Footer from "./layout/Footer/Footer";
 import { LANGS } from "./constants/langs";
+import Header from "./layout/Header/Header";
 const browserHistory = createBrowserHistory();
 
 export const AppContext = React.createContext();
@@ -24,7 +15,21 @@ export const AppContext = React.createContext();
 export default function App() {
   const [errors, setErrors] = React.useState([]);
   const [infos, setInfos] = React.useState([]);
-  const [lang, setLang] = React.useState("en");
+  const [lang, setLang] = React.useState(LANGS[0]);
+
+  React.useEffect(() => {
+    const userLangCode = localStorage.getItem("userLangCode");
+    if (userLangCode) {
+      const lang = LANGS.find(({ code }) => code === userLangCode);
+      if (lang) setLang(lang);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    console.log("here");
+    localStorage.setItem("userLangCode", lang.code);
+  }, [lang.code]);
+
   const showError = (error) => {
     console.error(error);
     setErrors((errors) => errors.concat(error));
@@ -45,42 +50,7 @@ export default function App() {
       <Router history={browserHistory}>
         <div className="App">
           <div className="appBody">
-            <Navbar bg="dark" variant="dark" expand="lg">
-              <Container>
-                <Navbar.Brand href="/">
-                  <GiTreeBranch /> WikiForest
-                </Navbar.Brand>
-                <DropdownButton
-                  title="Examples"
-                  variant="info"
-                  className="examplesButton"
-                >
-                  {EXAMPLES.map(({ name, href }) => (
-                    <Dropdown.Item key={name} href={href}>
-                      {name}
-                    </Dropdown.Item>
-                  ))}
-                </DropdownButton>
-                <div className="ml-auto">
-                  <Navbar.Toggle aria-controls="navbar-nav" />
-                  <Navbar.Collapse id="navbar-nav">
-                    <Nav>
-                      <Navbar.Text>Language:</Navbar.Text>
-                      <NavDropdown title={lang} id="lang-drop">
-                        {LANGS.map((lang) => (
-                          <NavDropdown.Item
-                            key={lang.code}
-                            onClick={() => setLang(lang.code)}
-                          >
-                            {lang.code}
-                          </NavDropdown.Item>
-                        ))}
-                      </NavDropdown>
-                    </Nav>
-                  </Navbar.Collapse>
-                </div>
-              </Container>
-            </Navbar>
+            <Header />
             <div className="messages">
               {errors.map((error) => (
                 <Alert key={JSON.stringify(error)} variant="danger">
