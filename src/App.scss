@@ -1,4 +1,7 @@
 .App {
+  .appBody {
+    height: 100vh;
+  }
   .messages {
     position: fixed;
     z-index: 999;

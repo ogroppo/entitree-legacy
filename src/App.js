@@ -6,6 +6,7 @@ import {
   DropdownButton,
   Dropdown,
   Nav,
+  NavDropdown,
 } from "react-bootstrap";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
@@ -14,11 +15,16 @@ import { GiTreeBranch } from "react-icons/gi";
 import "./App.scss";
 import { EXAMPLES } from "./constants/examples";
 import AboutPage from "./pages/AboutPage/AboutPage";
+import Footer from "./layout/Footer/Footer";
+import { LANGS } from "./constants/langs";
 const browserHistory = createBrowserHistory();
 
-function App() {
+export const AppContext = React.createContext();
+
+export default function App() {
   const [errors, setErrors] = React.useState([]);
   const [infos, setInfos] = React.useState([]);
+  const [lang, setLang] = React.useState("en");
   const showError = (error) => {
     console.error(error);
     setErrors((errors) => errors.concat(error));
@@ -35,57 +41,70 @@ function App() {
   };
 
   return (
-    <Router history={browserHistory}>
-      <div className="App">
-        <Navbar bg="dark" variant="dark" expand="lg">
-          <Container>
-            <Navbar.Brand href="/">
-              <GiTreeBranch /> WikiForest
-            </Navbar.Brand>
-            <DropdownButton
-              title="Examples"
-              variant="info"
-              className="examplesButton"
-            >
-              {EXAMPLES.map(({ name, href }) => (
-                <Dropdown.Item key={name} href={href}>
-                  {name}
-                </Dropdown.Item>
+    <AppContext.Provider value={{ showError, showInfo, lang, setLang }}>
+      <Router history={browserHistory}>
+        <div className="App">
+          <div className="appBody">
+            <Navbar bg="dark" variant="dark" expand="lg">
+              <Container>
+                <Navbar.Brand href="/">
+                  <GiTreeBranch /> WikiForest
+                </Navbar.Brand>
+                <DropdownButton
+                  title="Examples"
+                  variant="info"
+                  className="examplesButton"
+                >
+                  {EXAMPLES.map(({ name, href }) => (
+                    <Dropdown.Item key={name} href={href}>
+                      {name}
+                    </Dropdown.Item>
+                  ))}
+                </DropdownButton>
+                <div className="ml-auto">
+                  <Navbar.Toggle aria-controls="navbar-nav" />
+                  <Navbar.Collapse id="navbar-nav">
+                    <Nav>
+                      <Navbar.Text>Language:</Navbar.Text>
+                      <NavDropdown title={lang} id="lang-drop">
+                        {LANGS.map((lang) => (
+                          <NavDropdown.Item
+                            key={lang.code}
+                            onClick={() => setLang(lang.code)}
+                          >
+                            {lang.code}
+                          </NavDropdown.Item>
+                        ))}
+                      </NavDropdown>
+                    </Nav>
+                  </Navbar.Collapse>
+                </div>
+              </Container>
+            </Navbar>
+            <div className="messages">
+              {errors.map((error) => (
+                <Alert key={JSON.stringify(error)} variant="danger">
+                  {error.message}
+                </Alert>
               ))}
-            </DropdownButton>
-            <div className="ml-auto">
-              <Navbar.Toggle aria-controls="navbar-nav" />
-              <Navbar.Collapse id="navbar-nav">
-                <Nav>
-                  <Nav.Link href="/about">About</Nav.Link>
-                </Nav>
-              </Navbar.Collapse>
+              {infos.map(({ id, message }) => (
+                <Alert key={id || message} variant="info">
+                  {message}
+                </Alert>
+              ))}
             </div>
-          </Container>
-        </Navbar>
-        <div className="messages">
-          {errors.map((error) => (
-            <Alert key={JSON.stringify(error)} variant="danger">
-              {error.message}
-            </Alert>
-          ))}
-          {infos.map(({ id, message }) => (
-            <Alert key={id || message} variant="info">
-              {message}
-            </Alert>
-          ))}
+            <Switch>
+              <Route exact path="/">
+                <HomePage />
+              </Route>
+              <Route exact path="/about">
+                <AboutPage />
+              </Route>
+            </Switch>
+          </div>
+          <Footer />
         </div>
-        <Switch>
-          <Route exact path="/">
-            <HomePage showError={showError} showInfo={showInfo} />
-          </Route>
-          <Route exact path="/about">
-            <AboutPage showError={showError} showInfo={showInfo} />
-          </Route>
-        </Switch>
-      </div>
-    </Router>
+      </Router>
+    </AppContext.Provider>
   );
 }
-
-export default App;

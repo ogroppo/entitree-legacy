@@ -1,11 +1,10 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useContext } from "react";
 import { getItem, getItems } from "../../lib/api";
 import "./Graph.scss";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { hierarchy } from "d3-hierarchy";
 import {
   CARD_OUTER_WIDTH,
-  CARD_HEIGHT,
   CARD_WIDTH,
   SIBLING_SPOUSE_SEPARATION,
   SAME_GROUP_SEPARATION,
@@ -14,8 +13,10 @@ import Node from "../Node/Node";
 import Rel from "../Rel/Rel";
 import { CHILD_ID } from "../../constants/properties";
 import graphReducer, { initialState } from "./graphReducer";
+import { AppContext } from "../../App";
 
-export default function Graph({ showError, currentEntityId, currentPropId }) {
+export default function Graph({ currentEntityId, currentPropId }) {
+  const { showInfo, lang, showError } = useContext(AppContext);
   const [graph, dispatchGraph] = useReducer(graphReducer, initialState);
 
   //GET ROOT
@@ -23,7 +24,11 @@ export default function Graph({ showError, currentEntityId, currentPropId }) {
     if (currentEntityId && currentPropId) {
       //reset graph
       dispatchGraph({ type: "reset" });
-      getItem(currentEntityId, { withParents: true, propId: currentPropId })
+      getItem(currentEntityId, {
+        withParents: true,
+        propId: currentPropId,
+        lang,
+      })
         .then(async (entity) => {
           let root = hierarchy(entity);
           root.treeId = "root";

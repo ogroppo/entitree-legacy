@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import useDebounce from "../../lib/useDebounce";
 import "./SearchBar.scss";
 import {
@@ -14,12 +14,11 @@ import { search, getItem, getItemTypes, getItemProps } from "../../lib/api";
 import qs from "query-string";
 import { useHistory, useLocation } from "react-router-dom";
 import { propLabelMap, preferredProps } from "../../constants/properties";
+import { LANGS } from "../../constants/langs";
+import { AppContext } from "../../App";
 
-export default function SearchBar({
-  setCurrentEntityId,
-  setCurrentPropId,
-  showError,
-}) {
+export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
+  const { showInfo, lang, showError } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [entityId, setEntityId] = React.useState();
   const [loadingSuggestions, setLoadingSuggestions] = React.useState(false);
@@ -62,9 +61,13 @@ export default function SearchBar({
       setShowSuggestions(true);
       setLoadingSuggestions(true);
       search(debouncedSearchTerm).then(({ data: { search } }) => {
-
-        // TODO different languages see #19
-        search = search.filter((item) => item.description !== 'Wikimedia disambiguation page' );
+        const langDisambuationDesc = LANGS.find(({ code }) => code === lang)
+          .disambPageDesc;
+        if (langDisambuationDesc) {
+          search = search.filter(
+            ({ description }) => description !== langDisambuationDesc
+          );
+        }
         setLoadingSuggestions(false);
         setSearchResults(search);
       });

@@ -3,7 +3,7 @@ import SearchBar from "../../components/SearchBar/SearchBar";
 import Graph from "../../components/Graph/Graph";
 import "./HomePage.scss";
 
-export default function HomePage({ showError, showInfo }) {
+export default function HomePage() {
   const [currentEntityId, setCurrentEntityId] = React.useState();
   const [currentPropId, setCurrentPropId] = React.useState();
 
@@ -12,11 +12,9 @@ export default function HomePage({ showError, showInfo }) {
       <SearchBar
         setCurrentEntityId={setCurrentEntityId}
         setCurrentPropId={setCurrentPropId}
-        showError={showError}
       />
       {currentEntityId && currentPropId && (
         <Graph
-          showError={showError}
           currentEntityId={currentEntityId}
           currentPropId={currentPropId}
         />
