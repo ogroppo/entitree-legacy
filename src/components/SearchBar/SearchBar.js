@@ -62,6 +62,9 @@ export default function SearchBar({
       setShowSuggestions(true);
       setLoadingSuggestions(true);
       search(debouncedSearchTerm).then(({ data: { search } }) => {
+
+        // TODO different languages see #19
+        search = search.filter((item) => item.description !== 'Wikimedia disambiguation page' );
         setLoadingSuggestions(false);
         setSearchResults(search);
       });
