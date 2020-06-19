@@ -21,6 +21,6 @@ export const EXAMPLES = [
   },
   {
     name: "Jesus Christ's family",
-    href: `?q=Q15928745&p=P40&l=9`,
+    href: `?q=Q302&p=P40&l=9`,
   },
 ];
