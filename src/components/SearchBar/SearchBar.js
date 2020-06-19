@@ -61,11 +61,9 @@ export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
       setShowSuggestions(true);
       setLoadingSuggestions(true);
       search(debouncedSearchTerm).then(({ data: { search } }) => {
-        const langDisambuationDesc = LANGS.find(({ code }) => code === lang)
-          .disambPageDesc;
-        if (langDisambuationDesc) {
+        if (lang.disambPageDesc) {
           search = search.filter(
-            ({ description }) => description !== langDisambuationDesc
+            ({ description }) => description !== lang.disambPageDesc
           );
         }
         setLoadingSuggestions(false);
