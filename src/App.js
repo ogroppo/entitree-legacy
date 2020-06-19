@@ -15,19 +15,19 @@ export const AppContext = React.createContext();
 export default function App() {
   const [errors, setErrors] = React.useState([]);
   const [infos, setInfos] = React.useState([]);
-  const [lang, setLang] = React.useState(LANGS[0]);
+  const [currentLang, setCurrentLang] = React.useState(LANGS[0]);
 
   React.useEffect(() => {
     const userLangCode = localStorage.getItem("userLangCode");
     if (userLangCode) {
       const lang = LANGS.find(({ code }) => code === userLangCode);
-      if (lang) setLang(lang);
+      if (lang) setCurrentLang(lang);
     }
   }, []);
 
   React.useEffect(() => {
-    localStorage.setItem("userLangCode", lang.code);
-  }, [lang.code]);
+    localStorage.setItem("userLangCode", currentLang.code);
+  }, [currentLang.code]);
 
   const showError = (error) => {
     console.error(error);
@@ -45,7 +45,9 @@ export default function App() {
   };
 
   return (
-    <AppContext.Provider value={{ showError, showInfo, lang, setLang }}>
+    <AppContext.Provider
+      value={{ showError, showInfo, currentLang, setCurrentLang }}
+    >
       <Router history={browserHistory}>
         <div className="App">
           <div className="appBody">

@@ -18,7 +18,7 @@ import { LANGS } from "../../constants/langs";
 import { AppContext } from "../../App";
 
 export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
-  const { showInfo, lang, showError } = useContext(AppContext);
+  const { showInfo, currentLang, showError } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [entityId, setEntityId] = React.useState();
   const [loadingSuggestions, setLoadingSuggestions] = React.useState(false);
@@ -61,9 +61,9 @@ export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
       setShowSuggestions(true);
       setLoadingSuggestions(true);
       search(debouncedSearchTerm).then(({ data: { search } }) => {
-        if (lang.disambPageDesc) {
+        if (currentLang.disambPageDesc) {
           search = search.filter(
-            ({ description }) => description !== lang.disambPageDesc
+            ({ description }) => description !== currentLang.disambPageDesc
           );
         }
         setLoadingSuggestions(false);

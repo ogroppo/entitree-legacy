@@ -16,7 +16,7 @@ import graphReducer, { initialState } from "./graphReducer";
 import { AppContext } from "../../App";
 
 export default function Graph({ currentEntityId, currentPropId }) {
-  const { showInfo, lang, showError } = useContext(AppContext);
+  const { showInfo, currentLang, showError } = useContext(AppContext);
   const [graph, dispatchGraph] = useReducer(graphReducer, initialState);
 
   //GET ROOT
