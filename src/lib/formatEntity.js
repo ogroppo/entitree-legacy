@@ -47,6 +47,7 @@ export default function formatEntity(entity, options = {}) {
   // const images = entity.claims["P18"] || [];
   var images = addImagesFromClaims(claims);
   //({ mainsnak: { datavalue: { value } } }) =>
+  entity.imageState = 0;
   entity.images = images.map( ({url, source}) => ({
     alt: url, //a lot of things could be done here from the qualifiers
     url: url,
