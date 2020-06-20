@@ -10,7 +10,7 @@ import {
   CHILD_ID,
 } from "../constants/properties";
 import wbk from "wikidata-sdk";
-import getSocialMediaIcons from "./../wikidata/socialMediaIcons";
+import getSocialMediaProps from "./getSocialMediaProps";
 
 export default function formatEntity(entity, options = {}) {
   if (entity.missing !== undefined)
@@ -39,7 +39,7 @@ export default function formatEntity(entity, options = {}) {
   entity.deathDate = formatDateClaim(entity.claims[DEATH_DATE_ID]);
 
   var claims = wbk.simplify.claims(entity.claims, { keepQualifiers: true });
-  entity.html = getSocialMediaIcons(claims);
+  entity.externalLinks = getSocialMediaProps(claims);
 
   if (options.propId === CHILD_ID) {
     entity.spouseIds = getClaimIds(entity, SPOUSE_ID);

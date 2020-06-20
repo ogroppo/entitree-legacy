@@ -5,7 +5,6 @@ import {
   DropdownButton,
   Dropdown,
   Nav,
-  NavDropdown,
   FormControl,
 } from "react-bootstrap";
 import { GiTreeBranch } from "react-icons/gi";
@@ -44,6 +43,7 @@ export default function Header() {
             <Dropdown.Menu alignRight as={CustomMenu}>
               {LANGS.map((lang, index) => (
                 <Dropdown.Item
+                  key={lang.code}
                   eventKey={index + 1}
                   active={lang.code === currentLang.code}
                   onClick={() => setCurrentLang(lang)}

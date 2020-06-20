@@ -1,14 +1,14 @@
 .Node {
+  box-sizing: border-box;
   position: absolute;
   transition: all ease-in-out 0.2s;
   background-color: #eee;
   border: 1px solid grey;
   border-radius: 5px;
-  padding: 5px;
   transform: translate(-50%, -50%);
   .img {
     float: left;
-    border-radius: 5px;
+    border-radius: 3px;
     overflow: hidden;
     img {
       width: 100%;
@@ -19,6 +19,7 @@
   .content {
     float: left;
     padding-left: 4px;
+    position: relative;
     .label {
       font-size: 13px;
       line-height: 15px;
@@ -42,6 +43,23 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+    .externalLinks {
+      position: absolute;
+      bottom: 0;
+      left: 5px;
+      height: 16px;
+      a {
+        margin-right: 5px;
+        display: inline-block;
+        height: 16px;
+        width: 16px;
+        img {
+          vertical-align: top;
+          height: 16px;
+          width: 16px;
+        }
+      }
     }
   }
   .counter {

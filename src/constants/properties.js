@@ -53,3 +53,49 @@ export const preferredProps = {
     },
   ],
 };
+
+export const SOCIAL_PROPS_IDS = {
+  P6634: {
+    title: "Open Linkeding profile in a new tab",
+    iconName: "linkedin",
+    alt: "linkedin icon",
+    baseUrl: "https://www.linkedin.com/in/",
+  },
+  P2003: {
+    title: "Open instagram profile in a new tab",
+    alt: "instagram icon",
+    iconName: "instagram",
+    baseUrl: "https://www.instagram.com/",
+  },
+  P2002: {
+    title: "Open twitter profile in a new tab",
+    alt: "twitter icon",
+    iconName: "twitter",
+    baseUrl: "https://twitter.com/",
+  },
+  P2013: {
+    title: "Open facebook page in a new tab",
+    iconName: "facebook",
+    alt: "facebook icon",
+    baseUrl: "https://www.facebook.com/",
+  },
+  P2949: {
+    title: "Open wikitree profile in a new tab",
+    iconName: "wikitree",
+    alt: "wikitree icon",
+    baseUrl: "https://www.wikitree.com/wiki/",
+  },
+  P2600: {
+    title: "Open geni profile in a new tab",
+    iconName: "geni",
+    alt: "geni icon",
+    baseUrl: "https://www.geni.com/profile/index/",
+  },
+  P7085: {
+    title: "Open geni profile in a new tab",
+    iconName: "tiktok",
+    alt: "tiktok icon",
+    baseUrl: "https://www.tiktok.com/@",
+  },
+  // 'P345' : ['imdb',' https://www.imdb.com/name/$1/']
+};

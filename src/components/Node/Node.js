@@ -1,12 +1,11 @@
 import React from "react";
 import {
-  IMAGE_HEIGHT,
-  CARD_INNER_WIDTH,
+  IMAGE_SIZE,
   CARD_WIDTH,
-  CARD_OUTER_WIDTH,
+  CARD_PADDING,
+  CARD_CONTENT_WIDTH,
 } from "../../constants/tree";
 import { Button } from "react-bootstrap";
-import { FaUsers } from "react-icons/fa";
 import "./Node.scss";
 
 export default function Node({
@@ -31,12 +30,13 @@ export default function Node({
         left: node.x,
         top: node.y,
         width: CARD_WIDTH,
+        padding: CARD_PADDING,
       }}
       className="Node"
     >
       <div
         className="img"
-        style={{ height: IMAGE_HEIGHT, width: IMAGE_HEIGHT }}
+        style={{ height: IMAGE_SIZE, width: IMAGE_SIZE }}
         onClick={() => {
           toggleImage();
         }}
@@ -49,12 +49,12 @@ export default function Node({
           />
         )}
         {!node.data.images[0] && (
-          <img src={`https://via.placeholder.com/${IMAGE_HEIGHT}`} />
+          <img src={`https://via.placeholder.com/${IMAGE_SIZE}`} />
         )}
       </div>
       <div
         className="content"
-        style={{ width: CARD_INNER_WIDTH - IMAGE_HEIGHT }}
+        style={{ height: IMAGE_SIZE, width: CARD_CONTENT_WIDTH }}
       >
         <div className="label">
           <a
@@ -73,10 +73,20 @@ export default function Node({
           {node.data.birthDate && node.data.deathDate && " - "}
           {node.data.deathDate && node.data.deathDate}
         </div>
-        <div
-          className="rest"
-          dangerouslySetInnerHTML={{ __html: node.data.html }}
-        ></div>
+        {node.data.externalLinks && !!node.data.externalLinks.length && (
+          <div className="externalLinks">
+            {node.data.externalLinks.map((link) => (
+              <a
+                key={link.title}
+                target="_blank"
+                title={link.title}
+                href={link.url}
+              >
+                <img src={link.iconSrc} alt={link.alt} />
+              </a>
+            ))}
+          </div>
+        )}
       </div>
       <Counter
         ids={node.extraSiblingIds}

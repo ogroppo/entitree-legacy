@@ -4,7 +4,6 @@ import "./Graph.scss";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { hierarchy } from "d3-hierarchy";
 import {
-  CARD_OUTER_WIDTH,
   CARD_WIDTH,
   SIBLING_SPOUSE_SEPARATION,
   SAME_GROUP_SEPARATION,
@@ -200,12 +199,11 @@ export default function Graph({ currentEntityId, currentPropId }) {
 
     try {
       const entities = await getItems(root.extraSpouseIds);
+      const baseX = CARD_WIDTH * SIBLING_SPOUSE_SEPARATION;
       entities.forEach((entity, index) => {
         const spouseNode = hierarchy(entity);
         spouseNode.isSpouse = true;
-        spouseNode.x =
-          CARD_WIDTH * SAME_GROUP_SEPARATION +
-          CARD_OUTER_WIDTH * SIBLING_SPOUSE_SEPARATION * index;
+        spouseNode.x = baseX + baseX * index;
         spouseNode.y = 0;
         spouseNode.treeId = spouseNode.data.id + "_spouse_root";
         if (!root.spouses) root.spouses = [];
@@ -228,12 +226,11 @@ export default function Graph({ currentEntityId, currentPropId }) {
 
     try {
       const entities = await getItems(root.data.siblingIds);
+      const baseX = -(CARD_WIDTH * SIBLING_SPOUSE_SEPARATION);
       entities.forEach((entity, index, { length }) => {
         const siblingNode = hierarchy(entity);
         siblingNode.isSibling = true;
-        siblingNode.x =
-          -SAME_GROUP_SEPARATION -
-          CARD_OUTER_WIDTH * SIBLING_SPOUSE_SEPARATION * (length - index);
+        siblingNode.x = baseX * (length - index);
         siblingNode.y = 0;
         siblingNode.treeId = siblingNode.data.id + "_sibling_root";
         if (!root.siblings) root.siblings = [];
