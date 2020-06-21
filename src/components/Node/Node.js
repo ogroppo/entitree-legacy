@@ -5,7 +5,7 @@ import {
   CARD_PADDING,
   CARD_CONTENT_WIDTH,
 } from "../../constants/tree";
-import { Button, Badge } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import "./Node.scss";
 
 export default function Node({
@@ -14,6 +14,8 @@ export default function Node({
   toggleChildren,
   toggleSiblings,
   toggleSpouses,
+  setFocusedNode,
+  focusedNode,
   debug,
 }) {
   if (debug) console.log(node);
@@ -39,7 +41,8 @@ export default function Node({
         width: CARD_WIDTH,
         padding: CARD_PADDING,
       }}
-      className="Node"
+      className={`Node ${focusedNode.treeId === node.treeId ? "focused" : ""}`}
+      onClick={() => setFocusedNode(node)}
     >
       <div
         className="imgWrapper"
@@ -65,13 +68,23 @@ export default function Node({
         style={{ height: IMAGE_SIZE, width: CARD_CONTENT_WIDTH }}
       >
         <div className="label">
-          <a
-            target="_blank"
-            title={node.data.label}
-            href={`https://www.wikidata.org/wiki/${node.data.id}`}
-          >
-            {node.data.label}
-          </a>
+          {node.data.label ? (
+            <a
+              target="_blank"
+              title={node.data.label}
+              href={`https://www.wikidata.org/wiki/${node.data.id}`}
+            >
+              {node.data.label}
+            </a>
+          ) : (
+            <a
+              target="_blank"
+              title={"Unlabelled item"}
+              href={`https://www.wikidata.org/wiki/${node.data.id}`}
+            >
+              <i>Unlabelled</i>
+            </a>
+          )}
         </div>
         <div className="description" title={node.data.description}>
           {node.data.description}

@@ -9,12 +9,14 @@ import {
   Row,
   Col,
   Container,
+  InputGroup,
 } from "react-bootstrap";
 import { search, getItem, getItemTypes, getItemProps } from "../../lib/api";
 import qs from "query-string";
 import { useHistory, useLocation } from "react-router-dom";
 import { preferredProps } from "../../constants/properties";
 import { AppContext } from "../../App";
+import { FaStar } from "react-icons/fa";
 
 export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
   const { showInfo, currentLang, showError } = useContext(AppContext);
@@ -59,15 +61,17 @@ export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
     if (debouncedSearchTerm && fromKeyboard) {
       setShowSuggestions(true);
       setLoadingSuggestions(true);
-      search(debouncedSearchTerm).then(({ data: { search } }) => {
-        if (currentLang.disambPageDesc) {
-          search = search.filter(
-            ({ description }) => description !== currentLang.disambPageDesc
-          );
+      search(debouncedSearchTerm, currentLang.code).then(
+        ({ data: { search: searchResults } }) => {
+          if (currentLang.disambPageDesc) {
+            searchResults = searchResults.filter(
+              ({ description }) => description !== currentLang.disambPageDesc
+            );
+          }
+          setLoadingSuggestions(false);
+          setSearchResults(searchResults);
         }
-        setLoadingSuggestions(false);
-        setSearchResults(search);
-      });
+      );
     } else {
       setLoadingSuggestions(false);
       setShowSuggestions(false);
@@ -87,7 +91,8 @@ export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
             props = props.concat(preferredProps[type.id]);
         });
         //not in mapping, get them all
-        if (!props.length) props = await getItemProps(entityId);
+        const normalProps = await getItemProps(entityId);
+        props.push(...normalProps);
 
         setAvailableProps(props);
       })();
@@ -113,52 +118,53 @@ export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
   return (
     <Form className="SearchBar">
       <Container>
-        <Row className="pt-4">
-          <Col md={6} lg={8}>
-            <Form.Group className="searchBox" controlId="searchBox">
-              <Form.Control
-                onKeyPress={() => setFromKeyboard(true)}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                }}
-                value={searchTerm}
-                type="search"
-                placeholder="Start typing to search..."
-                autoComplete="off"
-              />
-              {showSuggestions && (
-                <Suggestions
-                  setFromKeyboard={setFromKeyboard}
-                  setSearchTerm={setSearchTerm}
-                  setShowSuggestions={setShowSuggestions}
-                  setEntityId={setEntityId}
-                  loadingSuggestions={loadingSuggestions}
-                  searchResults={searchResults}
-                />
-              )}
-            </Form.Group>
-          </Col>
-          <Col md={6} lg={4}>
-            <Form.Group controlId="props">
-              <Dropdown>
-                <Dropdown.Toggle
-                  disabled={!availableProps.length}
-                  variant="none"
-                  id="dropdown-props"
-                >
-                  {prop.id ? prop.label : "Choose the tree property"}
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  {availableProps.map((prop) => (
-                    <Dropdown.Item key={prop.id} onClick={() => setProp(prop)}>
-                      {prop.label}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-            </Form.Group>
-          </Col>
-        </Row>
+        <Form.Group className="searchBox" controlId="searchBox">
+          <InputGroup>
+            <Form.Control
+              onKeyDown={() => setFromKeyboard(true)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+              }}
+              value={searchTerm}
+              type="search"
+              placeholder="Start typing to search..."
+              autoComplete="off"
+            />
+            {entityId && (
+              <InputGroup.Append>
+                <Dropdown>
+                  <Dropdown.Toggle
+                    disabled={!availableProps.length}
+                    variant="none"
+                    id="dropdown-props"
+                  >
+                    {prop.id ? prop.label : "Choose a property "}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu alignRight>
+                    {availableProps.map((prop) => (
+                      <Dropdown.Item
+                        key={prop.id + (prop.isFav ? "_fav" : "")}
+                        onClick={() => setProp(prop)}
+                      >
+                        {prop.isFav && <FaStar />} {prop.label}
+                      </Dropdown.Item>
+                    ))}
+                  </Dropdown.Menu>
+                </Dropdown>
+              </InputGroup.Append>
+            )}
+          </InputGroup>
+          {showSuggestions && (
+            <Suggestions
+              setFromKeyboard={setFromKeyboard}
+              setSearchTerm={setSearchTerm}
+              setShowSuggestions={setShowSuggestions}
+              setEntityId={setEntityId}
+              loadingSuggestions={loadingSuggestions}
+              searchResults={searchResults}
+            />
+          )}
+        </Form.Group>
       </Container>
     </Form>
   );

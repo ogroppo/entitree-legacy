@@ -21,18 +21,22 @@ export const BUSINESS_PROPS = [
   {
     id: "P355",
     label: "Subsidiaries",
+    isFav: true,
   },
   {
     id: "P749",
     label: "Parent orgs",
+    isFav: true,
   },
   {
     id: "P1830",
     label: "Ownership",
+    isFav: true,
   },
   {
     id: "P127",
     label: "Ownership reversed?",
+    isFav: true,
   },
 ];
 
@@ -41,10 +45,12 @@ export const preferredProps = {
     {
       id: CHILD_ID,
       label: "family",
+      isFav: true,
     },
     {
       id: STUDENT_ID,
       label: "student",
+      isFav: true,
     },
   ],
   [ORGANIZATION_ID]: BUSINESS_PROPS,
@@ -53,6 +59,7 @@ export const preferredProps = {
     {
       id: LOCATED_IN_ID,
       label: "location",
+      isFav: true,
     },
   ],
 };

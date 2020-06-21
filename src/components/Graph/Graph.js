@@ -1,3 +1,6 @@
+import "./Graph.scss";
+import { TransformWrapper } from "react-zoom-pan-pinch";
+import { AppContext } from "../../App";
 import React, {
   useReducer,
   useContext,
@@ -5,16 +8,14 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { TransformComponent } from "react-zoom-pan-pinch";
 import { getItem, getItems } from "../../lib/api";
-import "./Graph.scss";
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { hierarchy } from "d3-hierarchy";
 import { CARD_WIDTH, SIBLING_SPOUSE_SEPARATION } from "../../constants/tree";
 import Node from "../Node/Node";
 import Rel from "../Rel/Rel";
 import { CHILD_ID } from "../../constants/properties";
 import graphReducer, { initialState } from "./graphReducer";
-import { AppContext } from "../../App";
 import getActualSiblingsOrSpuses from "../../lib/getActualSiblings";
 import { Button } from "react-bootstrap";
 import { FiMinus, FiPlus, FiPrinter } from "react-icons/fi";
@@ -22,11 +23,21 @@ import { IoMdExpand } from "react-icons/io";
 import { RiFocus3Line } from "react-icons/ri";
 import domtoimage from "dom-to-image";
 
-export default function Graph({ currentEntityId, currentPropId }) {
-  const { showInfo, currentLang, showError } = useContext(AppContext);
+function Graph({
+  currentEntityId,
+  currentPropId,
+  setTransform,
+  zoomIn,
+  zoomOut,
+  scale: currentScale,
+  ...props
+}) {
+  const { showError } = useContext(AppContext);
+
   const [graph, dispatchGraph] = useReducer(graphReducer, initialState);
+  const [focusedNode, setFocusedNode] = useState();
+
   const graphRef = useRef();
-  const scaleRef = useRef(1);
   const [graphWidth, setGraphWidth] = useState(0);
   const [graphHeight, setGraphHeight] = useState(0);
 
@@ -54,12 +65,14 @@ export default function Graph({ currentEntityId, currentPropId }) {
         propId: currentPropId,
       })
         .then(async (entity) => {
+          setTransform(0, 0, 1, 0);
           let root = hierarchy(entity);
           root.treeId = "root";
           root.actualSpouseIds = root.data.spouseIds; //because this is read straight away
           root.actualSiblingIds = root.data.siblingIds; //because this is read straight away
           root.x = 0;
           root.y = 0;
+          setFocusedNode(root);
 
           //annoyingly a repetition but correct
           let childTree = hierarchy(entity);
@@ -251,10 +264,10 @@ export default function Graph({ currentEntityId, currentPropId }) {
     }
   };
 
-  const fitTree = (setTransform) => {
-    const leftEdge = graph.maxLeft - CARD_WIDTH / 2;
+  const fitTree = () => {
+    const leftEdge = graph.maxLeft - CARD_WIDTH; //should be CARD_WIDTH / 2 but give some padding
     const topEdge = graph.maxTop - CARD_WIDTH / 2;
-    const rightEdge = graph.maxRight + CARD_WIDTH / 2;
+    const rightEdge = graph.maxRight + CARD_WIDTH;
     const bottomEdge = graph.maxBottom + CARD_WIDTH / 2;
     const treeWidth = rightEdge - leftEdge;
     const treeHeight = bottomEdge - topEdge;
@@ -270,14 +283,17 @@ export default function Graph({ currentEntityId, currentPropId }) {
     const centerX = leftEdge + treeWidth / 2;
     const centerY = topEdge + treeHeight / 2;
 
-    centerPoint(setTransform, centerX, centerY, nextScale);
+    centerPoint(centerX, centerY, nextScale);
   };
 
-  const centerPoint = (setTransform, x, y, scale = scaleRef.current) => {
+  const centerPoint = (x, y, scale = currentScale) => {
     const halfWidth = graphWidth / 2;
-    var calculatedPositionX = halfWidth - (halfWidth + x) * scale;
-    const halfHeight = graphHeight / 2;
-    var calculatedPositionY = halfHeight - (halfHeight + y) * scale;
+    const calculatedPositionX = halfWidth - (halfWidth + x) * scale;
+    let calculatedPositionY = y;
+    if (!isNaN(y)) {
+      const halfHeight = graphHeight / 2;
+      calculatedPositionY = halfHeight - (halfHeight + y) * scale;
+    }
     setTransform(calculatedPositionX, calculatedPositionY, scale);
   };
 
@@ -294,199 +310,189 @@ export default function Graph({ currentEntityId, currentPropId }) {
 
   return (
     <div className="Graph" ref={graphRef}>
+      <TransformComponent>
+        <div className="center">
+          <svg className="svgContainer" style={containerStyle}>
+            <g
+              transform={`translate(${containerStyle.width / 2} ${
+                containerStyle.height / 2
+              })`}
+            >
+              <g className="rels">
+                {childRels.map((rel) => (
+                  <Rel key={rel.source.treeId + rel.target.treeId} rel={rel} />
+                ))}
+                {parentRels.map((rel) => (
+                  <Rel key={rel.source.treeId + rel.target.treeId} rel={rel} />
+                ))}
+                {root &&
+                  root.spouses &&
+                  root.spouses.map((target) => {
+                    return (
+                      <Rel
+                        key={"root" + target.treeId}
+                        rel={{ source: root, target }}
+                      />
+                    );
+                  })}
+                {root &&
+                  root.siblings &&
+                  root.siblings.map((target) => (
+                    <Rel
+                      key={"root" + target.treeId}
+                      rel={{ source: root, target }}
+                    />
+                  ))}
+              </g>
+            </g>
+          </svg>
+          <div style={containerStyle}>
+            <div
+              style={{
+                position: "absolute",
+                left: containerStyle.width / 2,
+                top: containerStyle.height / 2,
+              }}
+            >
+              <div className="nodes">
+                {root &&
+                  root.siblings &&
+                  root.siblings.map((node) => (
+                    <Node
+                      key={node.treeId}
+                      node={node}
+                      setFocusedNode={setFocusedNode}
+                      focusedNode={focusedNode}
+                    />
+                  ))}
+                {root && (
+                  <Node
+                    toggleChildren={() => {
+                      centerPoint(0, 0);
+                      toggleChildren(childTree);
+                    }}
+                    toggleParents={() => {
+                      centerPoint(0, 0);
+                      toggleParents(parentTree);
+                    }}
+                    toggleSpouses={() => {
+                      centerPoint(0);
+                      toggleRootSpouses();
+                    }}
+                    toggleSiblings={() => {
+                      centerPoint(0);
+                      toggleRootSiblings();
+                    }}
+                    node={root}
+                    setFocusedNode={setFocusedNode}
+                    focusedNode={focusedNode}
+                  />
+                )}
+                {root &&
+                  root.spouses &&
+                  root.spouses.map((node) => (
+                    <Node
+                      key={node.treeId}
+                      node={node}
+                      setFocusedNode={setFocusedNode}
+                      focusedNode={focusedNode}
+                    />
+                  ))}
+                {childNodes.map((node) => (
+                  <Node
+                    key={node.treeId}
+                    toggleChildren={(node) => {
+                      centerPoint(node.x, node.y);
+                      toggleChildren(node);
+                    }}
+                    toggleSpouses={(node) => {
+                      centerPoint(node.x);
+                      toggleSpouses(node);
+                    }}
+                    toggleSiblings={(node) => {
+                      centerPoint(node.x);
+                      toggleSiblings(node);
+                    }}
+                    node={node}
+                    setFocusedNode={setFocusedNode}
+                    focusedNode={focusedNode}
+                  />
+                ))}
+                {parentNodes.map((node) => (
+                  <Node
+                    key={node.treeId}
+                    toggleSpouses={(node) => {
+                      centerPoint(node.x);
+                      toggleSpouses(node);
+                    }}
+                    toggleSiblings={(node) => {
+                      centerPoint(node.x);
+                      toggleSiblings(node);
+                    }}
+                    toggleParents={(node) => {
+                      toggleParents(node);
+                      centerPoint(node.x, node.y);
+                    }}
+                    node={node}
+                    setFocusedNode={setFocusedNode}
+                    focusedNode={focusedNode}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </TransformComponent>
+      <div className="navigation">
+        <Button variant="light" onClick={zoomIn}>
+          <FiPlus />
+        </Button>
+        <Button variant="light" onClick={zoomOut}>
+          <FiMinus />
+        </Button>
+        <Button
+          variant="light"
+          onClick={() => {
+            centerPoint(focusedNode.x, focusedNode.y);
+          }}
+        >
+          <RiFocus3Line />
+        </Button>
+        <Button
+          variant="light"
+          onClick={() => {
+            fitTree(setTransform);
+          }}
+        >
+          <IoMdExpand />
+        </Button>
+        <Button variant="light" onClick={window.print}>
+          <FiPrinter />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export default function GraphWrapper({ currentEntityId, currentPropId }) {
+  return (
+    <div className="GraphWrapper">
       <TransformWrapper
         zoomIn={{ step: 20 }}
         zoomOut={{ step: 20 }}
         wheel={{ step: 25 }}
         options={{
           limitToBounds: false,
-          minScale: 0.2,
+          minScale: 0,
           maxScale: 2,
         }}
-        onZoomChange={(e) => {
-          scaleRef.current = e.scale;
-        }}
-        //scale={scale}
-        // onWheel={({ positionX, positionY, scale, ...rest }) => {
-        //   if (scale >= 0.2 && scale <= 2)
-        //     dispatchGraph({ type: "set", scale, positionX, positionY });
-        // }}
-        // positionX={positionX}
-        // positionY={positionY}
-        // onPanning={({ positionX, positionY }) => {
-        //   dispatchGraph({ type: "set", positionX });
-        //   dispatchGraph({ type: "set", positionY });
-        // }}
       >
-        {({
-          zoomIn,
-          zoomOut,
-          resetTransform,
-          setTransform,
-          setPositionX,
-          setScale,
-        }) => (
-          <>
-            <TransformComponent>
-              <div className="center">
-                <svg className="svgContainer" style={containerStyle}>
-                  <g
-                    transform={`translate(${containerStyle.width / 2} ${
-                      containerStyle.height / 2
-                    })`}
-                  >
-                    <g className="rels">
-                      {childRels.map((rel) => (
-                        <Rel
-                          key={rel.source.treeId + rel.target.treeId}
-                          rel={rel}
-                        />
-                      ))}
-                      {parentRels.map((rel) => (
-                        <Rel
-                          key={rel.source.treeId + rel.target.treeId}
-                          rel={rel}
-                        />
-                      ))}
-                      {root &&
-                        root.spouses &&
-                        root.spouses.map((target) => {
-                          return (
-                            <Rel
-                              key={"root" + target.treeId}
-                              rel={{ source: root, target }}
-                            />
-                          );
-                        })}
-                      {root &&
-                        root.siblings &&
-                        root.siblings.map((target) => (
-                          <Rel
-                            key={"root" + target.treeId}
-                            rel={{ source: root, target }}
-                          />
-                        ))}
-                    </g>
-                  </g>
-                </svg>
-                <div style={containerStyle}>
-                  <div
-                    style={{
-                      position: "absolute",
-                      left: containerStyle.width / 2,
-                      top: containerStyle.height / 2,
-                    }}
-                  >
-                    <div className="nodes">
-                      {root &&
-                        root.siblings &&
-                        root.siblings.map((node) => (
-                          <Node key={node.treeId} node={node} />
-                        ))}
-                      {root && (
-                        <Node
-                          toggleChildren={() => {
-                            centerPoint(setTransform, 0, 0);
-                            toggleChildren(childTree);
-                          }}
-                          toggleParents={() => {
-                            centerPoint(setTransform, 0, 0);
-                            toggleParents(parentTree);
-                          }}
-                          toggleSpouses={() => {
-                            centerPoint(setTransform, 0, 0);
-                            toggleRootSpouses();
-                          }}
-                          toggleSiblings={() => {
-                            centerPoint(setTransform, 0, 0);
-                            toggleRootSiblings();
-                          }}
-                          node={root}
-                        />
-                      )}
-                      {root &&
-                        root.spouses &&
-                        root.spouses.map((node) => (
-                          <Node key={node.treeId} node={node} />
-                        ))}
-                      {childNodes.map((node) => (
-                        <Node
-                          key={node.treeId}
-                          toggleChildren={(node) => {
-                            centerPoint(setTransform, node.x, node.y);
-                            toggleChildren(node);
-                          }}
-                          toggleSpouses={(node) => {
-                            centerPoint(setTransform, node.x, node.y);
-                            toggleSpouses(node);
-                          }}
-                          toggleSiblings={(node) => {
-                            centerPoint(setTransform, node.x, node.y);
-                            toggleSiblings(node);
-                          }}
-                          node={node}
-                        />
-                      ))}
-                      {parentNodes.map((node) => (
-                        <Node
-                          key={node.treeId}
-                          toggleSpouses={(node) => {
-                            centerPoint(setTransform, node.x, node.y);
-                            toggleSpouses(node);
-                          }}
-                          toggleSiblings={(node) => {
-                            centerPoint(setTransform, node.x, node.y);
-                            toggleSiblings(node);
-                          }}
-                          toggleParents={(node) => {
-                            centerPoint(setTransform, node.x, node.y);
-                            toggleParents(node);
-                          }}
-                          node={node}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </TransformComponent>
-            <div className="navigation">
-              <Button variant="light" onClick={zoomIn}>
-                <FiPlus />
-              </Button>
-              <Button variant="light" onClick={zoomOut}>
-                <FiMinus />
-              </Button>
-              <Button variant="light" onClick={resetTransform}>
-                <RiFocus3Line />
-              </Button>
-              <Button
-                variant="light"
-                onClick={() => {
-                  fitTree(setTransform);
-                }}
-              >
-                <IoMdExpand />
-              </Button>
-              <Button
-                variant="light"
-                onClick={() => {
-                  domtoimage
-                    .toPng(graphRef.current)
-                    .then(function (dataUrl) {
-                      var img = new Image();
-                      img.src = dataUrl;
-                      document.body.appendChild(img);
-                    })
-                    .catch(function (error) {
-                      console.error("oops, something went wrong!", error);
-                    });
-                }}
-              >
-                <FiPrinter />
-              </Button>
-            </div>
-          </>
+        {(props) => (
+          <Graph
+            {...props}
+            currentEntityId={currentEntityId}
+            currentPropId={currentPropId}
+          />
         )}
       </TransformWrapper>
     </div>

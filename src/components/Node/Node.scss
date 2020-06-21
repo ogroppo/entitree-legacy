@@ -7,6 +7,9 @@
   border-radius: 5px;
   transform: translate(-50%, -50%);
   box-shadow: 4px 4px 10px lightgrey;
+  &.focused {
+    box-shadow: 0px 0px 12px steelblue;
+  }
   .imgWrapper {
     float: left;
     border-radius: 3px;

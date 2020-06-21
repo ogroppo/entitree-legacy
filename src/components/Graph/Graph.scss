@@ -1,8 +1,9 @@
-.Graph {
+.GraphWrapper {
   position: relative;
-  height: calc(100vh - 56px - 78px);
+  height: calc(100vh - 56px - 62px);
   .react-transform-component,
-  .react-transform-element {
+  .react-transform-element,
+  .Graph {
     width: 100%;
     height: 100%;
     position: relative;
