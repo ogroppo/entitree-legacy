@@ -1,7 +1,6 @@
 import getClaimIds from "./getClaimIds";
 import formatDateClaim from "./formatDateClaim";
-import addImagesFromClaims from "./../wikidata/images";
-
+import addEntityImagesFromSimpleClaims from "./addEntityImagesFromSimpleClaims";
 import {
   SIBLINGS_ID,
   SPOUSE_ID,
@@ -15,6 +14,10 @@ import getSocialMediaProps from "./getSocialMediaProps";
 export default function formatEntity(entity, options = {}) {
   if (entity.missing !== undefined)
     throw new Error(`Entity ${entity.id} not found`);
+
+  const simpleClaims = wbk.simplify.claims(entity.claims, {
+    keepQualifiers: true,
+  });
 
   if (options.propId && options.withChildren !== false) {
     entity.childrenIds = getClaimIds(entity, options.propId);
@@ -38,20 +41,12 @@ export default function formatEntity(entity, options = {}) {
   entity.birthDate = formatDateClaim(entity.claims[BIRTH_DATE_ID]);
   entity.deathDate = formatDateClaim(entity.claims[DEATH_DATE_ID]);
 
-  var claims = wbk.simplify.claims(entity.claims, { keepQualifiers: true });
-  entity.externalLinks = getSocialMediaProps(claims);
+  entity.externalLinks = getSocialMediaProps(simpleClaims);
 
   if (options.propId === CHILD_ID) {
     entity.spouseIds = getClaimIds(entity, SPOUSE_ID);
     entity.siblingIds = getClaimIds(entity, SIBLINGS_ID);
   }
 
-  // const images = entity.claims["P18"] || [];
-  var images = addImagesFromClaims(claims);
-  //({ mainsnak: { datavalue: { value } } }) =>
-  entity.imageState = 0;
-  entity.images = images.map(({ url, source }) => ({
-    alt: url, //a lot of things could be done here from the qualifiers
-    url: url,
-  }));
+  addEntityImagesFromSimpleClaims(entity, simpleClaims);
 }

@@ -9,16 +9,16 @@ import {
 
 const treeLayout = tree();
 treeLayout.nodeSize([CARD_WIDTH, CARD_VERTICAL_SPACING]);
-treeLayout.separation((a, b) => {
-  if (a.isSpouse) return SIBLING_SPOUSE_SEPARATION;
-  //if (a.isSpouse && b.isSpouse) return 0.5;
+treeLayout.separation((next, prev) => {
+  if (next.isSpouse) return SIBLING_SPOUSE_SEPARATION;
+  if (prev.isSpouse && !next.isSpouse) return COUSINS_SEPARATION;
 
-  if (b.isSibling) return SIBLING_SPOUSE_SEPARATION;
-  //if (a.isSibling && b.isSibling) return 0.5;
+  if (prev.isSibling) return SIBLING_SPOUSE_SEPARATION;
+  if (next.isSibling && !prev.isSibling) return COUSINS_SEPARATION;
 
-  if (a.parent === b.parent) return SAME_GROUP_SEPARATION;
+  if (next.parent === prev.parent) return SAME_GROUP_SEPARATION;
 
-  if (a.parent !== b.parent) return COUSINS_SEPARATION;
+  if (next.parent !== prev.parent) return COUSINS_SEPARATION;
 });
 
 export default treeLayout;

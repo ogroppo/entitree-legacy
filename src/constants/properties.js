@@ -13,6 +13,9 @@ export const CHILD_ID = "P40";
 export const STUDENT_OF_ID = "P1066";
 export const STUDENT_ID = "P802";
 export const LOCATED_IN_ID = "P131";
+export const IMAGE_ID = "P18";
+export const LOGO_ID = "P154";
+export const TWITTER_ID = "P2002";
 
 export const BUSINESS_PROPS = [
   {

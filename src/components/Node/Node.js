@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   IMAGE_SIZE,
   CARD_WIDTH,
   CARD_PADDING,
   CARD_CONTENT_WIDTH,
 } from "../../constants/tree";
-import { Button } from "react-bootstrap";
+import { Button, Badge } from "react-bootstrap";
 import "./Node.scss";
 
 export default function Node({
@@ -17,12 +17,19 @@ export default function Node({
   debug,
 }) {
   if (debug) console.log(node);
-  function toggleImage() {
-    node.data.imageState++;
-    if (node.data.imageState >= node.data.images.length) {
-      node.data.imageState = 0; //reset counter
-    }
-  }
+
+  const [imageIndex, setImageIndex] = useState(0);
+
+  const nextImage = () => {
+    if (!node.data.images || !node.data.images.length) return;
+    let nextIndex = imageIndex + 1;
+    if (nextIndex === node.data.images.length) nextIndex = 0;
+    setImageIndex(nextIndex);
+  };
+
+  const {
+    data: { images },
+  } = node;
 
   return (
     <div
@@ -35,21 +42,22 @@ export default function Node({
       className="Node"
     >
       <div
-        className="img"
+        className="imgWrapper"
         style={{ height: IMAGE_SIZE, width: IMAGE_SIZE }}
-        onClick={() => {
-          toggleImage();
-        }}
+        onClick={nextImage}
       >
-        {node.data.images[0] && (
+        {images[imageIndex] && (
           <img
-            alt={node.data.images[0].alt}
-            src={node.data.images[node.data.imageState].url}
-            title={node.data.images[node.data.imageState].source}
+            alt={images[imageIndex].alt}
+            src={images[imageIndex].url}
+            title={images[imageIndex].source}
           />
         )}
-        {!node.data.images[0] && (
+        {(!images || !images.length) && (
           <img src={`https://via.placeholder.com/${IMAGE_SIZE}`} />
+        )}
+        {images && images.length > 1 && (
+          <span className="imgMore">+{images.length - 1}</span>
         )}
       </div>
       <div
@@ -89,13 +97,13 @@ export default function Node({
         )}
       </div>
       <Counter
-        ids={node.extraSiblingIds}
+        ids={node.actualSiblingIds}
         node={node}
         toggleFn={toggleSiblings}
         className="siblingCount"
       />
       <Counter
-        ids={node.extraSpouseIds}
+        ids={node.actualSpouseIds}
         node={node}
         toggleFn={toggleSpouses}
         className="spouseCount"

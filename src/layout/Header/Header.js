@@ -26,6 +26,7 @@ export default function Header() {
         <DropdownButton
           title="Examples"
           variant="info"
+          size="sm"
           className="examplesButton"
         >
           {EXAMPLES.map(({ name, href }) => (
