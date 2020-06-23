@@ -17,6 +17,11 @@ import { LANGS } from "../../constants/langs";
 export default function Header() {
   const { currentLang, setCurrentLang } = useContext(AppContext);
 
+  const setLang = (lang) => {
+    localStorage.setItem("userLangCode", lang.code);
+    setCurrentLang(lang);
+  };
+
   return (
     <Navbar className="Header" bg="dark" variant="dark" expand="lg">
       <Container>
@@ -47,7 +52,7 @@ export default function Header() {
                   key={lang.code}
                   eventKey={index + 1}
                   active={lang.code === currentLang.code}
-                  onClick={() => setCurrentLang(lang)}
+                  onClick={() => setLang(lang)}
                 >
                   {lang.name}
                 </Dropdown.Item>
