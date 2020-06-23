@@ -177,14 +177,14 @@ const expandParents = (node) => {
 const collapseChildren = (node, collapseAll = false) => {
   if (!node._childrenExpanded) return;
   node._childrenExpanded = false;
-  node._children = node.children;
+  node._children = node.children.filter((child) => child.isChild);
   node.children = null;
 
-  //not working at the moment... because these are children of parent and need to be filtered
+  //there is still some buggy behaviour here!
   if (collapseAll) {
-    node._siblings = node.siblings;
+    //node._siblings = node.siblings;
     node._siblingsExpanded = false;
-    node._spouses = node.spouses;
+    //node._spouses = node.spouses;
     node._spousesExpanded = false;
   }
   node._children.forEach((node) => collapseChildren(node, true));
@@ -193,14 +193,14 @@ const collapseChildren = (node, collapseAll = false) => {
 const collapseParents = (node, collapseAll = false) => {
   if (!node._parentsExpanded) return;
   node._parentsExpanded = false;
-  node._parents = node.children;
+  node._parents = node.children.filter((child) => child.isParent);
   node.children = null;
 
-  //not working at the moment... because these are children of parent and need to be filtered
+  //there is still some buggy behaviour here!
   if (collapseAll) {
-    node._siblings = node.siblings;
+    //node._siblings = node.siblings;
     node._siblingsExpanded = false;
-    node._spouses = node.spouses;
+    //node._spouses = node.spouses;
     node._spousesExpanded = false;
   }
   node._parents.forEach((node) => collapseParents(node, true));

@@ -11,7 +11,11 @@ import React, {
 import { TransformComponent } from "react-zoom-pan-pinch";
 import { getItem, getItems } from "../../lib/api";
 import { hierarchy } from "d3-hierarchy";
-import { CARD_WIDTH, SIBLING_SPOUSE_SEPARATION } from "../../constants/tree";
+import {
+  CARD_WIDTH,
+  SIBLING_SPOUSE_SEPARATION,
+  EXPAND_SIDE_BUTTON_GAP,
+} from "../../constants/tree";
 import Node from "../Node/Node";
 import Rel from "../Rel/Rel";
 import { CHILD_ID } from "../../constants/properties";
@@ -21,7 +25,7 @@ import { Button } from "react-bootstrap";
 import { FiMinus, FiPlus, FiPrinter } from "react-icons/fi";
 import { IoMdExpand } from "react-icons/io";
 import { RiFocus3Line } from "react-icons/ri";
-import domtoimage from "dom-to-image";
+import getNodeUniqueId from "../../lib/getNodeUniqueId";
 
 function Graph({
   currentEntityId,
@@ -67,19 +71,20 @@ function Graph({
         .then(async (entity) => {
           setTransform(0, 0, 1, 0);
           let root = hierarchy(entity);
-          root.treeId = "root";
+          const rootId = getNodeUniqueId(root, 0);
+          root.treeId = rootId;
           root.actualSpouseIds = root.data.spouseIds; //because this is read straight away
           root.actualSiblingIds = root.data.siblingIds; //because this is read straight away
           root.x = 0;
           root.y = 0;
           setFocusedNode(root);
 
-          //annoyingly a repetition but correct
+          //annoyingly a repetition but correct in order to have separate trees
           let childTree = hierarchy(entity);
-          childTree.treeId = "root";
+          childTree.treeId = rootId;
 
           let parentTree = hierarchy(entity);
-          parentTree.treeId = "root";
+          parentTree.treeId = rootId;
 
           dispatchGraph({ type: "set", root, childTree, parentTree });
         })
@@ -101,11 +106,11 @@ function Graph({
       const entities = await getItems(node.data.childrenIds, {
         propId: currentPropId,
       });
-      entities.forEach((entity) => {
+      entities.forEach((entity, index) => {
         const childNode = hierarchy(entity);
         childNode.depth = node.depth + 1;
         childNode.parent = node;
-        childNode.treeId = childNode.data.id + "_child_" + childNode.depth;
+        childNode.treeId = getNodeUniqueId(childNode, index);
         childNode.isChild = true;
         if (!node.children) {
           node.children = [];
@@ -138,12 +143,12 @@ function Graph({
         withParents: true,
         propId: currentPropId,
       });
-      entities.forEach((entity) => {
+      entities.forEach((entity, index) => {
         const parentNode = hierarchy(entity);
         parentNode.isParent = true;
         parentNode.depth = node.depth - 1;
-        parentNode.treeId = parentNode.data.id + "_parent_" + parentNode.depth;
         parentNode.parent = node;
+        parentNode.treeId = getNodeUniqueId(parentNode, index);
         if (!node.children) {
           node.children = [];
         }
@@ -167,13 +172,13 @@ function Graph({
     }
     try {
       const entities = await getItems(node.actualSpouseIds);
-      entities.forEach((entity) => {
+      entities.forEach((entity, index) => {
         const childNode = hierarchy(entity);
         childNode.depth = node.depth;
         childNode.isSpouse = true;
-        childNode.treeId = childNode.data.id + "_spouse_" + childNode.depth;
         childNode.virtualParent = node;
         childNode.parent = node.parent;
+        childNode.treeId = getNodeUniqueId(childNode, index, "spouse");
         const childIndex = node.parent.children.indexOf(node) + 1;
         node.parent.children.splice(childIndex, 0, childNode);
       });
@@ -194,13 +199,13 @@ function Graph({
 
     try {
       const entities = await getItems(node.actualSiblingIds);
-      entities.forEach((entity) => {
+      entities.forEach((entity, index) => {
         const childNode = hierarchy(entity);
         childNode.depth = node.depth;
         childNode.isSibling = true;
-        childNode.treeId = childNode.data.id + "_sibling_" + childNode.depth;
         childNode.virtualParent = node;
         childNode.parent = node.parent;
+        childNode.treeId = getNodeUniqueId(childNode, index, "sibling");
         const childIndex = node.parent.children.indexOf(node);
         node.parent.children.splice(childIndex, 0, childNode);
       });
@@ -208,6 +213,18 @@ function Graph({
     } catch (error) {
       showError(error);
     }
+  };
+
+  const toggleRootChildren = async () => {
+    const { root } = graph;
+    toggleChildren(root); //for side effects
+    toggleChildren(childTree);
+  };
+
+  const toggleRootParents = async () => {
+    const { root } = graph;
+    toggleParents(root); //for side effects
+    toggleParents(parentTree);
   };
 
   const toggleRootSpouses = async () => {
@@ -227,7 +244,9 @@ function Graph({
         spouseNode.isSpouse = true;
         spouseNode.x = baseX + baseX * index;
         spouseNode.y = 0;
-        spouseNode.treeId = spouseNode.data.id + "_spouse_root";
+        spouseNode.depth = 0;
+        spouseNode.parent = root;
+        spouseNode.treeId = getNodeUniqueId(spouseNode, index, "spouse");
         if (!root.spouses) root.spouses = [];
         root.spouses.push(spouseNode);
       });
@@ -254,7 +273,7 @@ function Graph({
         siblingNode.isSibling = true;
         siblingNode.x = baseX * (length - index);
         siblingNode.y = 0;
-        siblingNode.treeId = siblingNode.data.id + "_sibling_root";
+        siblingNode.treeId = getNodeUniqueId(siblingNode, index, "sibling");
         if (!root.siblings) root.siblings = [];
         root.siblings.push(siblingNode);
       });
@@ -369,11 +388,11 @@ function Graph({
                   <Node
                     toggleChildren={() => {
                       centerPoint(0, 0);
-                      toggleChildren(childTree);
+                      toggleRootChildren();
                     }}
                     toggleParents={() => {
                       centerPoint(0, 0);
-                      toggleParents(parentTree);
+                      toggleRootParents();
                     }}
                     toggleSpouses={() => {
                       centerPoint(0);

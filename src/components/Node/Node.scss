@@ -80,33 +80,45 @@
     }
   }
   .counter {
-    border-radius: 20px;
-    padding: 2px 6px;
+    padding: 2px;
     font-size: 12px;
+    font-weight: bold;
     position: absolute;
     min-width: 27px;
-    z-index: 99;
+    &:hover {
+      text-decoration: none;
+    }
+    &:focus {
+      box-shadow: none;
+    }
+    svg {
+      stroke-width: 2;
+      font-size: 16px;
+    }
+    transition: all;
   }
   .siblingCount {
-    left: -20px;
+    right: 100%;
   }
   .spouseCount {
-    right: -20px;
+    left: 100%;
   }
   .siblingCount,
   .spouseCount {
+    height: 100%;
     top: 50%;
     transform: translateY(-50%);
   }
   .parentCount,
   .childrenCount {
     left: 50%;
+    width: 100%;
     transform: translateX(-50%);
   }
   .parentCount {
-    top: -20px;
+    bottom: 100%;
   }
   .childrenCount {
-    bottom: -20px;
+    top: 100%;
   }
 }
