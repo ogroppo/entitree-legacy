@@ -10,8 +10,8 @@ export default function AboutPage() {
       <p>Martin</p>
       <h2>Bugs</h2>
       <p>
-        <a className="btn btn-sm bg-info" target="_blank" href="https://github.com/ogroppo/wikiforest">
-          <img className="img img-fluid" src="/icons/github.png" style={{maxHeight: 20 + "px"}} /> Wikiforest on Github
+        <a className="btn btn-sm bg-info" target="_blank" rel="noopener noreferrer" href="https://github.com/ogroppo/wikiforest">
+          <img alt="" className="img img-fluid" src="/icons/github.png" style={{maxHeight: 20 + "px"}} /> Wikiforest on Github
         </a>
         <br />
         Report</p>
