@@ -5,6 +5,7 @@ import { createBrowserHistory } from "history";
 import HomePage from "./pages/HomePage/HomePage";
 import "./App.scss";
 import AboutPage from "./pages/AboutPage/AboutPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage/PrivacyPolicyPage";
 import Footer from "./layout/Footer/Footer";
 import { LANGS, DEFAULT_LANG } from "./constants/langs";
 import Header from "./layout/Header/Header";
@@ -87,6 +88,9 @@ export default class App extends Component {
                 </Route>
                 <Route exact path="/about">
                   <AboutPage />
+                </Route>
+                <Route exact path="/privacy">
+                  <PrivacyPolicyPage />
                 </Route>
               </Switch>
             </div>
