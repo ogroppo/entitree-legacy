@@ -83,18 +83,22 @@ export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
     setProp({});
     if (entityId) {
       (async () => {
-        const types = await getItemTypes(entityId);
+        try {
+          const types = await getItemTypes(entityId);
 
-        let props = [];
-        types.forEach((type) => {
-          if (preferredProps[type.id])
-            props = props.concat(preferredProps[type.id]);
-        });
-        //not in mapping, get them all
-        const normalProps = await getItemProps(entityId);
-        props.push(...normalProps);
+          let props = [];
+          types.forEach((type) => {
+            if (preferredProps[type.id])
+              props = props.concat(preferredProps[type.id]);
+          });
+          //not in mapping, get them all
+          const normalProps = await getItemProps(entityId, currentLang.code);
+          props.push(...normalProps);
 
-        setAvailableProps(props);
+          setAvailableProps(props);
+        } catch (error) {
+          showError(error);
+        }
       })();
     }
   }, [entityId]);

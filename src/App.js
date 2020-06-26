@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import { Alert } from "react-bootstrap";
 import { Router, Switch, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
@@ -12,70 +12,88 @@ const browserHistory = createBrowserHistory();
 
 export const AppContext = React.createContext();
 
-export default function App() {
-  const [errors, setErrors] = React.useState([]);
-  const [infos, setInfos] = React.useState([]);
-  const [currentLang, setCurrentLang] = React.useState(DEFAULT_LANG);
+export default class App extends Component {
+  state = {
+    errors: [],
+    infos: [],
+    currentLang: DEFAULT_LANG,
+  };
 
-  React.useEffect(() => {
+  componentDidMount() {
     const userLangCode = localStorage.getItem("userLangCode");
     if (userLangCode) {
       const lang = LANGS.find(({ code }) => code === userLangCode);
-      if (lang) setCurrentLang(lang);
+      if (lang) this.setCurrentLang(lang);
     }
-  }, []);
+  }
 
-  React.useEffect(() => {
-    localStorage.setItem("userLangCode", currentLang.code);
-  }, [currentLang.code]);
+  componentDidCatch = (error) => {
+    this.showError(error);
+  };
 
-  const showError = (error) => {
+  setCurrentLang = (currentLang) => {
+    this.setState({ currentLang });
+  };
+
+  showError = (error) => {
     console.error(error);
-    setErrors((errors) => errors.concat(error));
+    this.setState(({ errors }) => ({
+      errors: errors.concat(error),
+    }));
     setTimeout(() => {
-      setErrors(errors.slice(1));
+      this.setState(({ errors }) => ({
+        errors: errors.slice(1),
+      }));
     }, 2500);
   };
 
-  const showInfo = ({ id, message }) => {
-    setInfos((infos) => infos.concat({ id, message }));
+  showInfo = ({ id, message }) => {
+    this.setState(({ infos }) => ({
+      infos: infos.concat({ id, message }),
+    }));
     setTimeout(() => {
-      setInfos(infos.slice(1));
+      this.setState(({ infos }) => ({
+        infos: infos.slice(1),
+      }));
     }, 2500);
   };
 
-  return (
-    <AppContext.Provider
-      value={{ showError, showInfo, currentLang, setCurrentLang }}
-    >
-      <Router history={browserHistory}>
-        <div className="App">
-          <div className="appBody">
-            <Header />
-            <div className="messages">
-              {errors.map((error) => (
-                <Alert key={JSON.stringify(error)} variant="danger">
-                  {error.message}
-                </Alert>
-              ))}
-              {infos.map(({ id, message }) => (
-                <Alert key={id || message} variant="info">
-                  {message}
-                </Alert>
-              ))}
+  render() {
+    const { showError, showInfo, setCurrentLang } = this;
+    const { currentLang, errors, infos } = this.state;
+    return (
+      <AppContext.Provider
+        value={{ showError, showInfo, currentLang, setCurrentLang }}
+      >
+        <Router history={browserHistory}>
+          <div className="App">
+            <div className="appBody">
+              <Header />
+              <div className="messages">
+                {errors.map((error) => (
+                  <Alert key={JSON.stringify(error)} variant="danger">
+                    {error.message}
+                  </Alert>
+                ))}
+                {infos.map(({ id, message }) => (
+                  <Alert key={id || message} variant="info">
+                    {message}
+                  </Alert>
+                ))}
+              </div>
+              <Switch>
+                <Route exact path="/">
+                  <HomePage />
+                </Route>
+                <Route exact path="/about">
+                  <AboutPage />
+                </Route>
+              </Switch>
             </div>
-            <Switch>
-              <Route exact path="/">
-                <HomePage />
-              </Route>
-              <Route exact path="/about">
-                <AboutPage />
-              </Route>
-            </Switch>
+            <Footer />
           </div>
-          <Footer />
-        </div>
-      </Router>
-    </AppContext.Provider>
-  );
+        </Router>
+      </AppContext.Provider>
+    );
+  }
 }

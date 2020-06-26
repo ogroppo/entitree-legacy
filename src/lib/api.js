@@ -15,36 +15,40 @@ export function search(term, language) {
   });
 }
 
-export function getItemProps(id) {
-  const query = `SELECT DISTINCT ?claim ?claimLabel WHERE {
-  VALUES ?item {
-    wd:${id}
-  }
-  ?item ?p ?statement.
-  ?claim wikibase:claim ?p.
-  ?claim wikibase:propertyType wikibase:WikibaseItem .
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}`;
-  const url = wdk.sparqlQuery(query);
+export async function getItemProps(id, languageCode) {
+  const url = await new Promise(function (resolve, reject) {
+    try {
+      const query = `SELECT DISTINCT ?claim ?claimLabel WHERE {
+      BIND(wd:${id} as ?item)
+      {
+        ?item ?p ?statement.
+        ?claim wikibase:claim ?p.
+        ?claim wikibase:propertyType wikibase:WikibaseItem .
+      } UNION {
+        ?parent ?p ?statement.
+        ?statement ?_ ?item .
+        ?claim wikibase:claim ?p.
+        ?claim wikibase:propertyType wikibase:WikibaseItem .
+      }
+      SERVICE wikibase:label { bd:serviceParam wikibase:language "${languageCode}". }
+    }`;
+      const url = wdk.sparqlQuery(query);
+      resolve(url);
+    } catch (error) {
+      reject(error);
+    }
+  });
 
-  return axios.get(url).then(
-    ({
-      data: {
-        results: { bindings },
-      },
-    }) => {
+  return axios
+    .get(url)
+    .then(({ data }) => wdk.simplify.sparqlResults(data))
+    .then((results) => {
       let props = [];
-      bindings.forEach((row) => {
-        const propLabel = row.claimLabel.value;
-        const propId = row.claim.value.replace(
-          "http://www.wikidata.org/entity/",
-          ""
-        );
-        props.push({ id: propId, label: propLabel });
+      results.forEach(({ claim: { value: id, label } }) => {
+        props.push({ id, label });
       });
       return props;
-    }
-  );
+    });
 }
 
 export async function getItemTypes(id, options = {}) {
