@@ -3,16 +3,12 @@ import wdk from "wikidata-sdk";
 import formatEntity from "./formatEntity";
 
 export function search(term, language) {
-  //const url = wbk.searchEntities('Ingmar Bergman')
-  return axios.get("https://www.wikidata.org/w/api.php", {
-    params: {
-      origin: "*",
-      action: "wbsearchentities",
-      format: "json",
-      language,
+  return axios.get(
+    wdk.searchEntities({
       search: term,
-    },
-  });
+      language: language
+    })
+  );
 }
 
 export async function getItemProps(id, languageCode) {
