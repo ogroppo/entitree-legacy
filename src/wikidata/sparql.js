@@ -6,7 +6,7 @@ export async function getSparql(query) {
 
   return axios.get(url)
     .then(function (response) {
-      return wbk.simplify.sparqlResults(response, { minimize: false })
+      return wdk.simplify.sparqlResults(response, { minimize: false })
     });
 }
 
