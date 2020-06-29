@@ -4,6 +4,8 @@ import { Router, Switch, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import HomePage from "./pages/HomePage/HomePage";
 import "./App.scss";
+import qs from "query-string";
+
 import AboutPage from "./pages/AboutPage/AboutPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage/PrivacyPolicyPage";
 import Footer from "./layout/Footer/Footer";
@@ -17,15 +19,24 @@ export default class App extends Component {
   state = {
     errors: [],
     infos: [],
+    loadingLang: true,
     currentLang: DEFAULT_LANG,
   };
 
   componentDidMount() {
-    const userLangCode = localStorage.getItem("userLangCode");
+    let { l } = qs.parse(window.location.search);
+    let userLangCode;
+    if (l) {
+      userLangCode = l;
+    } else {
+      userLangCode = localStorage.getItem("userLangCode");
+    }
+
     if (userLangCode) {
       const lang = LANGS.find(({ code }) => code === userLangCode);
       if (lang) this.setCurrentLang(lang);
     }
+    this.setState({ loadingLang: false });
   }
 
   componentDidCatch = (error) => {
@@ -61,7 +72,7 @@ export default class App extends Component {
 
   render() {
     const { showError, showInfo, setCurrentLang } = this;
-    const { currentLang, errors, infos } = this.state;
+    const { currentLang, errors, infos, loadingLang } = this.state;
     return (
       <AppContext.Provider
         value={{ showError, showInfo, currentLang, setCurrentLang }}
@@ -84,7 +95,7 @@ export default class App extends Component {
               </div>
               <Switch>
                 <Route exact path="/">
-                  <HomePage />
+                  {!loadingLang && <HomePage />}
                 </Route>
                 <Route exact path="/about">
                   <AboutPage />
