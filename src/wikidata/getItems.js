@@ -4,21 +4,23 @@ import formatEntity from "../lib/formatEntity";
 import { DEFAULT_LANG } from "../constants/langs";
 import addEntityConnectors from "../lib/addEntityConnectors";
 
-export default async function getItems(
-  ids,
-  languageCode,
-  propId,
-  options = {}
-) {
+
+export async function getEntitiesFromWikidata(para) {
+
+  if(para.ids.length === 0){
+    return [];
+  }
+  para.ids = para.ids.filter(item => !!item);//delete undefined values
+
   //1 url for every 50 items
   const urls = await new Promise(function (resolve, reject) {
     try {
-      if (!languageCode) throw new Error("languageCode Missing");
+      if (!para.langauges) throw new Error("languageCode Missing");
       resolve(
         wdk.getManyEntities({
-          ids,
-          languages: [languageCode].concat(DEFAULT_LANG.code),
-          props: ["labels", "descriptions", "claims", "sitelinks/urls"],
+          ids: para.ids,
+          languages: para.langauges,
+          props: para.props || [ 'labels', 'descriptions', 'claims', 'sitelinks/urls' ], // returns all data if not specified
         })
       );
     } catch (error) {
@@ -38,6 +40,21 @@ export default async function getItems(
         ...entities,
       })
   );
+  return allentities;
+}
+
+export default async function getItems(
+  ids,
+  languageCode,
+  propId,
+  options = {}
+) {
+
+  const allentities = await getEntitiesFromWikidata({
+    ids: ids,
+    langauges: [languageCode].concat(DEFAULT_LANG.code),
+    props: ["labels", "descriptions", "claims", "sitelinks/urls"],
+  });
 
   const entities = ids.map((id) => {
     let entity = formatEntity(allentities[id], languageCode);
