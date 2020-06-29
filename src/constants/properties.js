@@ -19,6 +19,21 @@ export const IMAGE_ID = "P18";
 export const LOGO_ID = "P154";
 export const TWITTER_ID = "P2002";
 
+export const FAMILY_IDS_MAP = {
+  [CHILD_ID]: true,
+  [SIBLINGS_ID]: true,
+  [SPOUSE_ID]: true,
+  [FATHER_ID]: true,
+  [MOTHER_ID]: true,
+};
+
+export const FAMILY_PROP = {
+  id: CHILD_ID,
+  label: "child", //this way this gets not translated!!!!
+  overrideLabel: "Family tree",
+  isFav: true,
+};
+
 export const BUSINESS_PROPS = [
   {
     id: "P355",

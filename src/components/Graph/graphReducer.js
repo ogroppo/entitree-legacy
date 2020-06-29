@@ -25,11 +25,9 @@ export const initialState = {
 //Use this reducer at some point
 export default function graphReducer(graph, { type, ...arg }) {
   switch (type) {
-    case "reset":
-      return initialState;
     case "set":
       return {
-        ...graph,
+        ...initialState,
         ...arg,
       };
     case "expandChildren":

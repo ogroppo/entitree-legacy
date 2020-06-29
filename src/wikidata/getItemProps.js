@@ -11,14 +11,17 @@ export default async function getItemProps(id, languageCode) {
         ?item ?p ?statement.
         ?claim wikibase:claim ?p.
         ?claim wikibase:propertyType wikibase:WikibaseItem .
-      } UNION {
-        ?parent ?p ?statement.
-        ?statement ?_ ?item .
-        ?claim wikibase:claim ?p.
-        ?claim wikibase:propertyType wikibase:WikibaseItem .
       }
       SERVICE wikibase:label { bd:serviceParam wikibase:language "${languageCode}, ${DEFAULT_LANG.code}". }
     }`;
+
+      //REVERSE PROPS TERRIBLY SLOW????
+      // UNION {
+      //   ?parent ?p ?statement.
+      //   ?statement ?_ ?item .
+      //   ?claim wikibase:claim ?p.
+      //   ?claim wikibase:propertyType wikibase:WikibaseItem .
+      // }
 
       const url = wdk.sparqlQuery(query);
       resolve(url);

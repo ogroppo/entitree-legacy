@@ -10,12 +10,11 @@ import React, {
 } from "react";
 import { TransformComponent } from "react-zoom-pan-pinch";
 import getItems from "../../wikidata/getItems";
-import formatEntity from "../../lib/formatEntity";
 import { hierarchy } from "d3-hierarchy";
 import { CARD_WIDTH, SIBLING_SPOUSE_SEPARATION } from "../../constants/tree";
 import Node from "../Node/Node";
 import Rel from "../Rel/Rel";
-import { CHILD_ID } from "../../constants/properties";
+import { CHILD_ID, FAMILY_IDS_MAP } from "../../constants/properties";
 import graphReducer, { initialState } from "./graphReducer";
 import { Button } from "react-bootstrap";
 import { FiMinus, FiPlus, FiPrinter } from "react-icons/fi";
@@ -62,22 +61,15 @@ function Graph({
   //GET ROOT
   useEffect(() => {
     if (currentEntity.id && currentProp.id) {
-      //reset graph
-      dispatchGraph({ type: "reset" });
-
       (async () => {
         try {
           upMap.current = await getUpMap(currentEntity.id, currentProp.id);
-          const rootItem = await addEntityConnectors(
-            currentEntity,
-            currentProp.id,
-            {
-              upMap: upMap.current,
-              withSpouses: true,
-              withSiblings: true,
-              withChildren: true,
-            }
-          );
+          const rootItem = addEntityConnectors(currentEntity, currentProp.id, {
+            upMap: upMap.current,
+            addDownIds: true,
+            addRightIds: currentProp.id === CHILD_ID,
+            addLeftIds: currentProp.id === CHILD_ID,
+          });
 
           const root = hierarchy(rootItem);
           const rootId = getNodeUniqueId(root, 0);
@@ -133,8 +125,8 @@ function Graph({
         currentLang.code,
         currentProp.id,
         {
-          withChildren: true,
-          withSpouses: true,
+          addDownIds: true,
+          addRightIds: currentProp.id === CHILD_ID,
         }
       );
 
@@ -173,8 +165,8 @@ function Graph({
         currentProp.id,
         {
           upMap: upMap.current,
-          withSiblings: true,
-          withSpouses: true,
+          addLeftIds: currentProp.id === CHILD_ID,
+          addRightIds: currentProp.id === CHILD_ID,
         }
       );
 
@@ -411,6 +403,7 @@ function Graph({
                   ))}
                 {root && (
                   <Node
+                    propLabel={currentProp.label}
                     toggleChildren={() => {
                       centerPoint(0, 0);
                       toggleChildren(childTree);
@@ -446,6 +439,7 @@ function Graph({
                   <Node
                     index={index}
                     key={node.treeId}
+                    propLabel={currentProp.label}
                     toggleChildren={(node) => {
                       centerPoint(node.x, node.y);
                       toggleChildren(node);
@@ -467,6 +461,7 @@ function Graph({
                   <Node
                     key={node.treeId}
                     index={index}
+                    propLabel={currentProp.label}
                     toggleSpouses={(node) => {
                       centerPoint(node.x);
                       toggleSpouses(node);

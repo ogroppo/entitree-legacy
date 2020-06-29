@@ -5,6 +5,7 @@ import {
   CARD_PADDING,
   CARD_CONTENT_WIDTH,
   CARD_HEIGHT,
+  CARD_VERTICAL_GAP,
 } from "../../constants/tree";
 import { Button } from "react-bootstrap";
 import {
@@ -18,6 +19,7 @@ import "./Node.scss";
 export default function Node({
   node,
   index,
+  propLabel,
   toggleParents,
   toggleChildren,
   toggleSiblings,
@@ -37,6 +39,8 @@ export default function Node({
       timer = setTimeout(() => {
         setShowImage(true);
       }, delay);
+    } else {
+      setShowImage(true);
     }
     return () => clearTimeout(timer);
   }, []);
@@ -72,22 +76,28 @@ export default function Node({
         style={{ height: IMAGE_SIZE, width: IMAGE_SIZE }}
         onClick={nextImage}
       >
-        {showImage && (
+        {!images || !images.length ? (
+          <span className="defaultImgMessage">no image</span>
+        ) : (
           <>
-            {images[imageIndex] && (
-              <img
-                alt={images[imageIndex].alt}
-                src={images[imageIndex].url}
-                title={images[imageIndex].source}
-              />
+            {!showImage && (
+              <span className="defaultImgMessage">loading image</span>
             )}
-            {images && images.length > 1 && (
-              <span className="imgMore">+{images.length - 1}</span>
+            {showImage && (
+              <>
+                {images[imageIndex] && (
+                  <img
+                    alt={images[imageIndex].alt}
+                    src={images[imageIndex].url}
+                    title={images[imageIndex].source}
+                  />
+                )}
+                {images && images.length > 1 && (
+                  <span className="imgMore">+{images.length - 1}</span>
+                )}
+              </>
             )}
           </>
-        )}
-        {(!images || !images.length) && (
-          <img src={`https://via.placeholder.com/${IMAGE_SIZE}`} />
         )}
       </div>
       <div
@@ -136,6 +146,19 @@ export default function Node({
           </div>
         )}
       </div>
+      {node._parentsExpanded && (
+        <div className="upPropLabel" style={{ top: -CARD_VERTICAL_GAP / 2 }}>
+          <span>{propLabel}</span>
+        </div>
+      )}
+      {node._childrenExpanded && (
+        <div
+          className="downPropLabel"
+          style={{ bottom: -CARD_VERTICAL_GAP / 2 }}
+        >
+          <span>{propLabel}</span>
+        </div>
+      )}
       <SiblingCounter
         ids={node.data.leftIds}
         node={node}

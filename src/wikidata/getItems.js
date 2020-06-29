@@ -40,10 +40,10 @@ export default async function getItems(
   );
 
   const entities = ids.map((id) => {
-    const entity = formatEntity(allentities[id], languageCode);
+    let entity = formatEntity(allentities[id], languageCode);
+    //siblings and spouses don't need connectors, so no propId is passed
     if (propId) {
-      //siblings and spouses don't need connectors
-      addEntityConnectors(entity, propId, options);
+      entity = addEntityConnectors(entity, propId, options);
     }
     return entity;
   });

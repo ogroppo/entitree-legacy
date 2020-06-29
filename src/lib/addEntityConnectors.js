@@ -1,21 +1,19 @@
 import getClaimIds from "./getClaimIds";
 import { SIBLINGS_ID, SPOUSE_ID } from "../constants/properties";
 
-export default async function addEntityConnectors(
-  entity,
-  propId,
-  options = {}
-) {
+export default function addEntityConnectors(entity, propId, options = {}) {
+  let _entity = { ...entity };
+
   if (options.upMap) {
     if (!propId) throw new Error("propId needed");
-    entity.upIds = options.upMap[entity.id];
+    _entity.upIds = options.upMap[_entity.id];
   }
-  if (options.withChildren) {
+  if (options.addDownIds) {
     if (!propId) throw new Error("propId needed");
-    entity.downIds = getClaimIds(entity, propId);
+    _entity.downIds = getClaimIds(_entity, propId);
   }
-  if (options.withSpouses) entity.rightIds = getClaimIds(entity, SPOUSE_ID);
-  if (options.withSiblings) entity.leftIds = getClaimIds(entity, SIBLINGS_ID);
+  if (options.addRightIds) _entity.rightIds = getClaimIds(_entity, SPOUSE_ID);
+  if (options.addLeftIds) _entity.leftIds = getClaimIds(_entity, SIBLINGS_ID);
 
-  return entity;
+  return _entity;
 }

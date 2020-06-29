@@ -11,7 +11,12 @@ import {
 } from "react-bootstrap";
 import qs from "query-string";
 import { useHistory, useLocation } from "react-router-dom";
-import { preferredProps } from "../../constants/properties";
+import {
+  preferredProps,
+  FAMILY_IDS,
+  FAMILY_PROP,
+  FAMILY_IDS_MAP,
+} from "../../constants/properties";
 import { AppContext } from "../../App";
 import { FaStar } from "react-icons/fa";
 import getItem from "../../wikidata/getItem";
@@ -88,21 +93,32 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
         setLoadingProps(true);
         try {
           let { p } = qs.parse(location.search);
-          if (p) {
-            //showInfo({ message: "Loading property" });
-            const prop = await getItem(p, currentLang.code);
-            setProp(prop);
+          let itemProps = await getItemProps(entity.id, currentLang.code);
+          //check if valid prop for item
+          //does not work if the reverse props are not calculated
+          // if (p && !itemProps.some((prop) => prop.id === p)) {
+          //   //remove prop from url!
+          //   return setAvailableProps(itemProps);
+          // }
+
+          //prop belongs to family stuff
+          if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
+            //Remove all family props
+            itemProps = itemProps.filter((prop) => !FAMILY_IDS_MAP[prop.id]);
+            //Add the Family tree fav prop
+            itemProps = [FAMILY_PROP].concat(itemProps);
+
+            //Select the family tree if no other prop is selected, or if it's a family prop
+            if (!p || FAMILY_IDS_MAP[p]) {
+              setProp(FAMILY_PROP);
+            }
           }
 
-          let props = [];
-          //not in mapping, get them all
-          const normalProps = await getItemProps(entity.id, currentLang.code);
-          props.push(...normalProps);
-
-          setAvailableProps(props);
-          setLoadingProps(false);
+          setAvailableProps(itemProps);
         } catch (error) {
           showError(error);
+        } finally {
+          setLoadingProps(false);
         }
       })();
     }
@@ -154,7 +170,7 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
                     {loadingProps
                       ? "loading props..."
                       : prop.id
-                      ? prop.label
+                      ? prop.overrideLabel || prop.label
                       : "Choose a property "}
                   </Dropdown.Toggle>
                   <Dropdown.Menu alignRight>
@@ -163,7 +179,8 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
                         key={prop.id + (prop.isFav ? "_fav" : "")}
                         onClick={() => setProp(prop)}
                       >
-                        {prop.isFav && <FaStar />} {prop.label}
+                        {prop.isFav && <FaStar />}{" "}
+                        {prop.overrideLabel || prop.label}
                       </Dropdown.Item>
                     ))}
                   </Dropdown.Menu>
