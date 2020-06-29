@@ -119,6 +119,9 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
             if (!p || FAMILY_IDS_MAP[p]) {
               setProp(FAMILY_PROP);
             }
+          } else {
+            let prop = itemProps.find(({ id }) => id === p);
+            if (prop) setProp(prop);
           }
 
           setAvailableProps(itemProps);
