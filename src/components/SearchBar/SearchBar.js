@@ -104,7 +104,14 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
           //prop belongs to family stuff
           if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
             //Remove all family props
-            itemProps = itemProps.filter((prop) => !FAMILY_IDS_MAP[prop.id]);
+            let translatedLabel;
+            itemProps = itemProps.filter((prop) => {
+              if (prop.id === FAMILY_PROP.id) translatedLabel = prop.label;
+              return !FAMILY_IDS_MAP[prop.id];
+            });
+
+            if (translatedLabel) FAMILY_PROP.label = translatedLabel;
+
             //Add the Family tree fav prop
             itemProps = [FAMILY_PROP].concat(itemProps);
 

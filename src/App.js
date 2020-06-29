@@ -82,8 +82,8 @@ export default class App extends Component {
             <div className="appBody">
               <Header />
               <div className="messages">
-                {errors.map((error) => (
-                  <Alert key={JSON.stringify(error)} variant="danger">
+                {errors.map((error, index) => (
+                  <Alert key={JSON.stringify(error) + index} variant="danger">
                     {error.message}
                   </Alert>
                 ))}

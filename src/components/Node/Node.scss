@@ -16,7 +16,6 @@
     overflow: hidden;
     position: relative;
     display: flex;
-    background-color: lightgray;
     .defaultImgMessage {
       position: absolute;
       top: 50%;
@@ -31,6 +30,7 @@
       object-fit: cover;
       object-position: top;
       z-index: 1;
+      width: 100%;
     }
     .imgMore {
       position: absolute;
@@ -101,6 +101,7 @@
       font-size: 14px;
       color: gray;
       position: absolute;
+      white-space: nowrap;
       transform: translate(-50%, -50%);
     }
   }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   IMAGE_SIZE,
   CARD_WIDTH,
@@ -32,6 +32,7 @@ export default function Node({
 
   //delay image rendering every 50 images of about 500ms
   const [showImage, setShowImage] = useState(false);
+
   useEffect(() => {
     let timer;
     if (index !== undefined) {
