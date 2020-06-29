@@ -13,6 +13,7 @@ import { EXAMPLES } from "../../constants/examples";
 import { AppContext } from "../../App";
 import "./Header.scss";
 import { LANGS } from "../../constants/langs";
+import Logo from "../../components/Logo/Logo";
 
 export default function Header() {
   const { currentLang, setCurrentLang } = useContext(AppContext);
@@ -26,7 +27,7 @@ export default function Header() {
     <Navbar className="Header" bg="dark" variant="dark" expand="lg">
       <Container>
         <Navbar.Brand href="/">
-          <GiTreeBranch /> Entitree
+          <Logo /> Entitree
         </Navbar.Brand>
         <DropdownButton
           title="Examples"
