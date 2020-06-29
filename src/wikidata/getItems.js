@@ -67,3 +67,16 @@ export default async function getItems(
 
   return entities;
 }
+
+export async function getLabels(
+  ids,
+  languageCode,
+) {
+
+  const allentities = await getEntitiesFromWikidata({
+    ids: ids,
+    langauges: [languageCode].concat(DEFAULT_LANG.code),
+    props: ["labels"],
+  });
+  return allentities;
+}
