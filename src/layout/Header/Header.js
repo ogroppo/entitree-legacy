@@ -26,7 +26,7 @@ export default function Header() {
     <Navbar className="Header" bg="dark" variant="dark" expand="lg">
       <Container>
         <Navbar.Brand href="/">
-          <GiTreeBranch /> WikiForest
+          <GiTreeBranch /> Entitree
         </Navbar.Brand>
         <DropdownButton
           title="Examples"

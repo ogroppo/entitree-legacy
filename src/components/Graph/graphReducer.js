@@ -25,32 +25,33 @@ export const initialState = {
 //Use this reducer at some point
 export default function graphReducer(graph, { type, ...arg }) {
   switch (type) {
-    case "reset":
-      return initialState;
     case "set":
       return {
-        ...graph,
+        ...initialState,
         ...arg,
       };
     case "expandChildren":
       var { node } = arg;
       expandChildren(node);
+      if (node.isRoot) graph.root._childrenExpanded = true;
       recalcChildren(graph);
       return { ...graph };
     case "collapseChildren":
       var { node } = arg;
       collapseChildren(node);
+      if (node.isRoot) graph.root._childrenExpanded = false;
       recalcChildren(graph);
       return { ...graph };
     case "expandParents":
       var { node } = arg;
       expandParents(node);
       recalcParents(graph);
+      if (node.isRoot) graph.root._parentsExpanded = true;
       return { ...graph };
     case "collapseParents":
       var { node } = arg;
-
       collapseParents(node);
+      if (node.isRoot) graph.root._parentsExpanded = false;
       recalcParents(graph);
       return { ...graph };
     case "expandSpouses":

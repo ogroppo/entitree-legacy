@@ -6,22 +6,30 @@ import {
   Spinner,
   Button,
   Dropdown,
-  Row,
-  Col,
   Container,
   InputGroup,
 } from "react-bootstrap";
-import { search, getItem, getItemTypes, getItemProps } from "../../lib/api";
 import qs from "query-string";
 import { useHistory, useLocation } from "react-router-dom";
-import { preferredProps } from "../../constants/properties";
+import {
+  preferredProps,
+  FAMILY_IDS,
+  FAMILY_PROP,
+  FAMILY_IDS_MAP,
+} from "../../constants/properties";
 import { AppContext } from "../../App";
 import { FaStar } from "react-icons/fa";
+import getItem from "../../wikidata/getItem";
+import getItemProps from "../../wikidata/getItemProps";
+import search from "../../wikidata/search";
+import { DEFAULT_LANG } from "../../constants/langs";
 
-export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
-  const { showInfo, currentLang, showError } = useContext(AppContext);
+export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
+  const { currentLang, showError } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [entityId, setEntityId] = React.useState();
+  const [entity, setEntity] = React.useState({});
+  const [loadingEntity, setLoadingEntity] = React.useState(false);
+  const [loadingProps, setLoadingProps] = React.useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = React.useState(false);
   const [searchResults, setSearchResults] = React.useState([]);
   const [showSuggestions, setShowSuggestions] = React.useState();
@@ -30,31 +38,29 @@ export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
   const [prop, setProp] = React.useState({});
 
   //Check on mount if there are params in the url
-  let location = useLocation();
+  const location = useLocation();
   React.useEffect(() => {
     (async () => {
       try {
-        let { q, p } = qs.parse(location.search);
+        let { q } = qs.parse(location.search);
         if (q) {
           //showInfo({ message: "Loading entity" });
-          const entity = await getItem(q);
-          setFromKeyboard(false);
-          setSearchTerm(entity.labels.en.value);
-          setEntityId(entity.id);
-        }
-        if (p) {
-          //showInfo({ message: "Loading property" });
-          const prop = await getItem(p);
-          setProp({
-            id: prop.id,
-            label: prop.labels.en.value,
-          });
+          await loadEntity(q);
         }
       } catch (error) {
         showError(error);
       }
     })();
   }, []);
+
+  const loadEntity = async (id) => {
+    setLoadingEntity(true);
+    const entity = await getItem(id, currentLang.code);
+    setLoadingEntity(false);
+    setFromKeyboard(false);
+    setSearchTerm(entity.label);
+    setEntity(entity);
+  };
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   React.useEffect(() => {
@@ -81,42 +87,67 @@ export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
   //Get new props on entity change
   React.useEffect(() => {
     setProp({});
-    if (entityId) {
+
+    if (entity.id) {
       (async () => {
+        setLoadingProps(true);
         try {
-          const types = await getItemTypes(entityId);
+          let { p } = qs.parse(location.search);
+          let itemProps = await getItemProps(entity.id, currentLang.code);
+          //check if valid prop for item
+          //does not work if the reverse props are not calculated
+          // if (p && !itemProps.some((prop) => prop.id === p)) {
+          //   //remove prop from url!
+          //   return setAvailableProps(itemProps);
+          // }
 
-          let props = [];
-          types.forEach((type) => {
-            if (preferredProps[type.id])
-              props = props.concat(preferredProps[type.id]);
-          });
-          //not in mapping, get them all
-          const normalProps = await getItemProps(entityId, currentLang.code);
-          props.push(...normalProps);
+          //prop belongs to family stuff
+          if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
+            //Remove all family props
+            let translatedLabel;
+            itemProps = itemProps.filter((prop) => {
+              if (prop.id === FAMILY_PROP.id) translatedLabel = prop.label;
+              return !FAMILY_IDS_MAP[prop.id];
+            });
 
-          setAvailableProps(props);
+            if (translatedLabel) FAMILY_PROP.label = translatedLabel;
+
+            //Add the Family tree fav prop
+            itemProps = [FAMILY_PROP].concat(itemProps);
+
+            //Select the family tree if no other prop is selected, or if it's a family prop
+            if (!p || FAMILY_IDS_MAP[p]) {
+              setProp(FAMILY_PROP);
+            }
+          }
+
+          setAvailableProps(itemProps);
         } catch (error) {
           showError(error);
+        } finally {
+          setLoadingProps(false);
         }
       })();
     }
-  }, [entityId]);
+  }, [entity.id]);
 
   React.useEffect(() => {
-    submit();
+    if (prop.id) {
+      submit();
+    }
   }, [prop.id]);
 
   const history = useHistory();
   const submit = (e) => {
-    if (!prop.id || !entityId) return;
-    const query = { q: entityId, p: prop.id };
+    if (!prop.id || !entity.id) return;
+    const query = { q: entity.id, p: prop.id };
+    if (currentLang.code !== DEFAULT_LANG.code) query.l = currentLang.code;
     const searchString = qs.stringify(query);
     history.push({
       search: "?" + searchString,
     });
-    setCurrentEntityId(entityId);
-    setCurrentPropId(prop.id);
+    setCurrentEntity(entity);
+    setCurrentProp(prop);
   };
 
   return (
@@ -129,20 +160,25 @@ export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
               onChange={(e) => {
                 setSearchTerm(e.target.value);
               }}
-              value={searchTerm}
+              value={loadingEntity ? "Loading entity..." : searchTerm}
               type="search"
+              readOnly={loadingEntity}
               placeholder="Start typing to search..."
               autoComplete="off"
             />
-            {entityId && (
+            {entity.id && (
               <InputGroup.Append>
                 <Dropdown>
                   <Dropdown.Toggle
-                    disabled={!availableProps.length}
+                    disabled={loadingProps}
                     variant="none"
                     id="dropdown-props"
                   >
-                    {prop.id ? prop.label : "Choose a property "}
+                    {loadingProps
+                      ? "loading props..."
+                      : prop.id
+                      ? prop.overrideLabel || prop.label
+                      : "Choose a property "}
                   </Dropdown.Toggle>
                   <Dropdown.Menu alignRight>
                     {availableProps.map((prop) => (
@@ -150,7 +186,8 @@ export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
                         key={prop.id + (prop.isFav ? "_fav" : "")}
                         onClick={() => setProp(prop)}
                       >
-                        {prop.isFav && <FaStar />} {prop.label}
+                        {prop.isFav && <FaStar />}{" "}
+                        {prop.overrideLabel || prop.label}
                       </Dropdown.Item>
                     ))}
                   </Dropdown.Menu>
@@ -163,7 +200,7 @@ export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
               setFromKeyboard={setFromKeyboard}
               setSearchTerm={setSearchTerm}
               setShowSuggestions={setShowSuggestions}
-              setEntityId={setEntityId}
+              loadEntity={loadEntity}
               loadingSuggestions={loadingSuggestions}
               searchResults={searchResults}
             />
@@ -177,10 +214,8 @@ export default function SearchBar({ setCurrentEntityId, setCurrentPropId }) {
 function Suggestions({
   loadingSuggestions,
   searchResults,
-  setSearchTerm,
-  setEntityId,
+  loadEntity,
   setShowSuggestions,
-  setFromKeyboard,
 }) {
   const wrapperRef = React.useRef(null);
 
@@ -214,9 +249,7 @@ function Suggestions({
           className="searchResultBtn"
           variant="light"
           onClick={() => {
-            setFromKeyboard(false);
-            setSearchTerm(result.label);
-            setEntityId(result.id);
+            loadEntity(result.id);
             setShowSuggestions(false);
           }}
         >

@@ -9,34 +9,32 @@ import React, {
   useState,
 } from "react";
 import { TransformComponent } from "react-zoom-pan-pinch";
-import { getItem, getItems } from "../../lib/api";
+import getItems from "../../wikidata/getItems";
 import { hierarchy } from "d3-hierarchy";
-import {
-  CARD_WIDTH,
-  SIBLING_SPOUSE_SEPARATION,
-  EXPAND_SIDE_BUTTON_GAP,
-} from "../../constants/tree";
+import { CARD_WIDTH, SIBLING_SPOUSE_SEPARATION } from "../../constants/tree";
 import Node from "../Node/Node";
 import Rel from "../Rel/Rel";
-import { CHILD_ID } from "../../constants/properties";
+import { CHILD_ID, FAMILY_IDS_MAP } from "../../constants/properties";
 import graphReducer, { initialState } from "./graphReducer";
-import getActualSiblingsOrSpuses from "../../lib/getActualSiblings";
 import { Button } from "react-bootstrap";
 import { FiMinus, FiPlus, FiPrinter } from "react-icons/fi";
 import { IoMdExpand } from "react-icons/io";
 import { RiFocus3Line } from "react-icons/ri";
 import getNodeUniqueId from "../../lib/getNodeUniqueId";
+import filterSpouses from "../../lib/filterSpouses";
+import addEntityConnectors from "../../lib/addEntityConnectors";
+import getUpMap from "../../wikidata/getUpMap";
 
 function Graph({
-  currentEntityId,
-  currentPropId,
+  currentEntity,
+  currentProp,
   setTransform,
   zoomIn,
   zoomOut,
   scale: currentScale,
   ...props
 }) {
-  const { showError } = useContext(AppContext);
+  const { showError, currentLang } = useContext(AppContext);
 
   const [graph, dispatchGraph] = useReducer(graphReducer, initialState);
   const [focusedNode, setFocusedNode] = useState();
@@ -44,6 +42,7 @@ function Graph({
   const graphRef = useRef();
   const [graphWidth, setGraphWidth] = useState(0);
   const [graphHeight, setGraphHeight] = useState(0);
+  const upMap = useRef();
 
   useEffect(() => {
     const handleResize = () => {
@@ -61,36 +60,54 @@ function Graph({
 
   //GET ROOT
   useEffect(() => {
-    if (currentEntityId && currentPropId) {
-      //reset graph
-      dispatchGraph({ type: "reset" });
-      getItem(currentEntityId, {
-        withParents: true,
-        propId: currentPropId,
-      })
-        .then(async (entity) => {
-          setTransform(0, 0, 1, 0);
-          let root = hierarchy(entity);
+    if (currentEntity.id && currentProp.id) {
+      (async () => {
+        try {
+          upMap.current = await getUpMap(currentEntity.id, currentProp.id);
+          const rootItem = addEntityConnectors(currentEntity, currentProp.id, {
+            upMap: upMap.current,
+            addDownIds: true,
+            addRightIds: currentProp.id === CHILD_ID,
+            addLeftIds: currentProp.id === CHILD_ID,
+          });
+
+          const root = hierarchy(rootItem);
           const rootId = getNodeUniqueId(root, 0);
           root.treeId = rootId;
-          root.actualSpouseIds = root.data.spouseIds; //because this is read straight away
-          root.actualSiblingIds = root.data.siblingIds; //because this is read straight away
+          root.isRoot = true;
           root.x = 0;
           root.y = 0;
-          setFocusedNode(root);
 
           //annoyingly a repetition but correct in order to have separate trees
-          let childTree = hierarchy(entity);
+          let childTree = hierarchy(rootItem);
           childTree.treeId = rootId;
+          childTree.isRoot = true;
+          childTree.x = 0;
+          childTree.y = 0;
 
-          let parentTree = hierarchy(entity);
+          let parentTree = hierarchy(rootItem);
           parentTree.treeId = rootId;
+          parentTree.isRoot = true;
+          parentTree.x = 0;
+          parentTree.y = 0;
 
-          dispatchGraph({ type: "set", root, childTree, parentTree });
-        })
-        .catch((e) => showError(e));
+          dispatchGraph({
+            type: "set",
+            root,
+            childTree,
+            parentTree,
+          });
+
+          toggleParents(parentTree);
+          toggleChildren(childTree);
+          setTransform(0, 0, 1, 0);
+          setFocusedNode(root);
+        } catch (error) {
+          showError(error);
+        }
+      })();
     }
-  }, [currentEntityId, currentPropId]);
+  }, [currentEntity.id, currentProp.id]);
 
   const toggleChildren = async (node) => {
     if (node._childrenExpanded) {
@@ -101,11 +118,18 @@ function Graph({
       return dispatchGraph({ type: "expandChildren", node });
     }
     try {
-      if (!node.data.childrenIds || !node.data.childrenIds.length) return;
+      if (!node.data.downIds || !node.data.downIds.length) return;
 
-      const entities = await getItems(node.data.childrenIds, {
-        propId: currentPropId,
-      });
+      const entities = await getItems(
+        node.data.downIds,
+        currentLang.code,
+        currentProp.id,
+        {
+          addDownIds: true,
+          addRightIds: currentProp.id === CHILD_ID,
+        }
+      );
+
       entities.forEach((entity, index) => {
         const childNode = hierarchy(entity);
         childNode.depth = node.depth + 1;
@@ -117,9 +141,6 @@ function Graph({
         }
         node.children.push(childNode);
       });
-      if (currentPropId === CHILD_ID) {
-        getActualSiblingsOrSpuses(node);
-      }
 
       dispatchGraph({ type: "expandChildren", node });
     } catch (error) {
@@ -137,12 +158,18 @@ function Graph({
     }
 
     try {
-      if (!node.data.parentIds || !node.data.parentIds.length) return;
-      const entities = await getItems(node.data.parentIds, {
-        withChildren: false,
-        withParents: true,
-        propId: currentPropId,
-      });
+      if (!node.data.upIds || !node.data.upIds.length) return;
+      const entities = await getItems(
+        node.data.upIds,
+        currentLang.code,
+        currentProp.id,
+        {
+          upMap: upMap.current,
+          addLeftIds: currentProp.id === CHILD_ID,
+          addRightIds: currentProp.id === CHILD_ID,
+        }
+      );
+
       entities.forEach((entity, index) => {
         const parentNode = hierarchy(entity);
         parentNode.isParent = true;
@@ -154,8 +181,8 @@ function Graph({
         }
         node.children.push(parentNode);
       });
-      if (currentPropId === CHILD_ID) {
-        getActualSiblingsOrSpuses(node);
+      if (currentProp.id === CHILD_ID) {
+        filterSpouses(node);
       }
       dispatchGraph({ type: "expandParents", node });
     } catch (error) {
@@ -171,7 +198,8 @@ function Graph({
       return dispatchGraph({ type: "expandSpouses", node });
     }
     try {
-      const entities = await getItems(node.actualSpouseIds);
+      if (!node.data.rightIds || !node.data.rightIds.length) return;
+      const entities = await getItems(node.data.rightIds, currentLang.code);
       entities.forEach((entity, index) => {
         const childNode = hierarchy(entity);
         childNode.depth = node.depth;
@@ -198,7 +226,8 @@ function Graph({
     }
 
     try {
-      const entities = await getItems(node.actualSiblingIds);
+      if (!node.data.leftIds || !node.data.leftIds.length) return;
+      const entities = await getItems(node.data.leftIds, currentLang.code);
       entities.forEach((entity, index) => {
         const childNode = hierarchy(entity);
         childNode.depth = node.depth;
@@ -215,18 +244,6 @@ function Graph({
     }
   };
 
-  const toggleRootChildren = async () => {
-    const { root } = graph;
-    toggleChildren(root); //for side effects
-    toggleChildren(childTree);
-  };
-
-  const toggleRootParents = async () => {
-    const { root } = graph;
-    toggleParents(root); //for side effects
-    toggleParents(parentTree);
-  };
-
   const toggleRootSpouses = async () => {
     const { root } = graph;
     if (root._spousesExpanded) {
@@ -237,7 +254,7 @@ function Graph({
     }
 
     try {
-      const entities = await getItems(root.actualSpouseIds);
+      const entities = await getItems(root.data.rightIds, currentLang.code);
       const baseX = CARD_WIDTH * SIBLING_SPOUSE_SEPARATION;
       entities.forEach((entity, index) => {
         const spouseNode = hierarchy(entity);
@@ -266,7 +283,7 @@ function Graph({
     }
 
     try {
-      const entities = await getItems(root.data.siblingIds);
+      const entities = await getItems(root.data.leftIds, currentLang.code);
       const baseX = -(CARD_WIDTH * SIBLING_SPOUSE_SEPARATION);
       entities.forEach((entity, index, { length }) => {
         const siblingNode = hierarchy(entity);
@@ -386,13 +403,14 @@ function Graph({
                   ))}
                 {root && (
                   <Node
+                    propLabel={currentProp.label}
                     toggleChildren={() => {
                       centerPoint(0, 0);
-                      toggleRootChildren();
+                      toggleChildren(childTree);
                     }}
                     toggleParents={() => {
                       centerPoint(0, 0);
-                      toggleRootParents();
+                      toggleParents(parentTree);
                     }}
                     toggleSpouses={() => {
                       centerPoint(0);
@@ -417,9 +435,11 @@ function Graph({
                       focusedNode={focusedNode}
                     />
                   ))}
-                {childNodes.map((node) => (
+                {childNodes.map((node, index) => (
                   <Node
+                    index={index}
                     key={node.treeId}
+                    propLabel={currentProp.label}
                     toggleChildren={(node) => {
                       centerPoint(node.x, node.y);
                       toggleChildren(node);
@@ -437,9 +457,11 @@ function Graph({
                     focusedNode={focusedNode}
                   />
                 ))}
-                {parentNodes.map((node) => (
+                {parentNodes.map((node, index) => (
                   <Node
                     key={node.treeId}
+                    index={index}
+                    propLabel={currentProp.label}
                     toggleSpouses={(node) => {
                       centerPoint(node.x);
                       toggleSpouses(node);
@@ -493,7 +515,7 @@ function Graph({
   );
 }
 
-export default function GraphWrapper({ currentEntityId, currentPropId }) {
+export default function GraphWrapper({ currentEntity, currentProp }) {
   return (
     <div className="GraphWrapper">
       <TransformWrapper
@@ -509,8 +531,8 @@ export default function GraphWrapper({ currentEntityId, currentPropId }) {
         {(props) => (
           <Graph
             {...props}
-            currentEntityId={currentEntityId}
-            currentPropId={currentPropId}
+            currentEntity={currentEntity}
+            currentProp={currentProp}
           />
         )}
       </TransformWrapper>

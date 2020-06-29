@@ -9,6 +9,8 @@ export const SIBLINGS_ID = "P3373";
 export const SPOUSE_ID = "P26";
 export const BIRTH_DATE_ID = "P569";
 export const DEATH_DATE_ID = "P570";
+export const FATHER_ID = "P22";
+export const MOTHER_ID = "P25";
 export const CHILD_ID = "P40";
 export const STUDENT_OF_ID = "P1066";
 export const STUDENT_ID = "P802";
@@ -16,6 +18,21 @@ export const LOCATED_IN_ID = "P131";
 export const IMAGE_ID = "P18";
 export const LOGO_ID = "P154";
 export const TWITTER_ID = "P2002";
+
+export const FAMILY_IDS_MAP = {
+  [CHILD_ID]: true,
+  [SIBLINGS_ID]: true,
+  [SPOUSE_ID]: true,
+  [FATHER_ID]: true,
+  [MOTHER_ID]: true,
+};
+
+export const FAMILY_PROP = {
+  id: CHILD_ID,
+  label: "child", //this is just a default, language label needs to be fetched!
+  overrideLabel: "Family tree", //how to translate this?!
+  isFav: true,
+};
 
 export const BUSINESS_PROPS = [
   {

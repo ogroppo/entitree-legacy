@@ -4,20 +4,17 @@ import Graph from "../../components/Graph/Graph";
 import "./HomePage.scss";
 
 export default function HomePage() {
-  const [currentEntityId, setCurrentEntityId] = React.useState();
-  const [currentPropId, setCurrentPropId] = React.useState();
+  const [currentEntity, setCurrentEntity] = React.useState();
+  const [currentProp, setCurrentProp] = React.useState();
 
   return (
     <div className="HomePage">
       <SearchBar
-        setCurrentEntityId={setCurrentEntityId}
-        setCurrentPropId={setCurrentPropId}
+        setCurrentEntity={setCurrentEntity}
+        setCurrentProp={setCurrentProp}
       />
-      {currentEntityId && currentPropId && (
-        <Graph
-          currentEntityId={currentEntityId}
-          currentPropId={currentPropId}
-        />
+      {currentEntity && currentProp && (
+        <Graph currentEntity={currentEntity} currentProp={currentProp} />
       )}
     </div>
   );
