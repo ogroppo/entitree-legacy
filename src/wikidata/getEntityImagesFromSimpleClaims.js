@@ -1,12 +1,12 @@
 import { IMAGE_ID, LOGO_ID, TWITTER_ID } from "../constants/properties";
 import { IMAGE_SIZE } from "../constants/tree";
 
-export default function addEntityImagesFromSimpleClaims(entity, claims) {
-  entity.images = [];
-  const images = claims[IMAGE_ID];
-  if (images) {
-    images.forEach((image) => {
-      entity.images.push({
+export default function getEntityImagesFromSimpleClaims(claims) {
+  let images = [];
+  const imageClaim = claims[IMAGE_ID];
+  if (imageClaim) {
+    imageClaim.forEach((image) => {
+      images.push({
         url: getCommonsUrlByFile(image.value),
         alt: "Wikimedia Commons image",
         source: "Wikimedia Commons",
@@ -14,10 +14,10 @@ export default function addEntityImagesFromSimpleClaims(entity, claims) {
     });
   }
 
-  const logos = claims[LOGO_ID];
-  if (logos) {
-    logos.forEach((image) => {
-      entity.images.push({
+  const logoClaim = claims[LOGO_ID];
+  if (logoClaim) {
+    logoClaim.forEach((image) => {
+      images.push({
         url: getCommonsUrlByFile(image.value),
         alt: "Wikimedia Commons image",
         source: "Wikimedia Commons",
@@ -26,17 +26,19 @@ export default function addEntityImagesFromSimpleClaims(entity, claims) {
   }
 
   //Twitter
-  const twitters = claims[TWITTER_ID];
-  if (twitters) {
+  const twitterClaim = claims[TWITTER_ID];
+  if (twitterClaim) {
     //https://github.com/siddharthkp/twitter-avatar
-    twitters.forEach((image) => {
-      entity.images.push({
+    twitterClaim.forEach((image) => {
+      images.push({
         url: `https://twitter-avatar.now.sh/${image.value}`,
         alt: "Twitter image",
         source: "Twitter",
       });
     });
   }
+
+  return images;
 }
 
 function getCommonsUrlByFile(filename) {

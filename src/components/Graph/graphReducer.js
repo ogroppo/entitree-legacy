@@ -35,22 +35,25 @@ export default function graphReducer(graph, { type, ...arg }) {
     case "expandChildren":
       var { node } = arg;
       expandChildren(node);
+      if (node.isRoot) graph.root._childrenExpanded = true;
       recalcChildren(graph);
       return { ...graph };
     case "collapseChildren":
       var { node } = arg;
       collapseChildren(node);
+      if (node.isRoot) graph.root._childrenExpanded = false;
       recalcChildren(graph);
       return { ...graph };
     case "expandParents":
       var { node } = arg;
       expandParents(node);
       recalcParents(graph);
+      if (node.isRoot) graph.root._parentsExpanded = true;
       return { ...graph };
     case "collapseParents":
       var { node } = arg;
-
       collapseParents(node);
+      if (node.isRoot) graph.root._parentsExpanded = false;
       recalcParents(graph);
       return { ...graph };
     case "expandSpouses":
