@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, {useContext, useState} from "react";
 import useDebounce from "../../lib/useDebounce";
 import "./SearchBar.scss";
 import {
@@ -8,7 +8,12 @@ import {
   Dropdown,
   Container,
   InputGroup,
+  Modal
 } from "react-bootstrap";
+import {
+ FiSliders
+} from "react-icons/fi";
+
 import qs from "query-string";
 import { useHistory, useLocation } from "react-router-dom";
 import {
@@ -36,6 +41,7 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
   const [fromKeyboard, setFromKeyboard] = React.useState(true);
   const [availableProps, setAvailableProps] = React.useState([]);
   const [prop, setProp] = React.useState({});
+  const [show, setShow] = React.useState(false);
 
   //Check on mount if there are params in the url
   const location = useLocation();
@@ -197,6 +203,8 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
                 </Dropdown>
               </InputGroup.Append>
             )}
+            <ModalSettings />
+
           </InputGroup>
           {showSuggestions && (
             <Suggestions
@@ -213,6 +221,48 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
     </Form>
   );
 }
+
+function ModalSettings() {
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  return (
+    <>
+      <Button variant="primary" onClick={handleShow}>
+        <FiSliders />
+      </Button>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Settings</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Please select <br />
+          <label>
+            <input
+              name="isGoing"
+              type="checkbox"
+              // checked={this.state.isGoing}
+              // onChange={this.handleInputChange}
+            />
+              Use Color based on gender
+          </label>
+
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleClose}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+}
+
 
 function Suggestions({
   loadingSuggestions,
