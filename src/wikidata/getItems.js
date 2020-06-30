@@ -1,26 +1,24 @@
 import axios from "axios";
 import wdk from "wikidata-sdk";
 import formatEntity from "../lib/formatEntity";
-import { DEFAULT_LANG } from "../constants/langs";
+import { DEFAULT_LANGS_CODES } from "../constants/langs";
 import addEntityConnectors from "../lib/addEntityConnectors";
 
-
-export async function getEntitiesFromWikidata(para) {
-
-  if(para.ids.length === 0){
+export async function getEntitiesFromWikidata({ ids, languages, props }) {
+  if (ids.length === 0) {
     return [];
   }
-  para.ids = para.ids.filter(item => !!item);//delete undefined values
+  ids = ids.filter((id) => !!id); //delete undefined values
 
   //1 url for every 50 items
   const urls = await new Promise(function (resolve, reject) {
     try {
-      if (!para.langauges) throw new Error("languageCode Missing");
+      if (!languages) throw new Error("languageCode Missing");
       resolve(
         wdk.getManyEntities({
-          ids: para.ids,
-          languages: para.langauges,
-          props: para.props || [ 'labels', 'descriptions', 'claims', 'sitelinks/urls' ], // returns all data if not specified
+          ids,
+          languages,
+          props,
         })
       );
     } catch (error) {
@@ -49,34 +47,24 @@ export default async function getItems(
   propId,
   options = {}
 ) {
+  if (!ids || !ids.length) throw new Error("You need valid ids to getItems");
 
   const allentities = await getEntitiesFromWikidata({
     ids: ids,
-    langauges: [languageCode].concat(DEFAULT_LANG.code),
+    languages: [languageCode].concat(DEFAULT_LANGS_CODES),
     props: ["labels", "descriptions", "claims", "sitelinks/urls"],
   });
 
-  const entities = ids.map((id) => {
-    let entity = formatEntity(allentities[id], languageCode);
-    //siblings and spouses don't need connectors, so no propId is passed
-    if (propId) {
-      entity = addEntityConnectors(entity, propId, options);
-    }
-    return entity;
-  });
+  const entities = await Promise.all(
+    ids.map(async (id) => {
+      let entity = await formatEntity(allentities[id], languageCode);
+      //siblings and spouses don't need connectors, so no propId is passed
+      if (propId) {
+        entity = addEntityConnectors(entity, propId, options);
+      }
+      return entity;
+    })
+  );
 
   return entities;
-}
-
-export async function getLabels(
-  ids,
-  languageCode,
-) {
-
-  const allentities = await getEntitiesFromWikidata({
-    ids: ids,
-    langauges: [languageCode].concat(DEFAULT_LANG.code),
-    props: ["labels"],
-  });
-  return allentities;
 }

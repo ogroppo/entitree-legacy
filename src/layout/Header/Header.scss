@@ -1,4 +1,10 @@
 .Header {
+  .navbar-brand {
+    svg {
+      top: -2px;
+      position: relative;
+    }
+  }
   .langDropdown {
     .dropdown-menu {
       position: absolute;

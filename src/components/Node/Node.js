@@ -90,7 +90,7 @@ export default function Node({
                   <img
                     alt={images[imageIndex].alt}
                     src={images[imageIndex].url}
-                    title={images[imageIndex].source}
+                    title={images[imageIndex].alt}
                   />
                 )}
                 {images && images.length > 1 && (
@@ -141,7 +141,7 @@ export default function Node({
                 title={link.title}
                 href={link.url}
               >
-                <img src={link.iconSrc} alt={link.alt} />
+                <img src={link.iconSrc} alt={link.alt} title={link.alt} />
               </a>
             ))}
           </div>
