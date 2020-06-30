@@ -14,6 +14,7 @@ import {
   FiChevronDown,
   FiChevronRight,
 } from "react-icons/fi";
+import { BsPlusCircle } from "react-icons/bs";
 import "./Node.scss";
 
 export default function Node({
@@ -26,9 +27,10 @@ export default function Node({
   toggleSpouses,
   setFocusedNode,
   focusedNode,
+  showMoreParents,
   debug,
 }) {
-  if (debug) console.log(node);
+  //console.log(node);
 
   //delay image rendering every 50 images of about 500ms
   const [showImage, setShowImage] = useState(false);
@@ -185,6 +187,17 @@ export default function Node({
         toggleFn={toggleChildren}
         className="childrenCount"
       />
+      {node.nextIndex && (
+        <Button
+          className={`next`}
+          variant={"warning"}
+          size="sm"
+          onClick={() => showMoreParents(node)}
+        >
+          <BsPlusCircle /> {node.parent._allChildren.length - node.nextIndex}{" "}
+          more
+        </Button>
+      )}
     </div>
   );
 }

@@ -187,10 +187,11 @@ function Graph({
         }
       );
 
+      const parentDepth = node.depth - 1;
       entities.forEach((entity, index) => {
         const parentNode = hierarchy(entity);
         parentNode.isParent = true;
-        parentNode.depth = node.depth - 1;
+        parentNode.depth = parentDepth;
         parentNode.parent = node;
         parentNode.treeId = getNodeUniqueId(parentNode, index);
         if (!node.children) {
@@ -201,10 +202,26 @@ function Graph({
       if (currentProp.id === CHILD_ID) {
         filterSpouses(node);
       }
+      if (node.children.length > 20) {
+        node._allChildren = [...node.children];
+        node.children = node.children.slice(0, 20);
+        node.children[node.children.length - 1].nextIndex = 21;
+      }
       dispatchGraph({ type: "expandParents", node });
     } catch (error) {
       showError(error);
     }
+  };
+
+  const showMoreParents = (node) => {
+    node.parent.children = node.parent._allChildren.slice(
+      node.nextIndex,
+      node.nextIndex + 20
+    );
+    node.nextIndex += 20;
+    console.log(node);
+
+    dispatchGraph({ type: "moreParents", node });
   };
 
   const toggleSpouses = async (node) => {
@@ -479,6 +496,7 @@ function Graph({
                     key={node.treeId}
                     index={index}
                     currentProp={currentProp}
+                    showMoreParents={showMoreParents}
                     toggleSpouses={(node) => {
                       centerPoint(node.x);
                       toggleSpouses(node);

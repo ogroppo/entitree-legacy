@@ -147,6 +147,18 @@
   .childrenCount {
     top: 100%;
   }
+  .next {
+    position: absolute;
+    border-radius: 10px;
+    font-size: 14px;
+    top: 110%;
+    right: 0;
+    svg {
+      top: -2px;
+      font-size: 16px;
+      position: relative;
+    }
+  }
 }
 
 .node-female {

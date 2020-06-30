@@ -48,6 +48,10 @@ export default function graphReducer(graph, { type, ...arg }) {
       recalcParents(graph);
       if (node.isRoot) graph.root._parentsExpanded = true;
       return { ...graph };
+    case "moreParents":
+      var { node } = arg;
+      recalcParents(graph);
+      return { ...graph };
     case "collapseParents":
       var { node } = arg;
       collapseParents(node);
