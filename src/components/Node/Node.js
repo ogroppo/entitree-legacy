@@ -32,6 +32,7 @@ export default function Node({
 
   //delay image rendering every 50 images of about 500ms
   const [showImage, setShowImage] = useState(false);
+  const [genderColors, setGenderColors] = useState(false);
 
   useEffect(() => {
     let timer;
@@ -69,7 +70,7 @@ export default function Node({
       }}
       className={`Node ${
         focusedNode && focusedNode.treeId === node.treeId ? "focused" : ""
-      }`}
+      } ${genderColors ? node.data.extraClass : ""}`}
       onClick={() => setFocusedNode(node)}
     >
       <div

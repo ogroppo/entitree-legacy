@@ -215,9 +215,28 @@ function ModalSettings() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const options = [
+    {
+      id: "genderColors",
+      label: "Use Color based on gender",
+    },
+    {
+      id: "birthName",
+      label: "Use Birthname",
+    },
+    {
+      id: "birthPlace",
+      label: "Show birthplace instead of hospital",
+    },
+  ];
+  const showButton = false;
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
+      <Button
+        variant="primary"
+        onClick={handleShow}
+        style={{ visibility: showButton ? "visible" : "hidden" }}
+      >
         <FiSliders />
       </Button>
 
@@ -226,16 +245,21 @@ function ModalSettings() {
           <Modal.Title>Settings</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Please select <br />
-          <label>
-            <input
-              name="isGoing"
-              type="checkbox"
-              // checked={this.state.isGoing}
-              // onChange={this.handleInputChange}
-            />
-            Use Color based on gender
-          </label>
+          Please select (beta)
+          <br />
+          {options.map((option) => (
+            <div>
+              <label>
+                <input
+                  name="isGoing"
+                  type="checkbox"
+                  // checked={this.state.isGoing}
+                  // onChange={this.handleInputChange}
+                />
+                {option.label}
+              </label>
+            </div>
+          ))}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
