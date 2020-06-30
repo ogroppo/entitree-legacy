@@ -36,7 +36,7 @@ export default async function getEntityImages(entity, currentLangCode) {
     });
   }
 
-  if (images.length == 0) {
+  if (images.length === 0) {
     //check if has wikipedia name, and set the name and id to be fetch in the client side;
     if (entity.sitelinks && entity.sitelinks[currentLangCode + "wiki"]) {
       var wikipediaName = entity.sitelinks[currentLangCode + "wiki"].url.split(
