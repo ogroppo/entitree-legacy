@@ -19,7 +19,11 @@ export default function Header() {
   const { currentLang, setCurrentLang } = useContext(AppContext);
 
   const setLang = (lang) => {
-    localStorage.setItem("userLangCode", lang.code);
+    try {
+      localStorage.setItem("userLangCode", lang.code);
+    } catch (error) {
+      //localstorage not working
+    }
     setCurrentLang(lang);
   };
 
