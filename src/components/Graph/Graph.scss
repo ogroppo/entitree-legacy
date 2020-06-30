@@ -10,7 +10,10 @@
   }
   .navigation {
     position: absolute;
-    bottom: 10px;
+    bottom: 15px;
+    @media (min-width: 576px) {
+      bottom: 10px;
+    }
     left: 10px;
     width: 32px;
     .btn {

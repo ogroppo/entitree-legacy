@@ -4,8 +4,8 @@ import Graph from "../../components/Graph/Graph";
 import "./HomePage.scss";
 
 export default function HomePage() {
-  const [currentEntity, setCurrentEntity] = React.useState();
-  const [currentProp, setCurrentProp] = React.useState();
+  const [currentEntity, setCurrentEntity] = React.useState(null);
+  const [currentProp, setCurrentProp] = React.useState(null);
 
   return (
     <div className="HomePage">
@@ -13,7 +13,7 @@ export default function HomePage() {
         setCurrentEntity={setCurrentEntity}
         setCurrentProp={setCurrentProp}
       />
-      {currentEntity && currentProp && (
+      {currentEntity && (
         <Graph currentEntity={currentEntity} currentProp={currentProp} />
       )}
     </div>

@@ -24,6 +24,7 @@ import getNodeUniqueId from "../../lib/getNodeUniqueId";
 import filterSpouses from "../../lib/filterSpouses";
 import addEntityConnectors from "../../lib/addEntityConnectors";
 import getUpMap from "../../wikidata/getUpMap";
+import setPageTitle from "../../lib/setPageTitle";
 
 function Graph({
   currentEntity,
@@ -60,54 +61,70 @@ function Graph({
 
   //GET ROOT
   useEffect(() => {
-    if (currentEntity.id && currentProp.id) {
+    if (currentEntity) {
       (async () => {
         try {
-          upMap.current = await getUpMap(currentEntity.id, currentProp.id);
-          const rootItem = addEntityConnectors(currentEntity, currentProp.id, {
-            upMap: upMap.current,
-            addDownIds: true,
-            addRightIds: currentProp.id === CHILD_ID,
-            addLeftIds: currentProp.id === CHILD_ID,
-          });
+          //property has been selected from dropdown
+          if (currentProp) {
+            upMap.current = await getUpMap(currentEntity.id, currentProp.id);
+            const rootItem = addEntityConnectors(
+              currentEntity,
+              currentProp.id,
+              {
+                upMap: upMap.current,
+                addDownIds: true,
+                addRightIds: currentProp.id === CHILD_ID,
+                addLeftIds: currentProp.id === CHILD_ID,
+              }
+            );
+            const root = hierarchy(rootItem);
+            const rootId = getNodeUniqueId(root, 0);
+            root.treeId = rootId;
+            root.isRoot = true;
+            root.x = 0;
+            root.y = 0;
 
-          const root = hierarchy(rootItem);
-          const rootId = getNodeUniqueId(root, 0);
-          root.treeId = rootId;
-          root.isRoot = true;
-          root.x = 0;
-          root.y = 0;
+            //annoyingly a repetition but correct in order to have separate trees
+            let childTree = hierarchy(rootItem);
+            childTree.treeId = rootId;
+            childTree.isRoot = true;
+            childTree.x = 0;
+            childTree.y = 0;
 
-          //annoyingly a repetition but correct in order to have separate trees
-          let childTree = hierarchy(rootItem);
-          childTree.treeId = rootId;
-          childTree.isRoot = true;
-          childTree.x = 0;
-          childTree.y = 0;
+            let parentTree = hierarchy(rootItem);
+            parentTree.treeId = rootId;
+            parentTree.isRoot = true;
+            parentTree.x = 0;
+            parentTree.y = 0;
 
-          let parentTree = hierarchy(rootItem);
-          parentTree.treeId = rootId;
-          parentTree.isRoot = true;
-          parentTree.x = 0;
-          parentTree.y = 0;
+            dispatchGraph({
+              type: "set",
+              root,
+              childTree,
+              parentTree,
+            });
 
-          dispatchGraph({
-            type: "set",
-            root,
-            childTree,
-            parentTree,
-          });
+            toggleParents(parentTree);
+            toggleChildren(childTree);
+          } else {
+            //currentEntity has changed from searchBox
+            const root = hierarchy(currentEntity);
+            root.treeId = getNodeUniqueId(root, 0);
+            dispatchGraph({
+              type: "set",
+              root,
+            });
+          }
 
-          toggleParents(parentTree);
-          toggleChildren(childTree);
           setTransform(0, 0, 1, 0);
           setFocusedNode(root);
+          setPageTitle(currentEntity, currentProp);
         } catch (error) {
           showError(error);
         }
       })();
     }
-  }, [currentEntity.id, currentProp.id]);
+  }, [currentEntity, currentProp]);
 
   const toggleChildren = async (node) => {
     if (node._childrenExpanded) {
@@ -403,7 +420,7 @@ function Graph({
                   ))}
                 {root && (
                   <Node
-                    propLabel={currentProp.label}
+                    currentProp={currentProp}
                     toggleChildren={() => {
                       centerPoint(0, 0);
                       toggleChildren(childTree);
@@ -439,7 +456,7 @@ function Graph({
                   <Node
                     index={index}
                     key={node.treeId}
-                    propLabel={currentProp.label}
+                    currentProp={currentProp}
                     toggleChildren={(node) => {
                       centerPoint(node.x, node.y);
                       toggleChildren(node);
@@ -461,7 +478,7 @@ function Graph({
                   <Node
                     key={node.treeId}
                     index={index}
-                    propLabel={currentProp.label}
+                    currentProp={currentProp}
                     toggleSpouses={(node) => {
                       centerPoint(node.x);
                       toggleSpouses(node);

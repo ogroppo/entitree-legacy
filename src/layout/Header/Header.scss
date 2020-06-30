@@ -8,8 +8,11 @@
   .langDropdown {
     .dropdown-menu {
       position: absolute;
-      max-height: 400px;
-      overflow-y: scroll;
+      min-width: 200px;
+      .langList {
+        max-height: 400px;
+        overflow-y: scroll;
+      }
     }
     .filterWrapper {
       padding: 0 1.3rem;

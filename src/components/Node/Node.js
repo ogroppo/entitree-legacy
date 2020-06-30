@@ -19,7 +19,7 @@ import "./Node.scss";
 export default function Node({
   node,
   index,
-  propLabel,
+  currentProp,
   toggleParents,
   toggleChildren,
   toggleSiblings,
@@ -147,17 +147,17 @@ export default function Node({
           </div>
         )}
       </div>
-      {node._parentsExpanded && (
+      {node._parentsExpanded && currentProp && (
         <div className="upPropLabel" style={{ top: -CARD_VERTICAL_GAP / 2 }}>
-          <span>{propLabel}</span>
+          <span>{currentProp.label}</span>
         </div>
       )}
-      {node._childrenExpanded && (
+      {node._childrenExpanded && currentProp && (
         <div
           className="downPropLabel"
           style={{ bottom: -CARD_VERTICAL_GAP / 2 }}
         >
-          <span>{propLabel}</span>
+          <span>{currentProp.label}</span>
         </div>
       )}
       <SiblingCounter

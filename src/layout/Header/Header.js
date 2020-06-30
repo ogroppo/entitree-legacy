@@ -90,6 +90,11 @@ const CustomMenu = React.forwardRef(
   ({ children, style, className, "aria-labelledby": labeledBy }, ref) => {
     const [value, setValue] = useState("");
 
+    const filterLangs = (e) => {
+      const { value: inputValue } = e.target;
+      setValue(inputValue.toLowerCase());
+    };
+
     return (
       <div
         ref={ref}
@@ -102,11 +107,12 @@ const CustomMenu = React.forwardRef(
             autoFocus
             className=""
             placeholder="Type to filter..."
-            onChange={(e) => setValue(e.target.value)}
+            onChange={filterLangs}
             value={value}
+            autoCapitalize="none"
           />
         </div>
-        <ul className="list-unstyled">
+        <ul className="list-unstyled langList">
           {React.Children.toArray(children).filter(
             (child) =>
               !value || child.props.children.toLowerCase().startsWith(value)

@@ -1,5 +1,6 @@
 import { IMAGE_ID, LOGO_ID, TWITTER_ID } from "../constants/properties";
 import { IMAGE_SIZE } from "../constants/tree";
+import getWikipediaThumbUrl from "../wikipedia/getWikipediaThumbUrl";
 
 export default async function getEntityImages(entity, currentLangCode) {
   let images = [];
@@ -42,13 +43,10 @@ export default async function getEntityImages(entity, currentLangCode) {
         "/wiki/"
       )[1];
       try {
-        const response = await fetch(
-          "https://en.wikipedia.org/api/rest_v1/page/summary/" + wikipediaName
-        );
-        const { thumbnail } = await response.json();
-        if (thumbnail) {
-          console.log(thumbnail.source);
-          images.push({ url: thumbnail.source, alt: "Wikipedia image" });
+        const url = await getWikipediaThumbUrl(wikipediaName);
+
+        if (url) {
+          images.push({ url, alt: `${entity.label}'s Wikipedia image` });
         }
       } catch (e) {
         //404 image will throw but that's ok

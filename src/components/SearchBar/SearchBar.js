@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, { useContext, useState } from "react";
 import useDebounce from "../../lib/useDebounce";
 import "./SearchBar.scss";
 import {
@@ -8,20 +8,12 @@ import {
   Dropdown,
   Container,
   InputGroup,
-  Modal
+  Modal,
 } from "react-bootstrap";
-import {
- FiSliders
-} from "react-icons/fi";
-
+import { FiSliders } from "react-icons/fi";
 import qs from "query-string";
 import { useHistory, useLocation } from "react-router-dom";
-import {
-  preferredProps,
-  FAMILY_IDS,
-  FAMILY_PROP,
-  FAMILY_IDS_MAP,
-} from "../../constants/properties";
+import { FAMILY_PROP, FAMILY_IDS_MAP } from "../../constants/properties";
 import { AppContext } from "../../App";
 import { FaStar } from "react-icons/fa";
 import getItem from "../../wikidata/getItem";
@@ -32,7 +24,8 @@ import { DEFAULT_LANG } from "../../constants/langs";
 export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
   const { currentLang, showError } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [entity, setEntity] = React.useState({});
+  const [entity, setEntity] = React.useState(null);
+  const [prop, setProp] = React.useState(null);
   const [loadingEntity, setLoadingEntity] = React.useState(false);
   const [loadingProps, setLoadingProps] = React.useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = React.useState(false);
@@ -40,7 +33,6 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
   const [showSuggestions, setShowSuggestions] = React.useState();
   const [fromKeyboard, setFromKeyboard] = React.useState(true);
   const [availableProps, setAvailableProps] = React.useState([]);
-  const [prop, setProp] = React.useState({});
   const [show, setShow] = React.useState(false);
 
   //Check on mount if there are params in the url
@@ -48,10 +40,19 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
   React.useEffect(() => {
     (async () => {
       try {
-        let { q } = qs.parse(location.search);
+        let { q, p } = qs.parse(location.search);
         if (q) {
           //showInfo({ message: "Loading entity" });
           await loadEntity(q);
+        }
+        if (p) {
+          setLoadingProps(true);
+          const { id, label } = await getItem(p, currentLang.code);
+          setProp({
+            id,
+            label,
+          });
+          setLoadingProps(false);
         }
       } catch (error) {
         showError(error);
@@ -92,20 +93,12 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
 
   //Get new props on entity change
   React.useEffect(() => {
-    setProp({});
-
-    if (entity.id) {
+    if (entity) {
+      setProp(null);
       (async () => {
         setLoadingProps(true);
         try {
-          let { p } = qs.parse(location.search);
           let itemProps = await getItemProps(entity.id, currentLang.code);
-          //check if valid prop for item
-          //does not work if the reverse props are not calculated
-          // if (p && !itemProps.some((prop) => prop.id === p)) {
-          //   //remove prop from url!
-          //   return setAvailableProps(itemProps);
-          // }
 
           //prop belongs to family stuff
           if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
@@ -122,12 +115,9 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
             itemProps = [FAMILY_PROP].concat(itemProps);
 
             //Select the family tree if no other prop is selected, or if it's a family prop
-            if (!p || FAMILY_IDS_MAP[p]) {
+            if (!prop || FAMILY_IDS_MAP[prop.id]) {
               setProp(FAMILY_PROP);
             }
-          } else {
-            let prop = itemProps.find(({ id }) => id === p);
-            if (prop) setProp(prop);
           }
 
           setAvailableProps(itemProps);
@@ -138,26 +128,24 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
         }
       })();
     }
-  }, [entity.id]);
-
-  React.useEffect(() => {
-    if (prop.id) {
-      submit();
-    }
-  }, [prop.id]);
+  }, [entity]);
 
   const history = useHistory();
-  const submit = (e) => {
-    if (!prop.id || !entity.id) return;
-    const query = { q: entity.id, p: prop.id };
-    if (currentLang.code !== DEFAULT_LANG.code) query.l = currentLang.code;
-    const searchString = qs.stringify(query);
-    history.push({
-      search: "?" + searchString,
-    });
-    setCurrentEntity(entity);
-    setCurrentProp(prop);
-  };
+  React.useEffect(() => {
+    if (entity) {
+      const query = { q: entity.id };
+      setCurrentEntity(entity);
+      if (prop) {
+        query.p = prop.id;
+        setCurrentProp(prop);
+      }
+      if (currentLang.code !== DEFAULT_LANG.code) query.l = currentLang.code;
+      const searchString = qs.stringify(query);
+      history.push({
+        search: "?" + searchString,
+      });
+    }
+  }, [entity, prop]);
 
   return (
     <Form className="SearchBar">
@@ -175,7 +163,7 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
               placeholder="Start typing to search..."
               autoComplete="off"
             />
-            {entity.id && (
+            {entity && (
               <InputGroup.Append>
                 <Dropdown>
                   <Dropdown.Toggle
@@ -185,7 +173,7 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
                   >
                     {loadingProps
                       ? "loading props..."
-                      : prop.id
+                      : prop
                       ? prop.overrideLabel || prop.label
                       : "Choose a property "}
                   </Dropdown.Toggle>
@@ -204,7 +192,6 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
               </InputGroup.Append>
             )}
             <ModalSettings />
-
           </InputGroup>
           {showSuggestions && (
             <Suggestions
@@ -238,7 +225,8 @@ function ModalSettings() {
         <Modal.Header closeButton>
           <Modal.Title>Settings</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Please select <br />
+        <Modal.Body>
+          Please select <br />
           <label>
             <input
               name="isGoing"
@@ -246,9 +234,8 @@ function ModalSettings() {
               // checked={this.state.isGoing}
               // onChange={this.handleInputChange}
             />
-              Use Color based on gender
+            Use Color based on gender
           </label>
-
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
@@ -262,7 +249,6 @@ function ModalSettings() {
     </>
   );
 }
-
 
 function Suggestions({
   loadingSuggestions,
