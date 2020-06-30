@@ -92,5 +92,7 @@ function parseDate(wikidatatime) {
       return parsedDate.format("D MMM y") + eraSuffix;
     case 9:
       return parsedDate.format("y") + eraSuffix;
+    default:
+      return;//https://www.wikidata.org/wiki/Help:Dates
   }
 }
