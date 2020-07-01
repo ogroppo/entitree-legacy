@@ -260,7 +260,7 @@ function ModalSettings() {
           Please select (beta)
           <br />
           {options.map((option) => (
-            <div>
+            <div key={option.id}>
               <label>
                 <input
                   name="isGoing"
