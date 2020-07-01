@@ -1,13 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import Graph from "../../components/Graph/Graph";
 import "./HomePage.scss";
 import ReactGA from "react-ga";
 import { useLocation } from "react-router-dom";
+import { AppContext } from "../../App";
 
 export default function HomePage() {
-  const [currentEntity, setCurrentEntity] = React.useState(null);
-  const [currentProp, setCurrentProp] = React.useState(null);
+  const { currentEntity } = useContext(AppContext);
 
   const location = useLocation();
   useEffect(() => {
@@ -17,13 +17,8 @@ export default function HomePage() {
 
   return (
     <div className="HomePage">
-      <SearchBar
-        setCurrentEntity={setCurrentEntity}
-        setCurrentProp={setCurrentProp}
-      />
-      {currentEntity && (
-        <Graph currentEntity={currentEntity} currentProp={currentProp} />
-      )}
+      <SearchBar />
+      {currentEntity && <Graph />}
     </div>
   );
 }
