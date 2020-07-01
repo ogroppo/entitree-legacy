@@ -22,7 +22,7 @@ import search from "../../wikidata/search";
 import { DEFAULT_LANG } from "../../constants/langs";
 
 export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
-  const { currentLang, showError } = useContext(AppContext);
+  const { currentLang, showError, hasLanguageChanged } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [entity, setEntity] = React.useState(null);
   const [prop, setProp] = React.useState(null);
@@ -59,6 +59,18 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
       }
     })();
   }, []);
+
+  //reload entity on lang change
+  React.useEffect(() => {
+    if (hasLanguageChanged)
+      (async () => {
+        try {
+          if (entity) await loadEntity(entity.id);
+        } catch (error) {
+          showError(error);
+        }
+      })();
+  }, [hasLanguageChanged]);
 
   const loadEntity = async (id) => {
     setLoadingEntity(true);

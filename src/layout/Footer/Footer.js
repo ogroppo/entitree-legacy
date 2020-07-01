@@ -5,8 +5,9 @@ export default function Footer() {
   return (
     <Navbar className="Footer" bg="light" expand="lg">
       <Container>
-        <Nav>
+        <Nav className="mr-auto">
           <Nav.Link href="/about">About</Nav.Link>
+          <Nav.Link href="/privacy">Privacy</Nav.Link>
         </Nav>
       </Container>
     </Navbar>
