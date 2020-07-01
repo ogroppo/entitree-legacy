@@ -75,14 +75,14 @@
     }
     .externalLinks {
       position: absolute;
-      bottom: 0;
+      bottom: 4px;
       left: 5px;
       height: 16px;
       a {
+        padding: 1px;
         margin-right: 5px;
         display: inline-block;
-        height: 16px;
-        width: 16px;
+        line-height: 1;
         img {
           vertical-align: top;
           height: 16px;
@@ -147,17 +147,23 @@
   .childrenCount {
     top: 100%;
   }
-  .next {
+  .next,
+  .prev {
     position: absolute;
     border-radius: 10px;
     font-size: 14px;
     top: 110%;
-    right: 0;
     svg {
       top: -2px;
       font-size: 16px;
       position: relative;
     }
+  }
+  .next {
+    right: 0;
+  }
+  .prev {
+    left: 0;
   }
 }
 

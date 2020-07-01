@@ -11,10 +11,14 @@ import React, {
 import { TransformComponent } from "react-zoom-pan-pinch";
 import getItems from "../../wikidata/getItems";
 import { hierarchy } from "d3-hierarchy";
-import { CARD_WIDTH, SIBLING_SPOUSE_SEPARATION } from "../../constants/tree";
+import {
+  CARD_WIDTH,
+  SIBLING_SPOUSE_SEPARATION,
+  MAX_LEVEL_ITEMS,
+} from "../../constants/tree";
 import Node from "../Node/Node";
 import Rel from "../Rel/Rel";
-import { CHILD_ID, FAMILY_IDS_MAP } from "../../constants/properties";
+import { CHILD_ID } from "../../constants/properties";
 import graphReducer, { initialState } from "./graphReducer";
 import { Button } from "react-bootstrap";
 import { FiMinus, FiPlus, FiPrinter } from "react-icons/fi";
@@ -25,6 +29,7 @@ import filterSpouses from "../../lib/filterSpouses";
 import addEntityConnectors from "../../lib/addEntityConnectors";
 import getUpMap from "../../wikidata/getUpMap";
 import setPageTitle from "../../lib/setPageTitle";
+import last from "../../lib/last";
 
 function Graph({
   currentEntity,
@@ -202,10 +207,10 @@ function Graph({
       if (currentProp.id === CHILD_ID) {
         filterSpouses(node);
       }
-      if (node.children.length > 20) {
+      if (node.children.length > MAX_LEVEL_ITEMS) {
         node._allChildren = [...node.children];
-        node.children = node.children.slice(0, 20);
-        node.children[node.children.length - 1].nextIndex = 21;
+        node.children = node.children.slice(0, MAX_LEVEL_ITEMS);
+        last(node.children).nextIndex = MAX_LEVEL_ITEMS;
       }
       dispatchGraph({ type: "expandParents", node });
     } catch (error) {
@@ -213,14 +218,23 @@ function Graph({
     }
   };
 
-  const showMoreParents = (node) => {
-    node.parent.children = node.parent._allChildren.slice(
-      node.nextIndex,
-      node.nextIndex + 20
-    );
-    node.nextIndex += 20;
-    console.log(node);
+  const showMoreRightParents = (node) => {
+    const nextIndex = node.nextIndex + MAX_LEVEL_ITEMS;
+    const prevIndex = node.nextIndex;
+    node.parent.children = node.parent._allChildren.slice(prevIndex, nextIndex);
+    node.parent.children[0].prevIndex = prevIndex > 0 ? prevIndex : null;
+    last(node.parent.children).nextIndex =
+      nextIndex < node.parent._allChildren.length ? nextIndex : null;
+    dispatchGraph({ type: "moreParents", node });
+  };
 
+  const showMoreLeftParents = (node) => {
+    const prevIndex = node.prevIndex - MAX_LEVEL_ITEMS;
+    const nextIndex = node.prevIndex;
+    node.parent.children = node.parent._allChildren.slice(prevIndex, nextIndex);
+    node.parent.children[0].prevIndex = prevIndex > 0 ? prevIndex : null;
+    last(node.parent.children).nextIndex =
+      nextIndex < node.parent._allChildren.length ? nextIndex : null;
     dispatchGraph({ type: "moreParents", node });
   };
 
@@ -495,8 +509,10 @@ function Graph({
                   <Node
                     key={node.treeId}
                     index={index}
+                    //debug
                     currentProp={currentProp}
-                    showMoreParents={showMoreParents}
+                    showMoreRightParents={showMoreRightParents}
+                    showMoreLeftParents={showMoreLeftParents}
                     toggleSpouses={(node) => {
                       centerPoint(node.x);
                       toggleSpouses(node);

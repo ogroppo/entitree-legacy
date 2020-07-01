@@ -27,27 +27,15 @@ export default function Node({
   toggleSpouses,
   setFocusedNode,
   focusedNode,
-  showMoreParents,
+  showMoreLeftParents,
+  showMoreRightParents,
   debug,
 }) {
-  //console.log(node);
+  if (debug) console.log(node);
 
   //delay image rendering every 50 images of about 500ms
   const [showImage, setShowImage] = useState(false);
   const [genderColors, setGenderColors] = useState(false);
-
-  useEffect(() => {
-    let timer;
-    if (index !== undefined) {
-      let delay = Math.floor(index / 50) * 500;
-      timer = setTimeout(() => {
-        setShowImage(true);
-      }, delay);
-    } else {
-      setShowImage(true);
-    }
-    return () => clearTimeout(timer);
-  }, []);
 
   const [imageIndex, setImageIndex] = useState(0);
   const nextImage = () => {
@@ -80,26 +68,21 @@ export default function Node({
         style={{ height: IMAGE_SIZE, width: IMAGE_SIZE }}
         onClick={nextImage}
       >
-        {!images || !images.length ? (
-          <span className="defaultImgMessage">no image</span>
-        ) : (
+        {!images ||
+          (!images.length && (
+            <span className="defaultImgMessage">no image</span>
+          ))}
+        {images && !!images.length && (
           <>
-            {!showImage && (
-              <span className="defaultImgMessage">loading image</span>
+            {images[imageIndex] && (
+              <img
+                alt={images[imageIndex].alt}
+                src={images[imageIndex].url}
+                title={images[imageIndex].alt}
+              />
             )}
-            {showImage && (
-              <>
-                {images[imageIndex] && (
-                  <img
-                    alt={images[imageIndex].alt}
-                    src={images[imageIndex].url}
-                    title={images[imageIndex].alt}
-                  />
-                )}
-                {images && images.length > 1 && (
-                  <span className="imgMore">+{images.length - 1}</span>
-                )}
-              </>
+            {images && images.length > 1 && (
+              <span className="imgMore">+{images.length - 1}</span>
             )}
           </>
         )}
@@ -187,12 +170,22 @@ export default function Node({
         toggleFn={toggleChildren}
         className="childrenCount"
       />
+      {node.prevIndex && (
+        <Button
+          className={`prev`}
+          variant={"warning"}
+          size="sm"
+          onClick={() => showMoreLeftParents(node)}
+        >
+          <BsPlusCircle /> {node.prevIndex} more
+        </Button>
+      )}
       {node.nextIndex && (
         <Button
           className={`next`}
           variant={"warning"}
           size="sm"
-          onClick={() => showMoreParents(node)}
+          onClick={() => showMoreRightParents(node)}
         >
           <BsPlusCircle /> {node.parent._allChildren.length - node.nextIndex}{" "}
           more
@@ -216,14 +209,10 @@ function SiblingCounter({ ids, node, toggleFn, className }) {
         setDisabled(false);
       }}
     >
-      {node._siblingsExpanded ? (
-        <FiChevronRight />
-      ) : (
-        <>
-          <div>{ids.length}</div>
-          <FiChevronLeft />
-        </>
-      )}
+      <div>
+        <div>{ids.length}</div>
+        {node._siblingsExpanded ? <FiChevronRight /> : <FiChevronLeft />}
+      </div>
     </Button>
   );
 }
@@ -242,13 +231,10 @@ function ParentCounter({ ids, node, toggleFn, className }) {
         setDisabled(false);
       }}
     >
-      {node._parentsExpanded ? (
-        <FiChevronDown />
-      ) : (
-        <>
-          {ids.length} <FiChevronUp />
-        </>
-      )}
+      <div>
+        <span className="mr-1">{ids.length}</span>
+        {node._parentsExpanded ? <FiChevronDown /> : <FiChevronUp />}
+      </div>
     </Button>
   );
 }
@@ -267,14 +253,16 @@ function SpouseCounter({ ids, node, toggleFn, className }) {
         setDisabled(false);
       }}
     >
-      {node._spousesExpanded ? (
-        <FiChevronLeft />
-      ) : (
-        <>
-          <div>{ids.length}</div>
-          <FiChevronRight />
-        </>
-      )}
+      <div>
+        <div>{ids.length}</div>
+        {node._spousesExpanded ? (
+          <FiChevronLeft />
+        ) : (
+          <>
+            <FiChevronRight />
+          </>
+        )}
+      </div>
     </Button>
   );
 }
@@ -293,13 +281,10 @@ function ChildCounter({ ids, node, toggleFn, className }) {
         setDisabled(false);
       }}
     >
-      {node._childrenExpanded ? (
-        <FiChevronUp />
-      ) : (
-        <>
-          {ids.length} <FiChevronDown />
-        </>
-      )}
+      <div>
+        <span className="mr-1">{ids.length}</span>
+        {node._childrenExpanded ? <FiChevronUp /> : <FiChevronDown />}
+      </div>
     </Button>
   );
 }
