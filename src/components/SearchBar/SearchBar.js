@@ -60,6 +60,18 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
     })();
   }, []);
 
+  //reload entity on lang change
+  React.useEffect(() => {
+    (async () => {
+      try {
+        let { q } = qs.parse(location.search);
+        await loadEntity(q);
+      } catch (error) {
+        showError(error);
+      }
+    })();
+  }, [currentLang]);
+
   const loadEntity = async (id) => {
     setLoadingEntity(true);
     const entity = await getItem(id, currentLang.code);
