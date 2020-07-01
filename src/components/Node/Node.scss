@@ -41,8 +41,9 @@
       border-radius: 15px;
       font-size: 10px;
       line-height: 1;
-      padding: 2px 4px;
+      padding: 2px 4px 3px;
       cursor: pointer;
+      z-index: 1;
     }
   }
   .content {

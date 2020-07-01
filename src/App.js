@@ -22,6 +22,7 @@ export default class App extends Component {
     infos: [],
     loadingLang: true,
     currentLang: DEFAULT_LANG,
+    hasLanguageChanged: 0,
   };
 
   componentDidMount() {
@@ -49,7 +50,10 @@ export default class App extends Component {
   };
 
   setCurrentLang = (currentLang) => {
-    this.setState({ currentLang });
+    this.setState({
+      currentLang,
+      hasLanguageChanged: this.state.hasLanguageChanged + 1,
+    });
   };
 
   showError = (error) => {
@@ -77,10 +81,22 @@ export default class App extends Component {
 
   render() {
     const { showError, showInfo, setCurrentLang } = this;
-    const { currentLang, errors, infos, loadingLang } = this.state;
+    const {
+      currentLang,
+      errors,
+      infos,
+      loadingLang,
+      hasLanguageChanged,
+    } = this.state;
     return (
       <AppContext.Provider
-        value={{ showError, showInfo, currentLang, setCurrentLang }}
+        value={{
+          showError,
+          showInfo,
+          setCurrentLang,
+          currentLang,
+          hasLanguageChanged,
+        }}
       >
         <Router history={browserHistory}>
           <div className="App">
