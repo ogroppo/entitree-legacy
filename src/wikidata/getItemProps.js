@@ -5,23 +5,22 @@ import { DEFAULT_LANG } from "../constants/langs";
 export default async function getItemProps(id, languageCode) {
   const url = await new Promise(function (resolve, reject) {
     try {
-      const query = `SELECT DISTINCT ?claim ?claimLabel WHERE {
-      BIND(wd:${id} as ?item)
-      {
-        ?item ?p ?statement.
-        ?claim wikibase:claim ?p.
-        ?claim wikibase:propertyType wikibase:WikibaseItem .
-      }
-      SERVICE wikibase:label { bd:serviceParam wikibase:language "${languageCode}, ${DEFAULT_LANG.code}". }
-    }`;
-
-      //REVERSE PROPS TERRIBLY SLOW????
-      // UNION {
-      //   ?parent ?p ?statement.
-      //   ?statement ?_ ?item .
-      //   ?claim wikibase:claim ?p.
-      //   ?claim wikibase:propertyType wikibase:WikibaseItem .
-      // }
+      const query = `
+      SELECT DISTINCT ?prop ?propLabel WHERE {
+        BIND(wd:${id} as ?item)
+        {
+          ?item ?p ?child.
+          ?prop wikibase:claim ?p;
+            wikibase:propertyType wikibase:WikibaseItem.
+        }
+        UNION
+        {
+          ?parent ?p ?item.
+          ?prop wikibase:directClaim ?p.
+          MINUS { ?parent rdf:type ?pt. }
+        }
+        SERVICE wikibase:label { bd:serviceParam wikibase:language "${languageCode}, ${DEFAULT_LANG.code}". }
+      }`.trim();
 
       const url = wdk.sparqlQuery(query);
       resolve(url);
@@ -34,10 +33,10 @@ export default async function getItemProps(id, languageCode) {
     .get(url)
     .then(({ data }) => wdk.simplify.sparqlResults(data))
     .then((results) => {
-      let props = [];
-      results.forEach(({ claim: { value: id, label } }) => {
-        props.push({ id, label });
-      });
+      const props = results.map(({ prop: { value: id, label } }) => ({
+        id,
+        label,
+      }));
       return props;
     });
 }

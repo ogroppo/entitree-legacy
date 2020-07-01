@@ -4,8 +4,9 @@ export default function filterSpouses(originNode) {
   originNode.children.forEach(({ data: { id } }) => (potentialSpouses[id] = 1));
 
   originNode.children.forEach((child) => {
-    child.data.rightIds = child.data.rightIds.filter(
-      (spouseId) => !potentialSpouses[spouseId]
-    );
+    if (child.data.rightIds)
+      child.data.rightIds = child.data.rightIds.filter(
+        (spouseId) => !potentialSpouses[spouseId]
+      );
   });
 }

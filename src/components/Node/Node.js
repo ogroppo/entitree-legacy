@@ -133,9 +133,9 @@ export default function Node({
           </div>
         )}
       </div>
-      {node._parentsExpanded && currentProp && (
-        <div className="upPropLabel" style={{ top: -CARD_VERTICAL_GAP / 2 }}>
-          <span>{currentProp.label}</span>
+      {node.isParent && node.propLabel && (
+        <div className="upPropLabel" style={{ bottom: -CARD_VERTICAL_GAP / 2 }}>
+          <span>{node.propLabel}</span>
         </div>
       )}
       {node._childrenExpanded && currentProp && (
@@ -159,7 +159,7 @@ export default function Node({
         className="spouseCount"
       />
       <ParentCounter
-        ids={node.data.upIds}
+        ids={node.data.upConnectors}
         node={node}
         toggleFn={toggleParents}
         className="parentCount"

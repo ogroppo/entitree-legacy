@@ -41,16 +41,11 @@ export async function getEntitiesFromWikidata({ ids, languages, props }) {
   return allentities;
 }
 
-export default async function getItems(
-  ids,
-  languageCode,
-  propId,
-  options = {}
-) {
+export default async function getItems(ids, languageCode, options = {}) {
   if (!ids || !ids.length) throw new Error("You need valid ids to getItems");
 
   const allentities = await getEntitiesFromWikidata({
-    ids: ids,
+    ids,
     languages: [languageCode].concat(DEFAULT_LANGS_CODES),
     props: ["labels", "descriptions", "claims", "sitelinks/urls"],
   });
@@ -59,12 +54,12 @@ export default async function getItems(
     ids.map(async (id) => {
       let entity = await formatEntity(allentities[id], languageCode);
       //siblings and spouses don't need connectors, so no propId is passed
-      if (propId) {
-        entity = addEntityConnectors(entity, propId, options);
-      }
+
       return entity;
     })
   );
+
+  await addEntityConnectors(entities, languageCode, options);
 
   return entities;
 }
