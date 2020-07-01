@@ -2,6 +2,12 @@
   .appBody {
     height: 100vh;
   }
+  @media (min-width: 576px) {
+    .container {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
   .messages {
     position: fixed;
     z-index: 999;
