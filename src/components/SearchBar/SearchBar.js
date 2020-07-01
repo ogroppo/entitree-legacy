@@ -21,19 +21,26 @@ import getItemProps from "../../wikidata/getItemProps";
 import search from "../../wikidata/search";
 import { DEFAULT_LANG } from "../../constants/langs";
 
-export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
-  const { currentLang, showError, hasLanguageChanged } = useContext(AppContext);
+export default function SearchBar() {
+  const {
+    currentLang,
+    showError,
+    hasLanguageChanged,
+    setCurrentEntity,
+    setCurrentProp,
+    currentProp,
+    currentEntity,
+  } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = React.useState("");
   const [entity, setEntity] = React.useState(null);
-  const [prop, setProp] = React.useState(null);
   const [loadingEntity, setLoadingEntity] = React.useState(false);
   const [loadingProps, setLoadingProps] = React.useState(false);
+  const [loadingProp, setLoadingProp] = React.useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = React.useState(false);
   const [searchResults, setSearchResults] = React.useState([]);
   const [showSuggestions, setShowSuggestions] = React.useState();
   const [fromKeyboard, setFromKeyboard] = React.useState(true);
   const [availableProps, setAvailableProps] = React.useState([]);
-  const [show, setShow] = React.useState(false);
 
   //Check on mount if there are params in the url
   const location = useLocation();
@@ -42,17 +49,16 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
       try {
         let { q, p } = qs.parse(location.search);
         if (q) {
-          //showInfo({ message: "Loading entity" });
           await loadEntity(q);
-        }
-        if (p) {
-          setLoadingProps(true);
-          const { id, label } = await getItem(p, currentLang.code);
-          setProp({
-            id,
-            label,
-          });
-          setLoadingProps(false);
+          if (p) {
+            setLoadingProp(true); //not used
+            const { id, label } = await getItem(p, currentLang.code);
+            setCurrentProp({
+              id,
+              label,
+            });
+            setLoadingProp(false);
+          }
         }
       } catch (error) {
         showError(error);
@@ -79,6 +85,7 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
     setFromKeyboard(false);
     setSearchTerm(entity.label);
     setEntity(entity);
+    setCurrentEntity(entity); //They used to have separate behaviours but can be merged now, I think
   };
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -106,29 +113,30 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
   //Get new props on entity change
   React.useEffect(() => {
     if (entity) {
-      setProp(null);
+      setCurrentProp(null);
       (async () => {
         setLoadingProps(true);
         try {
           let itemProps = await getItemProps(entity.id, currentLang.code);
 
-          //prop belongs to family stuff
-          if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
+          //currentProp belongs to family stuff
+          if (itemProps.some((currentProp) => FAMILY_IDS_MAP[currentProp.id])) {
             //Remove all family props
             let translatedLabel;
-            itemProps = itemProps.filter((prop) => {
-              if (prop.id === FAMILY_PROP.id) translatedLabel = prop.label;
-              return !FAMILY_IDS_MAP[prop.id];
+            itemProps = itemProps.filter((currentProp) => {
+              if (currentProp.id === FAMILY_PROP.id)
+                translatedLabel = currentProp.label;
+              return !FAMILY_IDS_MAP[currentProp.id];
             });
 
             if (translatedLabel) FAMILY_PROP.label = translatedLabel;
 
-            //Add the Family tree fav prop
+            //Add the Family tree fav currentProp
             itemProps = [FAMILY_PROP].concat(itemProps);
 
-            //Select the family tree if no other prop is selected, or if it's a family prop
-            if (!prop || FAMILY_IDS_MAP[prop.id]) {
-              setProp(FAMILY_PROP);
+            //Select the family tree if no other currentProp is selected, or if it's a family currentProp
+            if (!currentProp || FAMILY_IDS_MAP[currentProp.id]) {
+              setCurrentProp(FAMILY_PROP);
             }
           }
 
@@ -146,10 +154,9 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
   React.useEffect(() => {
     if (entity) {
       const query = { q: entity.id };
-      setCurrentEntity(entity);
-      if (prop) {
-        query.p = prop.id;
-        setCurrentProp(prop);
+
+      if (currentProp) {
+        query.p = currentProp.id;
       }
       if (currentLang.code !== DEFAULT_LANG.code) query.l = currentLang.code;
       const searchString = qs.stringify(query);
@@ -157,7 +164,7 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
         search: "?" + searchString,
       });
     }
-  }, [entity, prop]);
+  }, [currentEntity, currentProp]);
 
   return (
     <Form className="SearchBar">
@@ -185,15 +192,15 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
                   >
                     {loadingProps
                       ? "loading props..."
-                      : prop
-                      ? prop.overrideLabel || prop.label
+                      : currentProp
+                      ? currentProp.overrideLabel || currentProp.label
                       : "Choose a property "}
                   </Dropdown.Toggle>
                   <Dropdown.Menu alignRight>
                     {availableProps.map((prop) => (
                       <Dropdown.Item
                         key={prop.id + (prop.isFav ? "_fav" : "")}
-                        onClick={() => setProp(prop)}
+                        onClick={() => setCurrentProp(prop)}
                       >
                         {prop.isFav && <FaStar />}{" "}
                         {prop.overrideLabel || prop.label}

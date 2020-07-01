@@ -27,15 +27,19 @@ import getUpMap from "../../wikidata/getUpMap";
 import setPageTitle from "../../lib/setPageTitle";
 
 function Graph({
-  currentEntity,
-  currentProp,
   setTransform,
   zoomIn,
   zoomOut,
   scale: currentScale,
   ...props
 }) {
-  const { showError, currentLang } = useContext(AppContext);
+  const {
+    showError,
+    currentLang,
+    currentEntity,
+    currentProp,
+    setCurrentEntity,
+  } = useContext(AppContext);
 
   const [graph, dispatchGraph] = useReducer(graphReducer, initialState);
   const [focusedNode, setFocusedNode] = useState();
@@ -64,6 +68,8 @@ function Graph({
     if (currentEntity) {
       (async () => {
         try {
+          //Set a loader here!! otherwise
+
           //property has been selected from dropdown
           if (currentProp) {
             upMap.current = await getUpMap(currentEntity.id, currentProp.id);
@@ -350,6 +356,10 @@ function Graph({
     setTransform(calculatedPositionX, calculatedPositionY, scale);
   };
 
+  const recenter = (focusedNode) => {
+    setCurrentEntity(focusedNode.data);
+  };
+
   const {
     root,
     childTree,
@@ -511,7 +521,7 @@ function Graph({
         <Button
           variant="light"
           onClick={() => {
-            centerPoint(focusedNode.x, focusedNode.y);
+            recenter(focusedNode);
           }}
         >
           <RiFocus3Line />
@@ -532,7 +542,7 @@ function Graph({
   );
 }
 
-export default function GraphWrapper({ currentEntity, currentProp }) {
+export default function GraphWrapper() {
   return (
     <div className="GraphWrapper">
       <TransformWrapper
@@ -545,13 +555,7 @@ export default function GraphWrapper({ currentEntity, currentProp }) {
           maxScale: 2,
         }}
       >
-        {(props) => (
-          <Graph
-            {...props}
-            currentEntity={currentEntity}
-            currentProp={currentProp}
-          />
-        )}
+        {(props) => <Graph {...props} />}
       </TransformWrapper>
     </div>
   );

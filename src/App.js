@@ -23,6 +23,8 @@ export default class App extends Component {
     loadingLang: true,
     currentLang: DEFAULT_LANG,
     hasLanguageChanged: 0,
+    currentEntity: null,
+    currentProp: null,
   };
 
   componentDidMount() {
@@ -47,6 +49,14 @@ export default class App extends Component {
 
   componentDidCatch = (error) => {
     this.showError(error);
+  };
+
+  setCurrentEntity = (currentEntity) => {
+    this.setState({ currentEntity });
+  };
+
+  setCurrentProp = (currentProp) => {
+    this.setState({ currentProp });
   };
 
   setCurrentLang = (currentLang) => {
@@ -80,12 +90,20 @@ export default class App extends Component {
   };
 
   render() {
-    const { showError, showInfo, setCurrentLang } = this;
+    const {
+      showError,
+      showInfo,
+      setCurrentLang,
+      setCurrentProp,
+      setCurrentEntity,
+    } = this;
     const {
       currentLang,
       errors,
       infos,
       loadingLang,
+      currentEntity,
+      currentProp,
       hasLanguageChanged,
     } = this.state;
     return (
@@ -94,7 +112,11 @@ export default class App extends Component {
           showError,
           showInfo,
           setCurrentLang,
+          setCurrentProp,
+          setCurrentEntity,
           currentLang,
+          currentProp,
+          currentEntity,
           hasLanguageChanged,
         }}
       >
