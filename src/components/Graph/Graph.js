@@ -110,8 +110,10 @@ function Graph({
               parentTree,
             });
 
-            toggleParents(parentTree);
-            toggleChildren(childTree);
+            toggleParents(parentTree, { noRecenter: true });
+            toggleChildren(childTree, { noRecenter: true });
+            toggleRootSiblings(root, { noRecenter: true });
+            toggleRootSpouses(root, { noRecenter: true });
           } else {
             //currentEntity has changed from searchBox
             const root = hierarchy(currentEntity);
@@ -132,195 +134,218 @@ function Graph({
     }
   }, [currentEntity, currentProp]);
 
-  const toggleChildren = async (node) => {
+  const toggleChildren = async (node, options = {}) => {
+    if (!node.data.downIds || !node.data.downIds.length) return;
+
     if (node._childrenExpanded) {
-      return dispatchGraph({ type: "collapseChildren", node });
-    }
-    //has cached children
-    if (node._children) {
-      return dispatchGraph({ type: "expandChildren", node });
-    }
-    try {
-      if (!node.data.downIds || !node.data.downIds.length) return;
-
-      const entities = await getItems(
-        node.data.downIds,
-        currentLang.code,
-        currentProp.id,
-        {
-          addDownIds: true,
-          addRightIds: currentProp.id === CHILD_ID,
-        }
-      );
-
-      entities.forEach((entity, index) => {
-        const childNode = hierarchy(entity);
-        childNode.depth = node.depth + 1;
-        childNode.parent = node;
-        childNode.treeId = getNodeUniqueId(childNode, index);
-        childNode.isChild = true;
-        if (!node.children) {
-          node.children = [];
-        }
-        node.children.push(childNode);
-      });
-
+      dispatchGraph({ type: "collapseChildren", node });
+    } else if (node._children) {
       dispatchGraph({ type: "expandChildren", node });
-    } catch (error) {
-      showError(error);
-    }
-  };
+    } else {
+      try {
+        const entities = await getItems(
+          node.data.downIds,
+          currentLang.code,
+          currentProp.id,
+          {
+            addDownIds: true,
+            addRightIds: currentProp.id === CHILD_ID,
+          }
+        );
 
-  const toggleParents = async (node) => {
-    if (node._parentsExpanded) {
-      return dispatchGraph({ type: "collapseParents", node });
-    }
-    //has cached parents
-    if (node._parents) {
-      return dispatchGraph({ type: "expandParents", node });
-    }
+        entities.forEach((entity, index) => {
+          const childNode = hierarchy(entity);
+          childNode.depth = node.depth + 1;
+          childNode.parent = node;
+          childNode.treeId = getNodeUniqueId(childNode, index);
+          childNode.isChild = true;
+          if (!node.children) {
+            node.children = [];
+          }
+          node.children.push(childNode);
+        });
 
-    try {
-      if (!node.data.upIds || !node.data.upIds.length) return;
-      const entities = await getItems(
-        node.data.upIds,
-        currentLang.code,
-        currentProp.id,
-        {
-          upMap: upMap.current,
-          addLeftIds: currentProp.id === CHILD_ID,
-          addRightIds: currentProp.id === CHILD_ID,
-        }
-      );
-
-      entities.forEach((entity, index) => {
-        const parentNode = hierarchy(entity);
-        parentNode.isParent = true;
-        parentNode.depth = node.depth - 1;
-        parentNode.parent = node;
-        parentNode.treeId = getNodeUniqueId(parentNode, index);
-        if (!node.children) {
-          node.children = [];
-        }
-        node.children.push(parentNode);
-      });
-      if (currentProp.id === CHILD_ID) {
-        filterSpouses(node);
+        dispatchGraph({ type: "expandChildren", node });
+      } catch (error) {
+        showError(error);
       }
+    }
+    if (!options.noRecenter) centerPoint(node.x, node.y);
+  };
+
+  const toggleParents = async (node, options = {}) => {
+    if (!node.data.upIds || !node.data.upIds.length) return;
+
+    if (node._parentsExpanded) {
+      dispatchGraph({ type: "collapseParents", node });
+    } else if (node._parents) {
       dispatchGraph({ type: "expandParents", node });
-    } catch (error) {
-      showError(error);
+    } else {
+      try {
+        const entities = await getItems(
+          node.data.upIds,
+          currentLang.code,
+          currentProp.id,
+          {
+            upMap: upMap.current,
+            addLeftIds: currentProp.id === CHILD_ID,
+            addRightIds: currentProp.id === CHILD_ID,
+          }
+        );
+
+        entities.forEach((entity, index) => {
+          const parentNode = hierarchy(entity);
+          parentNode.isParent = true;
+          parentNode.depth = node.depth - 1;
+          parentNode.parent = node;
+          parentNode.treeId = getNodeUniqueId(parentNode, index);
+          if (!node.children) {
+            node.children = [];
+          }
+          node.children.push(parentNode);
+        });
+        if (currentProp.id === CHILD_ID) {
+          filterSpouses(node);
+        }
+        dispatchGraph({ type: "expandParents", node });
+      } catch (error) {
+        showError(error);
+      }
     }
+
+    if (!options.noRecenter) centerPoint(node.x, node.y);
   };
 
-  const toggleSpouses = async (node) => {
+  const toggleSpouses = async (node, options = {}) => {
+    if (!node.data.rightIds || !node.data.rightIds.length) return;
+
+    var lastSpouse;
     if (node._spousesExpanded) {
-      return dispatchGraph({ type: "collapseSpouses", node });
-    }
-    if (node._spouses) {
-      return dispatchGraph({ type: "expandSpouses", node });
-    }
-    try {
-      if (!node.data.rightIds || !node.data.rightIds.length) return;
-      const entities = await getItems(node.data.rightIds, currentLang.code);
-      entities.forEach((entity, index) => {
-        const childNode = hierarchy(entity);
-        childNode.depth = node.depth;
-        childNode.isSpouse = true;
-        childNode.virtualParent = node;
-        childNode.parent = node.parent;
-        childNode.treeId = getNodeUniqueId(childNode, index, "spouse");
-        const childIndex = node.parent.children.indexOf(node) + 1;
-        node.parent.children.splice(childIndex, 0, childNode);
-      });
+      dispatchGraph({ type: "collapseSpouses", node });
+    } else if (node._spouses) {
       dispatchGraph({ type: "expandSpouses", node });
-    } catch (error) {
-      showError(error);
+    } else {
+      try {
+        const entities = await getItems(node.data.rightIds, currentLang.code);
+        entities.forEach((entity, index) => {
+          const spouse = hierarchy(entity);
+          spouse.depth = node.depth;
+          spouse.isSpouse = true;
+          spouse.virtualParent = node;
+          spouse.parent = node.parent;
+          spouse.treeId = getNodeUniqueId(spouse, index, "spouse");
+          const spouseIndex = node.parent.children.indexOf(node) + 1;
+          node.parent.children.splice(spouseIndex, 0, spouse);
+          lastSpouse = spouse;
+        });
+        dispatchGraph({ type: "expandSpouses", node });
+      } catch (error) {
+        showError(error);
+      }
     }
+
+    let newx = node.x;
+    if (node._spousesExpanded) newx = (newx + lastSpouse.x) / 2;
+    if (!options.noRecenter) centerPoint(newx);
   };
 
-  const toggleSiblings = async (node) => {
+  const toggleSiblings = async (node, options = {}) => {
+    if (!node.data.leftIds || !node.data.leftIds.length) return;
+
+    var lastSibling;
     if (node._siblingsExpanded) {
-      return dispatchGraph({ type: "collapseSiblings", node });
-    }
-
-    if (node._siblings) {
-      return dispatchGraph({ type: "expandSiblings", node });
-    }
-
-    try {
-      if (!node.data.leftIds || !node.data.leftIds.length) return;
-      const entities = await getItems(node.data.leftIds, currentLang.code);
-      entities.forEach((entity, index) => {
-        const childNode = hierarchy(entity);
-        childNode.depth = node.depth;
-        childNode.isSibling = true;
-        childNode.virtualParent = node;
-        childNode.parent = node.parent;
-        childNode.treeId = getNodeUniqueId(childNode, index, "sibling");
-        const childIndex = node.parent.children.indexOf(node);
-        node.parent.children.splice(childIndex, 0, childNode);
-      });
+      dispatchGraph({ type: "collapseSiblings", node });
+    } else if (node._siblings) {
       dispatchGraph({ type: "expandSiblings", node });
-    } catch (error) {
-      showError(error);
+    } else {
+      try {
+        const entities = await getItems(node.data.leftIds, currentLang.code);
+        entities.forEach((entity, index) => {
+          const sibling = hierarchy(entity);
+          sibling.depth = node.depth;
+          sibling.isSibling = true;
+          sibling.virtualParent = node;
+          sibling.parent = node.parent;
+          sibling.treeId = getNodeUniqueId(sibling, index, "sibling");
+          const siblingIndex = node.parent.children.indexOf(node);
+          node.parent.children.splice(siblingIndex, 0, sibling);
+          lastSibling = sibling;
+        });
+        dispatchGraph({ type: "expandSiblings", node });
+      } catch (error) {
+        showError(error);
+      }
     }
+
+    let newx = node.x;
+    if (node._siblingsExpanded) newx = (newx + lastSibling.x) / 2;
+    if (!options.noRecenter) centerPoint(newx);
   };
 
-  const toggleRootSpouses = async () => {
-    const { root } = graph;
+  const toggleRootSpouses = async (root, options = {}) => {
+    if (!root.data.rightIds || !root.data.rightIds.length) return;
+
     if (root._spousesExpanded) {
-      return dispatchGraph({ type: "collapseRootSpouses", root });
-    }
-    if (root._spouses) {
-      return dispatchGraph({ type: "expandRootSpouses", root });
+      dispatchGraph({ type: "collapseRootSpouses", root });
+    } else if (root._spouses) {
+      dispatchGraph({ type: "expandRootSpouses", root });
+    } else {
+      try {
+        const entities = await getItems(root.data.rightIds, currentLang.code);
+        const baseX = CARD_WIDTH * SIBLING_SPOUSE_SEPARATION;
+        entities.forEach((entity, index) => {
+          const spouseNode = hierarchy(entity);
+          spouseNode.isSpouse = true;
+          spouseNode.x = baseX + baseX * index;
+          spouseNode.y = 0;
+          spouseNode.depth = 0;
+          spouseNode.parent = root;
+          spouseNode.treeId = getNodeUniqueId(spouseNode, index, "spouse");
+          if (!root.spouses) root.spouses = [];
+          root.spouses.push(spouseNode);
+        });
+        dispatchGraph({ type: "expandRootSpouses", root });
+      } catch (error) {
+        showError(error);
+      }
     }
 
-    try {
-      const entities = await getItems(root.data.rightIds, currentLang.code);
-      const baseX = CARD_WIDTH * SIBLING_SPOUSE_SEPARATION;
-      entities.forEach((entity, index) => {
-        const spouseNode = hierarchy(entity);
-        spouseNode.isSpouse = true;
-        spouseNode.x = baseX + baseX * index;
-        spouseNode.y = 0;
-        spouseNode.depth = 0;
-        spouseNode.parent = root;
-        spouseNode.treeId = getNodeUniqueId(spouseNode, index, "spouse");
-        if (!root.spouses) root.spouses = [];
-        root.spouses.push(spouseNode);
-      });
-      dispatchGraph({ type: "expandRootSpouses", root });
-    } catch (error) {
-      showError(error);
-    }
+    let newx = root.x;
+    if (root.spouses)
+      newx = (newx + root.spouses[root.spouses.length - 1].x) / 2;
+    if (!options.noRecenter) centerPoint(newx);
   };
 
-  const toggleRootSiblings = async () => {
-    const { root } = graph;
+  const toggleRootSiblings = async (root, options = {}) => {
+    if (!root.data.leftIds || !root.data.leftIds.length) return;
+
     if (root._siblingsExpanded) {
-      return dispatchGraph({ type: "collapseRootSiblings", root });
-    }
-    if (root._siblings) {
-      return dispatchGraph({ type: "expandRootSiblings", root });
+      dispatchGraph({ type: "collapseRootSiblings", root });
+    } else if (root._siblings) {
+      dispatchGraph({ type: "expandRootSiblings", root });
+    } else {
+      try {
+        const entities = await getItems(root.data.leftIds, currentLang.code);
+        const baseX = -(CARD_WIDTH * SIBLING_SPOUSE_SEPARATION);
+        entities.forEach((entity, index, { length }) => {
+          const siblingNode = hierarchy(entity);
+          siblingNode.isSibling = true;
+          siblingNode.x = baseX * (length - index);
+          siblingNode.y = 0;
+          siblingNode.treeId = getNodeUniqueId(siblingNode, index, "sibling");
+          if (!root.siblings) root.siblings = [];
+          root.siblings.push(siblingNode);
+        });
+        dispatchGraph({ type: "expandRootSiblings", root });
+      } catch (error) {
+        showError(error);
+      }
     }
 
-    try {
-      const entities = await getItems(root.data.leftIds, currentLang.code);
-      const baseX = -(CARD_WIDTH * SIBLING_SPOUSE_SEPARATION);
-      entities.forEach((entity, index, { length }) => {
-        const siblingNode = hierarchy(entity);
-        siblingNode.isSibling = true;
-        siblingNode.x = baseX * (length - index);
-        siblingNode.y = 0;
-        siblingNode.treeId = getNodeUniqueId(siblingNode, index, "sibling");
-        if (!root.siblings) root.siblings = [];
-        root.siblings.push(siblingNode);
-      });
-      dispatchGraph({ type: "expandRootSiblings", root });
-    } catch (error) {
-      showError(error);
-    }
+    let newx = root.x;
+    if (root.siblings)
+      newx = (newx + root.siblings[root.siblings.length - 1].x) / 2;
+    if (!options.noRecenter) centerPoint(newx);
   };
 
   const fitTree = () => {
@@ -432,20 +457,16 @@ function Graph({
                   <Node
                     currentProp={currentProp}
                     toggleChildren={() => {
-                      centerPoint(0, 0);
                       toggleChildren(childTree);
                     }}
                     toggleParents={() => {
-                      centerPoint(0, 0);
                       toggleParents(parentTree);
                     }}
                     toggleSpouses={() => {
-                      centerPoint(0);
-                      toggleRootSpouses();
+                      toggleRootSpouses(root);
                     }}
                     toggleSiblings={() => {
-                      centerPoint(0);
-                      toggleRootSiblings();
+                      toggleRootSiblings(root);
                     }}
                     node={root}
                     setFocusedNode={setFocusedNode}
@@ -468,15 +489,12 @@ function Graph({
                     key={node.treeId}
                     currentProp={currentProp}
                     toggleChildren={(node) => {
-                      centerPoint(node.x, node.y);
                       toggleChildren(node);
                     }}
                     toggleSpouses={(node) => {
-                      centerPoint(node.x);
                       toggleSpouses(node);
                     }}
                     toggleSiblings={(node) => {
-                      centerPoint(node.x);
                       toggleSiblings(node);
                     }}
                     node={node}
@@ -490,16 +508,13 @@ function Graph({
                     index={index}
                     currentProp={currentProp}
                     toggleSpouses={(node) => {
-                      centerPoint(node.x);
                       toggleSpouses(node);
                     }}
                     toggleSiblings={(node) => {
-                      centerPoint(node.x);
                       toggleSiblings(node);
                     }}
                     toggleParents={(node) => {
                       toggleParents(node);
-                      centerPoint(node.x, node.y);
                     }}
                     node={node}
                     setFocusedNode={setFocusedNode}
@@ -543,8 +558,9 @@ function Graph({
 }
 
 export default function GraphWrapper() {
+  const { showGenderColor } = useContext(AppContext);
   return (
-    <div className="GraphWrapper">
+    <div className={`GraphWrapper ${showGenderColor ? "showGenderColor" : ""}`}>
       <TransformWrapper
         zoomIn={{ step: 20 }}
         zoomOut={{ step: 20 }}

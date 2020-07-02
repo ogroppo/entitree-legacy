@@ -5,6 +5,10 @@
     color: #212529;
     padding: 12px 0;
     margin: 0;
+
+    .shouldSelectProp {
+      //border-color: green;
+    }
   }
   .dropdown-toggle {
     border: 1px solid #ced4da;
@@ -21,7 +25,7 @@
   }
   .Suggestions {
     position: absolute;
-    top: 42px;
+    top: 50px;
     width: 100%;
     background-color: #f8f9fa;
     .searchingMessage {
