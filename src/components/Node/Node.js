@@ -33,14 +33,13 @@ export default function Node({
 }) {
   if (debug) console.log(node);
 
-  //delay image rendering every 50 images of about 500ms
+  //delay image rendering every 20 images of about 500ms
   const [showImage, setShowImage] = useState(false);
-  const [genderColors, setGenderColors] = useState(false);
 
   useEffect(() => {
     let timer;
     if (index !== undefined) {
-      let delay = Math.floor(index / 50) * 500;
+      let delay = Math.floor(index / 35) * 500;
       timer = setTimeout(() => {
         setShowImage(true);
       }, delay);
@@ -138,9 +137,9 @@ export default function Node({
         </div>
         {node.data.externalLinks && !!node.data.externalLinks.length && (
           <div className="externalLinks">
-            {node.data.externalLinks.map((link) => (
+            {node.data.externalLinks.map((link, index) => (
               <a
-                key={link.title}
+                key={node.treeId + index}
                 target="_blank"
                 title={link.title}
                 href={link.url}
@@ -237,9 +236,9 @@ function ParentCounter({ ids, node, toggleFn, className }) {
       <span className="chevron ml-1 mr-1">
         {node._parentsExpanded ? <FiChevronDown /> : <FiChevronUp />}
       </span>
-      <span>
+      {/* <span>
         <RiParentLine />
-      </span>
+      </span> */}
     </Button>
   );
 }
@@ -288,9 +287,9 @@ function ChildCounter({ ids, node, toggleFn, className }) {
       <span className="chevron ml-1 mr-1">
         {node._childrenExpanded ? <FiChevronUp /> : <FiChevronDown />}
       </span>
-      <span>
+      {/* <span>
         <MdChildCare />
-      </span>
+      </span> */}
     </Button>
   );
 }

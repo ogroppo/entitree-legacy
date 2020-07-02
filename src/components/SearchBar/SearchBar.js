@@ -48,18 +48,7 @@ export default function SearchBar() {
     (async () => {
       try {
         let { q, p } = qs.parse(location.search);
-        if (q) {
-          await loadEntity(q);
-          if (p) {
-            setLoadingProp(true); //not used
-            const { id, label } = await getItem(p, currentLang.code);
-            setCurrentProp({
-              id,
-              label,
-            });
-            setLoadingProp(false);
-          }
-        }
+        loadEntity(q, p);
       } catch (error) {
         showError(error);
       }
@@ -68,23 +57,35 @@ export default function SearchBar() {
 
   //reload entity on lang change
   React.useEffect(() => {
-    if (hasLanguageChanged)
+    if (hasLanguageChanged) {
       (async () => {
         try {
-          if (currentEntity) await loadEntity(currentEntity.id);
+          if (currentEntity)
+            await loadEntity(
+              currentEntity.id,
+              currentProp ? currentProp.id : null
+            );
         } catch (error) {
           showError(error);
         }
       })();
+    }
   }, [hasLanguageChanged]);
 
-  const loadEntity = async (id) => {
-    setLoadingEntity(true);
-    const currentEntity = await getItem(id, currentLang.code);
-    setFromKeyboard(false);
-    setSearchTerm(currentEntity.label);
-    setCurrentEntity(currentEntity);
-    setLoadingEntity(false);
+  const loadEntity = async (_currentEntitId, _currentPropId) => {
+    if (_currentEntitId) {
+      setLoadingEntity(true);
+      const _currentEntity = await getItem(_currentEntitId, currentLang.code);
+      setFromKeyboard(false);
+      setSearchTerm(_currentEntity.label);
+      setLoadingEntity(false);
+      let _currentProp;
+      if (_currentPropId) {
+        _currentProp = await getItem(_currentPropId, currentLang.code);
+      }
+      await loadProps(_currentEntity, _currentProp);
+      setCurrentEntity(_currentEntity);
+    }
   };
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -110,47 +111,42 @@ export default function SearchBar() {
   }, [debouncedSearchTerm]);
 
   //Get new props on entity change
-  React.useEffect(() => {
-    if (currentEntity) {
-      setCurrentProp(null);
-      (async () => {
-        setLoadingProps(true);
-        try {
-          let itemProps = await getItemProps(
-            currentEntity.id,
-            currentLang.code
-          );
+  const loadProps = async (_currentEntity, _currentProp) => {
+    setLoadingProps(true);
+    try {
+      let itemProps = await getItemProps(_currentEntity.id, currentLang.code);
 
-          //currentProp belongs to family stuff
-          if (itemProps.some((currentProp) => FAMILY_IDS_MAP[currentProp.id])) {
-            //Remove all family props
-            let translatedLabel;
-            itemProps = itemProps.filter((currentProp) => {
-              if (currentProp.id === FAMILY_PROP.id)
-                translatedLabel = currentProp.label;
-              return !FAMILY_IDS_MAP[currentProp.id];
-            });
+      //currentProp belongs to family stuff
+      if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
+        //Remove all family props
+        let translatedLabel;
+        itemProps = itemProps.filter((prop) => {
+          if (prop.id === FAMILY_PROP.id) translatedLabel = prop.label;
+          return !FAMILY_IDS_MAP[prop.id];
+        });
 
-            if (translatedLabel) FAMILY_PROP.label = translatedLabel;
+        if (translatedLabel) FAMILY_PROP.label = translatedLabel;
 
-            //Add the Family tree fav currentProp
-            itemProps = [FAMILY_PROP].concat(itemProps);
+        //Add the Family tree fav currentProp
+        itemProps = [FAMILY_PROP].concat(itemProps);
 
-            //Select the family tree if no other currentProp is selected, or if it's a family currentProp
-            if (!currentProp || FAMILY_IDS_MAP[currentProp.id]) {
-              setCurrentProp(FAMILY_PROP);
-            }
-          }
-
-          setAvailableProps(itemProps);
-        } catch (error) {
-          showError(error);
-        } finally {
-          setLoadingProps(false);
+        //Select the family tree if no other currentProp is selected, or if it's a family currentProp
+        if (!_currentProp || FAMILY_IDS_MAP[_currentProp.id]) {
+          setCurrentProp(FAMILY_PROP);
+        } else {
+          setCurrentProp(_currentProp);
         }
-      })();
+      } else {
+        setCurrentProp(_currentProp);
+      }
+
+      setAvailableProps(itemProps);
+    } catch (error) {
+      showError(error);
+    } finally {
+      setLoadingProps(false);
     }
-  }, [currentEntity]);
+  };
 
   const history = useHistory();
   React.useEffect(() => {

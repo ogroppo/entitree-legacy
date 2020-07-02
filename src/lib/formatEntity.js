@@ -68,7 +68,6 @@ function getGender(simpleClaims) {
   try {
     gender = simpleClaims[GENDER_ID][0].value;
   } catch (error) {}
-  console.log(gender);
 
   if (gender) {
     if (gender === HUMAN_MALE_ID || gender === ANIMAL_MALE_ID) {

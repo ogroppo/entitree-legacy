@@ -219,6 +219,7 @@ function Graph({
   const toggleSpouses = async (node, options = {}) => {
     if (!node.data.rightIds || !node.data.rightIds.length) return;
 
+    var lastSpouse;
     if (node._spousesExpanded) {
       dispatchGraph({ type: "collapseSpouses", node });
     } else if (node._spouses) {
@@ -227,14 +228,15 @@ function Graph({
       try {
         const entities = await getItems(node.data.rightIds, currentLang.code);
         entities.forEach((entity, index) => {
-          const childNode = hierarchy(entity);
-          childNode.depth = node.depth;
-          childNode.isSpouse = true;
-          childNode.virtualParent = node;
-          childNode.parent = node.parent;
-          childNode.treeId = getNodeUniqueId(childNode, index, "spouse");
-          const childIndex = node.parent.children.indexOf(node) + 1;
-          node.parent.children.splice(childIndex, 0, childNode);
+          const spouse = hierarchy(entity);
+          spouse.depth = node.depth;
+          spouse.isSpouse = true;
+          spouse.virtualParent = node;
+          spouse.parent = node.parent;
+          spouse.treeId = getNodeUniqueId(spouse, index, "spouse");
+          const spouseIndex = node.parent.children.indexOf(node) + 1;
+          node.parent.children.splice(spouseIndex, 0, spouse);
+          lastSpouse = spouse;
         });
         dispatchGraph({ type: "expandSpouses", node });
       } catch (error) {
@@ -243,14 +245,14 @@ function Graph({
     }
 
     let newx = node.x;
-    if (node.spouses && !options.noRecenter)
-      newx = (newx + node.spouses[node.spouses.length - 1].x) / 2;
-    centerPoint(newx);
+    if (node._spousesExpanded) newx = (newx + lastSpouse.x) / 2;
+    if (!options.noRecenter) centerPoint(newx);
   };
 
   const toggleSiblings = async (node, options = {}) => {
     if (!node.data.leftIds || !node.data.leftIds.length) return;
 
+    var lastSibling;
     if (node._siblingsExpanded) {
       dispatchGraph({ type: "collapseSiblings", node });
     } else if (node._siblings) {
@@ -259,14 +261,15 @@ function Graph({
       try {
         const entities = await getItems(node.data.leftIds, currentLang.code);
         entities.forEach((entity, index) => {
-          const childNode = hierarchy(entity);
-          childNode.depth = node.depth;
-          childNode.isSibling = true;
-          childNode.virtualParent = node;
-          childNode.parent = node.parent;
-          childNode.treeId = getNodeUniqueId(childNode, index, "sibling");
-          const childIndex = node.parent.children.indexOf(node);
-          node.parent.children.splice(childIndex, 0, childNode);
+          const sibling = hierarchy(entity);
+          sibling.depth = node.depth;
+          sibling.isSibling = true;
+          sibling.virtualParent = node;
+          sibling.parent = node.parent;
+          sibling.treeId = getNodeUniqueId(sibling, index, "sibling");
+          const siblingIndex = node.parent.children.indexOf(node);
+          node.parent.children.splice(siblingIndex, 0, sibling);
+          lastSibling = sibling;
         });
         dispatchGraph({ type: "expandSiblings", node });
       } catch (error) {
@@ -275,10 +278,8 @@ function Graph({
     }
 
     let newx = node.x;
-    if (node.siblings && !options.noRecenter)
-      //not true, revise
-      newx = (newx + node.siblings[node.siblings.length - 1].x) / 2;
-    centerPoint(newx);
+    if (node._siblingsExpanded) newx = (newx + lastSibling.x) / 2;
+    if (!options.noRecenter) centerPoint(newx);
   };
 
   const toggleRootSpouses = async (root, options = {}) => {
@@ -310,9 +311,9 @@ function Graph({
     }
 
     let newx = root.x;
-    if (root.spouses && !options.noRecenter)
+    if (root.spouses)
       newx = (newx + root.spouses[root.spouses.length - 1].x) / 2;
-    centerPoint(newx);
+    if (!options.noRecenter) centerPoint(newx);
   };
 
   const toggleRootSiblings = async (root, options = {}) => {
@@ -342,9 +343,9 @@ function Graph({
     }
 
     let newx = root.x;
-    if (root.siblings && !options.noRecenter)
+    if (root.siblings)
       newx = (newx + root.siblings[root.siblings.length - 1].x) / 2;
-    centerPoint(newx);
+    if (!options.noRecenter) centerPoint(newx);
   };
 
   const fitTree = () => {
