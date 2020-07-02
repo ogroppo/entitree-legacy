@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef } from "react";
 import useDebounce from "../../lib/useDebounce";
 import "./SearchBar.scss";
 import {
@@ -8,9 +8,10 @@ import {
   Dropdown,
   Container,
   InputGroup,
-  Modal,
+  OverlayTrigger,
+  Tooltip,
+  Overlay,
 } from "react-bootstrap";
-import { FiSliders } from "react-icons/fi";
 import qs from "query-string";
 import { useHistory, useLocation } from "react-router-dom";
 import { FAMILY_PROP, FAMILY_IDS_MAP } from "../../constants/properties";
@@ -32,7 +33,6 @@ export default function SearchBar() {
     currentEntity,
   } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [entity, setEntity] = React.useState(null);
   const [loadingEntity, setLoadingEntity] = React.useState(false);
   const [loadingProps, setLoadingProps] = React.useState(false);
   const [loadingProp, setLoadingProp] = React.useState(false);
@@ -71,7 +71,7 @@ export default function SearchBar() {
     if (hasLanguageChanged)
       (async () => {
         try {
-          if (entity) await loadEntity(entity.id);
+          if (currentEntity) await loadEntity(currentEntity.id);
         } catch (error) {
           showError(error);
         }
@@ -80,12 +80,11 @@ export default function SearchBar() {
 
   const loadEntity = async (id) => {
     setLoadingEntity(true);
-    const entity = await getItem(id, currentLang.code);
-    setLoadingEntity(false);
+    const currentEntity = await getItem(id, currentLang.code);
     setFromKeyboard(false);
-    setSearchTerm(entity.label);
-    setEntity(entity);
-    setCurrentEntity(entity); //They used to have separate behaviours but can be merged now, I think
+    setSearchTerm(currentEntity.label);
+    setCurrentEntity(currentEntity);
+    setLoadingEntity(false);
   };
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -112,12 +111,15 @@ export default function SearchBar() {
 
   //Get new props on entity change
   React.useEffect(() => {
-    if (entity) {
+    if (currentEntity) {
       setCurrentProp(null);
       (async () => {
         setLoadingProps(true);
         try {
-          let itemProps = await getItemProps(entity.id, currentLang.code);
+          let itemProps = await getItemProps(
+            currentEntity.id,
+            currentLang.code
+          );
 
           //currentProp belongs to family stuff
           if (itemProps.some((currentProp) => FAMILY_IDS_MAP[currentProp.id])) {
@@ -148,12 +150,12 @@ export default function SearchBar() {
         }
       })();
     }
-  }, [entity]);
+  }, [currentEntity]);
 
   const history = useHistory();
   React.useEffect(() => {
-    if (entity) {
-      const query = { q: entity.id };
+    if (currentEntity) {
+      const query = { q: currentEntity.id };
 
       if (currentProp) {
         query.p = currentProp.id;
@@ -166,6 +168,8 @@ export default function SearchBar() {
     }
   }, [currentEntity, currentProp]);
 
+  const propToggleRef = useRef();
+  const [showPropTooltip, setShowPropTooltip] = useState(true);
   return (
     <Form className="SearchBar">
       <Container>
@@ -182,13 +186,24 @@ export default function SearchBar() {
               placeholder="Start typing to search..."
               autoComplete="off"
             />
-            {entity && (
+            {currentEntity && (
               <InputGroup.Append>
                 <Dropdown>
+                  <Overlay
+                    placement={"bottom"}
+                    show={false}
+                    target={propToggleRef.current}
+                  >
+                    <Tooltip>Select a property to show a tree</Tooltip>
+                  </Overlay>
                   <Dropdown.Toggle
                     disabled={loadingProps}
                     variant="none"
+                    ref={propToggleRef}
                     id="dropdown-props"
+                    className={
+                      currentEntity && !currentProp && "shouldSelectProp"
+                    }
                   >
                     {loadingProps
                       ? "loading props..."
@@ -196,6 +211,7 @@ export default function SearchBar() {
                       ? currentProp.overrideLabel || currentProp.label
                       : "Choose a property "}
                   </Dropdown.Toggle>
+
                   <Dropdown.Menu alignRight>
                     {availableProps.map((prop) => (
                       <Dropdown.Item
@@ -210,7 +226,6 @@ export default function SearchBar() {
                 </Dropdown>
               </InputGroup.Append>
             )}
-            <ModalSettings />
           </InputGroup>
           {showSuggestions && (
             <Suggestions
@@ -225,71 +240,6 @@ export default function SearchBar() {
         </Form.Group>
       </Container>
     </Form>
-  );
-}
-
-function ModalSettings() {
-  const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
-  const options = [
-    {
-      id: "genderColors",
-      label: "Use Color based on gender",
-    },
-    {
-      id: "birthName",
-      label: "Use Birthname",
-    },
-    {
-      id: "birthPlace",
-      label: "Show birthplace instead of hospital",
-    },
-  ];
-  const showButton = false;
-  return (
-    <>
-      <Button
-        variant="primary"
-        onClick={handleShow}
-        style={{ visibility: showButton ? "visible" : "hidden" }}
-      >
-        <FiSliders />
-      </Button>
-
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Settings</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Please select (beta)
-          <br />
-          {options.map((option) => (
-            <div key={option.id}>
-              <label>
-                <input
-                  name="isGoing"
-                  type="checkbox"
-                  // checked={this.state.isGoing}
-                  // onChange={this.handleInputChange}
-                />
-                {option.label}
-              </label>
-            </div>
-          ))}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
   );
 }
 

@@ -14,6 +14,9 @@ import {
   FiChevronDown,
   FiChevronRight,
 } from "react-icons/fi";
+import { RiGroupLine, RiParentLine } from "react-icons/ri";
+import { GiBigDiamondRing } from "react-icons/gi";
+import { MdChildCare } from "react-icons/md";
 import "./Node.scss";
 
 export default function Node({
@@ -56,7 +59,7 @@ export default function Node({
   };
 
   const {
-    data: { images },
+    data: { images, gender },
   } = node;
 
   return (
@@ -70,7 +73,7 @@ export default function Node({
       }}
       className={`Node ${
         focusedNode && focusedNode.treeId === node.treeId ? "focused" : ""
-      } ${genderColors ? node.data.extraClass : ""}`}
+      } ${gender ? gender : ""}`}
       onClick={() => setFocusedNode(node)}
     >
       <div
@@ -203,14 +206,15 @@ function SiblingCounter({ ids, node, toggleFn, className }) {
         setDisabled(false);
       }}
     >
-      {node._siblingsExpanded ? (
-        <FiChevronRight />
-      ) : (
-        <>
-          <div>{ids.length}</div>
-          <FiChevronLeft />
-        </>
-      )}
+      <div>
+        <div>{ids.length}</div>
+        <div className="chevron">
+          {node._siblingsExpanded ? <FiChevronRight /> : <FiChevronLeft />}
+        </div>
+        <div>
+          <RiGroupLine />
+        </div>
+      </div>
     </Button>
   );
 }
@@ -229,13 +233,13 @@ function ParentCounter({ ids, node, toggleFn, className }) {
         setDisabled(false);
       }}
     >
-      {node._parentsExpanded ? (
-        <FiChevronDown />
-      ) : (
-        <>
-          {ids.length} <FiChevronUp />
-        </>
-      )}
+      <span>{ids.length}</span>
+      <span className="chevron ml-1 mr-1">
+        {node._parentsExpanded ? <FiChevronDown /> : <FiChevronUp />}
+      </span>
+      <span>
+        <RiParentLine />
+      </span>
     </Button>
   );
 }
@@ -253,15 +257,15 @@ function SpouseCounter({ ids, node, toggleFn, className }) {
         await toggleFn(node);
         setDisabled(false);
       }}
+      title={(node._spousesExpanded ? "Collapse" : "Expand") + " spouses"}
     >
-      {node._spousesExpanded ? (
-        <FiChevronLeft />
-      ) : (
-        <>
-          <div>{ids.length}</div>
-          <FiChevronRight />
-        </>
-      )}
+      <div>{ids.length}</div>
+      <div className="chevron">
+        {node._spousesExpanded ? <FiChevronLeft /> : <FiChevronRight />}
+      </div>
+      <div>
+        <GiBigDiamondRing />
+      </div>
     </Button>
   );
 }
@@ -280,13 +284,13 @@ function ChildCounter({ ids, node, toggleFn, className }) {
         setDisabled(false);
       }}
     >
-      {node._childrenExpanded ? (
-        <FiChevronUp />
-      ) : (
-        <>
-          {ids.length} <FiChevronDown />
-        </>
-      )}
+      <span>{ids.length}</span>
+      <span className="chevron ml-1 mr-1">
+        {node._childrenExpanded ? <FiChevronUp /> : <FiChevronDown />}
+      </span>
+      <span>
+        <MdChildCare />
+      </span>
     </Button>
   );
 }

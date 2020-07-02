@@ -25,6 +25,7 @@ export default class App extends Component {
     hasLanguageChanged: 0,
     currentEntity: null,
     currentProp: null,
+    showGenderColor: false,
   };
 
   componentDidMount() {
@@ -89,6 +90,10 @@ export default class App extends Component {
     }, 2500);
   };
 
+  setShowGenderColor = (showGenderColor) => {
+    this.setState({ showGenderColor });
+  };
+
   render() {
     const {
       showError,
@@ -96,6 +101,7 @@ export default class App extends Component {
       setCurrentLang,
       setCurrentProp,
       setCurrentEntity,
+      setShowGenderColor,
     } = this;
     const {
       currentLang,
@@ -105,6 +111,7 @@ export default class App extends Component {
       currentEntity,
       currentProp,
       hasLanguageChanged,
+      showGenderColor,
     } = this.state;
     return (
       <AppContext.Provider
@@ -114,10 +121,12 @@ export default class App extends Component {
           setCurrentLang,
           setCurrentProp,
           setCurrentEntity,
+          setShowGenderColor,
           currentLang,
           currentProp,
           currentEntity,
           hasLanguageChanged,
+          showGenderColor,
         }}
       >
         <Router history={browserHistory}>

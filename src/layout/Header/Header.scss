@@ -5,18 +5,4 @@
       position: relative;
     }
   }
-  .langDropdown {
-    .dropdown-menu {
-      position: absolute;
-      min-width: 200px;
-      .langList {
-        max-height: 400px;
-        overflow-y: scroll;
-      }
-    }
-    .filterWrapper {
-      padding: 0 1.3rem;
-      margin-bottom: 8px;
-    }
-  }
 }

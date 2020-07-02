@@ -5,6 +5,12 @@ import {
   DEATH_DATE_ID,
   GENDER_ID,
 } from "../constants/properties";
+import {
+  HUMAN_MALE_ID,
+  ANIMAL_FEMALE_ID,
+  ANIMAL_MALE_ID,
+  HUMAN_FEMALE_ID,
+} from "../constants/entities";
 import wbk from "wikidata-sdk";
 import getSocialMediaProps from "./getSocialMediaProps";
 import { DEFAULT_LANGS_CODES } from "../constants/langs";
@@ -40,22 +46,7 @@ export default async function formatEntity(entity, languageCode) {
   );
   formattedEntity.externalLinks = getSocialMediaProps(simpleClaims);
 
-  let className = null;
-  if (simpleClaims[GENDER_ID]) {
-    var gender_id = parseInt(simpleClaims[GENDER_ID][0].value.substr(1));
-    if (gender_id === 6581097 || gender_id === 44148) {
-      // sortValue=0;
-      // gender_html = '<i class="fa fa-mars"></i>';
-      className = "node-male";
-    } else if (gender_id === 6581072 || gender_id === 43445) {
-      // sortValue = 1;
-      // gender_html = '<i class="fa fa-venus"></i>';
-      className = "node-female";
-    } else {
-      className = "node-thirdgender";
-    }
-  }
-  formattedEntity.extraClass = className;
+  formattedEntity.gender = getGender(simpleClaims);
 
   formattedEntity.images = await getEntityImages(formattedEntity, languageCode);
 
@@ -69,5 +60,23 @@ function getLanguageString(array, languageCode) {
   for (let defaultLangCode of DEFAULT_LANGS_CODES) {
     let defaultLangString = array[defaultLangCode];
     if (defaultLangString) return defaultLangString.value;
+  }
+}
+
+function getGender(simpleClaims) {
+  let gender;
+  try {
+    gender = simpleClaims[GENDER_ID][0].value;
+  } catch (error) {}
+  console.log(gender);
+
+  if (gender) {
+    if (gender === HUMAN_MALE_ID || gender === ANIMAL_MALE_ID) {
+      return "male";
+    } else if (gender === HUMAN_FEMALE_ID || gender === ANIMAL_FEMALE_ID) {
+      return "female";
+    } else {
+      return "thirdgender";
+    }
   }
 }
