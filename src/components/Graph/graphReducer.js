@@ -2,9 +2,6 @@ import treeLayout from "../../lib/getTreeLayout";
 import { CARD_WIDTH, CARD_HEIGHT } from "../../constants/tree";
 
 export const initialState = {
-  positionX: 0,
-  positionY: 0,
-  scale: 1,
   maxLeft: -CARD_WIDTH,
   maxRight: CARD_WIDTH,
   maxTop: -CARD_HEIGHT,
