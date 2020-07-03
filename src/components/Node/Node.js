@@ -18,6 +18,7 @@ import { RiGroupLine, RiParentLine } from "react-icons/ri";
 import { GiBigDiamondRing } from "react-icons/gi";
 import { MdChildCare } from "react-icons/md";
 import "./Node.scss";
+import NodePopover from "./NodePopover.js";
 
 export default function Node({
   node,
@@ -109,23 +110,32 @@ export default function Node({
         style={{ height: IMAGE_SIZE, width: CARD_CONTENT_WIDTH }}
       >
         <div className="label">
-          {node.data.label ? (
-            <a
-              target="_blank"
-              title={node.data.label}
-              href={`https://www.wikidata.org/wiki/${node.data.id}`}
-            >
-              {node.data.label}
-            </a>
-          ) : (
-            <a
-              target="_blank"
-              title={"Unlabelled item"}
-              href={`https://www.wikidata.org/wiki/${node.data.id}`}
-            >
-              <i>Unlabelled</i>
-            </a>
-          )}
+          {/*{node.data.label ? (*/}
+          {/*  <a*/}
+          {/*    target="_blank"*/}
+          {/*    title={node.data.label}*/}
+          {/*    href={`https://www.wikidata.org/wiki/${node.data.id}`}*/}
+          {/*  >*/}
+          {/*    {node.data.label}*/}
+          {/*  </a>*/}
+          {/*) : (*/}
+          {/*  <a*/}
+          {/*    target="_blank"*/}
+          {/*    title={"Unlabelled item"}*/}
+          {/*    href={`https://www.wikidata.org/wiki/${node.data.id}`}*/}
+          {/*  >*/}
+          {/*    <i>Unlabelled</i>*/}
+          {/*  </a>*/}
+          {/*)}*/}
+          <NodePopover
+            title={node.data.label}
+            qid={node.data.id}
+            // sitelink={node.data.sitelink}
+            lang={node.data.lang}
+            wikipediaPageName={node.data.sitelink}
+
+          />
+
         </div>
         <div className="description" title={node.data.description}>
           {node.data.description}
