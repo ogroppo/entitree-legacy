@@ -5,4 +5,11 @@
       position: relative;
     }
   }
+  .settingsButton {
+    color: white;
+    &:hover {
+      background-color: lightgray;
+      color: #233;
+    }
+  }
 }

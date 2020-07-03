@@ -38,8 +38,13 @@ export default function Header() {
         </DropdownButton>
 
         <Nav className="ml-auto">
-          <Button variant="light" onClick={() => setShowSettingsModal(true)}>
-            <FiSliders />
+          <Button
+            className="settingsButton"
+            variant="none"
+            onClick={() => setShowSettingsModal(true)}
+          >
+            settings
+            <FiSliders className="ml-2" />
           </Button>
           <Settings
             show={showSettingsModal}

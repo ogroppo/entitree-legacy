@@ -198,7 +198,9 @@ export default function SearchBar() {
                     ref={propToggleRef}
                     id="dropdown-props"
                     className={
-                      currentEntity && !currentProp && "shouldSelectProp"
+                      currentEntity &&
+                      !currentProp &&
+                      "shouldSelectProp btn-warning"
                     }
                   >
                     {loadingProps
@@ -211,10 +213,10 @@ export default function SearchBar() {
                   <Dropdown.Menu alignRight>
                     {availableProps.map((prop) => (
                       <Dropdown.Item
-                        key={prop.id + (prop.isFav ? "_fav" : "")}
+                        key={prop.id}
+                        className={prop.isFav ? "fav" : ""}
                         onClick={() => setCurrentProp(prop)}
                       >
-                        {prop.isFav && <FaStar />}{" "}
                         {prop.overrideLabel || prop.label}
                       </Dropdown.Item>
                     ))}
