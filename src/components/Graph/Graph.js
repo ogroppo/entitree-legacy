@@ -70,6 +70,7 @@ function Graph({
         try {
           //Set a loader here!! otherwise
 
+          let root;
           //property has been selected from dropdown
           if (currentProp) {
             upMap.current = await getUpMap(currentEntity.id, currentProp.id);
@@ -83,7 +84,7 @@ function Graph({
                 addLeftIds: currentProp.id === CHILD_ID,
               }
             );
-            const root = hierarchy(rootItem);
+            root = hierarchy(rootItem);
             const rootId = getNodeUniqueId(root, 0);
             root.treeId = rootId;
             root.isRoot = true;
@@ -116,7 +117,7 @@ function Graph({
             toggleRootSpouses(root, { noRecenter: true });
           } else {
             //currentEntity has changed from searchBox
-            const root = hierarchy(currentEntity);
+            root = hierarchy(currentEntity);
             root.treeId = getNodeUniqueId(root, 0);
             dispatchGraph({
               type: "set",
@@ -381,7 +382,7 @@ function Graph({
     setTransform(calculatedPositionX, calculatedPositionY, scale);
   };
 
-  const recenter = (focusedNode) => {
+  const recenter = () => {
     setCurrentEntity(focusedNode.data);
   };
 
@@ -533,12 +534,7 @@ function Graph({
         <Button variant="light" onClick={zoomOut}>
           <FiMinus />
         </Button>
-        <Button
-          variant="light"
-          onClick={() => {
-            recenter(focusedNode);
-          }}
-        >
+        <Button variant="light" onClick={recenter}>
           <RiFocus3Line />
         </Button>
         <Button

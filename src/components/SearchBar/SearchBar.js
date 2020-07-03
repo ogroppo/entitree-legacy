@@ -85,7 +85,7 @@ export default function SearchBar() {
         if (_currentPropId) {
           calls.push(getItem(_currentPropId, currentLang.code));
         }
-        const [_currentEntity, itemProps, _currentProp] = await Promise.all(
+        let [_currentEntity, itemProps, _currentProp] = await Promise.all(
           calls
         );
         setSearchTerm(_currentEntity.label);
