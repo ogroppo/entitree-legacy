@@ -5,6 +5,7 @@ import "./HomePage.scss";
 import ReactGA from "react-ga";
 import { useLocation } from "react-router-dom";
 import { AppContext } from "../../App";
+import { GiFamilyTree } from "react-icons/gi";
 
 export default function HomePage() {
   const { currentEntity } = useContext(AppContext);
@@ -18,7 +19,14 @@ export default function HomePage() {
   return (
     <div className="HomePage">
       <SearchBar />
-      {currentEntity && <Graph />}
+      {currentEntity ? (
+        <Graph />
+      ) : (
+        <div className="graphPlaceholder">
+          <GiFamilyTree />
+          <div>Start a new search or choose from the examples</div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,2 +1,14 @@
 .HomePage {
+  .graphPlaceholder {
+    svg {
+      font-size: 10em;
+      margin-bottom: 10px;
+    }
+    text-align: center;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    color: lightgray;
+    transform: translate(-50%, -50%);
+  }
 }
