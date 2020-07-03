@@ -73,18 +73,55 @@ export default function SearchBar() {
   }, [hasLanguageChanged]);
 
   const loadEntity = async (_currentEntitId, _currentPropId) => {
-    if (_currentEntitId) {
-      setLoadingEntity(true);
-      const _currentEntity = await getItem(_currentEntitId, currentLang.code);
-      setFromKeyboard(false);
-      setSearchTerm(_currentEntity.label);
-      setLoadingEntity(false);
-      let _currentProp;
-      if (_currentPropId) {
-        _currentProp = await getItem(_currentPropId, currentLang.code);
+    try {
+      if (_currentEntitId) {
+        setFromKeyboard(false);
+        setLoadingEntity(true);
+        setLoadingProps(true);
+        let calls = [
+          getItem(_currentEntitId, currentLang.code),
+          getItemProps(_currentEntitId, currentLang.code),
+        ];
+        if (_currentPropId) {
+          calls.push(getItem(_currentPropId, currentLang.code));
+        }
+        const [_currentEntity, itemProps, _currentProp] = await Promise.all(
+          calls
+        );
+        setSearchTerm(_currentEntity.label);
+
+        //currentProp belongs to family stuff
+        if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
+          //Remove all family props
+          let translatedLabel;
+          itemProps = itemProps.filter((prop) => {
+            if (prop.id === FAMILY_PROP.id) translatedLabel = prop.label;
+            return !FAMILY_IDS_MAP[prop.id];
+          });
+
+          if (translatedLabel) FAMILY_PROP.label = translatedLabel;
+
+          //Add the Family tree fav currentProp
+          itemProps = [FAMILY_PROP].concat(itemProps);
+
+          //Select the family tree if no other currentProp is selected, or if it's a family currentProp
+          if (!_currentProp || FAMILY_IDS_MAP[_currentProp.id]) {
+            setCurrentProp(FAMILY_PROP);
+          } else {
+            setCurrentProp(_currentProp);
+          }
+        } else {
+          setCurrentProp(_currentProp);
+        }
+        setAvailableProps(itemProps);
+        //Set here (short setCurrentProp) otherwise if there is a delay between entity and props graph will be called twice
+        setCurrentEntity(_currentEntity);
       }
-      await loadProps(_currentEntity, _currentProp);
-      setCurrentEntity(_currentEntity);
+    } catch (error) {
+      showError(error);
+    } finally {
+      setLoadingEntity(false);
+      setLoadingProps(false);
     }
   };
 
@@ -111,42 +148,7 @@ export default function SearchBar() {
   }, [debouncedSearchTerm]);
 
   //Get new props on entity change
-  const loadProps = async (_currentEntity, _currentProp) => {
-    setLoadingProps(true);
-    try {
-      let itemProps = await getItemProps(_currentEntity.id, currentLang.code);
-
-      //currentProp belongs to family stuff
-      if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
-        //Remove all family props
-        let translatedLabel;
-        itemProps = itemProps.filter((prop) => {
-          if (prop.id === FAMILY_PROP.id) translatedLabel = prop.label;
-          return !FAMILY_IDS_MAP[prop.id];
-        });
-
-        if (translatedLabel) FAMILY_PROP.label = translatedLabel;
-
-        //Add the Family tree fav currentProp
-        itemProps = [FAMILY_PROP].concat(itemProps);
-
-        //Select the family tree if no other currentProp is selected, or if it's a family currentProp
-        if (!_currentProp || FAMILY_IDS_MAP[_currentProp.id]) {
-          setCurrentProp(FAMILY_PROP);
-        } else {
-          setCurrentProp(_currentProp);
-        }
-      } else {
-        setCurrentProp(_currentProp);
-      }
-
-      setAvailableProps(itemProps);
-    } catch (error) {
-      showError(error);
-    } finally {
-      setLoadingProps(false);
-    }
-  };
+  const loadProps = async (_currentEntity, _currentProp) => {};
 
   const history = useHistory();
   React.useEffect(() => {
