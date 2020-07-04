@@ -56,6 +56,10 @@
       font-weight: bold;
       max-height: 30px; //line h * 2
       overflow: hidden;
+      a:focus {
+        outline: none;
+        text-decoration: underline;
+      }
     }
     .description {
       margin-top: 2px;
@@ -76,14 +80,14 @@
     }
     .externalLinks {
       position: absolute;
-      bottom: 0;
+      bottom: 5px;
       left: 5px;
       height: 16px;
       a {
+        padding: 1px;
         margin-right: 5px;
         display: inline-block;
-        height: 16px;
-        width: 16px;
+        line-height: 1;
         img {
           vertical-align: top;
           height: 16px;
@@ -116,6 +120,7 @@
       text-decoration: none;
     }
     &:focus {
+      text-decoration: underline;
       box-shadow: none;
     }
     .chevron {
