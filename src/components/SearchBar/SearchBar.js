@@ -138,14 +138,14 @@ export default function SearchBar() {
         ({ data: { search: searchResults } }) => {
           searchResults = searchResults.filter(({ id, description }) => {
             //remove current entity from results
-            if (currentEntity && id !== currentEntity.id) {
+            if (currentEntity && id === currentEntity.id) {
               return false;
             }
 
             //remove wikimedia disam pages
             if (
               currentLang.disambPageDesc &&
-              description !== currentLang.disambPageDesc
+              description === currentLang.disambPageDesc
             )
               return false;
 
