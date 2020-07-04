@@ -15,7 +15,11 @@ import {
   FiChevronRight,
 } from "react-icons/fi";
 import { BsPlusCircle } from "react-icons/bs";
+import { RiGroupLine, RiParentLine } from "react-icons/ri";
+import { GiBigDiamondRing } from "react-icons/gi";
+import { MdChildCare } from "react-icons/md";
 import "./Node.scss";
+import NodePopover from "./NodePopover.js";
 
 export default function Node({
   node,
@@ -33,9 +37,8 @@ export default function Node({
 }) {
   if (debug) console.log(node);
 
-  //delay image rendering every 50 images of about 500ms
+  //delay image rendering every 20 images of about 500ms
   const [showImage, setShowImage] = useState(false);
-  const [genderColors, setGenderColors] = useState(false);
 
   const [imageIndex, setImageIndex] = useState(0);
   const nextImage = () => {
@@ -46,7 +49,7 @@ export default function Node({
   };
 
   const {
-    data: { images },
+    data: { images, gender },
   } = node;
 
   return (
@@ -60,7 +63,7 @@ export default function Node({
       }}
       className={`Node ${
         focusedNode && focusedNode.treeId === node.treeId ? "focused" : ""
-      } ${genderColors ? node.data.extraClass : ""}`}
+      } ${gender ? gender : ""}`}
       onClick={() => setFocusedNode(node)}
     >
       <div
@@ -92,23 +95,30 @@ export default function Node({
         style={{ height: IMAGE_SIZE, width: CARD_CONTENT_WIDTH }}
       >
         <div className="label">
-          {node.data.label ? (
-            <a
-              target="_blank"
-              title={node.data.label}
-              href={`https://www.wikidata.org/wiki/${node.data.id}`}
-            >
-              {node.data.label}
-            </a>
-          ) : (
-            <a
-              target="_blank"
-              title={"Unlabelled item"}
-              href={`https://www.wikidata.org/wiki/${node.data.id}`}
-            >
-              <i>Unlabelled</i>
-            </a>
-          )}
+          {/*{node.data.label ? (*/}
+          {/*  <a*/}
+          {/*    target="_blank"*/}
+          {/*    title={node.data.label}*/}
+          {/*    href={`https://www.wikidata.org/wiki/${node.data.id}`}*/}
+          {/*  >*/}
+          {/*    {node.data.label}*/}
+          {/*  </a>*/}
+          {/*) : (*/}
+          {/*  <a*/}
+          {/*    target="_blank"*/}
+          {/*    title={"Unlabelled item"}*/}
+          {/*    href={`https://www.wikidata.org/wiki/${node.data.id}`}*/}
+          {/*  >*/}
+          {/*    <i>Unlabelled</i>*/}
+          {/*  </a>*/}
+          {/*)}*/}
+          <NodePopover
+            title={node.data.label}
+            qid={node.data.id}
+            // sitelink={node.data.sitelink}
+            lang={node.data.lang}
+            wikipediaPageName={node.data.sitelink}
+          />
         </div>
         <div className="description" title={node.data.description}>
           {node.data.description}
@@ -120,9 +130,9 @@ export default function Node({
         </div>
         {node.data.externalLinks && !!node.data.externalLinks.length && (
           <div className="externalLinks">
-            {node.data.externalLinks.map((link) => (
+            {node.data.externalLinks.map((link, index) => (
               <a
-                key={link.title}
+                key={node.treeId + index}
                 target="_blank"
                 title={link.title}
                 href={link.url}
@@ -211,7 +221,12 @@ function SiblingCounter({ ids, node, toggleFn, className }) {
     >
       <div>
         <div>{ids.length}</div>
-        {node._siblingsExpanded ? <FiChevronRight /> : <FiChevronLeft />}
+        <div className="chevron">
+          {node._siblingsExpanded ? <FiChevronRight /> : <FiChevronLeft />}
+        </div>
+        <div>
+          <RiGroupLine />
+        </div>
       </div>
     </Button>
   );
@@ -231,10 +246,13 @@ function ParentCounter({ ids, node, toggleFn, className }) {
         setDisabled(false);
       }}
     >
-      <div>
-        <span className="mr-1">{ids.length}</span>
+      <span>{ids.length}</span>
+      <span className="chevron ml-1 mr-1">
         {node._parentsExpanded ? <FiChevronDown /> : <FiChevronUp />}
-      </div>
+      </span>
+      {/* <span>
+        <RiParentLine />
+      </span> */}
     </Button>
   );
 }
@@ -252,16 +270,14 @@ function SpouseCounter({ ids, node, toggleFn, className }) {
         await toggleFn(node);
         setDisabled(false);
       }}
+      title={(node._spousesExpanded ? "Collapse" : "Expand") + " spouses"}
     >
+      <div>{ids.length}</div>
+      <div className="chevron">
+        {node._spousesExpanded ? <FiChevronLeft /> : <FiChevronRight />}
+      </div>
       <div>
-        <div>{ids.length}</div>
-        {node._spousesExpanded ? (
-          <FiChevronLeft />
-        ) : (
-          <>
-            <FiChevronRight />
-          </>
-        )}
+        <GiBigDiamondRing />
       </div>
     </Button>
   );
@@ -281,10 +297,13 @@ function ChildCounter({ ids, node, toggleFn, className }) {
         setDisabled(false);
       }}
     >
-      <div>
-        <span className="mr-1">{ids.length}</span>
+      <span>{ids.length}</span>
+      <span className="chevron ml-1 mr-1">
         {node._childrenExpanded ? <FiChevronUp /> : <FiChevronDown />}
-      </div>
+      </span>
+      {/* <span>
+        <MdChildCare />
+      </span> */}
     </Button>
   );
 }

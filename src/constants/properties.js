@@ -31,7 +31,7 @@ export const FAMILY_IDS_MAP = {
 export const FAMILY_PROP = {
   id: CHILD_ID,
   label: "child", //this is just a default, language label needs to be fetched!
-  overrideLabel: "Family tree", //how to translate this?!
+  overrideLabel: "family tree", //how to translate this?!
   isFav: true,
 };
 

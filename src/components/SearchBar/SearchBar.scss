@@ -5,6 +5,12 @@
     color: #212529;
     padding: 12px 0;
     margin: 0;
+
+    .shouldSelectProp {
+      //border-color: green;
+      //background-color: #ffc107;
+      font-style: italic;
+    }
   }
   .dropdown-toggle {
     border: 1px solid #ced4da;
@@ -14,6 +20,9 @@
   .dropdown-menu {
     max-height: 32 * 8px + 8px !important;
     overflow-y: auto;
+    .fav {
+      font-weight: bold;
+    }
   }
   .submitButton {
     margin-bottom: 1rem;
@@ -21,7 +30,7 @@
   }
   .Suggestions {
     position: absolute;
-    top: 42px;
+    top: 50px;
     width: 100%;
     background-color: #f8f9fa;
     .searchingMessage {
