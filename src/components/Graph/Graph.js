@@ -22,7 +22,7 @@ import Node from "../Node/Node";
 import Rel from "../Rel/Rel";
 import { CHILD_ID } from "../../constants/properties";
 import graphReducer, { initialState } from "./graphReducer";
-import { Button } from "react-bootstrap";
+import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { FiMinus, FiPlus, FiPrinter } from "react-icons/fi";
 import { IoMdExpand } from "react-icons/io";
 import { RiFocus3Line } from "react-icons/ri";
@@ -556,21 +556,43 @@ const Graph = memo(
           </div>
         </TransformComponent>
         <div className="navigation">
-          <Button variant="light" onClick={zoomIn}>
-            <FiPlus />
-          </Button>
-          <Button variant="light" onClick={zoomOut}>
-            <FiMinus />
-          </Button>
-          <Button variant="light" onClick={recenter}>
-            <RiFocus3Line />
-          </Button>
-          <Button variant="light" onClick={fitTree}>
-            <IoMdExpand />
-          </Button>
-          <Button variant="light" onClick={window.print}>
-            <FiPrinter />
-          </Button>
+          <OverlayTrigger
+            placement="right"
+            overlay={<Tooltip>Zoom in</Tooltip>}
+          >
+            <Button variant="light" onClick={zoomIn}>
+              <FiPlus />
+            </Button>
+          </OverlayTrigger>
+          <OverlayTrigger
+            placement="right"
+            overlay={<Tooltip>Zoom out</Tooltip>}
+          >
+            <Button variant="light" onClick={zoomOut}>
+              <FiMinus />
+            </Button>
+          </OverlayTrigger>
+          <OverlayTrigger
+            placement="right"
+            overlay={<Tooltip>Center tree on {currentEntity.label}</Tooltip>}
+          >
+            <Button variant="light" onClick={recenter}>
+              <RiFocus3Line />
+            </Button>
+          </OverlayTrigger>
+          <OverlayTrigger
+            placement="right"
+            overlay={<Tooltip>Fit tree to screen</Tooltip>}
+          >
+            <Button variant="light" onClick={fitTree}>
+              <IoMdExpand />
+            </Button>
+          </OverlayTrigger>
+          <OverlayTrigger placement="right" overlay={<Tooltip>Print</Tooltip>}>
+            <Button variant="light" onClick={window.print}>
+              <FiPrinter />
+            </Button>
+          </OverlayTrigger>
         </div>
       </div>
     );
