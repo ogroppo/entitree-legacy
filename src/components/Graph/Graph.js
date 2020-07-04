@@ -22,7 +22,7 @@ import Node from "../Node/Node";
 import Rel from "../Rel/Rel";
 import { CHILD_ID } from "../../constants/properties";
 import graphReducer, { initialState } from "./graphReducer";
-import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Button, OverlayTrigger, Tooltip, Spinner } from "react-bootstrap";
 import { FiMinus, FiPlus, FiPrinter } from "react-icons/fi";
 import { IoMdExpand } from "react-icons/io";
 import { RiFocus3Line } from "react-icons/ri";
@@ -89,8 +89,6 @@ const Graph = memo(
       if (currentEntity) {
         (async () => {
           try {
-            //Set a loader here!!
-
             let root;
             //property has been selected from dropdown
             if (currentProp) {
@@ -417,6 +415,7 @@ const Graph = memo(
       childNodes,
       parentRels,
       childRels,
+      loading,
     } = graph;
 
     return (

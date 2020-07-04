@@ -31,9 +31,10 @@ export default function SearchBar() {
     setCurrentProp,
     currentProp,
     currentEntity,
+    setLoadingEntity,
+    loadingEntity,
   } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [loadingEntity, setLoadingEntity] = React.useState(false);
   const [loadingProps, setLoadingProps] = React.useState(false);
   const [loadingProp, setLoadingProp] = React.useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = React.useState(false);
@@ -75,6 +76,9 @@ export default function SearchBar() {
   const loadEntity = async (_currentEntitId, _currentPropId) => {
     try {
       if (_currentEntitId) {
+        if (currentEntity && _currentEntitId !== currentEntity.id)
+          setCurrentEntity(null); //avoids weird caching behaviour, get a fresh one
+
         setFromKeyboard(false);
         setLoadingEntity(true);
         setLoadingProps(true);
@@ -132,11 +136,21 @@ export default function SearchBar() {
       setLoadingSuggestions(true);
       search(debouncedSearchTerm, currentLang.code).then(
         ({ data: { search: searchResults } }) => {
-          if (currentLang.disambPageDesc) {
-            searchResults = searchResults.filter(
-              ({ description }) => description !== currentLang.disambPageDesc
-            );
-          }
+          searchResults = searchResults.filter(({ id, description }) => {
+            //remove current entity from results
+            if (currentEntity && id !== currentEntity.id) {
+              return false;
+            }
+
+            //remove wikimedia disam pages
+            if (
+              currentLang.disambPageDesc &&
+              description !== currentLang.disambPageDesc
+            )
+              return false;
+
+            return true;
+          });
           setLoadingSuggestions(false);
           setSearchResults(searchResults);
         }
@@ -146,9 +160,6 @@ export default function SearchBar() {
       setShowSuggestions(false);
     }
   }, [debouncedSearchTerm]);
-
-  //Get new props on entity change
-  const loadProps = async (_currentEntity, _currentProp) => {};
 
   const history = useHistory();
   React.useEffect(() => {
@@ -249,6 +260,7 @@ function Suggestions({
   loadEntity,
   setShowSuggestions,
 }) {
+  const { currentEntity } = useContext(AppContext);
   const wrapperRef = React.useRef(null);
 
   React.useEffect(() => {
