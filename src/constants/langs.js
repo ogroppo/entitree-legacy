@@ -1,6 +1,7 @@
 const DISAMBIGUATION_PAGE_DESC = {
   en: "Wikimedia disambiguation page",
   it: "pagina di disambiguazione di un progetto Wikimedia",
+  nl: "Wikimedia-doorverwijspagina",
 };
 
 const LANG_MAP = {

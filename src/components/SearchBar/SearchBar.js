@@ -31,9 +31,10 @@ export default function SearchBar() {
     setCurrentProp,
     currentProp,
     currentEntity,
+    setLoadingEntity,
+    loadingEntity,
   } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [loadingEntity, setLoadingEntity] = React.useState(false);
   const [loadingProps, setLoadingProps] = React.useState(false);
   const [loadingProp, setLoadingProp] = React.useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = React.useState(false);
@@ -73,18 +74,58 @@ export default function SearchBar() {
   }, [hasLanguageChanged]);
 
   const loadEntity = async (_currentEntitId, _currentPropId) => {
-    if (_currentEntitId) {
-      setLoadingEntity(true);
-      const _currentEntity = await getItem(_currentEntitId, currentLang.code);
-      setFromKeyboard(false);
-      setSearchTerm(_currentEntity.label);
-      setLoadingEntity(false);
-      let _currentProp;
-      if (_currentPropId) {
-        _currentProp = await getItem(_currentPropId, currentLang.code);
+    try {
+      if (_currentEntitId) {
+        if (currentEntity && _currentEntitId !== currentEntity.id)
+          setCurrentEntity(null); //avoids weird caching behaviour, get a fresh one
+
+        setFromKeyboard(false);
+        setLoadingEntity(true);
+        setLoadingProps(true);
+        let calls = [
+          getItem(_currentEntitId, currentLang.code),
+          getItemProps(_currentEntitId, currentLang.code),
+        ];
+        if (_currentPropId) {
+          calls.push(getItem(_currentPropId, currentLang.code));
+        }
+        let [_currentEntity, itemProps, _currentProp] = await Promise.all(
+          calls
+        );
+        setSearchTerm(_currentEntity.label);
+
+        //currentProp belongs to family stuff
+        if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
+          //Remove all family props
+          let translatedLabel;
+          itemProps = itemProps.filter((prop) => {
+            if (prop.id === FAMILY_PROP.id) translatedLabel = prop.label;
+            return !FAMILY_IDS_MAP[prop.id];
+          });
+
+          if (translatedLabel) FAMILY_PROP.label = translatedLabel;
+
+          //Add the Family tree fav currentProp
+          itemProps = [FAMILY_PROP].concat(itemProps);
+
+          //Select the family tree if no other currentProp is selected, or if it's a family currentProp
+          if (!_currentProp || FAMILY_IDS_MAP[_currentProp.id]) {
+            setCurrentProp(FAMILY_PROP);
+          } else {
+            setCurrentProp(_currentProp);
+          }
+        } else {
+          setCurrentProp(_currentProp);
+        }
+        setAvailableProps(itemProps);
+        //Set here (short setCurrentProp) otherwise if there is a delay between entity and props graph will be called twice
+        setCurrentEntity(_currentEntity);
       }
-      await loadProps(_currentEntity, _currentProp);
-      setCurrentEntity(_currentEntity);
+    } catch (error) {
+      showError(error);
+    } finally {
+      setLoadingEntity(false);
+      setLoadingProps(false);
     }
   };
 
@@ -95,11 +136,21 @@ export default function SearchBar() {
       setLoadingSuggestions(true);
       search(debouncedSearchTerm, currentLang.code).then(
         ({ data: { search: searchResults } }) => {
-          if (currentLang.disambPageDesc) {
-            searchResults = searchResults.filter(
-              ({ description }) => description !== currentLang.disambPageDesc
-            );
-          }
+          searchResults = searchResults.filter(({ id, description }) => {
+            //remove current entity from results
+            if (currentEntity && id !== currentEntity.id) {
+              return false;
+            }
+
+            //remove wikimedia disam pages
+            if (
+              currentLang.disambPageDesc &&
+              description !== currentLang.disambPageDesc
+            )
+              return false;
+
+            return true;
+          });
           setLoadingSuggestions(false);
           setSearchResults(searchResults);
         }
@@ -109,44 +160,6 @@ export default function SearchBar() {
       setShowSuggestions(false);
     }
   }, [debouncedSearchTerm]);
-
-  //Get new props on entity change
-  const loadProps = async (_currentEntity, _currentProp) => {
-    setLoadingProps(true);
-    try {
-      let itemProps = await getItemProps(_currentEntity.id, currentLang.code);
-
-      //currentProp belongs to family stuff
-      if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
-        //Remove all family props
-        let translatedLabel;
-        itemProps = itemProps.filter((prop) => {
-          if (prop.id === FAMILY_PROP.id) translatedLabel = prop.label;
-          return !FAMILY_IDS_MAP[prop.id];
-        });
-
-        if (translatedLabel) FAMILY_PROP.label = translatedLabel;
-
-        //Add the Family tree fav currentProp
-        itemProps = [FAMILY_PROP].concat(itemProps);
-
-        //Select the family tree if no other currentProp is selected, or if it's a family currentProp
-        if (!_currentProp || FAMILY_IDS_MAP[_currentProp.id]) {
-          setCurrentProp(FAMILY_PROP);
-        } else {
-          setCurrentProp(_currentProp);
-        }
-      } else {
-        setCurrentProp(_currentProp);
-      }
-
-      setAvailableProps(itemProps);
-    } catch (error) {
-      showError(error);
-    } finally {
-      setLoadingProps(false);
-    }
-  };
 
   const history = useHistory();
   React.useEffect(() => {
@@ -247,6 +260,7 @@ function Suggestions({
   loadEntity,
   setShowSuggestions,
 }) {
+  const { currentEntity } = useContext(AppContext);
   const wrapperRef = React.useRef(null);
 
   React.useEffect(() => {

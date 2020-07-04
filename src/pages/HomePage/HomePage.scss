@@ -1,6 +1,7 @@
 .HomePage {
   .graphPlaceholder {
-    svg {
+    svg,
+    .spinner-grow {
       font-size: 10em;
       margin-bottom: 10px;
     }

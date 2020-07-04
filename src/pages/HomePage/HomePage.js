@@ -6,9 +6,10 @@ import ReactGA from "react-ga";
 import { useLocation } from "react-router-dom";
 import { AppContext } from "../../App";
 import { GiFamilyTree } from "react-icons/gi";
+import { Spinner } from "react-bootstrap";
 
 export default function HomePage() {
-  const { currentEntity } = useContext(AppContext);
+  const { currentEntity, loadingEntity } = useContext(AppContext);
 
   const location = useLocation();
   useEffect(() => {
@@ -19,9 +20,14 @@ export default function HomePage() {
   return (
     <div className="HomePage">
       <SearchBar />
-      {currentEntity ? (
-        <Graph />
-      ) : (
+      {loadingEntity && (
+        <div className="graphPlaceholder">
+          <Spinner animation="grow" />
+          <div>Loading tree</div>
+        </div>
+      )}
+      {currentEntity && <Graph />}
+      {!loadingEntity && !currentEntity && (
         <div className="graphPlaceholder">
           <GiFamilyTree />
           <div>Start a new search or choose from the examples</div>
