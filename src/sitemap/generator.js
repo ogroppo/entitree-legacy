@@ -10,7 +10,11 @@ const hostname = "http://www.entitree.com";
 const dest = path.resolve("./public", "sitemap.xml");
 
 // Generate sitemap and return Sitemap instance
-const sitemap = buildSitemap(hostname, ["/", "/about", "/privacy"]);
+const sitemap = buildSitemap(hostname, [
+  "/",
+  "/about",
+  //"/privacy"
+]);
 
 // write sitemap.xml file in /public folder
 // Access the sitemap content by converting it with .toString() method

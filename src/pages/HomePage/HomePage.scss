@@ -1,15 +1,19 @@
 .HomePage {
   .graphPlaceholder {
-    svg,
-    .spinner-grow {
-      font-size: 10em;
-      margin-bottom: 10px;
+    position: relative;
+    height: calc(100vh - 56px - 62px);
+    .center {
+      text-align: center;
+      top: 50%;
+      left: 50%;
+      position: absolute;
+      color: lightgray;
+      transform: translate(-50%, -50%);
+      svg,
+      .spinner-grow {
+        font-size: 10em;
+        margin-bottom: 10px;
+      }
     }
-    text-align: center;
-    top: 50%;
-    left: 50%;
-    position: absolute;
-    color: lightgray;
-    transform: translate(-50%, -50%);
   }
 }

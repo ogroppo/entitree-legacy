@@ -5,11 +5,26 @@
       position: relative;
     }
   }
+  .examplesButton {
+    .dropdown-menu {
+      top: 105%;
+    }
+    @media (max-width: 576px) {
+      .dropdown-menu {
+        left: 45px;
+        transform: translateX(-50%);
+      }
+    }
+  }
   .settingsButton {
     color: white;
     &:hover {
       background-color: lightgray;
       color: #233;
+    }
+    svg {
+      position: relative;
+      top: -1px;
     }
   }
 }

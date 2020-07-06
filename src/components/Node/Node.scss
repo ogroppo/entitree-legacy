@@ -16,6 +16,7 @@
     overflow: hidden;
     position: relative;
     display: flex;
+    cursor: pointer;
     .defaultImgMessage {
       position: absolute;
       top: 50%;
@@ -51,14 +52,23 @@
     padding-left: 4px;
     position: relative;
     .label {
-      font-size: 13px;
-      line-height: 15px;
-      font-weight: bold;
-      max-height: 30px; //line h * 2
-      overflow: hidden;
-      a:focus {
-        outline: none;
-        text-decoration: underline;
+      display: flex;
+      button {
+        border: 0;
+        padding: 0;
+        font-size: 13px;
+        line-height: 15px;
+        font-weight: bold;
+        max-height: 30px; //line h * 2
+        overflow: hidden;
+        text-align: left;
+        vertical-align: top;
+        &:focus {
+          outline: none;
+          border: 0;
+          box-shadow: none;
+          //text-decoration: underline;
+        }
       }
     }
     .description {
@@ -166,6 +176,22 @@
   &.thirdgender {
     .showGenderColor & {
       //background-color: rgba(238, 130, 238, 0.11);
+    }
+  }
+}
+
+.DetailsModal {
+  .allImages {
+    width: 100%;
+    margin-bottom: 8px;
+    overflow: hidden;
+    img {
+      height: 100%;
+      max-height: 90px;
+      float: left;
+      margin-right: 4px;
+      margin-bottom: 4px;
+      max-width: 100%;
     }
   }
 }
