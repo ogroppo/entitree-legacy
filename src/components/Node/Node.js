@@ -265,18 +265,19 @@ function DetailsModal({ node, hideModal }) {
   const [wikipediaExtract, setWikipediaExtract] = useState();
 
   useEffect(() => {
-    Axios.get(
-      `https://${currentLang.code}.wikipedia.org/api/rest_v1/page/summary/${node.data.wikipediaSlug}`
-    ).then(({ data: { extract, thumbnail } }) => {
-      if (extract) setWikipediaExtract(extract);
-      if (thumbnail)
-        setImages((images) =>
-          images.concat({
-            url: thumbnail.source,
-            alt: `${node.data.label}'s Wikipedia image`,
-          })
-        );
-    });
+    if (node.data.wikipediaSlug)
+      Axios.get(
+        `https://${currentLang.code}.wikipedia.org/api/rest_v1/page/summary/${node.data.wikipediaSlug}`
+      ).then(({ data: { extract, thumbnail } }) => {
+        if (extract) setWikipediaExtract(extract);
+        if (thumbnail)
+          setImages((images) =>
+            images.concat({
+              url: thumbnail.source,
+              alt: `${node.data.label}'s Wikipedia image`,
+            })
+          );
+      });
   }, []);
 
   return (
