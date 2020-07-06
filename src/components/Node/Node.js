@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import {
   IMAGE_SIZE,
   CARD_WIDTH,
@@ -7,7 +7,7 @@ import {
   CARD_HEIGHT,
   CARD_VERTICAL_GAP,
 } from "../../constants/tree";
-import { Button } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import {
   FiChevronLeft,
   FiChevronUp,
@@ -17,8 +17,10 @@ import {
 import { RiGroupLine, RiParentLine } from "react-icons/ri";
 import { GiBigDiamondRing } from "react-icons/gi";
 import { MdChildCare } from "react-icons/md";
+import { FiExternalLink } from "react-icons/fi";
 import "./Node.scss";
-import NodePopover from "./NodePopover.js";
+import Axios from "axios";
+import { AppContext } from "../../App";
 
 export default function Node({
   node,
@@ -34,28 +36,10 @@ export default function Node({
 }) {
   if (debug) console.log(node);
 
-  //delay image rendering every 20 images of about 500ms
-  const [showImage, setShowImage] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    let timer;
-    if (index !== undefined) {
-      let delay = Math.floor(index / 35) * 500;
-      timer = setTimeout(() => {
-        setShowImage(true);
-      }, delay);
-    } else {
-      setShowImage(true);
-    }
-    return () => clearTimeout(timer);
-  }, []);
-
-  const [imageIndex, setImageIndex] = useState(0);
-  const nextImage = () => {
-    if (!node.data.images || !node.data.images.length) return;
-    let nextIndex = imageIndex + 1;
-    if (nextIndex === node.data.images.length) nextIndex = 0;
-    setImageIndex(nextIndex);
+  const hideModal = () => {
+    setShowModal(false);
   };
 
   const {
@@ -79,29 +63,22 @@ export default function Node({
       <div
         className="imgWrapper"
         style={{ height: IMAGE_SIZE, width: IMAGE_SIZE }}
-        onClick={nextImage}
+        onClick={() => setShowModal(true)}
       >
         {!images || !images.length ? (
           <span className="defaultImgMessage">no image</span>
         ) : (
           <>
-            {!showImage && (
-              <span className="defaultImgMessage">loading image</span>
+            {images[0] && (
+              <img
+                alt={images[0].alt}
+                src={images[0].url}
+                title={images[0].alt}
+              />
             )}
-            {showImage && (
-              <>
-                {images[imageIndex] && (
-                  <img
-                    alt={images[imageIndex].alt}
-                    src={images[imageIndex].url}
-                    title={images[imageIndex].alt}
-                  />
-                )}
-                {images && images.length > 1 && (
-                  <span className="imgMore">+{images.length - 1}</span>
-                )}
-              </>
-            )}
+            {/* {images && images.length > 1 && (
+              <span className="imgMore">+{images.length - 1}</span>
+            )} */}
           </>
         )}
       </div>
@@ -110,32 +87,9 @@ export default function Node({
         style={{ height: IMAGE_SIZE, width: CARD_CONTENT_WIDTH }}
       >
         <div className="label">
-          {/*{node.data.label ? (*/}
-          {/*  <a*/}
-          {/*    target="_blank"*/}
-          {/*    title={node.data.label}*/}
-          {/*    href={`https://www.wikidata.org/wiki/${node.data.id}`}*/}
-          {/*  >*/}
-          {/*    {node.data.label}*/}
-          {/*  </a>*/}
-          {/*) : (*/}
-          {/*  <a*/}
-          {/*    target="_blank"*/}
-          {/*    title={"Unlabelled item"}*/}
-          {/*    href={`https://www.wikidata.org/wiki/${node.data.id}`}*/}
-          {/*  >*/}
-          {/*    <i>Unlabelled</i>*/}
-          {/*  </a>*/}
-          {/*)}*/}
-          <NodePopover
-            title={node.data.label}
-            qid={node.data.id}
-            // sitelink={node.data.sitelink}
-            lang={node.data.lang}
-            wikipediaPageName={node.data.sitelink}
-
-          />
-
+          <Button variant="link" onClick={() => setShowModal(true)}>
+            {node.data.label ? node.data.label : <i>Unlabelled</i>}
+          </Button>
         </div>
         <div className="description" title={node.data.description}>
           {node.data.description}
@@ -197,6 +151,7 @@ export default function Node({
         toggleFn={toggleChildren}
         className="childrenCount"
       />
+      {showModal && <DetailsModal hideModal={hideModal} node={node} />}
     </div>
   );
 }
@@ -301,5 +256,66 @@ function ChildCounter({ ids, node, toggleFn, className }) {
         <MdChildCare />
       </span> */}
     </Button>
+  );
+}
+
+function DetailsModal({ node, hideModal }) {
+  const { currentLang } = useContext(AppContext);
+  const [images, setImages] = useState(node.data.images);
+  const [wikipediaExtract, setWikipediaExtract] = useState();
+
+  useEffect(() => {
+    Axios.get(
+      `https://${currentLang.code}.wikipedia.org/api/rest_v1/page/summary/${node.data.wikipediaSlug}`
+    ).then(({ data: { extract, thumbnail } }) => {
+      if (extract) setWikipediaExtract(extract);
+      if (thumbnail)
+        setImages((images) =>
+          images.concat({
+            url: thumbnail.source,
+            alt: `${node.data.label}'s Wikipedia image`,
+          })
+        );
+    });
+  }, []);
+
+  return (
+    <Modal show={true} onHide={hideModal} className="DetailsModal">
+      <Modal.Header closeButton>
+        <Modal.Title>{node.data.label}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <div className="allImages">
+          {images &&
+            images.map((image) => (
+              <img
+                key={image.url}
+                alt={image.alt}
+                src={image.url}
+                title={image.alt}
+              />
+            ))}
+        </div>
+        <p>{wikipediaExtract || node.data.description}</p>
+
+        {node.data.sitelink && node.data.sitelink.url && (
+          <p>
+            <a href={node.data.sitelink.url} target="_blank">
+              Open Wikipedia page <FiExternalLink />
+            </a>
+          </p>
+        )}
+        <p>
+          <a href={node.data.wikidataUrl} target="_blank">
+            Open Wikidata item <FiExternalLink />
+          </a>
+        </p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="primary" onClick={hideModal}>
+          OK
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 }

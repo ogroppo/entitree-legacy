@@ -391,6 +391,8 @@ const Graph = memo(
     };
 
     const centerPoint = (x, y, scale = currentScale) => {
+      console.log(currentScale);
+
       const halfWidth = graphWidth / 2;
       const calculatedPositionX = halfWidth - (halfWidth + x) * scale;
       let calculatedPositionY = y;
@@ -404,6 +406,7 @@ const Graph = memo(
     const recenter = () => {
       if (focusedNode.treeId !== root.treeId)
         setCurrentEntity(focusedNode.data);
+      else centerPoint(focusedNode.x, focusedNode.y);
     };
 
     const {
@@ -573,9 +576,13 @@ const Graph = memo(
           </OverlayTrigger>
           <OverlayTrigger
             placement="right"
-            overlay={<Tooltip>Center tree on {currentEntity.label}</Tooltip>}
+            overlay={
+              <Tooltip>
+                Center tree on {focusedNode && focusedNode.data.label}
+              </Tooltip>
+            }
           >
-            <Button variant="light" onClick={recenter}>
+            <Button variant="light" onClick={recenter} disabled={!focusedNode}>
               <RiFocus3Line />
             </Button>
           </OverlayTrigger>
@@ -597,6 +604,7 @@ const Graph = memo(
     );
   },
   (prevProps, nextProps) => {
-    return true; //prevProps.scale === nextProps.scale; //should consider scale, but has better performance like this
+    return prevProps.scale === nextProps.scale; //should consider scale, but has better performance like this
+    return true;
   }
 );

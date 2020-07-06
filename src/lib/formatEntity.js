@@ -46,11 +46,17 @@ export default async function formatEntity(entity, languageCode) {
   );
   formattedEntity.externalLinks = getSocialMediaProps(simpleClaims);
 
-  formattedEntity.sitelink = (entity.sitelinks ?
-    (entity.sitelinks[languageCode + "wiki"] ?
-      entity.sitelinks[languageCode + "wiki"].title
-      : null) : null);
-  // formattedEntity.lang  = languageCode;
+  formattedEntity.wikidataUrl = wbk.getSitelinkUrl({
+    site: "wikidata",
+    title: formattedEntity.id,
+  });
+
+  if (entity.sitelinks && entity.sitelinks[languageCode + "wiki"]) {
+    formattedEntity.sitelink = entity.sitelinks[languageCode + "wiki"];
+    formattedEntity.wikipediaSlug = formattedEntity.sitelink.url.split(
+      "/wiki/"
+    )[1];
+  }
 
   formattedEntity.gender = getGender(simpleClaims);
 

@@ -22,17 +22,21 @@ export default function HomePage() {
       <SearchBar />
       {loadingEntity && (
         <div className="graphPlaceholder">
-          <Spinner animation="grow" />
-          <div>Loading tree</div>
+          <div className="center">
+            <Spinner animation="grow" />
+            <div>Loading tree</div>
+          </div>
+        </div>
+      )}
+      {!loadingEntity && !currentEntity && (
+        <div className="graphPlaceholder">
+          <div className="center">
+            <GiFamilyTree />
+            <div>Start a new search or choose from the examples</div>
+          </div>
         </div>
       )}
       {currentEntity && <Graph />}
-      {!loadingEntity && !currentEntity && (
-        <div className="graphPlaceholder">
-          <GiFamilyTree />
-          <div>Start a new search or choose from the examples</div>
-        </div>
-      )}
     </div>
   );
 }
