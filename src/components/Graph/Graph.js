@@ -391,8 +391,6 @@ const Graph = memo(
     };
 
     const centerPoint = (x, y, scale = currentScale) => {
-      console.log(currentScale);
-
       const halfWidth = graphWidth / 2;
       const calculatedPositionX = halfWidth - (halfWidth + x) * scale;
       let calculatedPositionY = y;

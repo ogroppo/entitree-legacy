@@ -144,7 +144,6 @@ export default class App extends Component {
         <Router history={browserHistory}>
           <div className="App">
             <div className="appBody">
-              <Header />
               <div className="messages">
                 {errors.map((error, index) => (
                   <Alert key={JSON.stringify(error) + index} variant="danger">
