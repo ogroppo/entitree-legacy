@@ -1,5 +1,8 @@
 .SearchBar {
   background-color: #eee;
+  @media print {
+    display: none;
+  }
   .searchBox {
     position: relative;
     color: #212529;

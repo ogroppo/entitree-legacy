@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
   Navbar,
   Container,
@@ -6,18 +6,30 @@ import {
   Dropdown,
   Button,
   Nav,
-  FormControl,
 } from "react-bootstrap";
 import { FiSliders } from "react-icons/fi";
-
+import ReactGA from "react-ga";
 import { EXAMPLES } from "../../constants/examples";
-import { AppContext } from "../../App";
 import "./Header.scss";
 import Logo from "../../components/Logo/Logo";
 import Settings from "../../modals/Settings/Settings";
 
 export default function Header({ simple }) {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+
+  const openSettingsModal = () => {
+    ReactGA.modalview("settings");
+    setShowSettingsModal(true);
+  };
+
+  const openExampleLink = (e) => {
+    ReactGA.event({
+      category: "Examples",
+      action: "Clicked on example",
+      label: e.target.href,
+    });
+  };
+
   return (
     <Navbar className="Header" bg="dark" variant="dark" expand="lg">
       <Container>
@@ -32,7 +44,7 @@ export default function Header({ simple }) {
             className="examplesButton"
           >
             {EXAMPLES.map(({ name, href }) => (
-              <Dropdown.Item key={name} href={href}>
+              <Dropdown.Item key={name} href={href} onClick={openExampleLink}>
                 {name}
               </Dropdown.Item>
             ))}
@@ -43,7 +55,7 @@ export default function Header({ simple }) {
             <Button
               className="settingsButton"
               variant="none"
-              onClick={() => setShowSettingsModal(true)}
+              onClick={openSettingsModal}
             >
               settings
               <FiSliders className="ml-2" />

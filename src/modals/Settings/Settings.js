@@ -3,6 +3,7 @@ import { Form, Button, Dropdown, Modal, FormControl } from "react-bootstrap";
 import { LANGS } from "../../constants/langs";
 import { AppContext } from "../../App";
 import "./Settings.scss";
+import ReactGA from "react-ga";
 
 export default function Settings({ show, hideModal }) {
   const {
@@ -13,6 +14,12 @@ export default function Settings({ show, hideModal }) {
   } = useContext(AppContext);
 
   const setLang = (lang) => {
+    ReactGA.event({
+      category: "Language",
+      action: `Changed`,
+      label: lang.code,
+    });
+
     try {
       localStorage.setItem("userLangCode", lang.code);
     } catch (error) {

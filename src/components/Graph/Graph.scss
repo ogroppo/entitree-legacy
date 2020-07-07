@@ -9,6 +9,9 @@
     position: relative;
   }
   .navigation {
+    @media print {
+      display: none;
+    }
     position: absolute;
     bottom: 15px;
     @media (min-width: 576px) {
@@ -37,5 +40,12 @@
   }
   .nodes {
     position: absolute;
+  }
+}
+
+//top level
+@media print {
+  .tooltip {
+    display: none;
   }
 }
