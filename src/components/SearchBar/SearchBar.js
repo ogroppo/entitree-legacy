@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import useDebounce from "../../lib/useDebounce";
 import "./SearchBar.scss";
 import {
@@ -8,7 +8,6 @@ import {
   Dropdown,
   Container,
   InputGroup,
-  OverlayTrigger,
   Tooltip,
   Overlay,
 } from "react-bootstrap";
@@ -16,7 +15,6 @@ import qs from "query-string";
 import { useHistory, useLocation } from "react-router-dom";
 import { FAMILY_PROP, FAMILY_IDS_MAP } from "../../constants/properties";
 import { AppContext } from "../../App";
-import { FaStar } from "react-icons/fa";
 import getItem from "../../wikidata/getItem";
 import getItemProps from "../../wikidata/getItemProps";
 import search from "../../wikidata/search";
@@ -34,18 +32,18 @@ export default function SearchBar() {
     setLoadingEntity,
     loadingEntity,
   } = useContext(AppContext);
-  const [searchTerm, setSearchTerm] = React.useState("");
-  const [loadingProps, setLoadingProps] = React.useState(false);
-  const [loadingProp, setLoadingProp] = React.useState(false);
-  const [loadingSuggestions, setLoadingSuggestions] = React.useState(false);
-  const [searchResults, setSearchResults] = React.useState([]);
-  const [showSuggestions, setShowSuggestions] = React.useState();
-  const [fromKeyboard, setFromKeyboard] = React.useState(true);
-  const [availableProps, setAvailableProps] = React.useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loadingProps, setLoadingProps] = useState(false);
+  const [loadingProp, setLoadingProp] = useState(false);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState();
+  const [fromKeyboard, setFromKeyboard] = useState(true);
+  const [availableProps, setAvailableProps] = useState([]);
 
   //Check on mount if there are params in the url
   const location = useLocation();
-  React.useEffect(() => {
+  useEffect(() => {
     (async () => {
       try {
         let { q, p } = qs.parse(location.search);
@@ -57,7 +55,7 @@ export default function SearchBar() {
   }, []);
 
   //reload entity on lang change
-  React.useEffect(() => {
+  useEffect(() => {
     if (hasLanguageChanged) {
       (async () => {
         try {
@@ -98,11 +96,14 @@ export default function SearchBar() {
           //Remove all family props
           let translatedLabel;
           itemProps = itemProps.filter((prop) => {
-            if (prop.id === FAMILY_PROP.id) translatedLabel = prop.label;
+            if (prop.id === FAMILY_PROP.id) translatedLabel = prop.label; //translated child label
             return !FAMILY_IDS_MAP[prop.id];
           });
 
           if (translatedLabel) FAMILY_PROP.label = translatedLabel;
+          if (FAMILY_PROP.overrideLabels[currentLang.code])
+            FAMILY_PROP.overrideLabel =
+              FAMILY_PROP.overrideLabels[currentLang.code];
 
           //Add the Family tree fav currentProp
           itemProps = [FAMILY_PROP].concat(itemProps);
@@ -130,7 +131,7 @@ export default function SearchBar() {
   };
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  React.useEffect(() => {
+  useEffect(() => {
     if (debouncedSearchTerm && fromKeyboard) {
       setShowSuggestions(true);
       setLoadingSuggestions(true);
@@ -162,7 +163,7 @@ export default function SearchBar() {
   }, [debouncedSearchTerm]);
 
   const history = useHistory();
-  React.useEffect(() => {
+  useEffect(() => {
     if (currentEntity) {
       const query = { q: currentEntity.id };
 
