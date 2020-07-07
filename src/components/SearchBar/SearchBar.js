@@ -92,7 +92,6 @@ export default function SearchBar() {
         let [_currentEntity, itemProps, _currentProp] = await Promise.all(
           calls
         );
-        setSearchTerm(_currentEntity.label);
 
         //currentProp belongs to family stuff
         if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
@@ -126,6 +125,7 @@ export default function SearchBar() {
     } finally {
       setLoadingEntity(false);
       setLoadingProps(false);
+      setSearchTerm("");
     }
   };
 
@@ -178,7 +178,6 @@ export default function SearchBar() {
   }, [currentEntity, currentProp]);
 
   const propToggleRef = useRef();
-  const [showPropTooltip, setShowPropTooltip] = useState(true);
   return (
     <Form className="SearchBar">
       <Container>
@@ -189,7 +188,15 @@ export default function SearchBar() {
               onChange={(e) => {
                 setSearchTerm(e.target.value);
               }}
-              value={loadingEntity ? "Loading entity..." : searchTerm}
+              value={
+                loadingEntity
+                  ? "Loading entity..."
+                  : searchTerm
+                  ? searchTerm
+                  : currentEntity
+                  ? currentEntity.label
+                  : ""
+              }
               type="search"
               readOnly={loadingEntity}
               placeholder="Start typing to search..."
@@ -240,12 +247,10 @@ export default function SearchBar() {
           </InputGroup>
           {showSuggestions && (
             <Suggestions
-              setFromKeyboard={setFromKeyboard}
-              setSearchTerm={setSearchTerm}
-              setShowSuggestions={setShowSuggestions}
-              loadEntity={loadEntity}
               loadingSuggestions={loadingSuggestions}
               searchResults={searchResults}
+              loadEntity={loadEntity}
+              setShowSuggestions={setShowSuggestions}
             />
           )}
         </Form.Group>
@@ -260,7 +265,6 @@ function Suggestions({
   loadEntity,
   setShowSuggestions,
 }) {
-  const { currentEntity } = useContext(AppContext);
   const wrapperRef = React.useRef(null);
 
   React.useEffect(() => {

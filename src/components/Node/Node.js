@@ -43,7 +43,7 @@ export default function Node({
   };
 
   const {
-    data: { images, gender },
+    data: { thumbnails, gender },
   } = node;
 
   return (
@@ -65,19 +65,19 @@ export default function Node({
         style={{ height: IMAGE_SIZE, width: IMAGE_SIZE }}
         onClick={() => setShowModal(true)}
       >
-        {!images || !images.length ? (
+        {!thumbnails || !thumbnails.length ? (
           <span className="defaultImgMessage">no image</span>
         ) : (
           <>
-            {images[0] && (
+            {thumbnails[0] && (
               <img
-                alt={images[0].alt}
-                src={images[0].url}
-                title={images[0].alt}
+                alt={thumbnails[0].alt}
+                src={thumbnails[0].url}
+                title={thumbnails[0].alt}
               />
             )}
-            {/* {images && images.length > 1 && (
-              <span className="imgMore">+{images.length - 1}</span>
+            {/* {thumbnails && thumbnails.length > 1 && (
+              <span className="imgMore">+{thumbnails.length - 1}</span>
             )} */}
           </>
         )}
@@ -270,13 +270,12 @@ function DetailsModal({ node, hideModal }) {
         `https://${currentLang.code}.wikipedia.org/api/rest_v1/page/summary/${node.data.wikipediaSlug}`
       ).then(({ data: { extract, thumbnail } }) => {
         if (extract) setWikipediaExtract(extract);
-        if (thumbnail)
-          setImages((images) =>
-            images.concat({
-              url: thumbnail.source,
-              alt: `${node.data.label}'s Wikipedia image`,
-            })
-          );
+        if (thumbnail && !images.length) {
+          setImages({
+            url: thumbnail.source,
+            alt: `${node.data.label}'s Wikipedia image`,
+          });
+        }
       });
   }, []);
 

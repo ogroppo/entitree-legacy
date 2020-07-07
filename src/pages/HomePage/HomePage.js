@@ -7,6 +7,7 @@ import { useLocation } from "react-router-dom";
 import { AppContext } from "../../App";
 import { GiFamilyTree } from "react-icons/gi";
 import { Spinner } from "react-bootstrap";
+import Header from "../../layout/Header/Header";
 
 export default function HomePage() {
   const { currentEntity, loadingEntity } = useContext(AppContext);
@@ -19,6 +20,7 @@ export default function HomePage() {
 
   return (
     <div className="HomePage">
+      <Header />
       <SearchBar />
       {loadingEntity && (
         <div className="graphPlaceholder">

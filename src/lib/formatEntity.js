@@ -1,5 +1,5 @@
 import formatDateClaim from "./formatDateClaim";
-import getEntityImages from "../wikidata/getEntityImages";
+import addEntityImages from "../wikidata/addEntityImages";
 import {
   BIRTH_DATE_ID,
   DEATH_DATE_ID,
@@ -60,7 +60,7 @@ export default async function formatEntity(entity, languageCode) {
 
   formattedEntity.gender = getGender(simpleClaims);
 
-  formattedEntity.images = await getEntityImages(formattedEntity, languageCode);
+  await addEntityImages(formattedEntity, languageCode);
 
   return formattedEntity;
 }

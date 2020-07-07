@@ -16,7 +16,7 @@ import "./Header.scss";
 import Logo from "../../components/Logo/Logo";
 import Settings from "../../modals/Settings/Settings";
 
-export default function Header() {
+export default function Header({ simple }) {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   return (
     <Navbar className="Header" bg="dark" variant="dark" expand="lg">
@@ -24,33 +24,36 @@ export default function Header() {
         <Navbar.Brand href="/">
           <Logo /> Entitree
         </Navbar.Brand>
-        <DropdownButton
-          title="Examples"
-          variant="info"
-          size="sm"
-          className="examplesButton"
-        >
-          {EXAMPLES.map(({ name, href }) => (
-            <Dropdown.Item key={name} href={href}>
-              {name}
-            </Dropdown.Item>
-          ))}
-        </DropdownButton>
-
-        <Nav className="ml-auto">
-          <Button
-            className="settingsButton"
-            variant="none"
-            onClick={() => setShowSettingsModal(true)}
+        {!simple && (
+          <DropdownButton
+            title="Examples"
+            variant="info"
+            size="sm"
+            className="examplesButton"
           >
-            settings
-            <FiSliders className="ml-2" />
-          </Button>
-          <Settings
-            show={showSettingsModal}
-            hideModal={() => setShowSettingsModal(false)}
-          />
-        </Nav>
+            {EXAMPLES.map(({ name, href }) => (
+              <Dropdown.Item key={name} href={href}>
+                {name}
+              </Dropdown.Item>
+            ))}
+          </DropdownButton>
+        )}
+        {!simple && (
+          <Nav className="ml-auto">
+            <Button
+              className="settingsButton"
+              variant="none"
+              onClick={() => setShowSettingsModal(true)}
+            >
+              settings
+              <FiSliders className="ml-2" />
+            </Button>
+            <Settings
+              show={showSettingsModal}
+              hideModal={() => setShowSettingsModal(false)}
+            />
+          </Nav>
+        )}
       </Container>
     </Navbar>
   );
