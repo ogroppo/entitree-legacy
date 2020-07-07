@@ -67,12 +67,20 @@ export default async function formatEntity(entity, languageCode) {
 
 function getLanguageString(array, languageCode) {
   let langString = array[languageCode];
-  if (langString) return langString.value;
+  if (!langString)
+    for (let defaultLangCode of DEFAULT_LANGS_CODES) {
+      let defaultLangString = array[defaultLangCode];
+      if (defaultLangString) {
+        langString = defaultLangString;
+        break;
+      }
+    }
 
-  for (let defaultLangCode of DEFAULT_LANGS_CODES) {
-    let defaultLangString = array[defaultLangCode];
-    if (defaultLangString) return defaultLangString.value;
-  }
+  if (!langString) return;
+
+  if (langString.value.startsWith("Peerage person ID=")) return;
+
+  return langString.value;
 }
 
 function getGender(simpleClaims) {

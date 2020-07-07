@@ -285,18 +285,24 @@ function DetailsModal({ node, hideModal }) {
         <Modal.Title>{node.data.label}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="allImages">
-          {images &&
-            images.map((image) => (
-              <img
-                key={image.url}
-                alt={image.alt}
-                src={image.url}
-                title={image.alt}
-              />
-            ))}
-        </div>
-        <p>{wikipediaExtract || node.data.description}</p>
+        {!!images.length && (
+          <div className="allImages">
+            {images &&
+              images.map((image) => (
+                <img
+                  key={image.url}
+                  alt={image.alt}
+                  src={image.url}
+                  title={image.alt}
+                />
+              ))}
+          </div>
+        )}
+        <p>
+          {wikipediaExtract || node.data.description || (
+            <i>This entity has no description</i>
+          )}
+        </p>
 
         {node.data.sitelink && node.data.sitelink.url && (
           <p>
