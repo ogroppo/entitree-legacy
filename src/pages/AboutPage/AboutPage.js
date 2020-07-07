@@ -28,11 +28,11 @@ export default function AboutPage() {
         <p>Our mission is to support the following people:</p>
         <ul>
           <li>
-            researchers of any level that want to able to explore wikidata
-            connections among items in a visual way 🧪
+            researchers of any level that want to explore wikidata connections
+            in a visual way 🧪
           </li>
           <li>
-            scientists that are keen to have an interactive taxonomy tree 🔬
+            scientists that are keen to use an interactive taxonomy tree 🔬
           </li>
           <li>historians investigating royal families 👑</li>
           <li>
@@ -50,11 +50,11 @@ export default function AboutPage() {
         </ul>
         <p>
           Please feel free to get in touch with any member of the team, for
-          technical queries you proably want to get in touch with{" "}
+          technical queries or help around the user interface{" "}
           <a href="https://github.com/ogroppo" target="_blank">
             Orlando
           </a>{" "}
-          otherwise for anything related to data{" "}
+          is the right guy, for anything related to (wiki)data{" "}
           <a href="https://github.com/mshd" target="_blank">
             Martin
           </a>{" "}
@@ -79,9 +79,9 @@ export default function AboutPage() {
           </a>
         </p>
         <p>
-          Our visitors are the most precious thing and you are always in our
-          minds while building this tool. If you could feel the love we have put
-          in this tool and you want to partecipate to the growth of the amazing
+          Our visitors are very precious to us and are always in our minds while
+          building this tool. If you could feel the love we have put in this
+          project and you want to participate to the growth of the amazing
           community orbiting around Wikidata, please make a donation.
         </p>
         <div className="donateButtons">
