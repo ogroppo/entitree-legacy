@@ -8,27 +8,6 @@
     height: 100%;
     position: relative;
   }
-  .navigation {
-    @media print {
-      display: none;
-    }
-    position: absolute;
-    bottom: 15px;
-    @media (min-width: 576px) {
-      bottom: 10px;
-    }
-    left: 10px;
-    width: 32px;
-    .btn {
-      margin-top: 3px;
-      padding: 0;
-      border: 1px solid lightgray;
-      line-height: 1;
-      width: 32px;
-      height: 32px;
-      vertical-align: middle;
-    }
-  }
   .center {
     position: absolute;
     left: 50%;
@@ -43,9 +22,51 @@
   }
 }
 
-//top level
+.Navigation {
+  @media print {
+    display: none;
+  }
+  position: absolute;
+  bottom: 15px;
+  @media (min-width: 576px) {
+    bottom: 10px;
+  }
+  left: 10px;
+  width: 32px;
+  .btn {
+    margin-top: 3px;
+    padding: 0;
+    border: 1px solid lightgray;
+    line-height: 1;
+    width: 32px;
+    height: 32px;
+    vertical-align: middle;
+  }
+}
+
+//top level of Navigation
 @media print {
   .tooltip {
     display: none;
+  }
+}
+
+.ShareModal {
+  .shareButton {
+    margin-bottom: 8px;
+    svg {
+      height: 2em;
+      width: 2em;
+    }
+    .btn {
+      svg {
+        height: 2em;
+        width: 2em;
+        margin: 0.5em;
+        font-size: 0.65em;
+      }
+      padding: 0;
+      padding-right: 0.5em;
+    }
   }
 }

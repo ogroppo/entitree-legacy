@@ -28,25 +28,6 @@ export default function Settings({ show, hideModal }) {
     setCurrentLang(lang);
   };
 
-  const save = () => {
-    hideModal();
-  };
-
-  const options = [
-    {
-      id: "genderColors",
-      label: "Use Color based on gender",
-    },
-    {
-      id: "birthName",
-      label: "Use Birthname",
-    },
-    {
-      id: "birthPlace",
-      label: "Show birthplace instead of hospital",
-    },
-  ];
-
   return (
     <Modal show={show} onHide={hideModal} className="Settings">
       <Modal.Header closeButton>
@@ -59,7 +40,7 @@ export default function Settings({ show, hideModal }) {
             checked={showGenderColor}
             onChange={(e) => setShowGenderColor(e.target.checked)}
             type="checkbox"
-            label={"Use Color based on gender"}
+            label={"Use background color based on gender"}
           />
         </Form.Group>
         <Form.Group controlId="language">
