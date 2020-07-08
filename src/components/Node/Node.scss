@@ -91,26 +91,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .externalLinks {
-      @media print {
-        display: none;
-      }
-      position: absolute;
-      bottom: 5px;
-      left: 5px;
-      height: 16px;
-      a {
-        padding: 1px;
-        margin-right: 5px;
-        display: inline-block;
-        line-height: 1;
-        img {
-          vertical-align: top;
-          height: 16px;
-          width: 16px;
-        }
-      }
-    }
   }
 
   .downPropLabel,
@@ -204,6 +184,26 @@
       margin-right: 4px;
       margin-bottom: 4px;
       max-width: 100%;
+    }
+  }
+  .externalLinks {
+    @media print {
+      display: none;
+    }
+    //position: absolute;
+    bottom: 5px;
+    left: 5px;
+    height: 32px;
+    a {
+      padding: 1px;
+      margin-right: 10px;
+      display: inline-block;
+      line-height: 1;
+      img {
+        vertical-align: top;
+        height: 32px;
+        width: 32px;
+      }
     }
   }
 }

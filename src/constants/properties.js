@@ -152,8 +152,20 @@ export const preferredProps = {
 };
 
 export const SOCIAL_PROPS_IDS = {
+  wikidata: {
+    title: "Open Wikidata item in a new tab",
+    iconName: "wikidata",
+    alt: "wikidata icon",
+    baseUrl: "",
+  },
+  wikipedia: {
+    title: "Open wikipedia article in a new tab",
+    iconName: "wikipedia",
+    alt: "wikipedia icon",
+    baseUrl: "",
+  },
   P6634: {
-    title: "Open Linkeding profile in a new tab",
+    title: "Open LinkedIn profile in a new tab",
     iconName: "linkedin",
     alt: "linkedin icon",
     baseUrl: "https://www.linkedin.com/in/",

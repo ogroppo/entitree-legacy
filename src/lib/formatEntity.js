@@ -44,19 +44,33 @@ export default async function formatEntity(entity, languageCode) {
     entity.claims[DEATH_DATE_ID],
     languageCode
   );
-  formattedEntity.externalLinks = getSocialMediaProps(simpleClaims);
 
   formattedEntity.wikidataUrl = wbk.getSitelinkUrl({
     site: "wikidata",
     title: formattedEntity.id,
   });
+  simpleClaims["wikidata"] = [{value:formattedEntity.wikidataUrl}];
 
   if (entity.sitelinks && entity.sitelinks[languageCode + "wiki"]) {
     formattedEntity.sitelink = entity.sitelinks[languageCode + "wiki"];
+    simpleClaims["wikipedia"] = [{value:formattedEntity.sitelink.url}];
+
     formattedEntity.wikipediaSlug = formattedEntity.sitelink.url.split(
       "/wiki/"
     )[1];
   }
+
+  formattedEntity.externalLinks = getSocialMediaProps(simpleClaims);
+  // formattedEntity.claims = simpleClaims;
+
+
+  // formattedEntity.externalLinks.push({
+  //
+  // })
+
+
+  formattedEntity.website = (simpleClaims["P856"] ? simpleClaims["P856"][0].value : null);
+  console.log(formattedEntity);
 
   formattedEntity.gender = getGender(simpleClaims);
 

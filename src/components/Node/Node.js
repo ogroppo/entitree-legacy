@@ -99,20 +99,20 @@ export default function Node({
           {node.data.birthDate && node.data.deathDate && " - "}
           {node.data.deathDate && node.data.deathDate}
         </div>
-        {node.data.externalLinks && !!node.data.externalLinks.length && (
-          <div className="externalLinks">
-            {node.data.externalLinks.map((link, index) => (
-              <a
-                key={node.treeId + index}
-                target="_blank"
-                title={link.title}
-                href={link.url}
-              >
-                <img src={link.iconSrc} alt={link.alt} title={link.alt} />
-              </a>
-            ))}
-          </div>
-        )}
+        {/*{node.data.externalLinks && !!node.data.externalLinks.length && (*/}
+        {/*  <div className="externalLinks">*/}
+        {/*    {node.data.externalLinks.map((link, index) => (*/}
+        {/*      <a*/}
+        {/*        key={node.treeId + index}*/}
+        {/*        target="_blank"*/}
+        {/*        title={link.title}*/}
+        {/*        href={link.url}*/}
+        {/*      >*/}
+        {/*        <img src={link.iconSrc} alt={link.alt} title={link.alt} />*/}
+        {/*      </a>*/}
+        {/*    ))}*/}
+        {/*  </div>*/}
+        {/*)}*/}
       </div>
       {node._parentsExpanded && currentProp && (
         <div className="upPropLabel" style={{ top: -CARD_VERTICAL_GAP / 2 }}>
@@ -304,18 +304,39 @@ function DetailsModal({ node, hideModal }) {
           )}
         </p>
 
-        {node.data.sitelink && node.data.sitelink.url && (
-          <p>
-            <a href={node.data.sitelink.url} target="_blank">
-              Open Wikipedia page <FiExternalLink />
-            </a>
-          </p>
-        )}
+        {/*{node.data.sitelink && node.data.sitelink.url && (*/}
+        {/*  <p>*/}
+        {/*    <a href={node.data.sitelink.url} target="_blank">*/}
+        {/*      Open Wikipedia page <FiExternalLink />*/}
+        {/*    </a>*/}
+        {/*  </p>*/}
+        {/*)}*/}
+        {/*<p>*/}
+        {/*  <a href={node.data.wikidataUrl} target="_blank">*/}
+        {/*    Open Wikidata item <FiExternalLink />*/}
+        {/*  </a>*/}
+        {/*</p>*/}
+        {node.data.website && (
         <p>
-          <a href={node.data.wikidataUrl} target="_blank">
-            Open Wikidata item <FiExternalLink />
+          <a href={node.data.website} target="_blank">
+            Open official website <FiExternalLink />
           </a>
         </p>
+        )}
+        {node.data.externalLinks && !!node.data.externalLinks.length && (
+          <div className="externalLinks">
+            {node.data.externalLinks.map((link, index) => (
+              <a
+                key={node.treeId + index}
+                target="_blank"
+                title={link.title}
+                href={link.url}
+              >
+                <img src={link.iconSrc} alt={link.alt} title={link.title} />
+              </a>
+            ))}
+          </div>
+        )}
       </Modal.Body>
       <Modal.Footer>
         <Button variant="primary" onClick={hideModal}>
