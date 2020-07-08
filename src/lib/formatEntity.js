@@ -61,16 +61,8 @@ export default async function formatEntity(entity, languageCode) {
   }
 
   formattedEntity.externalLinks = getSocialMediaProps(simpleClaims);
-  // formattedEntity.claims = simpleClaims;
 
-
-  // formattedEntity.externalLinks.push({
-  //
-  // })
-
-
-  formattedEntity.website = (simpleClaims["P856"] ? simpleClaims["P856"][0].value : null);
-  console.log(formattedEntity);
+  formattedEntity.website = (simpleClaims["P856"]  && simpleClaims["P856"][0] ? simpleClaims["P856"][0].value : null);
 
   formattedEntity.gender = getGender(simpleClaims);
 
