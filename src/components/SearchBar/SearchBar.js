@@ -180,7 +180,13 @@ export default function SearchBar() {
 
   const propToggleRef = useRef();
   return (
-    <Form className="SearchBar">
+    <Form
+      className="SearchBar"
+      onSubmit={(e) => {
+        e.preventDefault();
+        setShowSuggestions(true);
+      }}
+    >
       <Container>
         <Form.Group className="searchBox" controlId="searchBox">
           <InputGroup>

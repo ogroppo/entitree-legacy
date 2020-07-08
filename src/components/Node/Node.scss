@@ -91,26 +91,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .externalLinks {
-      @media print {
-        display: none;
-      }
-      position: absolute;
-      bottom: 5px;
-      left: 5px;
-      height: 16px;
-      a {
-        padding: 1px;
-        margin-right: 5px;
-        display: inline-block;
-        line-height: 1;
-        img {
-          vertical-align: top;
-          height: 16px;
-          width: 16px;
-        }
-      }
-    }
   }
 
   .downPropLabel,
@@ -127,11 +107,12 @@
     }
   }
   .counter {
-    padding: 2px;
+    padding: 3px;
     font-size: 12px;
     font-weight: bold;
     position: absolute;
-    min-width: 27px;
+    //background-color: red;
+    line-height: 1;
     @media print {
       color: gray;
     }
@@ -159,15 +140,17 @@
   }
   .siblingCount,
   .spouseCount {
-    height: 100%;
     top: 50%;
     transform: translateY(-50%);
   }
   .parentCount,
   .childrenCount {
     left: 50%;
-    width: 100%;
     transform: translateX(-50%);
+    .value {
+      display: inline-block;
+      min-width: 1em; //default to optional icon width for central alignment
+    }
   }
   .parentCount {
     bottom: 100%;
@@ -204,6 +187,18 @@
       margin-right: 4px;
       margin-bottom: 4px;
       max-width: 100%;
+    }
+  }
+  .externalLinks {
+    a {
+      padding: 1px;
+      margin-right: 10px;
+      display: inline-block;
+      line-height: 1;
+      img {
+        vertical-align: middle;
+        width: 32px;
+      }
     }
   }
 }
