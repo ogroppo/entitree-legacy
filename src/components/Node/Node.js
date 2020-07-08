@@ -67,7 +67,7 @@ export default function Node({
         onClick={() => setShowModal(true)}
       >
         {!thumbnails || !thumbnails.length ? (
-          <span className="defaultImgMessage">no image</span>
+          <span className="defaultImgMessage"></span>
         ) : (
           <>
             {thumbnails[0] && (
