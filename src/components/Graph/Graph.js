@@ -293,14 +293,16 @@ const Graph = memo(
       }
 
       let newx = node.x;
-      if (node._spousesExpanded) newx = (newx + lastSpouse.x) / 2;
+      if (node._spousesExpanded) {
+        newx = (newx + lastSpouse.x) / 2;
+      }
       if (!options.noRecenter) centerPoint(newx);
     };
 
     const toggleSiblings = async (node, options = {}) => {
       if (!node.data.leftIds || !node.data.leftIds.length) return;
 
-      var lastSibling;
+      let firstSibling, lastSibling;
       if (node._siblingsExpanded) {
         dispatchGraph({ type: "collapseSiblings", node });
       } else if (node._siblings) {
@@ -317,6 +319,7 @@ const Graph = memo(
             sibling.treeId = getNodeUniqueId(sibling, index, "sibling");
             const siblingIndex = node.parent.children.indexOf(node);
             node.parent.children.splice(siblingIndex, 0, sibling);
+            if (!firstSibling) firstSibling = sibling;
             lastSibling = sibling;
           });
           dispatchGraph({ type: "expandSiblings", node });
@@ -326,7 +329,7 @@ const Graph = memo(
       }
 
       let newx = node.x;
-      if (node._siblingsExpanded) newx = (newx + lastSibling.x) / 2;
+      if (node._siblingsExpanded) newx = (newx + firstSibling.x) / 2;
       if (!options.noRecenter) centerPoint(newx);
     };
 
@@ -391,8 +394,7 @@ const Graph = memo(
       }
 
       let newx = root.x;
-      if (root.siblings)
-        newx = (newx + root.siblings[root.siblings.length - 1].x) / 2;
+      if (root.siblings) newx = (newx + root.siblings[0].x) / 2;
       if (!options.noRecenter) centerPoint(newx);
     };
 

@@ -21,6 +21,7 @@ import { FiExternalLink } from "react-icons/fi";
 import "./Node.scss";
 import Axios from "axios";
 import { AppContext } from "../../App";
+import { CHILD_ID } from "../../constants/properties";
 
 export default function Node({
   node,
@@ -132,31 +133,35 @@ export default function Node({
         node={node}
         toggleFn={toggleSiblings}
         className="siblingCount"
+        currentProp={currentProp}
       />
       <SpouseCounter
         ids={node.data.rightIds}
         node={node}
         toggleFn={toggleSpouses}
         className="spouseCount"
+        currentProp={currentProp}
       />
       <ParentCounter
         ids={node.data.upIds}
         node={node}
         toggleFn={toggleParents}
         className="parentCount"
+        currentProp={currentProp}
       />
       <ChildCounter
         ids={node.data.downIds}
         node={node}
         toggleFn={toggleChildren}
         className="childrenCount"
+        currentProp={currentProp}
       />
       {showModal && <DetailsModal hideModal={hideModal} node={node} />}
     </div>
   );
 }
 
-function SiblingCounter({ ids, node, toggleFn, className }) {
+function SiblingCounter({ ids, node, toggleFn, className, currentProp }) {
   const [disabled, setDisabled] = React.useState(false);
   if (!ids || !ids.length) return null;
   return (
@@ -172,7 +177,7 @@ function SiblingCounter({ ids, node, toggleFn, className }) {
     >
       <div>
         <div>{ids.length}</div>
-        <div className="chevron">
+        <div className="chevron mt-1 mb-1">
           {node._siblingsExpanded ? <FiChevronRight /> : <FiChevronLeft />}
         </div>
         <div>
@@ -183,7 +188,7 @@ function SiblingCounter({ ids, node, toggleFn, className }) {
   );
 }
 
-function ParentCounter({ ids, node, toggleFn, className }) {
+function ParentCounter({ ids, node, toggleFn, className, currentProp }) {
   const [disabled, setDisabled] = React.useState(false);
   if (!ids || !ids.length) return null;
   return (
@@ -197,18 +202,20 @@ function ParentCounter({ ids, node, toggleFn, className }) {
         setDisabled(false);
       }}
     >
-      <span>{ids.length}</span>
+      <span className="value">{ids.length}</span>
       <span className="chevron ml-1 mr-1">
         {node._parentsExpanded ? <FiChevronDown /> : <FiChevronUp />}
       </span>
-      {/* <span>
-        <RiParentLine />
-      </span> */}
+      {currentProp && currentProp.id === CHILD_ID && (
+        <span>
+          <RiParentLine />
+        </span>
+      )}
     </Button>
   );
 }
 
-function SpouseCounter({ ids, node, toggleFn, className }) {
+function SpouseCounter({ ids, node, toggleFn, className, currentProp }) {
   const [disabled, setDisabled] = React.useState(false);
   if (!ids || !ids.length) return null;
   return (
@@ -224,7 +231,7 @@ function SpouseCounter({ ids, node, toggleFn, className }) {
       title={(node._spousesExpanded ? "Collapse" : "Expand") + " spouses"}
     >
       <div>{ids.length}</div>
-      <div className="chevron">
+      <div className="chevron mt-1 mb-1">
         {node._spousesExpanded ? <FiChevronLeft /> : <FiChevronRight />}
       </div>
       <div>
@@ -234,7 +241,7 @@ function SpouseCounter({ ids, node, toggleFn, className }) {
   );
 }
 
-function ChildCounter({ ids, node, toggleFn, className }) {
+function ChildCounter({ ids, node, toggleFn, className, currentProp }) {
   const [disabled, setDisabled] = React.useState(false);
   if (!ids || !ids.length) return null;
   return (
@@ -248,13 +255,15 @@ function ChildCounter({ ids, node, toggleFn, className }) {
         setDisabled(false);
       }}
     >
-      <span>{ids.length}</span>
+      <span className="value">{ids.length}</span>
       <span className="chevron ml-1 mr-1">
         {node._childrenExpanded ? <FiChevronUp /> : <FiChevronDown />}
       </span>
-      {/* <span>
-        <MdChildCare />
-      </span> */}
+      {currentProp && currentProp.id === CHILD_ID && (
+        <span>
+          <MdChildCare />
+        </span>
+      )}
     </Button>
   );
 }
@@ -317,11 +326,11 @@ function DetailsModal({ node, hideModal }) {
         {/*  </a>*/}
         {/*</p>*/}
         {node.data.website && (
-        <p>
-          <a href={node.data.website} target="_blank">
-            Open official website <FiExternalLink />
-          </a>
-        </p>
+          <p>
+            <a href={node.data.website} target="_blank">
+              Open official website <FiExternalLink />
+            </a>
+          </p>
         )}
         {node.data.externalLinks && !!node.data.externalLinks.length && (
           <div className="externalLinks">
