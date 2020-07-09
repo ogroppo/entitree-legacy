@@ -19,13 +19,13 @@
     cursor: pointer;
     .defaultImgMessage {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      font-size: 12px;
+      top: -4px;
+      left: 16px;
+      font-size: 50px;
+      opacity: 0.3;
       font-style: italic;
       white-space: nowrap;
       color: gray;
-      transform: translate(-50%, -50%);
     }
     img {
       object-fit: cover;
@@ -79,9 +79,10 @@
       font-size: 12px;
       line-height: 14px;
       color: #666;
-      white-space: nowrap;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
       overflow: hidden;
-      text-overflow: ellipsis;
     }
     .dates {
       margin-top: 1px;

@@ -16,6 +16,7 @@ import {
 } from "react-icons/fi";
 import { RiGroupLine, RiParentLine } from "react-icons/ri";
 import { GiBigDiamondRing } from "react-icons/gi";
+import { BsImage } from "react-icons/bs";
 import { MdChildCare } from "react-icons/md";
 import { FiExternalLink } from "react-icons/fi";
 import "./Node.scss";
@@ -67,7 +68,9 @@ export default function Node({
         onClick={() => setShowModal(true)}
       >
         {!thumbnails || !thumbnails.length ? (
-          <span className="defaultImgMessage">no image</span>
+          <span className="defaultImgMessage">
+            <BsImage />
+          </span>
         ) : (
           <>
             {thumbnails[0] && (

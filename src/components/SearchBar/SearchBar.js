@@ -126,7 +126,6 @@ export default function SearchBar() {
     } finally {
       setLoadingEntity(false);
       setLoadingProps(false);
-      setSearchTerm("");
     }
   };
 
@@ -165,6 +164,7 @@ export default function SearchBar() {
   const history = useHistory();
   useEffect(() => {
     if (currentEntity) {
+      setSearchTerm(currentEntity.label); //if updates from graph (recenter)
       const query = { q: currentEntity.id };
 
       if (currentProp) {
@@ -200,8 +200,6 @@ export default function SearchBar() {
                   ? "Loading entity..."
                   : searchTerm
                   ? searchTerm
-                  : currentEntity
-                  ? currentEntity.label
                   : ""
               }
               type="search"

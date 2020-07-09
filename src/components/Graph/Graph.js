@@ -29,6 +29,7 @@ import addEntityConnectors from "../../lib/addEntityConnectors";
 import getUpMap from "../../wikidata/getUpMap";
 import setPageTitle from "../../lib/setPageTitle";
 import Navigation from "./Navigation/Navigation";
+import sortByBirthDate from "../../lib/sortByBirthDate";
 
 export default function GraphWrapper() {
   const { showGenderColor } = useContext(AppContext);
@@ -171,6 +172,7 @@ const Graph = memo(
             }
           );
 
+          sortByBirthDate(entities);
           entities.forEach((entity, index) => {
             const childNode = hierarchy(entity);
             childNode.depth = node.depth + 1;
@@ -241,20 +243,19 @@ const Graph = memo(
       if (node._spousesExpanded) {
         dispatchGraph({ type: "collapseSpouses", node });
       } else if (node._spouses) {
+        //cached
         dispatchGraph({ type: "expandSpouses", node });
       } else {
         try {
           const entities = await getItems(node.data.rightIds, currentLang.code);
           entities.forEach((entity, index) => {
-            const spouse = hierarchy(entity);
-            spouse.depth = node.depth;
-            spouse.isSpouse = true;
-            spouse.virtualParent = node;
-            spouse.parent = node.parent;
-            spouse.treeId = getNodeUniqueId(spouse, index, "spouse");
-            const spouseIndex = node.parent.children.indexOf(node) + 1;
-            node.parent.children.splice(spouseIndex, 0, spouse);
-            lastSpouse = spouse;
+            const spouseNode = getSpouseNode(entity);
+            spouseNode.depth = node.depth;
+            spouseNode.virtualParent = node;
+            spouseNode.parent = node.parent;
+            const spouseIndex = node.parent.children.indexOf(node) + 1 + index; //need to be appended to the list
+            node.parent.children.splice(spouseIndex, 0, spouseNode);
+            lastSpouse = spouseNode;
           });
           dispatchGraph({ type: "expandSpouses", node });
         } catch (error) {
@@ -280,17 +281,16 @@ const Graph = memo(
       } else {
         try {
           const entities = await getItems(node.data.leftIds, currentLang.code);
+          sortByBirthDate(entities);
           entities.forEach((entity, index) => {
-            const sibling = hierarchy(entity);
-            sibling.depth = node.depth;
-            sibling.isSibling = true;
-            sibling.virtualParent = node;
-            sibling.parent = node.parent;
-            sibling.treeId = getNodeUniqueId(sibling, index, "sibling");
-            const siblingIndex = node.parent.children.indexOf(node);
-            node.parent.children.splice(siblingIndex, 0, sibling);
-            if (!firstSibling) firstSibling = sibling;
-            lastSibling = sibling;
+            const siblingNode = getSiblingNode(entity, index);
+            siblingNode.depth = node.depth;
+            siblingNode.virtualParent = node;
+            siblingNode.parent = node.parent;
+            const siblingIndex = node.parent.children.indexOf(node); //it will keep prepending to the node index
+            node.parent.children.splice(siblingIndex, 0, siblingNode);
+            if (!firstSibling) firstSibling = siblingNode;
+            lastSibling = siblingNode;
           });
           dispatchGraph({ type: "expandSiblings", node });
         } catch (error) {
@@ -315,13 +315,11 @@ const Graph = memo(
           const entities = await getItems(root.data.rightIds, currentLang.code);
           const baseX = CARD_WIDTH * SIBLING_SPOUSE_SEPARATION;
           entities.forEach((entity, index) => {
-            const spouseNode = hierarchy(entity);
-            spouseNode.isSpouse = true;
+            const spouseNode = getSpouseNode(entity);
             spouseNode.x = baseX + baseX * index;
             spouseNode.y = 0;
             spouseNode.depth = 0;
             spouseNode.parent = root;
-            spouseNode.treeId = getNodeUniqueId(spouseNode, index, "spouse");
             if (!root.spouses) root.spouses = [];
             root.spouses.push(spouseNode);
           });
@@ -348,12 +346,11 @@ const Graph = memo(
         try {
           const entities = await getItems(root.data.leftIds, currentLang.code);
           const baseX = -(CARD_WIDTH * SIBLING_SPOUSE_SEPARATION);
+          sortByBirthDate(entities);
           entities.forEach((entity, index, { length }) => {
-            const siblingNode = hierarchy(entity);
-            siblingNode.isSibling = true;
+            const siblingNode = getSiblingNode(entity, index);
             siblingNode.x = baseX * (length - index);
             siblingNode.y = 0;
-            siblingNode.treeId = getNodeUniqueId(siblingNode, index, "sibling");
             if (!root.siblings) root.siblings = [];
             root.siblings.push(siblingNode);
           });
@@ -366,6 +363,20 @@ const Graph = memo(
       let newx = root.x;
       if (root.siblings) newx = (newx + root.siblings[0].x) / 2;
       if (!options.noRecenter) centerPoint(newx);
+    };
+
+    const getSiblingNode = (entity, index) => {
+      const siblingNode = hierarchy(entity);
+      siblingNode.isSibling = true;
+      siblingNode.treeId = getNodeUniqueId(siblingNode, index, "sibling");
+      return siblingNode;
+    };
+
+    const getSpouseNode = (entity, index) => {
+      const spouseNode = hierarchy(entity);
+      spouseNode.isSpouse = true;
+      spouseNode.treeId = getNodeUniqueId(spouseNode, index, "spouse");
+      return spouseNode;
     };
 
     const fitTree = () => {
