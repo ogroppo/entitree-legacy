@@ -52,14 +52,7 @@ function parseDate(wikidatatime, languageCode) {
     10 - month (only month);
     11 - day
     */
-  const momentFormat = {
-    6: "y [millennium]",
-    7: "y[th century]",
-    8: "y[s]",
-    9: "y",
-    10: "Y-MM",
-    11: "Y-MM-DD",
-  };
+
   const { precision, time } = wikidatatime;
 
   const dateISOString = wbk.wikibaseTimeToISOString(time);

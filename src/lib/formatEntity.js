@@ -19,6 +19,7 @@ import addLabel from "./addLabel";
 export default async function formatEntity(entity, languageCode) {
   if (entity.missing !== undefined) return undefined;
 
+  if (!entity) throw new Error("Entity is required");
   if (!languageCode) throw new Error("Language code missing");
 
   const simpleClaims = wbk.simplify.claims(entity.claims, {
