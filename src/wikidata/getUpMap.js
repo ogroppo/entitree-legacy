@@ -28,7 +28,8 @@ export default async function getUpMap(id, propId) {
       let map = {};
       rows.forEach(({ source, target }) => {
         if (!map[source]) map[source] = [];
-        map[source].push(target);
+        //leave out lexemes
+        if (target.startsWith("Q")) map[source].push(target);
       });
       return map;
     });

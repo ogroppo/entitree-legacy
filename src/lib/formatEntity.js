@@ -15,6 +15,9 @@ import wbk from "wikidata-sdk";
 import getSocialMediaProps from "./getSocialMediaProps";
 import addDescription from "./addDescription";
 import addLabel from "./addLabel";
+import addDeathDate from "./addDeathDate";
+import addBirthDate from "./addBirthDate";
+import addBirthPlace from "./addBirthPlace";
 
 export default async function formatEntity(entity, languageCode) {
   if (entity.missing !== undefined) return undefined;
@@ -34,15 +37,10 @@ export default async function formatEntity(entity, languageCode) {
   addLabel(formattedEntity, languageCode);
   addDescription(formattedEntity, languageCode);
 
-  //All the below should be conditional to the propId
-  formattedEntity.birthDate = formatDateClaim(
-    entity.claims[BIRTH_DATE_ID],
-    languageCode
-  );
-  formattedEntity.deathDate = formatDateClaim(
-    entity.claims[DEATH_DATE_ID],
-    languageCode
-  );
+  addBirthDate(formattedEntity, languageCode);
+  addDeathDate(formattedEntity, languageCode);
+
+  addBirthPlace(formattedEntity, languageCode);
 
   formattedEntity.wikidataUrl = wbk.getSitelinkUrl({
     site: "wikidata",

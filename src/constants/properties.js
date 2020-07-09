@@ -8,6 +8,7 @@ import {
 export const SIBLINGS_ID = "P3373";
 export const SPOUSE_ID = "P26";
 export const BIRTH_DATE_ID = "P569";
+export const BIRTH_PLACE_ID = "P19";
 export const DEATH_DATE_ID = "P570";
 export const GENDER_ID = "P21";
 export const FATHER_ID = "P22";
