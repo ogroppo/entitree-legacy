@@ -40,7 +40,7 @@ export default function AboutPage() {
             knowledge 🎓
           </li>
           <li>
-            curious random and non english-speaking people from around the
+            curious random and non English-speaking people from around the
             globe, thanks to the multilingual feature 🌎🌍🌏
           </li>
           <li>

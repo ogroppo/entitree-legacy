@@ -435,4 +435,4 @@ export const LANGS = Object.keys(LANG_MAP).map((code) => {
 });
 
 export const DEFAULT_LANG = LANGS.find(({ code }) => code === "en");
-export const DEFAULT_LANGS_CODES = ["en", "fr", "de", "it", "es", "nl"];
+export const DEFAULT_LANGS_CODES = ["en", "fr", "de", "it", "es", "nl", "pt"];
