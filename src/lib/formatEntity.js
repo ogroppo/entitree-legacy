@@ -13,7 +13,8 @@ import {
 } from "../constants/entities";
 import wbk from "wikidata-sdk";
 import getSocialMediaProps from "./getSocialMediaProps";
-import { DEFAULT_LANGS_CODES } from "../constants/langs";
+import addDescription from "./addDescription";
+import addLabel from "./addLabel";
 
 export default async function formatEntity(entity, languageCode) {
   if (entity.missing !== undefined) return undefined;
@@ -29,11 +30,8 @@ export default async function formatEntity(entity, languageCode) {
     simpleClaims,
   };
 
-  formattedEntity.label = getLanguageString(entity.labels, languageCode);
-  formattedEntity.description = getLanguageString(
-    entity.descriptions,
-    languageCode
-  );
+  addLabel(formattedEntity, languageCode);
+  addDescription(formattedEntity, languageCode);
 
   //All the below should be conditional to the propId
   formattedEntity.birthDate = formatDateClaim(
@@ -49,11 +47,11 @@ export default async function formatEntity(entity, languageCode) {
     site: "wikidata",
     title: formattedEntity.id,
   });
-  simpleClaims["wikidata"] = [{value:formattedEntity.wikidataUrl}];
+  simpleClaims["wikidata"] = [{ value: formattedEntity.wikidataUrl }];
 
   if (entity.sitelinks && entity.sitelinks[languageCode + "wiki"]) {
     formattedEntity.sitelink = entity.sitelinks[languageCode + "wiki"];
-    simpleClaims["wikipedia"] = [{value:formattedEntity.sitelink.url}];
+    simpleClaims["wikipedia"] = [{ value: formattedEntity.sitelink.url }];
 
     formattedEntity.wikipediaSlug = formattedEntity.sitelink.url.split(
       "/wiki/"
@@ -62,31 +60,16 @@ export default async function formatEntity(entity, languageCode) {
 
   formattedEntity.externalLinks = getSocialMediaProps(simpleClaims);
 
-  formattedEntity.website = (simpleClaims["P856"]  && simpleClaims["P856"][0] ? simpleClaims["P856"][0].value : null);
+  formattedEntity.website =
+    simpleClaims["P856"] && simpleClaims["P856"][0]
+      ? simpleClaims["P856"][0].value
+      : null;
 
   formattedEntity.gender = getGender(simpleClaims);
 
   await addEntityImages(formattedEntity, languageCode);
 
   return formattedEntity;
-}
-
-function getLanguageString(array, languageCode) {
-  let langString = array[languageCode];
-  if (!langString)
-    for (let defaultLangCode of DEFAULT_LANGS_CODES) {
-      let defaultLangString = array[defaultLangCode];
-      if (defaultLangString) {
-        langString = defaultLangString;
-        break;
-      }
-    }
-
-  if (!langString) return;
-
-  if (langString.value.startsWith("Peerage person ID=")) return;
-
-  return langString.value;
 }
 
 function getGender(simpleClaims) {
