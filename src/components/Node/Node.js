@@ -99,9 +99,13 @@ export default function Node({
           {node.data.description}
         </div>
         <div className="dates">
-          {node.data.birthDate}
-          {node.data.birthDate && node.data.deathDate && " - "}
-          {node.data.deathDate && node.data.deathDate}
+          {node.data.lifeSpan
+            ? node.data.lifeSpan
+            : node.data.startEndSpan
+            ? node.data.startEndSpan
+            : node.data.inceptionAblishedSpan
+            ? node.data.inceptionAblishedSpan
+            : ""}
         </div>
         {/*{node.data.externalLinks && !!node.data.externalLinks.length && (*/}
         {/*  <div className="externalLinks">*/}

@@ -21,6 +21,9 @@ export const IMAGE_ID = "P18";
 export const LOGO_ID = "P154";
 export const TWITTER_ID = "P2002";
 export const START_DATE_ID = "P580";
+export const END_DATE_ID = "P582";
+export const INCEPTION_ID = "P571";
+export const DISSOLVED_ABOLISHED_DEMOLISHED_ID = "P576";
 
 export const FAMILY_IDS_MAP = {
   [CHILD_ID]: true,

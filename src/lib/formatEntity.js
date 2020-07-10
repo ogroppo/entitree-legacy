@@ -17,7 +17,14 @@ import addDescription from "./addDescription";
 import addLabel from "./addLabel";
 import addDeathDate from "./addDeathDate";
 import addBirthDate from "./addBirthDate";
-import addBirthPlace from "./addBirthPlace";
+import addBirthPlaceId from "./addBirthPlaceId";
+import addLifeSpan from "./addLifeSpan";
+import addStartDate from "./addStartDate";
+import addEndDate from "./addEndDate";
+import addStartEndSpan from "./addStartEndSpan";
+import addInceptionDate from "./addInceptionDate";
+import addAbolishedDate from "./addAbolishedDate";
+import addInceptionAbolishedSpan from "./addInceptionAbolishedSpan";
 
 export default async function formatEntity(entity, languageCode) {
   if (entity.missing !== undefined) return undefined;
@@ -39,8 +46,17 @@ export default async function formatEntity(entity, languageCode) {
 
   addBirthDate(formattedEntity, languageCode);
   addDeathDate(formattedEntity, languageCode);
+  addLifeSpan(formattedEntity);
 
-  addBirthPlace(formattedEntity, languageCode);
+  addBirthPlaceId(formattedEntity, languageCode);
+
+  addStartDate(formattedEntity, languageCode);
+  addEndDate(formattedEntity, languageCode);
+  addStartEndSpan(formattedEntity);
+
+  addInceptionDate(formattedEntity, languageCode);
+  addAbolishedDate(formattedEntity, languageCode);
+  addInceptionAbolishedSpan(formattedEntity);
 
   formattedEntity.wikidataUrl = wbk.getSitelinkUrl({
     site: "wikidata",
