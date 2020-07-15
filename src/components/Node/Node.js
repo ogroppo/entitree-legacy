@@ -90,13 +90,15 @@ export default function Node({
         className="content"
         style={{ height: IMAGE_SIZE, width: CARD_CONTENT_WIDTH }}
       >
-        <div className="label">
-          <Button variant="link" onClick={() => setShowModal(true)}>
-            {node.data.label ? node.data.label : <i>Unlabelled</i>}
-          </Button>
-        </div>
-        <div className="description" title={node.data.description}>
-          {node.data.description}
+        <div className="four-line-clamp">
+          <span className="label">
+            <a href={"javascript:void(0)"} onClick={() => setShowModal(true)}>
+              {node.data.label ? node.data.label : <i>Unlabelled</i>}
+            </a>
+          </span>
+          <div className="description" title={node.data.description}>
+            <br />{node.data.description}
+          </div>
         </div>
         <div className="dates">
           {node.data.lifeSpan

@@ -52,8 +52,8 @@
     padding-left: 4px;
     position: relative;
     .label {
-      display: flex;
-      button {
+      //display: flex;
+      a {
         @media print {
           color: gray;
         }
@@ -63,7 +63,7 @@
         line-height: 15px;
         font-weight: bold;
         max-height: 30px; //line h * 2
-        overflow: hidden;
+        //overflow: hidden;
         text-align: left;
         vertical-align: top;
         &:focus {
@@ -74,15 +74,20 @@
         }
       }
     }
+    .four-line-clamp{
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+      line-height: 14px;
+
+      overflow: hidden;
+    }
     .description {
+      display:inline;
       margin-top: 2px;
       font-size: 12px;
       line-height: 14px;
       color: #666;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      overflow: hidden;
     }
     .dates {
       margin-top: 1px;
