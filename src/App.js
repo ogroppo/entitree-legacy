@@ -31,10 +31,10 @@ export default class App extends Component {
   };
 
   componentDidMount() {
-    let { l } = qs.parse(window.location.search);
+    let { lang } = qs.parse(window.location.search);
     let userLangCode;
-    if (l) {
-      userLangCode = l;
+    if (lang) {
+      userLangCode = lang;
     } else {
       try {
         userLangCode = localStorage.getItem("userLangCode");

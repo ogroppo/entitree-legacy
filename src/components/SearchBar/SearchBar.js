@@ -55,14 +55,21 @@ export default function SearchBar() {
       try {
         let itemId;
         if (match.params.itemSlug) {
-          const slugItem = slugs[match.params.itemSlug];
-          if (slugItem) {
-            itemId = slugItem.id;
+          if (match.params.itemSlug.match(/^Q\d+$/)) {
+            itemId = match.params.itemSlug;
           } else {
-            const {
-              data: { wikibase_item },
-            } = await getWikipediaArticle(match.params.slug, currentLang.code);
-            if (wikibase_item) itemId = wikibase_item;
+            const slugItem = slugs[match.params.itemSlug];
+            if (slugItem) {
+              itemId = slugItem.id;
+            } else {
+              const {
+                data: { wikibase_item },
+              } = await getWikipediaArticle(
+                match.params.itemSlug,
+                currentLang.code
+              );
+              if (wikibase_item) itemId = wikibase_item;
+            }
           }
         }
 
@@ -81,7 +88,8 @@ export default function SearchBar() {
           if (currentEntity)
             await loadEntity(
               currentEntity.id,
-              currentProp ? currentProp.id : null
+              null,
+              currentProp ? currentProp.id : null //this doesn't work if I switch language
             );
         } catch (error) {
           showError(error);
@@ -90,25 +98,32 @@ export default function SearchBar() {
     }
   }, [hasLanguageChanged]);
 
-  const loadEntity = async (_currentEntitId, propSlug) => {
+  const loadEntity = async (_currentEntityId, propSlug, propId) => {
     try {
-      if (_currentEntitId) {
-        if (currentEntity && _currentEntitId !== currentEntity.id)
+      if (_currentEntityId) {
+        if (currentEntity && _currentEntityId !== currentEntity.id)
           setCurrentEntity(null); //avoids weird caching behaviour, get a fresh one
 
         setFromKeyboard(false);
         setLoadingEntity(true);
         setLoadingProps(true);
-        let calls = [
-          getItem(_currentEntitId, currentLang.code),
-          getItemProps(_currentEntitId, currentLang.code),
-        ];
-        if (_currentPropId) {
-          calls.push(getItem(_currentPropId, currentLang.code));
+
+        let [_currentEntity, itemProps] = await Promise.all([
+          getItem(_currentEntityId, currentLang.code),
+          getItemProps(_currentEntityId, currentLang.code),
+        ]);
+
+        itemProps.forEach((prop) => {
+          prop.slug = prop.label.replace(/\s/g, "_");
+        });
+
+        let _currentProp;
+        if (propSlug) {
+          _currentProp = itemProps.find(({ slug }) => slug === propSlug);
         }
-        let [_currentEntity, itemProps, _currentProp] = await Promise.all(
-          calls
-        );
+        if (propId) {
+          _currentProp = itemProps.find(({ id }) => id === propId);
+        }
 
         //currentProp belongs to family stuff
         if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
@@ -182,13 +197,12 @@ export default function SearchBar() {
       setSearchTerm(currentEntity.label); //if updates from graph (recenter)
       const params = {};
 
-      // if (currentProp) {
-      //   query.p = currentProp.id;
-      // }
-      if (currentLang.code !== DEFAULT_LANG.code) params.l = currentLang.code;
+      if (currentLang.code !== DEFAULT_LANG.code)
+        params.lang = currentLang.code;
       const searchString = qs.stringify(params);
+
       history.push({
-        pathname: `/${currentProp.slug}/${
+        pathname: `/${currentProp ? currentProp.slug : "all"}/${
           currentEntity.wikipediaSlug
             ? currentEntity.wikipediaSlug
             : currentEntity.id
