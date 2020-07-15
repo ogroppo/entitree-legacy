@@ -3,7 +3,7 @@ import SearchBar from "../../components/SearchBar/SearchBar";
 import Graph from "../../components/Graph/Graph";
 import "./HomePage.scss";
 import ReactGA from "react-ga";
-import { useLocation } from "react-router-dom";
+import { useLocation, useRouteMatch } from "react-router-dom";
 import { AppContext } from "../../App";
 import { GiFamilyTree } from "react-icons/gi";
 import { Spinner } from "react-bootstrap";
@@ -13,6 +13,7 @@ export default function HomePage() {
   const { currentEntity, loadingEntity } = useContext(AppContext);
 
   const location = useLocation();
+
   useEffect(() => {
     ReactGA.set({ page: location.pathname });
     ReactGA.pageview(location.pathname);

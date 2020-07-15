@@ -31,7 +31,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "sitemap": "babel-node src/sitemap/generator.js"
+    "sitemap": "babel-node src/sitemap/generator.js",
+    "import": "babel-node src/sitemap/processViews.js"
   },
   "eslintConfig": {
     "extends": "react-app"

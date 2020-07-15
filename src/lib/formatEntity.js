@@ -25,6 +25,7 @@ import addStartEndSpan from "./addStartEndSpan";
 import addInceptionDate from "./addInceptionDate";
 import addAbolishedDate from "./addAbolishedDate";
 import addInceptionAbolishedSpan from "./addInceptionAbolishedSpan";
+import addDeathPlaceId from "./addDeathPlaceId";
 
 export default async function formatEntity(entity, languageCode) {
   if (entity.missing !== undefined) return undefined;
@@ -49,6 +50,7 @@ export default async function formatEntity(entity, languageCode) {
   addLifeSpan(formattedEntity);
 
   addBirthPlaceId(formattedEntity, languageCode);
+  addDeathPlaceId(formattedEntity, languageCode);
 
   addStartDate(formattedEntity, languageCode);
   addEndDate(formattedEntity, languageCode);

@@ -12,13 +12,19 @@ import {
   Overlay,
 } from "react-bootstrap";
 import qs from "query-string";
-import { useHistory, useLocation } from "react-router-dom";
-import { FAMILY_PROP, FAMILY_IDS_MAP } from "../../constants/properties";
+import { useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import {
+  FAMILY_PROP,
+  FAMILY_IDS_MAP,
+  CHILD_ID,
+} from "../../constants/properties";
 import { AppContext } from "../../App";
 import getItem from "../../wikidata/getItem";
 import getItemProps from "../../wikidata/getItemProps";
 import search from "../../wikidata/search";
+import slugs from "../../sitemap/slugs.json";
 import { DEFAULT_LANG } from "../../constants/langs";
+import getWikipediaArticle from "../../wikipedia/getWikipediaArticle";
 
 export default function SearchBar() {
   const {
@@ -43,11 +49,24 @@ export default function SearchBar() {
 
   //Check on mount if there are params in the url
   const location = useLocation();
+  const match = useRouteMatch();
   useEffect(() => {
     (async () => {
       try {
-        let { q, p } = qs.parse(location.search);
-        loadEntity(q, p);
+        let itemId;
+        if (match.params.itemSlug) {
+          const slugItem = slugs[match.params.itemSlug];
+          if (slugItem) {
+            itemId = slugItem.id;
+          } else {
+            const {
+              data: { wikibase_item },
+            } = await getWikipediaArticle(match.params.slug, currentLang.code);
+            if (wikibase_item) itemId = wikibase_item;
+          }
+        }
+
+        loadEntity(itemId, match.params.propSlug);
       } catch (error) {
         showError(error);
       }
@@ -71,7 +90,7 @@ export default function SearchBar() {
     }
   }, [hasLanguageChanged]);
 
-  const loadEntity = async (_currentEntitId, _currentPropId) => {
+  const loadEntity = async (_currentEntitId, propSlug) => {
     try {
       if (_currentEntitId) {
         if (currentEntity && _currentEntitId !== currentEntity.id)
@@ -93,17 +112,13 @@ export default function SearchBar() {
 
         //currentProp belongs to family stuff
         if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
-          //Remove all family props
-          let translatedLabel;
+          //Remove all family-related props in favour of the custom
           itemProps = itemProps.filter((prop) => {
-            if (prop.id === FAMILY_PROP.id) translatedLabel = prop.label; //translated child label
             return !FAMILY_IDS_MAP[prop.id];
           });
 
-          if (translatedLabel) FAMILY_PROP.label = translatedLabel;
-          if (FAMILY_PROP.overrideLabels[currentLang.code])
-            FAMILY_PROP.overrideLabel =
-              FAMILY_PROP.overrideLabels[currentLang.code];
+          const translatedFamilyTree = FAMILY_PROP.labels[currentLang.code];
+          if (translatedFamilyTree) FAMILY_PROP.label = translatedFamilyTree;
 
           //Add the Family tree fav currentProp
           itemProps = [FAMILY_PROP].concat(itemProps);
@@ -165,14 +180,19 @@ export default function SearchBar() {
   useEffect(() => {
     if (currentEntity) {
       setSearchTerm(currentEntity.label); //if updates from graph (recenter)
-      const query = { q: currentEntity.id };
+      const params = {};
 
-      if (currentProp) {
-        query.p = currentProp.id;
-      }
-      if (currentLang.code !== DEFAULT_LANG.code) query.l = currentLang.code;
-      const searchString = qs.stringify(query);
+      // if (currentProp) {
+      //   query.p = currentProp.id;
+      // }
+      if (currentLang.code !== DEFAULT_LANG.code) params.l = currentLang.code;
+      const searchString = qs.stringify(params);
       history.push({
+        pathname: `/${currentProp.slug}/${
+          currentEntity.wikipediaSlug
+            ? currentEntity.wikipediaSlug
+            : currentEntity.id
+        }`,
         search: "?" + searchString,
       });
     }
@@ -231,7 +251,7 @@ export default function SearchBar() {
                     {loadingProps
                       ? "loading props..."
                       : currentProp
-                      ? currentProp.overrideLabel || currentProp.label
+                      ? currentProp.label
                       : "Choose a property "}
                   </Dropdown.Toggle>
 
@@ -242,7 +262,7 @@ export default function SearchBar() {
                         className={prop.isFav ? "fav" : ""}
                         onClick={() => setCurrentProp(prop)}
                       >
-                        {prop.overrideLabel || prop.label}
+                        {prop.label}
                       </Dropdown.Item>
                     ))}
                   </Dropdown.Menu>

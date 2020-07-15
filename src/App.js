@@ -12,6 +12,7 @@ import Footer from "./layout/Footer/Footer";
 import { LANGS, DEFAULT_LANG } from "./constants/langs";
 import Header from "./layout/Header/Header";
 import Logo from "./components/Logo/Logo";
+import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 const browserHistory = createBrowserHistory();
 
 export const AppContext = React.createContext();
@@ -160,17 +161,21 @@ export default class App extends Component {
                 <Route exact path="/">
                   {!loadingLang && <HomePage />}
                 </Route>
+                <Route exact path="/:propSlug/:itemSlug">
+                  {!loadingLang && <HomePage />}
+                </Route>
                 <Route exact path="/about">
                   <AboutPage />
                 </Route>
                 <Route exact path="/privacy">
                   <PrivacyPolicyPage />
                 </Route>
-                <Route exact path="/logo">
+                <Route exact path="/logopreview">
                   <Container className="pt-5">
                     <Logo width={"5em"} height={"5em"} />
                   </Container>
                 </Route>
+                <Route component={NotFoundPage} />
               </Switch>
             </div>
             <Footer />
