@@ -9,7 +9,6 @@ import React, {
   useState,
   memo,
 } from "react";
-
 import { TransformComponent } from "react-zoom-pan-pinch";
 import getItems from "../../wikidata/getItems";
 import { hierarchy } from "d3-hierarchy";
@@ -27,7 +26,6 @@ import getNodeUniqueId from "../../lib/getNodeUniqueId";
 import filterSpouses from "../../lib/filterSpouses";
 import addEntityConnectors from "../../lib/addEntityConnectors";
 import getUpMap from "../../wikidata/getUpMap";
-import setPageTitle from "../../lib/setPageTitle";
 import Navigation from "./Navigation/Navigation";
 import sortByBirthDate from "../../lib/sortByBirthDate";
 
@@ -145,7 +143,6 @@ const Graph = memo(
 
             setTransform(0, 0, 1, 0);
             setFocusedNode(root);
-            setPageTitle(currentEntity, currentProp);
           } catch (error) {
             showError(error);
           }

@@ -9,11 +9,16 @@ import { GiFamilyTree } from "react-icons/gi";
 import { Spinner } from "react-bootstrap";
 import Header from "../../layout/Header/Header";
 import { LANGS } from "../../constants/langs";
+import { Helmet } from "react-helmet";
+import { DEFAULT_DESC, SITE_TITLE } from "../../constants/meta";
 
 export default function HomePage() {
-  const { currentEntity, loadingEntity, setCurrentLang } = useContext(
-    AppContext
-  );
+  const {
+    currentEntity,
+    loadingEntity,
+    setCurrentLang,
+    currentProp,
+  } = useContext(AppContext);
 
   const [loadedLang, setLoadedLang] = useState(false);
   const location = useLocation();
@@ -44,8 +49,28 @@ export default function HomePage() {
 
   if (!loadedLang) return null;
 
+  //console.log(curcurrentEntity.description);
+
   return (
     <div className="HomePage">
+      {currentEntity ? (
+        <Helmet>
+          <title>
+            {currentEntity.label}
+            {currentProp
+              ? ` - ${currentProp.overrideLabel || currentProp.label}`
+              : ""}{" "}
+            - {SITE_TITLE}
+          </title>
+          {currentEntity.description && (
+            <meta name="description" content={currentEntity.description} />
+          )}
+        </Helmet>
+      ) : (
+        <Helmet>
+          <meta name="description" content={DEFAULT_DESC} />
+        </Helmet>
+      )}
       <Header />
       <SearchBar />
       {loadingEntity && (
