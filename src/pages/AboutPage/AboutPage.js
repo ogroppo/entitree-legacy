@@ -4,6 +4,8 @@ import { useLocation } from "react-router-dom";
 import ReactGA from "react-ga";
 import "./AboutPage.scss";
 import Header from "../../layout/Header/Header";
+import { Helmet } from "react-helmet";
+import { DEFAULT_DESC, SITE_TITLE } from "../../constants/meta";
 
 export default function AboutPage() {
   const location = useLocation();
@@ -14,6 +16,10 @@ export default function AboutPage() {
 
   return (
     <div className="AboutPage">
+      <Helmet>
+        <title>About - {SITE_TITLE}</title>
+        <meta name="description" content={DEFAULT_DESC} />
+      </Helmet>
       <Header simple />
       <Container className="pb-5">
         <h1>About the project</h1>

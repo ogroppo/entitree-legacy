@@ -22,6 +22,7 @@ import {
   WhatsappIcon,
 } from "react-share";
 import "./Navigation.scss";
+import { SITE_TITLE } from "../../../constants/meta";
 
 export default function Navigation({
   zoomIn,
@@ -116,7 +117,7 @@ export default function Navigation({
               <FacebookShareButton
                 url={window.location.href}
                 quote={focusedNode.data.description}
-                hashtag="entitree"
+                hashtag={SITE_TITLE}
               >
                 <FacebookIcon /> Share on Facebook
               </FacebookShareButton>
@@ -125,7 +126,7 @@ export default function Navigation({
               <TwitterShareButton
                 url={window.location.href}
                 title={document.title}
-                hashtags={["entitree"]}
+                hashtags={[SITE_TITLE]}
               >
                 <TwitterIcon /> Share on Twitter
               </TwitterShareButton>

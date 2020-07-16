@@ -5,11 +5,14 @@ import {
   HUMAN_SETTLEMENT_ID,
 } from "./entities";
 
+export const INSTANCE_OF_ID = "P31";
+
 export const SIBLINGS_ID = "P3373";
 export const SPOUSE_ID = "P26";
 export const BIRTH_DATE_ID = "P569";
 export const BIRTH_PLACE_ID = "P19";
 export const DEATH_DATE_ID = "P570";
+export const DEATH_PLACE_ID = "P20";
 export const GENDER_ID = "P21";
 export const FATHER_ID = "P22";
 export const MOTHER_ID = "P25";
@@ -35,7 +38,8 @@ export const FAMILY_IDS_MAP = {
 
 export const FAMILY_PROP = {
   id: CHILD_ID,
-  label: "child", //this is just a default, language label needs to be fetched!
+  slug: "family_tree",
+  label: "child",
   overrideLabel: "family tree",
   overrideLabels: {
     "zh-hans": "家族树",
@@ -131,30 +135,6 @@ export const BUSINESS_PROPS = [
     isFav: true,
   },
 ];
-
-export const preferredProps = {
-  [HUMAN_ID]: [
-    {
-      id: CHILD_ID,
-      label: "family",
-      isFav: true,
-    },
-    {
-      id: STUDENT_ID,
-      label: "student",
-      isFav: true,
-    },
-  ],
-  [ORGANIZATION_ID]: BUSINESS_PROPS,
-  [BUSINESS_ID]: BUSINESS_PROPS,
-  [HUMAN_SETTLEMENT_ID]: [
-    {
-      id: LOCATED_IN_ID,
-      label: "location",
-      isFav: true,
-    },
-  ],
-};
 
 export const SOCIAL_PROPS_IDS = {
   wikidata: {

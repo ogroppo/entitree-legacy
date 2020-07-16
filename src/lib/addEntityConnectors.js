@@ -25,7 +25,6 @@ export default function addEntityConnectors(entity, propId, options = {}) {
 
 function addRightIds(entity) {
   const claim = entity.claims[SPOUSE_ID] || []; //cannot use simpleclaims here as only preferred will show up
-
   entity.rightIds = claim
     .sort((a, b) => {
       try {
@@ -37,14 +36,12 @@ function addRightIds(entity) {
         return 1;
       }
     })
-    .map(
-      ({
-        mainsnak: {
-          datavalue: {
-            value: { id },
-          },
-        },
-      }) => id
-    )
+    .map(({ mainsnak }) => {
+      try {
+        return mainsnak.datavalue.value.id; //for 'No value' and 'Unknown'
+      } catch (error) {
+        return null;
+      }
+    })
     .filter((id) => id); //filter out 'No value' and 'Unknown'
 }

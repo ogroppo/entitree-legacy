@@ -1,13 +1,13 @@
-import axios from "axios";
+import getWikipediaArticle from "./getWikipediaArticle";
 
 let wikiImagesMemo = {};
 
 export default async function getWikipediaThumbUrl(
-  wikipediaName,
+  wikipediaSlug,
   currentLangCode
 ) {
-  if (wikiImagesMemo[wikipediaName] !== undefined) {
-    return wikiImagesMemo[wikipediaName];
+  if (wikiImagesMemo[wikipediaSlug] !== undefined) {
+    return wikiImagesMemo[wikipediaSlug];
   }
 
   try {
@@ -15,13 +15,11 @@ export default async function getWikipediaThumbUrl(
       data: {
         thumbnail: { source: url },
       },
-    } = await axios.get(
-      `https://${currentLangCode}.wikipedia.org/api/rest_v1/page/summary/${wikipediaName}`
-    );
-    wikiImagesMemo[wikipediaName] = url;
+    } = getWikipediaArticle(wikipediaSlug, currentLangCode);
+    wikiImagesMemo[wikipediaSlug] = url;
   } catch (error) {
-    wikiImagesMemo[wikipediaName] = null; //not found or any other error
+    wikiImagesMemo[wikipediaSlug] = null; //not found or any other error
   } finally {
-    return wikiImagesMemo[wikipediaName];
+    return wikiImagesMemo[wikipediaSlug];
   }
 }
