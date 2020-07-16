@@ -89,14 +89,23 @@ export default function Node({
         style={{ height: IMAGE_SIZE, width: CARD_CONTENT_WIDTH }}
       >
         <div className="four-line-clamp">
-          <span className="label">
-            <a href={"javascript:void(0)"} onClick={() => setShowModal(true)}>
-              {node.data.label ? node.data.label : <i>Unlabelled</i>}
-            </a>
+          <span
+            className="label btn btn-link"
+            role="button"
+            tabIndex="0"
+            onClick={() => setShowModal(true)}
+            title={`Show details`}
+          >
+            {node.data.label ? node.data.label : <i>Unlabelled</i>}
           </span>
-          <div className="description" title={node.data.description}>
-            <br />{node.data.description}
-          </div>
+          {node.data.description && (
+            <>
+              <br />
+              <span className="description" title={node.data.description}>
+                {node.data.description}
+              </span>
+            </>
+          )}
         </div>
         <div className="dates">
           {node.data.lifeSpan
