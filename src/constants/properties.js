@@ -41,7 +41,7 @@ export const FAMILY_PROP = {
   slug: "family_tree",
   label: "child",
   overrideLabel: "family tree",
-  labels: {
+  overrideLabels: {
     "zh-hans": "家族树",
     "zh-hant": "家族樹",
     "zh-hk": "家族樹",

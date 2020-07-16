@@ -1,7 +1,7 @@
 export const EXAMPLES = [
   {
     name: "The Queen's family",
-    href: `/family_tree/Elizabeth_II`,
+    href: `/en/family_tree/Elizabeth_II`,
   },
   // {
   //   name: "Sudono Salim's descendants",

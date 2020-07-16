@@ -131,12 +131,13 @@ export default function SearchBar() {
       if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
         //Remove all family-related props in favour of the custom
         itemProps = itemProps.filter((prop) => {
+          if (prop.id === CHILD_ID) FAMILY_PROP.label = prop.label; //get translated child label
           return !FAMILY_IDS_MAP[prop.id];
         });
 
-        const translatedFamilyTree = FAMILY_PROP.labels[currentLang.code];
+        const translatedFamilyTree =
+          FAMILY_PROP.overrideLabels[currentLang.code];
         if (translatedFamilyTree) {
-          FAMILY_PROP.label = translatedFamilyTree;
           FAMILY_PROP.overrideLabel = translatedFamilyTree;
           FAMILY_PROP.slug = translatedFamilyTree.replace(/\s/g, "_");
         }
@@ -259,7 +260,7 @@ export default function SearchBar() {
                     {loadingProps
                       ? "loading props..."
                       : currentProp
-                      ? currentProp.label
+                      ? currentProp.overrideLabel || currentProp.label
                       : "Choose a property "}
                   </Dropdown.Toggle>
 
@@ -270,7 +271,7 @@ export default function SearchBar() {
                         className={prop.isFav ? "fav" : ""}
                         onClick={() => setCurrentProp(prop)}
                       >
-                        {prop.label}
+                        {prop.overrideLabel || prop.label}
                       </Dropdown.Item>
                     ))}
                   </Dropdown.Menu>
