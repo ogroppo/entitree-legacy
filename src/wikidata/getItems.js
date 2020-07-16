@@ -1,4 +1,3 @@
-import axios from "axios";
 import formatEntity from "../lib/formatEntity";
 import { DEFAULT_LANGS_CODES } from "../constants/langs";
 import addEntityConnectors from "../lib/addEntityConnectors";

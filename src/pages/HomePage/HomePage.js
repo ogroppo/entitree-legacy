@@ -1,4 +1,4 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect, useContext, useState } from "react";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import Graph from "../../components/Graph/Graph";
 import "./HomePage.scss";
@@ -8,16 +8,41 @@ import { AppContext } from "../../App";
 import { GiFamilyTree } from "react-icons/gi";
 import { Spinner } from "react-bootstrap";
 import Header from "../../layout/Header/Header";
+import { LANGS } from "../../constants/langs";
 
 export default function HomePage() {
-  const { currentEntity, loadingEntity } = useContext(AppContext);
+  const { currentEntity, loadingEntity, setCurrentLang } = useContext(
+    AppContext
+  );
 
+  const [loadedLang, setLoadedLang] = useState(false);
   const location = useLocation();
+  const match = useRouteMatch();
 
   useEffect(() => {
     ReactGA.set({ page: location.pathname });
     ReactGA.pageview(location.pathname);
+
+    let { langCode } = match.params;
+    let currentLangCode;
+    if (langCode) {
+      currentLangCode = langCode;
+    } else {
+      try {
+        currentLangCode = localStorage.getItem("userLangCode");
+      } catch (error) {
+        //localstorage not working
+      }
+    }
+
+    if (currentLangCode) {
+      const currentLang = LANGS.find(({ code }) => code === currentLangCode);
+      if (currentLang) setCurrentLang(currentLang);
+    }
+    setLoadedLang(true);
   }, []);
+
+  if (!loadedLang) return null;
 
   return (
     <div className="HomePage">

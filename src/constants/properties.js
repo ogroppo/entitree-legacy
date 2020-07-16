@@ -39,7 +39,8 @@ export const FAMILY_IDS_MAP = {
 export const FAMILY_PROP = {
   id: CHILD_ID,
   slug: "family_tree",
-  label: "family tree",
+  label: "child",
+  overrideLabel: "family tree",
   labels: {
     "zh-hans": "家族树",
     "zh-hant": "家族樹",

@@ -99,58 +99,63 @@ export default function SearchBar() {
   }, [hasLanguageChanged]);
 
   const loadEntity = async (_currentEntityId, propSlug, propId) => {
+    if (!_currentEntityId) return;
     try {
-      if (_currentEntityId) {
-        if (currentEntity && _currentEntityId !== currentEntity.id)
-          setCurrentEntity(null); //avoids weird caching behaviour, get a fresh one
+      if (currentEntity && _currentEntityId !== currentEntity.id)
+        setCurrentEntity(null); //avoids weird caching behaviour, get a fresh one
+      // if(currentProp && propId !== currentProp.id)
+      //   setCurrentProp(null); //avoids weird caching behaviour, get a fresh one
 
-        setFromKeyboard(false);
-        setLoadingEntity(true);
-        setLoadingProps(true);
+      setFromKeyboard(false);
+      setLoadingEntity(true);
+      setLoadingProps(true);
 
-        let [_currentEntity, itemProps] = await Promise.all([
-          getItem(_currentEntityId, currentLang.code),
-          getItemProps(_currentEntityId, currentLang.code),
-        ]);
+      let [_currentEntity, itemProps] = await Promise.all([
+        getItem(_currentEntityId, currentLang.code),
+        getItemProps(_currentEntityId, currentLang.code),
+      ]);
 
-        itemProps.forEach((prop) => {
-          prop.slug = prop.label.replace(/\s/g, "_");
+      itemProps.forEach((prop) => {
+        prop.slug = prop.label.replace(/\s/g, "_");
+      });
+
+      let _currentProp;
+      if (propSlug) {
+        _currentProp = itemProps.find(({ slug }) => slug === propSlug);
+      }
+      if (propId) {
+        _currentProp = itemProps.find(({ id }) => id === propId);
+      }
+
+      //currentProp belongs to family stuff
+      if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
+        //Remove all family-related props in favour of the custom
+        itemProps = itemProps.filter((prop) => {
+          return !FAMILY_IDS_MAP[prop.id];
         });
 
-        let _currentProp;
-        if (propSlug) {
-          _currentProp = itemProps.find(({ slug }) => slug === propSlug);
+        const translatedFamilyTree = FAMILY_PROP.labels[currentLang.code];
+        if (translatedFamilyTree) {
+          FAMILY_PROP.label = translatedFamilyTree;
+          FAMILY_PROP.overrideLabel = translatedFamilyTree;
+          FAMILY_PROP.slug = translatedFamilyTree.replace(/\s/g, "_");
         }
-        if (propId) {
-          _currentProp = itemProps.find(({ id }) => id === propId);
-        }
 
-        //currentProp belongs to family stuff
-        if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
-          //Remove all family-related props in favour of the custom
-          itemProps = itemProps.filter((prop) => {
-            return !FAMILY_IDS_MAP[prop.id];
-          });
+        //Add the Family tree fav currentProp
+        itemProps = [FAMILY_PROP].concat(itemProps);
 
-          const translatedFamilyTree = FAMILY_PROP.labels[currentLang.code];
-          if (translatedFamilyTree) FAMILY_PROP.label = translatedFamilyTree;
-
-          //Add the Family tree fav currentProp
-          itemProps = [FAMILY_PROP].concat(itemProps);
-
-          //Select the family tree if no other currentProp is selected, or if it's a family currentProp
-          if (!_currentProp || FAMILY_IDS_MAP[_currentProp.id]) {
-            setCurrentProp(FAMILY_PROP);
-          } else {
-            setCurrentProp(_currentProp);
-          }
+        //Select the family tree if no other currentProp is selected, or if it's a family currentProp
+        if (!_currentProp || FAMILY_IDS_MAP[_currentProp.id]) {
+          setCurrentProp(FAMILY_PROP);
         } else {
           setCurrentProp(_currentProp);
         }
-        setAvailableProps(itemProps);
-        //Set here (short setCurrentProp) otherwise if there is a delay between entity and props graph will be called twice
-        setCurrentEntity(_currentEntity);
+      } else {
+        setCurrentProp(_currentProp);
       }
+      setAvailableProps(itemProps);
+      //Set here (short after setCurrentProp) otherwise if there is a delay between entity and props graph will be called twice
+      setCurrentEntity(_currentEntity);
     } catch (error) {
       showError(error);
     } finally {
@@ -195,19 +200,14 @@ export default function SearchBar() {
   useEffect(() => {
     if (currentEntity) {
       setSearchTerm(currentEntity.label); //if updates from graph (recenter)
-      const params = {};
-
-      if (currentLang.code !== DEFAULT_LANG.code)
-        params.lang = currentLang.code;
-      const searchString = qs.stringify(params);
-
       history.push({
-        pathname: `/${currentProp ? currentProp.slug : "all"}/${
+        pathname: `/${currentLang.code}/${
+          currentProp ? currentProp.slug : "all"
+        }/${
           currentEntity.wikipediaSlug
             ? currentEntity.wikipediaSlug
             : currentEntity.id
         }`,
-        search: "?" + searchString,
       });
     }
   }, [currentEntity, currentProp]);
@@ -229,13 +229,7 @@ export default function SearchBar() {
               onChange={(e) => {
                 setSearchTerm(e.target.value);
               }}
-              value={
-                loadingEntity
-                  ? "Loading entity..."
-                  : searchTerm
-                  ? searchTerm
-                  : ""
-              }
+              value={loadingEntity ? "Loading entity..." : searchTerm}
               type="search"
               readOnly={loadingEntity}
               placeholder="Start typing to search..."

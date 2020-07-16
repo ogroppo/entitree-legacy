@@ -21,7 +21,6 @@ export default class App extends Component {
   state = {
     errors: [],
     infos: [],
-    loadingLang: true,
     currentLang: DEFAULT_LANG,
     hasLanguageChanged: 0,
     currentEntity: null,
@@ -30,28 +29,7 @@ export default class App extends Component {
     loadingEntity: false,
   };
 
-  componentDidMount() {
-    let { lang } = qs.parse(window.location.search);
-    let userLangCode;
-    if (lang) {
-      userLangCode = lang;
-    } else {
-      try {
-        userLangCode = localStorage.getItem("userLangCode");
-      } catch (error) {
-        //localstorage not working
-      }
-    }
-
-    if (userLangCode) {
-      const currentLang = LANGS.find(({ code }) => code === userLangCode);
-      if (currentLang)
-        this.setState({
-          currentLang,
-        });
-    }
-    this.setState({ loadingLang: false });
-  }
+  componentDidMount() {}
 
   componentDidCatch = (error) => {
     this.showError(error);
@@ -117,7 +95,6 @@ export default class App extends Component {
       currentLang,
       errors,
       infos,
-      loadingLang,
       currentEntity,
       currentProp,
       hasLanguageChanged,
@@ -159,10 +136,10 @@ export default class App extends Component {
               </div>
               <Switch>
                 <Route exact path="/">
-                  {!loadingLang && <HomePage />}
+                  <HomePage />
                 </Route>
-                <Route exact path="/:propSlug/:itemSlug">
-                  {!loadingLang && <HomePage />}
+                <Route exact path="/:langCode/:propSlug/:itemSlug">
+                  <HomePage />
                 </Route>
                 <Route exact path="/about">
                   <AboutPage />

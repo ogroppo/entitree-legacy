@@ -1,6 +1,6 @@
 const buildSitemap = require("react-router-sitemap").sitemapBuilder;
 const path = require("path");
-const slugs = require("./slugs.json");
+const en_slugs = require("./slugs.json");
 const fs = require("fs");
 
 // use your website root address here. Optimally you can
@@ -10,15 +10,11 @@ const hostname = "https://www.entitree.com";
 // define our destination folder and sitemap file name
 const dest = path.resolve("./public", "sitemap.xml");
 
-const pages = [
-  "/",
-  "/about",
-  //"/privacy"
-];
+const pages = ["/", "/about", "/privacy"];
 
-for (slug in slugs) {
+for (slug in en_slugs) {
   if (slugs[slug].hasFamily) {
-    pages.push(`/family/${slug}`);
+    pages.push(`/en/family_tree/${slug}`);
   }
 }
 
