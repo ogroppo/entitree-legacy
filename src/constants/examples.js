@@ -1,38 +1,38 @@
 export const EXAMPLES = [
   {
     name: "The Queen's family",
-    href: `?q=Q9682&p=P40`,
+    href: `/en/family_tree/Elizabeth_II`,
   },
   {
     name: "Sudono Salim's descendants",
-    href: `?q=Q712401&p=P40`,
+    href: `/en/family_tree/Sudono_Salim`,
   },
   {
-    name: "Dhirendra of Nepal's family",
-    href: `?q=Q5269611&p=P40`,
+    name: "Dhirendra of Nepal's ancestors",
+    href: `/en/family_tree/Dhirendra_of_Nepal`,
   },
   {
-    name: "Jesus Christ's family",
-    href: `?q=Q302&p=P40`,
+    name: "Jesus Christ's pedigree",
+    href: `/en/family_tree/Jesus`,
   },
   {
     name: "Trump's family",
-    href: `?q=Q3752663&p=P40`,
+    href: `/en/family_tree/Donald_Trump`,
   },
   {
     name: "Mammal taxonomy",
-    href: "?p=P171&q=Q7377",
+    href: "/en/parent_taxon/Mammal",
   },
   {
-    name: "Pan Pan's family",
-    href: `?q=Q15928745&p=P40`,
+    name: "Pan Pan (giant panda) offspring",
+    href: `/en/family_tree/Pan_Pan_(giant_panda)`,
   },
   {
-    name: "Companies owned by Cola-Cola",
-    href: "?p=P127&q=Q3295867",
+    name: "Cola-Cola's etymology",
+    href: "/en/named_after/Coca-Cola",
   },
   {
-    name: "Companies owned by Walmart",
-    href: "?p=P127&q=Q483551",
+    name: "Walmart's subsidiaries",
+    href: "/en/subsidiary/Walmart",
   },
 ];

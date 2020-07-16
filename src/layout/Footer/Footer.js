@@ -14,7 +14,7 @@ export default function Footer() {
         </Navbar.Brand>
         <Nav className="ml-auto">
           <Nav.Link href="/about">About</Nav.Link>
-          {/* <Nav.Link href="/privacy">Privacy</Nav.Link> */}
+          <Nav.Link href="/privacy">Privacy Policy</Nav.Link>
         </Nav>
       </Container>
     </Navbar>

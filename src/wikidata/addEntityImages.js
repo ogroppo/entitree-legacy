@@ -5,20 +5,6 @@ export default async function getEntityImages(entity, currentLangCode) {
   entity.thumbnails = [];
   entity.images = [];
 
-  //Twitter comes first as it is squared
-  const twitterClaim = entity.simpleClaims[TWITTER_ID];
-  if (twitterClaim) {
-    //https://github.com/siddharthkp/twitter-avatar
-    twitterClaim.forEach((image) => {
-      const img = {
-        url: `https://twitter-avatar.now.sh/${image.value}`,
-        alt: `${entity.label}'s Twitter image`,
-      };
-      entity.thumbnails.push(img);
-      entity.images.push(img);
-    });
-  }
-
   const imageClaim = entity.simpleClaims[IMAGE_ID];
   if (imageClaim) {
     imageClaim.forEach((image, index) => {
@@ -30,6 +16,19 @@ export default async function getEntityImages(entity, currentLangCode) {
         url: getCommonsUrlByFile(image.value, IMAGE_SIZE * 2),
         alt: `${entity.label}'s Image ${index + 1} from Wikimedia Commons`,
       });
+    });
+  }
+
+  const twitterClaim = entity.simpleClaims[TWITTER_ID];
+  if (twitterClaim) {
+    //https://github.com/siddharthkp/twitter-avatar
+    twitterClaim.forEach((image) => {
+      const img = {
+        url: `https://twitter-avatar.now.sh/${image.value}`,
+        alt: `${entity.label}'s Twitter image`,
+      };
+      entity.thumbnails.push(img);
+      entity.images.push(img);
     });
   }
 

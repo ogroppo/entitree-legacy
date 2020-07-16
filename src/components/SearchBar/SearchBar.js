@@ -11,14 +11,18 @@ import {
   Tooltip,
   Overlay,
 } from "react-bootstrap";
-import qs from "query-string";
-import { useHistory, useLocation } from "react-router-dom";
-import { FAMILY_PROP, FAMILY_IDS_MAP } from "../../constants/properties";
+import { useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import {
+  FAMILY_PROP,
+  FAMILY_IDS_MAP,
+  CHILD_ID,
+} from "../../constants/properties";
 import { AppContext } from "../../App";
 import getItem from "../../wikidata/getItem";
 import getItemProps from "../../wikidata/getItemProps";
 import search from "../../wikidata/search";
-import { DEFAULT_LANG } from "../../constants/langs";
+import enSlugs from "../../sitemap/en-slugs.json";
+import getWikipediaArticle from "../../wikipedia/getWikipediaArticle";
 
 export default function SearchBar() {
   const {
@@ -43,11 +47,31 @@ export default function SearchBar() {
 
   //Check on mount if there are params in the url
   const location = useLocation();
+  const match = useRouteMatch();
   useEffect(() => {
     (async () => {
       try {
-        let { q, p } = qs.parse(location.search);
-        loadEntity(q, p);
+        let itemId;
+        if (match.params.itemSlug) {
+          if (match.params.itemSlug.match(/^Q\d+$/)) {
+            itemId = match.params.itemSlug;
+          } else {
+            const slugItem = enSlugs[match.params.itemSlug];
+            if (slugItem) {
+              itemId = slugItem.id;
+            } else {
+              const {
+                data: { wikibase_item },
+              } = await getWikipediaArticle(
+                match.params.itemSlug,
+                currentLang.code
+              );
+              if (wikibase_item) itemId = wikibase_item;
+            }
+          }
+        }
+
+        loadEntity(itemId, match.params.propSlug);
       } catch (error) {
         showError(error);
       }
@@ -62,7 +86,8 @@ export default function SearchBar() {
           if (currentEntity)
             await loadEntity(
               currentEntity.id,
-              currentProp ? currentProp.id : null
+              null,
+              currentProp ? currentProp.id : null //this doesn't work if I switch language
             );
         } catch (error) {
           showError(error);
@@ -71,56 +96,65 @@ export default function SearchBar() {
     }
   }, [hasLanguageChanged]);
 
-  const loadEntity = async (_currentEntitId, _currentPropId) => {
+  const loadEntity = async (_currentEntityId, propSlug, propId) => {
+    if (!_currentEntityId) return;
     try {
-      if (_currentEntitId) {
-        if (currentEntity && _currentEntitId !== currentEntity.id)
-          setCurrentEntity(null); //avoids weird caching behaviour, get a fresh one
+      if (currentEntity && _currentEntityId !== currentEntity.id)
+        setCurrentEntity(null); //avoids weird caching behaviour, get a fresh one
+      // if(currentProp && propId !== currentProp.id)
+      //   setCurrentProp(null); //avoids weird caching behaviour, get a fresh one
 
-        setFromKeyboard(false);
-        setLoadingEntity(true);
-        setLoadingProps(true);
-        let calls = [
-          getItem(_currentEntitId, currentLang.code),
-          getItemProps(_currentEntitId, currentLang.code),
-        ];
-        if (_currentPropId) {
-          calls.push(getItem(_currentPropId, currentLang.code));
+      setFromKeyboard(false);
+      setLoadingEntity(true);
+      setLoadingProps(true);
+
+      let [_currentEntity, itemProps] = await Promise.all([
+        getItem(_currentEntityId, currentLang.code),
+        getItemProps(_currentEntityId, currentLang.code),
+      ]);
+
+      itemProps.forEach((prop) => {
+        prop.slug = prop.label.replace(/\s/g, "_");
+      });
+
+      let _currentProp;
+      if (propSlug) {
+        _currentProp = itemProps.find(({ slug }) => slug === propSlug);
+      }
+      if (propId) {
+        _currentProp = itemProps.find(({ id }) => id === propId);
+      }
+
+      //currentProp belongs to family stuff
+      if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
+        //Remove all family-related props in favour of the custom
+        itemProps = itemProps.filter((prop) => {
+          if (prop.id === CHILD_ID) FAMILY_PROP.label = prop.label; //get translated child label
+          return !FAMILY_IDS_MAP[prop.id];
+        });
+
+        const translatedFamilyTree =
+          FAMILY_PROP.overrideLabels[currentLang.code];
+        if (translatedFamilyTree) {
+          FAMILY_PROP.overrideLabel = translatedFamilyTree;
+          FAMILY_PROP.slug = translatedFamilyTree.replace(/\s/g, "_");
         }
-        let [_currentEntity, itemProps, _currentProp] = await Promise.all(
-          calls
-        );
 
-        //currentProp belongs to family stuff
-        if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
-          //Remove all family props
-          let translatedLabel;
-          itemProps = itemProps.filter((prop) => {
-            if (prop.id === FAMILY_PROP.id) translatedLabel = prop.label; //translated child label
-            return !FAMILY_IDS_MAP[prop.id];
-          });
+        //Add the Family tree fav currentProp
+        itemProps = [FAMILY_PROP].concat(itemProps);
 
-          if (translatedLabel) FAMILY_PROP.label = translatedLabel;
-          if (FAMILY_PROP.overrideLabels[currentLang.code])
-            FAMILY_PROP.overrideLabel =
-              FAMILY_PROP.overrideLabels[currentLang.code];
-
-          //Add the Family tree fav currentProp
-          itemProps = [FAMILY_PROP].concat(itemProps);
-
-          //Select the family tree if no other currentProp is selected, or if it's a family currentProp
-          if (!_currentProp || FAMILY_IDS_MAP[_currentProp.id]) {
-            setCurrentProp(FAMILY_PROP);
-          } else {
-            setCurrentProp(_currentProp);
-          }
+        //Select the family tree if no other currentProp is selected, or if it's a family currentProp
+        if (!_currentProp || FAMILY_IDS_MAP[_currentProp.id]) {
+          setCurrentProp(FAMILY_PROP);
         } else {
           setCurrentProp(_currentProp);
         }
-        setAvailableProps(itemProps);
-        //Set here (short setCurrentProp) otherwise if there is a delay between entity and props graph will be called twice
-        setCurrentEntity(_currentEntity);
+      } else {
+        setCurrentProp(_currentProp);
       }
+      setAvailableProps(itemProps);
+      //Set here (short after setCurrentProp) otherwise if there is a delay between entity and props graph will be called twice
+      setCurrentEntity(_currentEntity);
     } catch (error) {
       showError(error);
     } finally {
@@ -165,15 +199,14 @@ export default function SearchBar() {
   useEffect(() => {
     if (currentEntity) {
       setSearchTerm(currentEntity.label); //if updates from graph (recenter)
-      const query = { q: currentEntity.id };
-
-      if (currentProp) {
-        query.p = currentProp.id;
-      }
-      if (currentLang.code !== DEFAULT_LANG.code) query.l = currentLang.code;
-      const searchString = qs.stringify(query);
       history.push({
-        search: "?" + searchString,
+        pathname: `/${currentLang.code}/${
+          currentProp ? currentProp.slug : "all"
+        }/${
+          currentEntity.wikipediaSlug
+            ? currentEntity.wikipediaSlug
+            : currentEntity.id
+        }`,
       });
     }
   }, [currentEntity, currentProp]);
@@ -195,13 +228,7 @@ export default function SearchBar() {
               onChange={(e) => {
                 setSearchTerm(e.target.value);
               }}
-              value={
-                loadingEntity
-                  ? "Loading entity..."
-                  : searchTerm
-                  ? searchTerm
-                  : ""
-              }
+              value={loadingEntity ? "Loading entity..." : searchTerm}
               type="search"
               readOnly={loadingEntity}
               placeholder="Start typing to search..."

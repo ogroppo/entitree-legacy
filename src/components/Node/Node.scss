@@ -51,41 +51,41 @@
     float: left;
     padding-left: 4px;
     position: relative;
+    .four-line-clamp {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+      line-height: 15px;
+      overflow: hidden;
+      max-height: 62px; //line h * 4 + 2?
+    }
     .label {
-      display: flex;
-      button {
-        @media print {
-          color: gray;
-        }
+      @media print {
+        color: gray;
+      }
+      display: inline;
+      border: 0;
+      padding: 0;
+      font-size: 13px;
+      line-height: 15px;
+      font-weight: bold;
+      text-align: left;
+      vertical-align: top;
+      &:focus {
+        outline: none;
         border: 0;
-        padding: 0;
-        font-size: 13px;
-        line-height: 15px;
-        font-weight: bold;
-        max-height: 30px; //line h * 2
-        overflow: hidden;
-        text-align: left;
-        vertical-align: top;
-        &:focus {
-          outline: none;
-          border: 0;
-          box-shadow: none;
-          //text-decoration: underline;
-        }
+        box-shadow: none;
+        text-decoration: underline;
       }
     }
     .description {
-      margin-top: 2px;
+      display: inline;
       font-size: 12px;
-      line-height: 14px;
+      line-height: 15px;
       color: #666;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      overflow: hidden;
     }
     .dates {
-      margin-top: 1px;
+      margin-top: 3px;
       font-size: 10px;
       color: #666;
       white-space: nowrap;

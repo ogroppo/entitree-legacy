@@ -12,6 +12,7 @@ import Footer from "./layout/Footer/Footer";
 import { LANGS, DEFAULT_LANG } from "./constants/langs";
 import Header from "./layout/Header/Header";
 import Logo from "./components/Logo/Logo";
+import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 const browserHistory = createBrowserHistory();
 
 export const AppContext = React.createContext();
@@ -20,7 +21,6 @@ export default class App extends Component {
   state = {
     errors: [],
     infos: [],
-    loadingLang: true,
     currentLang: DEFAULT_LANG,
     hasLanguageChanged: 0,
     currentEntity: null,
@@ -29,28 +29,7 @@ export default class App extends Component {
     loadingEntity: false,
   };
 
-  componentDidMount() {
-    let { l } = qs.parse(window.location.search);
-    let userLangCode;
-    if (l) {
-      userLangCode = l;
-    } else {
-      try {
-        userLangCode = localStorage.getItem("userLangCode");
-      } catch (error) {
-        //localstorage not working
-      }
-    }
-
-    if (userLangCode) {
-      const currentLang = LANGS.find(({ code }) => code === userLangCode);
-      if (currentLang)
-        this.setState({
-          currentLang,
-        });
-    }
-    this.setState({ loadingLang: false });
-  }
+  componentDidMount() {}
 
   componentDidCatch = (error) => {
     this.showError(error);
@@ -116,7 +95,6 @@ export default class App extends Component {
       currentLang,
       errors,
       infos,
-      loadingLang,
       currentEntity,
       currentProp,
       hasLanguageChanged,
@@ -158,7 +136,10 @@ export default class App extends Component {
               </div>
               <Switch>
                 <Route exact path="/">
-                  {!loadingLang && <HomePage />}
+                  <HomePage />
+                </Route>
+                <Route exact path="/:langCode/:propSlug/:itemSlug">
+                  <HomePage />
                 </Route>
                 <Route exact path="/about">
                   <AboutPage />
@@ -166,11 +147,12 @@ export default class App extends Component {
                 <Route exact path="/privacy">
                   <PrivacyPolicyPage />
                 </Route>
-                <Route exact path="/logo">
+                <Route exact path="/logopreview">
                   <Container className="pt-5">
                     <Logo width={"5em"} height={"5em"} />
                   </Container>
                 </Route>
+                <Route component={NotFoundPage} />
               </Switch>
             </div>
             <Footer />
