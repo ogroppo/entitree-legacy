@@ -11,7 +11,6 @@ import {
   Tooltip,
   Overlay,
 } from "react-bootstrap";
-import qs from "query-string";
 import { useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import {
   FAMILY_PROP,
@@ -22,8 +21,7 @@ import { AppContext } from "../../App";
 import getItem from "../../wikidata/getItem";
 import getItemProps from "../../wikidata/getItemProps";
 import search from "../../wikidata/search";
-import slugs from "../../sitemap/slugs.json";
-import { DEFAULT_LANG } from "../../constants/langs";
+import enSlugs from "../../sitemap/en-slugs.json";
 import getWikipediaArticle from "../../wikipedia/getWikipediaArticle";
 
 export default function SearchBar() {
@@ -58,7 +56,7 @@ export default function SearchBar() {
           if (match.params.itemSlug.match(/^Q\d+$/)) {
             itemId = match.params.itemSlug;
           } else {
-            const slugItem = slugs[match.params.itemSlug];
+            const slugItem = enSlugs[match.params.itemSlug];
             if (slugItem) {
               itemId = slugItem.id;
             } else {

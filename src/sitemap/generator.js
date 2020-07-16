@@ -1,6 +1,6 @@
 const buildSitemap = require("react-router-sitemap").sitemapBuilder;
 const path = require("path");
-const en_slugs = require("./slugs.json");
+const enSlugs = require("./en-slugs.json");
 const fs = require("fs");
 
 // use your website root address here. Optimally you can
@@ -12,8 +12,8 @@ const dest = path.resolve("./public", "sitemap.xml");
 
 const pages = ["/", "/about", "/privacy"];
 
-for (slug in en_slugs) {
-  if (slugs[slug].hasFamily) {
+for (slug in enSlugs) {
+  if (enSlugs[slug].hasFamily) {
     pages.push(`/en/family_tree/${slug}`);
   }
 }

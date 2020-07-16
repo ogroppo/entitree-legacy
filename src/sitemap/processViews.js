@@ -1,10 +1,10 @@
+const LANGUAGE_CODE = "en";
 //const views = require("./topviews-2019.json");
 const views = require("./topviews-2020_06.json");
-const slugs = require("./slugs.json");
+const slugs = require(`./${LANGUAGE_CODE}-slugs.json`);
 const axios = require("axios");
 const wdk = require("wikidata-sdk");
 const fs = require("fs");
-//console.log(views);
 
 const go = async () => {
   for (let index = 0; index < views.length; index++) {
@@ -17,12 +17,12 @@ const go = async () => {
       let qid;
       try {
         const { data } = await axios.get(
-          `https://en.wikipedia.org/api/rest_v1/page/summary/${encodedSlug}`
+          `https://${LANGUAGE_CODE}.wikipedia.org/api/rest_v1/page/summary/${encodedSlug}`
         );
         qid = data.wikibase_item;
         slugs[slug] = {
           id: qid,
-          createdAt: new Date(),
+          importedAt: new Date(),
         };
       } catch (error) {
         console.log(slug, error.response.status, error.response.statusText);
@@ -30,7 +30,7 @@ const go = async () => {
       try {
         const url = await wdk.getEntities({
           ids: qid,
-          languages: "en",
+          languages: LANGUAGE_CODE,
           props: ["claims"],
         });
         const {
@@ -57,9 +57,7 @@ const go = async () => {
         } catch (error) {}
 
         if (
-          ["P40", "P3373", , "P26", "P22", "P25"].some(
-            (id) => entity.claims[id]
-          )
+          ["P40", "P3373", "P26", "P22", "P25"].some((id) => entity.claims[id])
         ) {
           slugs[slug].hasFamily = true;
         }
@@ -70,7 +68,7 @@ const go = async () => {
   }
 
   let data = JSON.stringify(slugs, null, 2);
-  fs.writeFileSync("./src/sitemap/slugs.json", data);
+  fs.writeFileSync(`./src/sitemap/${LANGUAGE_CODE}-slugs.json`, data);
 };
 
 go();
