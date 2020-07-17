@@ -46,6 +46,7 @@ export default function Navigation({
     });
     zoomOut(e);
   };
+
   const recenterWrapper = () => {
     ReactGA.event({
       category: "Navigation",
@@ -54,6 +55,7 @@ export default function Navigation({
     });
     recenter();
   };
+
   const fitTreeWrapper = () => {
     ReactGA.event({
       category: "Navigation",

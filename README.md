@@ -1,24 +1,22 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-Live Demo here https://wikiforest.herokuapp.com/
+Live website here https://www.entitree.com/
 
 ## User instructions
 
 Search for items (people, organizations, anything!) and then select a property.
-Language can be changed at the top right.
+Language can be changed from the top right 'settings' button.
 
 ## Install this app
 
 ```console
-git clone https://github.com/ogroppo/wikiforest
-cd wikiforest/
+git clone https://github.com/ogroppo/entitree
+cd entiree/
 npm install
 npm start
 ```
 
 Open [localhost:3000](http://localhost:3000/)
-
-
 
 ## Available Scripts
 
@@ -43,11 +41,10 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-
 ## Authors
 
-* **Orlando Groppo** - [ogroppo](https://github.com/ogroppo)
-* **Martin Schibel**  - [mshd](https://github.com/mshd)
+- **Orlando Groppo** - [ogroppo](https://github.com/ogroppo)
+- **Martin Schibel** - [mshd](https://github.com/mshd)
 
 ## License
 
@@ -56,4 +53,4 @@ see LICENSE
 
 ## Acknowledgments
 
-* Wikidata community
+- Wikidata community
