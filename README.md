@@ -11,7 +11,7 @@ Language can be changed from the top right 'settings' button.
 
 ```console
 git clone https://github.com/ogroppo/entitree
-cd entiree/
+cd entitree/
 npm install
 npm start
 ```
