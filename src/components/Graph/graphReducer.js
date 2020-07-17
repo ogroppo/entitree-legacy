@@ -222,7 +222,6 @@ const collapseParents = (node) => {
       child.virtualParent._siblings.push(child);
     }
   });
-  console.log(node);
 
   node.children = null;
   node._parentsExpanded = false;
