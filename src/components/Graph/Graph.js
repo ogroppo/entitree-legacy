@@ -17,6 +17,7 @@ import {
   SIBLING_SPOUSE_SEPARATION,
   MAX_SCALE,
   MIN_SCALE,
+  DEFAULT_SCALE,
 } from "../../constants/tree";
 import Node from "../Node/Node";
 import Rel from "../Rel/Rel";
@@ -28,6 +29,7 @@ import addEntityConnectors from "../../lib/addEntityConnectors";
 import getUpMap from "../../wikidata/getUpMap";
 import Navigation from "./Navigation/Navigation";
 import sortByBirthDate from "../../lib/sortByBirthDate";
+import last from "../../lib/last";
 
 export default function GraphWrapper() {
   const { showGenderColor } = useContext(AppContext);
@@ -37,6 +39,7 @@ export default function GraphWrapper() {
         zoomIn={{ step: 20 }}
         zoomOut={{ step: 20 }}
         wheel={{ step: 25 }}
+        defaultScale={DEFAULT_SCALE}
         options={{
           limitToBounds: false,
           minScale: MIN_SCALE,
@@ -83,7 +86,8 @@ const Graph = memo(
 
     //GET ROOT
     useEffect(() => {
-      if (currentEntity) {
+      if (currentEntity && graphWidth) {
+        //also wait until the container size has been set
         (async () => {
           try {
             let root;
@@ -141,14 +145,14 @@ const Graph = memo(
               });
             }
 
-            setTransform(0, 0, 1, 0);
             setFocusedNode(root);
+            centerPoint(0, 0);
           } catch (error) {
             showError(error);
           }
         })();
       }
-    }, [currentEntity, currentProp]);
+    }, [currentEntity, currentProp, graphWidth]);
 
     const toggleChildren = async (node, options = {}) => {
       if (!node.data.downIds || !node.data.downIds.length) return;
@@ -236,11 +240,12 @@ const Graph = memo(
     const toggleSpouses = async (node, options = {}) => {
       if (!node.data.rightIds || !node.data.rightIds.length) return;
 
-      var lastSpouse;
+      let lastSpouse;
       if (node._spousesExpanded) {
         dispatchGraph({ type: "collapseSpouses", node });
       } else if (node._spouses) {
         //cached
+        lastSpouse = last(node._spouses);
         dispatchGraph({ type: "expandSpouses", node });
       } else {
         try {
@@ -261,7 +266,7 @@ const Graph = memo(
       }
 
       let newx = node.x;
-      if (node._spousesExpanded) {
+      if (node._spousesExpanded && lastSpouse) {
         newx = (newx + lastSpouse.x) / 2;
       }
       if (!options.noRecenter) centerPoint(newx);
@@ -270,10 +275,11 @@ const Graph = memo(
     const toggleSiblings = async (node, options = {}) => {
       if (!node.data.leftIds || !node.data.leftIds.length) return;
 
-      let firstSibling, lastSibling;
+      let firstSibling;
       if (node._siblingsExpanded) {
         dispatchGraph({ type: "collapseSiblings", node });
       } else if (node._siblings) {
+        firstSibling = node._siblings[0];
         dispatchGraph({ type: "expandSiblings", node });
       } else {
         try {
@@ -287,7 +293,6 @@ const Graph = memo(
             const siblingIndex = node.parent.children.indexOf(node); //it will keep prepending to the node index
             node.parent.children.splice(siblingIndex, 0, siblingNode);
             if (!firstSibling) firstSibling = siblingNode;
-            lastSibling = siblingNode;
           });
           dispatchGraph({ type: "expandSiblings", node });
         } catch (error) {
@@ -296,7 +301,8 @@ const Graph = memo(
       }
 
       let newx = node.x;
-      if (node._siblingsExpanded) newx = (newx + firstSibling.x) / 2;
+      if (node._siblingsExpanded && firstSibling)
+        newx = (newx + firstSibling.x) / 2;
       if (!options.noRecenter) centerPoint(newx);
     };
 
@@ -424,7 +430,6 @@ const Graph = memo(
       childNodes,
       parentRels,
       childRels,
-      loading,
     } = graph;
 
     return (
@@ -574,7 +579,7 @@ const Graph = memo(
     );
   },
   (prevProps, nextProps) => {
-    return prevProps.scale === nextProps.scale;
+    //return prevProps.scale === nextProps.scale;
     return true; //better performance but inconsistent scale
   }
 );
