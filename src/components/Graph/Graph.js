@@ -60,6 +60,7 @@ const Graph = memo(
       currentEntity,
       currentProp,
       setCurrentEntity,
+      setLoadingEntity,
     } = useContext(AppContext);
 
     const [graph, dispatchGraph] = useReducer(graphReducer, initialState);
@@ -86,13 +87,15 @@ const Graph = memo(
 
     //GET ROOT
     useEffect(() => {
+      //also wait until the container size has been set
       if (currentEntity && graphWidth) {
-        //also wait until the container size has been set
         (async () => {
           try {
             let root;
-            //property has been selected from dropdown
+            //property has been selected/changed from dropdown or is available from url
             if (currentProp) {
+              //show "loading tree" spinner a bit more
+              setLoadingEntity(true);
               upMap.current = await getUpMap(currentEntity.id, currentProp.id);
               const rootItem = addEntityConnectors(
                 currentEntity,
@@ -135,6 +138,8 @@ const Graph = memo(
               toggleChildren(childTree, { noRecenter: true });
               toggleRootSiblings(root, { noRecenter: true });
               toggleRootSpouses(root, { noRecenter: true });
+
+              setLoadingEntity(false);
             } else {
               //currentEntity has changed from searchBox
               root = hierarchy(currentEntity);
@@ -157,9 +162,14 @@ const Graph = memo(
     const toggleChildren = async (node, options = {}) => {
       if (!node.data.downIds || !node.data.downIds.length) return;
 
+      dispatchGraph({ type: "setLoadingChildren", node });
+
       if (node._childrenExpanded) {
         dispatchGraph({ type: "collapseChildren", node });
       } else if (node._children) {
+        //has cached data
+        node.children = node._children;
+        node._children = null;
         dispatchGraph({ type: "expandChildren", node });
       } else {
         try {
@@ -197,9 +207,14 @@ const Graph = memo(
     const toggleParents = async (node, options = {}) => {
       if (!node.data.upIds || !node.data.upIds.length) return;
 
+      dispatchGraph({ type: "setLoadingParents", node });
+
       if (node._parentsExpanded) {
         dispatchGraph({ type: "collapseParents", node });
       } else if (node._parents) {
+        //has cached data
+        node.children = node._parents;
+        node._parents = null;
         dispatchGraph({ type: "expandParents", node });
       } else {
         try {
@@ -240,6 +255,8 @@ const Graph = memo(
     const toggleSpouses = async (node, options = {}) => {
       if (!node.data.rightIds || !node.data.rightIds.length) return;
 
+      dispatchGraph({ type: "setLoadingSpouses", node });
+
       let lastSpouse;
       if (node._spousesExpanded) {
         dispatchGraph({ type: "collapseSpouses", node });
@@ -275,6 +292,8 @@ const Graph = memo(
     const toggleSiblings = async (node, options = {}) => {
       if (!node.data.leftIds || !node.data.leftIds.length) return;
 
+      dispatchGraph({ type: "setLoadingSiblings", node });
+
       let firstSibling;
       if (node._siblingsExpanded) {
         dispatchGraph({ type: "collapseSiblings", node });
@@ -309,6 +328,8 @@ const Graph = memo(
     const toggleRootSpouses = async (root, options = {}) => {
       if (!root.data.rightIds || !root.data.rightIds.length) return;
 
+      dispatchGraph({ type: "setLoadingSpouses", node: root });
+
       if (root._spousesExpanded) {
         dispatchGraph({ type: "collapseRootSpouses", root });
       } else if (root._spouses) {
@@ -340,6 +361,8 @@ const Graph = memo(
 
     const toggleRootSiblings = async (root, options = {}) => {
       if (!root.data.leftIds || !root.data.leftIds.length) return;
+
+      dispatchGraph({ type: "setLoadingSiblings", node: root });
 
       if (root._siblingsExpanded) {
         dispatchGraph({ type: "collapseRootSiblings", root });

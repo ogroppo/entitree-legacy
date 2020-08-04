@@ -1,6 +1,6 @@
 import { Button, OverlayTrigger, Tooltip, Modal } from "react-bootstrap";
 import ReactGA from "react-ga";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { FiMinus, FiPlus, FiPrinter } from "react-icons/fi";
 import { FaRegShareSquare } from "react-icons/fa";
 import { IoMdExpand } from "react-icons/io";
@@ -23,6 +23,7 @@ import {
 } from "react-share";
 import "./Navigation.scss";
 import { SITE_TITLE } from "../../../constants/meta";
+import { AppContext } from "../../../App";
 
 export default function Navigation({
   zoomIn,
@@ -31,6 +32,8 @@ export default function Navigation({
   recenter,
   fitTree,
 }) {
+  const { currentEntity, currentProp } = useContext(AppContext);
+
   const [showShareTooltip, setShowShareTooltip] = useState(false);
   const zoomInWrapper = (e) => {
     ReactGA.event({
@@ -118,7 +121,7 @@ export default function Navigation({
             <div className="shareButton">
               <FacebookShareButton
                 url={window.location.href}
-                quote={focusedNode.data.description}
+                quote={document.title}
                 hashtag={SITE_TITLE}
               >
                 <FacebookIcon /> Share on Facebook
@@ -132,20 +135,6 @@ export default function Navigation({
               >
                 <TwitterIcon /> Share on Twitter
               </TwitterShareButton>
-            </div>
-            <div
-              className="shareButton"
-              url={window.location.href}
-              media={
-                focusedNode.data.images[0]
-                  ? focusedNode.data.images[0].url
-                  : null
-              }
-              description={focusedNode.data.description}
-            >
-              <PinterestShareButton>
-                <PinterestIcon /> Share on Pinterest
-              </PinterestShareButton>
             </div>
             <div className="shareButton">
               <RedditShareButton

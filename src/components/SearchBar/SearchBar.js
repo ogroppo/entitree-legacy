@@ -38,7 +38,6 @@ export default function SearchBar() {
   } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = useState("");
   const [loadingProps, setLoadingProps] = useState(false);
-  const [loadingProp, setLoadingProp] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState();
