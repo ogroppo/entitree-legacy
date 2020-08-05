@@ -4,12 +4,15 @@ import {
   BIRTH_DATE_ID,
   DEATH_DATE_ID,
   GENDER_ID,
+  WEBSITE_ID,
+  INSTANCE_OF_ID,
 } from "../constants/properties";
 import {
   HUMAN_MALE_ID,
   ANIMAL_FEMALE_ID,
   ANIMAL_MALE_ID,
   HUMAN_FEMALE_ID,
+  HUMAN_ID,
 } from "../constants/entities";
 import wbk from "wikidata-sdk";
 import getSocialMediaProps from "./getSocialMediaProps";
@@ -77,31 +80,45 @@ export default async function formatEntity(entity, languageCode) {
 
   formattedEntity.externalLinks = getSocialMediaProps(simpleClaims);
 
-  formattedEntity.website =
-    simpleClaims["P856"] && simpleClaims["P856"][0]
-      ? simpleClaims["P856"][0].value
-      : null;
+  addWebsite(formattedEntity);
 
-  formattedEntity.gender = getGender(simpleClaims);
+  addGender(formattedEntity);
+
+  addIsHuman(formattedEntity);
 
   await addEntityImages(formattedEntity, languageCode);
 
   return formattedEntity;
 }
 
-function getGender(simpleClaims) {
-  let gender;
+function addIsHuman(entity) {
   try {
-    gender = simpleClaims[GENDER_ID][0].value;
+    entity.isHuman = entity.simpleClaims[INSTANCE_OF_ID].some(
+      ({ value }) => value === HUMAN_ID //add all other IDS of person subclass?
+    );
   } catch (error) {}
+}
 
-  if (gender) {
-    if (gender === HUMAN_MALE_ID || gender === ANIMAL_MALE_ID) {
-      return "male";
-    } else if (gender === HUMAN_FEMALE_ID || gender === ANIMAL_FEMALE_ID) {
-      return "female";
-    } else {
-      return "thirdgender";
+function addWebsite(entity) {
+  try {
+    entity.website = entity.simpleClaims[WEBSITE_ID][0].value;
+  } catch (error) {}
+}
+
+function addGender(entity) {
+  try {
+    const genderId = entity.simpleClaims[GENDER_ID][0].value;
+    if (genderId) {
+      if (genderId === HUMAN_MALE_ID || genderId === ANIMAL_MALE_ID) {
+        entity.gender = "male";
+      } else if (
+        genderId === HUMAN_FEMALE_ID ||
+        genderId === ANIMAL_FEMALE_ID
+      ) {
+        entity.gender = "female";
+      } else {
+        entity.gender = "thirdgender";
+      }
     }
-  }
+  } catch (error) {}
 }

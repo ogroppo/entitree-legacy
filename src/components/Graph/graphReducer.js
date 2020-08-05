@@ -19,8 +19,8 @@ export const initialState = {
   root: null,
 };
 
-//Use this reducer at some point
 export default function graphReducer(graph, { type, ...arg }) {
+  //console.log({ type });
   switch (type) {
     case "set":
       return {
@@ -31,38 +31,61 @@ export default function graphReducer(graph, { type, ...arg }) {
       var { node } = arg;
       if (node._childrenExpanded) return graph; //no-op
       node._childrenExpanded = true;
-      //has cached data
-      if (node._children) {
-        node.children = node._children;
-        node._children = null;
+      node.loadingChildren = false;
+      if (node.isRoot) {
+        graph.root._childrenExpanded = true;
+        graph.root.loadingChildren = false;
       }
-      if (node.isRoot) graph.root._childrenExpanded = true;
       recalcChildren(graph);
       return { ...graph };
     case "collapseChildren":
+      var newGraph = { ...graph };
       var { node } = arg;
+      node.loadingChildren = false;
+      if (node.isRoot) {
+        newGraph.root._childrenExpanded = false;
+        newGraph.root.loadingChildren = false;
+      }
       collapseChildren(node);
-      if (node.isRoot) graph.root._childrenExpanded = false;
-      recalcChildren(graph);
+      recalcChildren(newGraph);
+      return newGraph;
+    case "setLoadingChildren":
+      var { node } = arg;
+      node.loadingChildren = true;
+      if (node.isRoot) graph.root.loadingChildren = true;
+      return { ...graph };
+    case "setLoadingParents":
+      var { node } = arg;
+      node.loadingParents = true;
+      if (node.isRoot) graph.root.loadingParents = true;
       return { ...graph };
     case "expandParents":
       var { node } = arg;
       if (node._parentsExpanded) return graph; //no-op
       node._parentsExpanded = true;
-      //has cached data
-      if (node._parents) {
-        node.children = node._parents;
-        node._parents = null;
+      node.loadingParents = false;
+      if (node.isRoot) {
+        //replicate on root
+        graph.root._parentsExpanded = true;
+        graph.root.loadingParents = false;
       }
       recalcParents(graph);
-      if (node.isRoot) graph.root._parentsExpanded = true;
       return { ...graph };
     case "collapseParents":
       var { node } = arg;
+      node.loadingParents = false;
+      if (node.isRoot) {
+        //replicate on root
+        graph.root._parentsExpanded = false;
+        graph.root.loadingParents = false;
+      }
       collapseParents(node);
-      if (node.isRoot) graph.root._parentsExpanded = false;
       recalcParents(graph);
       return { ...graph };
+    case "setLoadingSpouses":
+      var { node } = arg;
+      node.loadingSpouses = true;
+      return graph;
     case "expandSpouses":
       var { node } = arg;
       node._spousesExpanded = true;
@@ -73,19 +96,30 @@ export default function graphReducer(graph, { type, ...arg }) {
       }
       if (node.isChild) recalcChildren(graph);
       if (node.isParent) recalcParents(graph);
+      node.loadingSpouses = false;
       return { ...graph };
     case "collapseSpouses":
+      var newGraph = { ...graph };
       var { node } = arg;
       node._spousesExpanded = false;
-      //two loops below could be optimised in one
-      node._spouses = node.parent.children.filter(
-        (sibling) => sibling.isSpouse && sibling.virtualParent === node
-      );
-      node.parent.children = node.parent.children.filter(
-        (sibling) => !(sibling.isSpouse && sibling.virtualParent === node)
-      );
-      if (node.isChild) recalcChildren(graph);
-      if (node.isParent) recalcParents(graph);
+      node.loadingSpouses = false;
+      var spouses = [];
+      var rest = [];
+      node.parent.children.forEach((adjacent) => {
+        if (adjacent.isSpouse && adjacent.virtualParent === node) {
+          spouses.push(adjacent);
+        } else {
+          rest.push(adjacent);
+        }
+      });
+      node._spouses = spouses;
+      node.parent.children = rest;
+      if (node.isChild) recalcChildren(newGraph);
+      if (node.isParent) recalcParents(newGraph);
+      return newGraph;
+    case "setLoadingSiblings":
+      var { node } = arg;
+      node.loadingSiblings = true;
       return { ...graph };
     case "expandSiblings":
       var { node } = arg;
@@ -97,8 +131,10 @@ export default function graphReducer(graph, { type, ...arg }) {
       }
       if (node.isChild) recalcChildren(graph);
       if (node.isParent) recalcParents(graph);
+      node.loadingSiblings = false;
       return { ...graph };
     case "collapseSiblings":
+      var newGraph = { ...graph };
       var { node } = arg;
       node._siblingsExpanded = false;
       node._siblings = node.parent.children.filter(
@@ -107,14 +143,16 @@ export default function graphReducer(graph, { type, ...arg }) {
       node.parent.children = node.parent.children.filter(
         (sibling) => !(sibling.isSibling && sibling.virtualParent === node)
       );
-      if (node.isChild) recalcChildren(graph);
-      if (node.isParent) recalcParents(graph);
-      return { ...graph };
+      if (node.isChild) recalcChildren(newGraph);
+      if (node.isParent) recalcParents(newGraph);
+      node.loadingSiblings = false;
+      return newGraph;
     case "expandRootSpouses":
       var { root } = arg;
       root._spousesExpanded = true;
       if (root._spouses) root.spouses = root._spouses;
       calcBounds(graph);
+      root.loadingSpouses = false;
       return { ...graph };
     case "collapseRootSpouses":
       var { root } = arg;
@@ -122,6 +160,7 @@ export default function graphReducer(graph, { type, ...arg }) {
       root._spouses = root.spouses;
       root.spouses = null;
       calcBounds(graph);
+      root.loadingSpouses = false;
       return { ...graph };
     case "collapseRootSiblings":
       var { root } = arg;
@@ -129,12 +168,14 @@ export default function graphReducer(graph, { type, ...arg }) {
       root._siblings = root.siblings;
       root.siblings = null;
       calcBounds(graph);
+      root.loadingSiblings = false;
       return { ...graph };
     case "expandRootSiblings":
       var { root } = arg;
       root._siblingsExpanded = true;
       if (root._siblings) root.siblings = root._siblings;
       calcBounds(graph);
+      root.loadingSiblings = false;
       return { ...graph };
     default:
       throw new Error("Unknown action type " + type);
