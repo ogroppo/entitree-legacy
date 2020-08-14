@@ -20,8 +20,6 @@ export default async function getItem(id, languageCode) {
 
   if (url.endsWith("origin=*")) url += "&force=1";
 
-  console.log({ url });
-
   const {
     data: { entities },
   } = await axios.get(url);
