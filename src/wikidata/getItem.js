@@ -4,7 +4,7 @@ import formatEntity from "../lib/formatEntity";
 import { DEFAULT_LANGS_CODES } from "../constants/langs";
 
 export default async function getItem(id, languageCode) {
-  const url = await new Promise(function (resolve, reject) {
+  let url = await new Promise(function (resolve, reject) {
     try {
       resolve(
         wdk.getEntities({
@@ -17,6 +17,10 @@ export default async function getItem(id, languageCode) {
       reject(error);
     }
   });
+
+  if (url.endsWith("origin=*")) url += "&force=1";
+
+  console.log({ url });
 
   const {
     data: { entities },
