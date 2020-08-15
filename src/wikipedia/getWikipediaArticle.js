@@ -1,7 +1,7 @@
-import Axios from "axios";
+import getData from "../axios/getData";
 
 export default function getWikipediaArticle(wikipediaSlug, currentLangCode) {
-  return Axios.get(
+  return getData(
     `https://${currentLangCode}.wikipedia.org/api/rest_v1/page/summary/${wikipediaSlug}`
   );
 }

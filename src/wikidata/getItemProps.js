@@ -1,6 +1,6 @@
-import axios from "axios";
 import wdk from "wikidata-sdk";
 import { DEFAULT_LANG } from "../constants/langs";
+import getData from "../axios/getData";
 
 export default async function getItemProps(id, languageCode) {
   const url = await new Promise(function (resolve, reject) {
@@ -29,9 +29,8 @@ export default async function getItemProps(id, languageCode) {
     }
   });
 
-  return axios
-    .get(url)
-    .then(({ data }) => wdk.simplify.sparqlResults(data))
+  return getData(url)
+    .then((data) => wdk.simplify.sparqlResults(data))
     .then((results) => {
       const props = results.map(({ prop: { value: id, label } }) => ({
         id,

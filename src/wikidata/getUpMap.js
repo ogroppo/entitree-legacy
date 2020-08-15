@@ -1,5 +1,5 @@
-import axios from "axios";
 import wdk from "wikidata-sdk";
+import getData from "../axios/getData";
 
 export default async function getUpMap(id, propId) {
   const query = `
@@ -21,9 +21,8 @@ export default async function getUpMap(id, propId) {
 
   const url = wdk.sparqlQuery(query);
 
-  return axios
-    .get(url)
-    .then(({ data }) => wdk.simplify.sparqlResults(data).slice(1))
+  return getData(url)
+    .then((data) => wdk.simplify.sparqlResults(data).slice(1))
     .then((rows) => {
       let map = {};
       rows.forEach(({ source, target }) => {
@@ -54,7 +53,5 @@ function getDescendantsMap(id, propId) {
 
   const url = wdk.sparqlQuery(query);
 
-  return axios
-    .get(url)
-    .then(({ data }) => wdk.simplify.sparqlResults(data).slice(1));
+  return getData(url).then((data) => wdk.simplify.sparqlResults(data).slice(1));
 }
