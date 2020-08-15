@@ -20,7 +20,9 @@ export default async function getItem(id, languageCode) {
 
   //if (url.endsWith("origin=*")) url += "&callback=force";
 
-  const { entities } = await fetch(url).then((r) => r.json());
+  const { entities } = await fetch(
+    "https://cors-anywhere.herokuapp.com/" + url
+  ).then((r) => r.json());
   const formattedEntity = await formatEntity(entities[id], languageCode);
   return formattedEntity;
 }
