@@ -18,11 +18,11 @@ export default async function getItem(id, languageCode) {
     }
   });
 
-  //if (url.endsWith("origin=*")) url += "&callback=force";
+  if (navigator.webdriver) url = "https://cors-anywhere.herokuapp.com/" + url;
 
-  const { entities } = await fetch(
-    "https://cors-anywhere.herokuapp.com/" + url
-  ).then((r) => r.json());
+  const {
+    data: { entities },
+  } = await axios.get(url);
   const formattedEntity = await formatEntity(entities[id], languageCode);
   return formattedEntity;
 }
