@@ -1,5 +1,6 @@
 import wdk from "wikidata-sdk";
 import axios from "axios";
+import getData from "../axios/getData";
 
 export default async function getEntitiesFromWikidata({
   ids,
@@ -28,12 +29,12 @@ export default async function getEntitiesFromWikidata({
   });
 
   //responses will be based on the number of urls generated
-  const responses = await axios.all(urls.map((url) => axios.get(url)));
+  const responses = await axios.all(urls.map((url) => getData(url)));
 
   //merge all responses in one object
   let allentities = {};
   responses.forEach(
-    ({ data: { entities } }) =>
+    ({ entities }) =>
       (allentities = {
         ...allentities,
         ...entities,

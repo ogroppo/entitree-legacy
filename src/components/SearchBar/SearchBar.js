@@ -59,9 +59,7 @@ export default function SearchBar() {
             if (slugItem) {
               itemId = slugItem.id;
             } else {
-              const {
-                data: { wikibase_item },
-              } = await getWikipediaArticle(
+              const { wikibase_item } = await getWikipediaArticle(
                 match.params.itemSlug,
                 currentLang.code
               );
@@ -168,7 +166,7 @@ export default function SearchBar() {
       setShowSuggestions(true);
       setLoadingSuggestions(true);
       search(debouncedSearchTerm, currentLang.code).then(
-        ({ data: { search: searchResults } }) => {
+        ({ search: searchResults }) => {
           searchResults = searchResults.filter(({ id, description }) => {
             //remove current entity from results
             if (currentEntity && id === currentEntity.id) {

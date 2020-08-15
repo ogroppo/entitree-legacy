@@ -12,9 +12,7 @@ export default async function getWikipediaThumbUrl(
 
   try {
     const {
-      data: {
-        thumbnail: { source: url },
-      },
+      thumbnail: { source: url },
     } = getWikipediaArticle(wikipediaSlug, currentLangCode);
     wikiImagesMemo[wikipediaSlug] = url;
   } catch (error) {

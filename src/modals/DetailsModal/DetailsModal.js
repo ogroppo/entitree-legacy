@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import Axios from "axios";
 import { AppContext } from "../../App";
 import { FiExternalLink } from "react-icons/fi";
 import { Button, Modal } from "react-bootstrap";
 import getItem from "../../wikidata/getItem";
+import getData from "../../axios/getData";
 
 export default function DetailsModal({ node, hideModal }) {
   const { currentLang } = useContext(AppContext);
@@ -14,9 +14,9 @@ export default function DetailsModal({ node, hideModal }) {
 
   useEffect(() => {
     if (node.data.wikipediaSlug)
-      Axios.get(
+      getData(
         `https://${currentLang.code}.wikipedia.org/api/rest_v1/page/summary/${node.data.wikipediaSlug}`
-      ).then(({ data: { extract, thumbnail } }) => {
+      ).then(({ extract, thumbnail }) => {
         if (extract) setWikipediaExtract(extract);
         if (thumbnail && !images.length) {
           setImages({
