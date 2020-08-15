@@ -18,11 +18,9 @@ export default async function getItem(id, languageCode) {
     }
   });
 
-  if (url.endsWith("origin=*")) url += "&callback=force";
+  //if (url.endsWith("origin=*")) url += "&callback=force";
 
-  const {
-    data: { entities },
-  } = await axios.get(url);
+  const { entities } = await fetch(url).then((r) => r.json());
   const formattedEntity = await formatEntity(entities[id], languageCode);
   return formattedEntity;
 }
