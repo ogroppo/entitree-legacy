@@ -18,7 +18,7 @@ export default async function getItem(id, languageCode) {
     }
   });
 
-  if (url.endsWith("origin=*")) url += "&force=1";
+  if (url.endsWith("origin=*")) url += "&callback=force";
 
   const {
     data: { entities },
