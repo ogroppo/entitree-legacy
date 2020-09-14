@@ -13,6 +13,8 @@ import { LANGS, DEFAULT_LANG } from "./constants/langs";
 import Header from "./layout/Header/Header";
 import Logo from "./components/Logo/Logo";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
+import TutorialPage from "./pages/TutorialPage/TutorialPage";
+
 const browserHistory = createBrowserHistory();
 
 export const AppContext = React.createContext();
@@ -143,6 +145,9 @@ export default class App extends Component {
                 </Route>
                 <Route exact path="/about">
                   <AboutPage />
+                </Route>
+                <Route exact path="/tutorial">
+                  <TutorialPage />
                 </Route>
                 <Route exact path="/privacy">
                   <PrivacyPolicyPage />
