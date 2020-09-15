@@ -50,20 +50,24 @@ export default async function getEntityImages(entity, currentLangCode) {
   var numericId = entity.id.substr(1);
   const imageDbServer = 'http://image.dataprick.com:8080';
   if (entity.thumbnails.length === 0){
-    await getData(
-      `${imageDbServer}/api/image/info/${numericId}`
-    ).then((data => {
-      if (data.images.length > 0) {
-        entity.thumbnails.push({
-          url: `${imageDbServer}/api/getImage/${numericId}`,
-          alt: `Image Database`,
-        });
-        entity.images.push({
-          url: `${imageDbServer}/api/getImage/${numericId}`,
-          alt: `Image Database`,
-        });
-      }
-    }));
+    try {
+      await getData(
+        `${imageDbServer}/api/image/info/${numericId}`
+      ).then((data => {
+        if (data.images.length > 0) {
+          entity.thumbnails.push({
+            url: `${imageDbServer}/api/getImage/${numericId}`,
+            alt: `Image Database`,
+          });
+          entity.images.push({
+            url: `${imageDbServer}/api/getImage/${numericId}`,
+            alt: `Image Database`,
+          });
+        }
+      }));
+    }catch{
+
+    }
   }
 }
 
