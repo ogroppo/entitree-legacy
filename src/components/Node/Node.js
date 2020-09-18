@@ -92,7 +92,6 @@ export default function Node({
         style={{ height: IMAGE_SIZE, width: CARD_CONTENT_WIDTH }}
       >
         <div className="four-line-clamp">
-          {node.isRoot ? (
             <h1
               className="label btn btn-link"
               role="button"
@@ -100,19 +99,14 @@ export default function Node({
               onClick={() => setShowModal(true)}
               title={node.data.label ? `Show ${node.data.label} details` : null}
             >
+              <span className="labelText">
               {node.data.label ? node.data.label : <i>Unlabelled</i>}
+              </span>
+              <span className="nodeBirthName" style={{display: 'none'}}>
+              {node.data.birthName ? node.data.birthName : node.data.label }
+              </span>
             </h1>
-          ) : (
-            <span
-              className="label btn btn-link"
-              role="button"
-              tabIndex="0"
-              onClick={() => setShowModal(true)}
-              title={node.data.label ? `Show ${node.data.label} details` : null}
-            >
-              {node.data.label ? node.data.label : <i>Unlabelled</i>}
-            </span>
-          )}
+
           {node.data.description && (
             <>
               <br />
@@ -152,15 +146,13 @@ export default function Node({
           disabled={node.loadingSiblings}
           onClick={() => toggleSiblings(node)}
         >
-          <div>
-            <div>{node.data.leftIds.length}</div>
+            <div className="value">{node.data.leftIds.length}</div>
             <div className="chevron mt-1 mb-1">
               {node._siblingsExpanded ? <FiChevronRight /> : <FiChevronLeft />}
             </div>
-            <div>
+            <div className="icon">
               <RiGroupLine />
             </div>
-          </div>
         </Button>
       )}
       {node.data.rightIds && !!node.data.rightIds.length && (
@@ -171,11 +163,11 @@ export default function Node({
           onClick={() => toggleSpouses(node)}
           title={(node._spousesExpanded ? "Collapse" : "Expand") + " spouses"}
         >
-          <div>{node.data.rightIds.length}</div>
+          <div className="value">{node.data.rightIds.length}</div>
           <div className="chevron mt-1 mb-1">
             {node._spousesExpanded ? <FiChevronLeft /> : <FiChevronRight />}
           </div>
-          <div>
+          <div className="icon">
             <GiBigDiamondRing />
           </div>
         </Button>
@@ -192,7 +184,7 @@ export default function Node({
             {node._parentsExpanded ? <FiChevronDown /> : <FiChevronUp />}
           </span>
           {currentProp && currentProp.id === CHILD_ID && (
-            <span>
+            <span className="icon">
               <RiParentLine />
             </span>
           )}
@@ -210,7 +202,7 @@ export default function Node({
             {node._childrenExpanded ? <FiChevronUp /> : <FiChevronDown />}
           </span>
           {currentProp && currentProp.id === CHILD_ID && (
-            <span>
+            <span className="icon">
               <MdChildCare />
             </span>
           )}
