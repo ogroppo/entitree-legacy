@@ -103,7 +103,7 @@ export default function Node({
               onClick={() => setShowModal(true)}
               title={node.data.label ? `Show ${node.data.label} details` : null}
             >
-              {node.data.birthName && toggleIcons ? node.data.birthName :  node.data.label ? node.data.label : <i>Unlabelled</i>  }
+              {node.data.birthName && showBirthName ? node.data.birthName :  node.data.label ? node.data.label : <i>Unlabelled</i>  }
             </h1>
           ) : (
             <span
@@ -113,7 +113,7 @@ export default function Node({
               onClick={() => setShowModal(true)}
               title={node.data.label ? `Show ${node.data.label} details` : null}
             >
-              {node.data.birthName && toggleIcons ? node.data.birthName :  node.data.label ? node.data.label : <i>Unlabelled</i>  }
+              {node.data.birthName && showBirthName ? node.data.birthName :  node.data.label ? node.data.label : <i>Unlabelled</i>  }
             </span>
           )}
 
