@@ -182,20 +182,6 @@
       display: none;
     }
   }
-
-  .labelText
-  {
-    .showBirthName & {
-      display: none;
-    }
-  }
-  .nodeBirthName
-  {
-    //display:none;
-    .showBirthName & {
-      display: block;
-    }
-  }
 }
 
 .DetailsModal {

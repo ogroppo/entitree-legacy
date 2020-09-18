@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useContext, useState} from "react";
 import {
   IMAGE_SIZE,
   CARD_WIDTH,
@@ -23,6 +23,7 @@ import { CHILD_ID } from "../../constants/properties";
 import DetailsModal from "../../modals/DetailsModal/DetailsModal";
 import { FaMale, FaFemale } from "react-icons/fa";
 import { GiPerson } from "react-icons/gi";
+import {AppContext} from "../../App";
 
 export default function Node({
   node,
@@ -38,6 +39,8 @@ export default function Node({
   if (debug) console.log(node);
 
   const [showModal, setShowModal] = useState(false);
+
+  const { showGenderColor, toggleIcons, showBirthName } = useContext(AppContext);
 
   const hideModal = () => {
     setShowModal(false);
@@ -92,6 +95,7 @@ export default function Node({
         style={{ height: IMAGE_SIZE, width: CARD_CONTENT_WIDTH }}
       >
         <div className="four-line-clamp">
+          {node.isRoot ? (
             <h1
               className="label btn btn-link"
               role="button"
@@ -99,13 +103,19 @@ export default function Node({
               onClick={() => setShowModal(true)}
               title={node.data.label ? `Show ${node.data.label} details` : null}
             >
-              <span className="labelText">
-              {node.data.label ? node.data.label : <i>Unlabelled</i>}
-              </span>
-              <span className="nodeBirthName" style={{display: 'none'}}>
-              {node.data.birthName ? node.data.birthName : node.data.label }
-              </span>
+              {node.data.birthName && toggleIcons ? node.data.birthName :  node.data.label ? node.data.label : <i>Unlabelled</i>  }
             </h1>
+          ) : (
+            <span
+              className="label btn btn-link"
+              role="button"
+              tabIndex="0"
+              onClick={() => setShowModal(true)}
+              title={node.data.label ? `Show ${node.data.label} details` : null}
+            >
+              {node.data.birthName && toggleIcons ? node.data.birthName :  node.data.label ? node.data.label : <i>Unlabelled</i>  }
+            </span>
+          )}
 
           {node.data.description && (
             <>
