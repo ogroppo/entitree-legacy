@@ -13,6 +13,7 @@ export const BIRTH_DATE_ID = "P569";
 export const BIRTH_PLACE_ID = "P19";
 export const DEATH_DATE_ID = "P570";
 export const DEATH_PLACE_ID = "P20";
+export const BIRTH_NAME = "P1477";
 export const GENDER_ID = "P21";
 export const FATHER_ID = "P22";
 export const MOTHER_ID = "P25";

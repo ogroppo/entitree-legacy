@@ -20,6 +20,29 @@ export default async function getEntityImages(entity, currentLangCode) {
     });
   }
 
+  var numericId = entity.id.substr(1);
+  const imageDbServer = 'https://images.dataprick.com';
+  if (entity.thumbnails.length === 0){
+    try {
+      await getData(
+        `${imageDbServer}/api/image/info/${numericId}`
+      ).then((data => {
+        if (data.images.length > 0) {
+          entity.thumbnails.push({
+            url: `${imageDbServer}/api/getImage/${numericId}`,
+            alt: `Image Database`,
+          });
+          entity.images.push({
+            url: `${imageDbServer}/api/getImage/${numericId}`,
+            alt: `Image Database`,
+          });
+        }
+      }));
+    }catch{
+
+    }
+  }
+
   const twitterClaim = entity.simpleClaims[TWITTER_ID];
   if (twitterClaim) {
     //https://github.com/siddharthkp/twitter-avatar
@@ -46,28 +69,6 @@ export default async function getEntityImages(entity, currentLangCode) {
         alt: `${entity.label}'s Logo ${index + 1} from Wikimedia Commons`,
       });
     });
-  }
-  var numericId = entity.id.substr(1);
-  const imageDbServer = 'http://image.dataprick.com:8080';
-  if (entity.thumbnails.length === 0){
-    try {
-      await getData(
-        `${imageDbServer}/api/image/info/${numericId}`
-      ).then((data => {
-        if (data.images.length > 0) {
-          entity.thumbnails.push({
-            url: `${imageDbServer}/api/getImage/${numericId}`,
-            alt: `Image Database`,
-          });
-          entity.images.push({
-            url: `${imageDbServer}/api/getImage/${numericId}`,
-            alt: `Image Database`,
-          });
-        }
-      }));
-    }catch{
-
-    }
   }
 }
 

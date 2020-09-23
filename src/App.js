@@ -28,6 +28,8 @@ export default class App extends Component {
     currentEntity: null,
     currentProp: null,
     showGenderColor: false,
+    showBirthName: false,
+    toggleIcons: false,
     loadingEntity: false,
   };
 
@@ -82,7 +84,12 @@ export default class App extends Component {
   setShowGenderColor = (showGenderColor) => {
     this.setState({ showGenderColor });
   };
-
+  setShowBirthName = (showBirthName) => {
+    this.setState({ showBirthName });
+  };
+  setToggleIcons = (toggleIcons) => {
+    this.setState({ toggleIcons });
+  };
   render() {
     const {
       showError,
@@ -91,6 +98,8 @@ export default class App extends Component {
       setCurrentProp,
       setCurrentEntity,
       setShowGenderColor,
+      setShowBirthName,
+      setToggleIcons,
       setLoadingEntity,
     } = this;
     const {
@@ -101,6 +110,8 @@ export default class App extends Component {
       currentProp,
       hasLanguageChanged,
       showGenderColor,
+      showBirthName,
+      toggleIcons,
       loadingEntity,
     } = this.state;
     return (
@@ -112,12 +123,16 @@ export default class App extends Component {
           setCurrentProp,
           setCurrentEntity,
           setShowGenderColor,
+          setShowBirthName,
+          setToggleIcons,
           setLoadingEntity,
           currentLang,
           currentProp,
           currentEntity,
           hasLanguageChanged,
           showGenderColor,
+          showBirthName,
+          toggleIcons,
           loadingEntity,
         }}
       >

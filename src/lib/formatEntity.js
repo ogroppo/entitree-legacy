@@ -29,6 +29,7 @@ import addInceptionDate from "./addInceptionDate";
 import addAbolishedDate from "./addAbolishedDate";
 import addInceptionAbolishedSpan from "./addInceptionAbolishedSpan";
 import addDeathPlaceId from "./addDeathPlaceId";
+import addBirthName from "./addBirthName";
 
 export default async function formatEntity(entity, languageCode) {
   if (entity.missing !== undefined) return undefined;
@@ -79,6 +80,8 @@ export default async function formatEntity(entity, languageCode) {
   }
 
   formattedEntity.externalLinks = getSocialMediaProps(simpleClaims);
+
+  addBirthName(formattedEntity, languageCode);
 
   addWebsite(formattedEntity);
 

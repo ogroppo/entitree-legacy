@@ -11,6 +11,10 @@ export default function Settings({ show, hideModal }) {
     setCurrentLang,
     showGenderColor,
     setShowGenderColor,
+    showBirthName,
+    setShowBirthName,
+    toggleIcons,
+    setToggleIcons,
   } = useContext(AppContext);
 
   const setLang = (lang) => {
@@ -41,6 +45,24 @@ export default function Settings({ show, hideModal }) {
             onChange={(e) => setShowGenderColor(e.target.checked)}
             type="checkbox"
             label={"Use background color based on gender"}
+          />
+        </Form.Group>
+        <Form.Group controlId={"birthName"}>
+          <Form.Check
+            custom
+            checked={showBirthName}
+            onChange={(e) => setShowBirthName(e.target.checked)}
+            type="checkbox"
+            label={"Show birth name instead of label"}
+          />
+        </Form.Group>
+        <Form.Group controlId={"iconsDisplay"}>
+          <Form.Check
+            custom
+            checked={toggleIcons}
+            onChange={(e) => setToggleIcons(e.target.checked)}
+            type="checkbox"
+            label={"Hide Icons"}
           />
         </Form.Group>
         <Form.Group controlId="language">
