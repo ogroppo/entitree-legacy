@@ -21,7 +21,7 @@ export default async function getEntityImages(entity, currentLangCode) {
   }
 
   var numericId = entity.id.substr(1);
-  const imageDbServer = 'http://image.dataprick.com:8080';
+  const imageDbServer = 'https://images.dataprick.com';
   if (entity.thumbnails.length === 0){
     try {
       await getData(
