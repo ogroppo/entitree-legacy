@@ -32,9 +32,9 @@ import sortByBirthDate from "../../lib/sortByBirthDate";
 import last from "../../lib/last";
 
 export default function GraphWrapper() {
-  const { showGenderColor, toggleIcons, showBirthName } = useContext(AppContext);
+  const { showGenderColor, showNavIcons, showBirthName } = useContext(AppContext);
   return (
-    <div className={`GraphWrapper ${showGenderColor ? "showGenderColor" : ""} ${toggleIcons ? "toggleIcons" : ""} ${showBirthName ? "showBirthName" : ""}`}>
+    <div className={`GraphWrapper ${showGenderColor ? "showGenderColor" : ""} ${showNavIcons ? "showNavIcons" : ""} ${showBirthName ? "showBirthName" : ""}`}>
       <TransformWrapper
         zoomIn={{ step: 20 }}
         zoomOut={{ step: 20 }}

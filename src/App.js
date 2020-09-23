@@ -29,7 +29,7 @@ export default class App extends Component {
     currentProp: null,
     showGenderColor: false,
     showBirthName: false,
-    toggleIcons: false,
+    showNavIcons: true,
     loadingEntity: false,
   };
 
@@ -87,8 +87,8 @@ export default class App extends Component {
   setShowBirthName = (showBirthName) => {
     this.setState({ showBirthName });
   };
-  setToggleIcons = (toggleIcons) => {
-    this.setState({ toggleIcons });
+  setShowNavIcons = (showNavIcons) => {
+    this.setState({ showNavIcons });
   };
   render() {
     const {
@@ -99,7 +99,7 @@ export default class App extends Component {
       setCurrentEntity,
       setShowGenderColor,
       setShowBirthName,
-      setToggleIcons,
+      setShowNavIcons,
       setLoadingEntity,
     } = this;
     const {
@@ -111,7 +111,7 @@ export default class App extends Component {
       hasLanguageChanged,
       showGenderColor,
       showBirthName,
-      toggleIcons,
+      showNavIcons,
       loadingEntity,
     } = this.state;
     return (
@@ -124,7 +124,7 @@ export default class App extends Component {
           setCurrentEntity,
           setShowGenderColor,
           setShowBirthName,
-          setToggleIcons,
+          setShowNavIcons,
           setLoadingEntity,
           currentLang,
           currentProp,
@@ -132,7 +132,7 @@ export default class App extends Component {
           hasLanguageChanged,
           showGenderColor,
           showBirthName,
-          toggleIcons,
+          showNavIcons,
           loadingEntity,
         }}
       >

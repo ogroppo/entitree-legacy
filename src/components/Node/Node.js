@@ -40,7 +40,7 @@ export default function Node({
 
   const [showModal, setShowModal] = useState(false);
 
-  const { showGenderColor, toggleIcons, showBirthName } = useContext(AppContext);
+  const { showGenderColor, showNavIcons, showBirthName } = useContext(AppContext);
 
   const hideModal = () => {
     setShowModal(false);
