@@ -4,13 +4,10 @@ import { Router, Switch, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import HomePage from "./pages/HomePage/HomePage";
 import "./App.scss";
-import qs from "query-string";
-
 import AboutPage from "./pages/AboutPage/AboutPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage/PrivacyPolicyPage";
 import Footer from "./layout/Footer/Footer";
-import { LANGS, DEFAULT_LANG } from "./constants/langs";
-import Header from "./layout/Header/Header";
+import { DEFAULT_LANG } from "./constants/langs";
 import Logo from "./components/Logo/Logo";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import TutorialPage from "./pages/TutorialPage/TutorialPage";

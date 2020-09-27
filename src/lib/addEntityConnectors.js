@@ -1,10 +1,5 @@
 import getClaimIds from "./getClaimIds";
-import {
-  SIBLINGS_ID,
-  SPOUSE_ID,
-  START_DATE_ID,
-  BIRTH_DATE_ID,
-} from "../constants/properties";
+import { SIBLINGS_ID, SPOUSE_ID, START_DATE_ID } from "../constants/properties";
 
 export default function addEntityConnectors(entity, propId, options = {}) {
   let _entity = { ...entity };
