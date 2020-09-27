@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, { useContext, useState } from "react";
 import {
   IMAGE_SIZE,
   CARD_WIDTH,
@@ -23,7 +23,7 @@ import { CHILD_ID } from "../../constants/properties";
 import DetailsModal from "../../modals/DetailsModal/DetailsModal";
 import { FaMale, FaFemale } from "react-icons/fa";
 import { GiPerson } from "react-icons/gi";
-import {AppContext} from "../../App";
+import { AppContext } from "../../App";
 
 export default function Node({
   node,
@@ -34,13 +34,16 @@ export default function Node({
   toggleSpouses,
   setFocusedNode,
   focusedNode,
+  reloadTreeFromFocused,
   debug,
 }) {
   if (debug) console.log(node);
 
   const [showModal, setShowModal] = useState(false);
 
-  const { showGenderColor, toggleIcons, showBirthName } = useContext(AppContext);
+  const { showGenderColor, showNavIcons, showBirthName } = useContext(
+    AppContext
+  );
 
   const hideModal = () => {
     setShowModal(false);
@@ -103,7 +106,13 @@ export default function Node({
               onClick={() => setShowModal(true)}
               title={node.data.label ? `Show ${node.data.label} details` : null}
             >
-              {node.data.birthName && showBirthName ? node.data.birthName :  node.data.label ? node.data.label : <i>Unlabelled</i>  }
+              {node.data.birthName && showBirthName ? (
+                node.data.birthName
+              ) : node.data.label ? (
+                node.data.label
+              ) : (
+                <i>Unlabelled</i>
+              )}
             </h1>
           ) : (
             <span
@@ -113,7 +122,13 @@ export default function Node({
               onClick={() => setShowModal(true)}
               title={node.data.label ? `Show ${node.data.label} details` : null}
             >
-              {node.data.birthName && showBirthName ? node.data.birthName :  node.data.label ? node.data.label : <i>Unlabelled</i>  }
+              {node.data.birthName && showBirthName ? (
+                node.data.birthName
+              ) : node.data.label ? (
+                node.data.label
+              ) : (
+                <i>Unlabelled</i>
+              )}
             </span>
           )}
 
@@ -156,13 +171,13 @@ export default function Node({
           disabled={node.loadingSiblings}
           onClick={() => toggleSiblings(node)}
         >
-            <div className="value">{node.data.leftIds.length}</div>
-            <div className="chevron mt-1 mb-1">
-              {node._siblingsExpanded ? <FiChevronRight /> : <FiChevronLeft />}
-            </div>
-            <div className="icon">
-              <RiGroupLine />
-            </div>
+          <div className="value">{node.data.leftIds.length}</div>
+          <div className="chevron mt-1 mb-1">
+            {node._siblingsExpanded ? <FiChevronRight /> : <FiChevronLeft />}
+          </div>
+          <div className="icon">
+            <RiGroupLine />
+          </div>
         </Button>
       )}
       {node.data.rightIds && !!node.data.rightIds.length && (
@@ -218,7 +233,13 @@ export default function Node({
           )}
         </Button>
       )}
-      {showModal && <DetailsModal hideModal={hideModal} node={node} />}
+      {showModal && (
+        <DetailsModal
+          hideModal={hideModal}
+          node={node}
+          reloadTreeFromFocused={reloadTreeFromFocused}
+        />
+      )}
     </div>
   );
 }

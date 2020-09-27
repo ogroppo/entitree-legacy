@@ -4,13 +4,10 @@ import { Router, Switch, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import HomePage from "./pages/HomePage/HomePage";
 import "./App.scss";
-import qs from "query-string";
-
 import AboutPage from "./pages/AboutPage/AboutPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage/PrivacyPolicyPage";
 import Footer from "./layout/Footer/Footer";
-import { LANGS, DEFAULT_LANG } from "./constants/langs";
-import Header from "./layout/Header/Header";
+import { DEFAULT_LANG } from "./constants/langs";
 import Logo from "./components/Logo/Logo";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import TutorialPage from "./pages/TutorialPage/TutorialPage";
@@ -29,7 +26,7 @@ export default class App extends Component {
     currentProp: null,
     showGenderColor: false,
     showBirthName: false,
-    toggleIcons: false,
+    showNavIcons: true,
     loadingEntity: false,
   };
 
@@ -87,8 +84,8 @@ export default class App extends Component {
   setShowBirthName = (showBirthName) => {
     this.setState({ showBirthName });
   };
-  setToggleIcons = (toggleIcons) => {
-    this.setState({ toggleIcons });
+  setShowNavIcons = (showNavIcons) => {
+    this.setState({ showNavIcons });
   };
   render() {
     const {
@@ -99,7 +96,7 @@ export default class App extends Component {
       setCurrentEntity,
       setShowGenderColor,
       setShowBirthName,
-      setToggleIcons,
+      setShowNavIcons,
       setLoadingEntity,
     } = this;
     const {
@@ -111,7 +108,7 @@ export default class App extends Component {
       hasLanguageChanged,
       showGenderColor,
       showBirthName,
-      toggleIcons,
+      showNavIcons,
       loadingEntity,
     } = this.state;
     return (
@@ -124,7 +121,7 @@ export default class App extends Component {
           setCurrentEntity,
           setShowGenderColor,
           setShowBirthName,
-          setToggleIcons,
+          setShowNavIcons,
           setLoadingEntity,
           currentLang,
           currentProp,
@@ -132,7 +129,7 @@ export default class App extends Component {
           hasLanguageChanged,
           showGenderColor,
           showBirthName,
-          toggleIcons,
+          showNavIcons,
           loadingEntity,
         }}
       >

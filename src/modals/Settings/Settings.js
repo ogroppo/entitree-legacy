@@ -13,8 +13,8 @@ export default function Settings({ show, hideModal }) {
     setShowGenderColor,
     showBirthName,
     setShowBirthName,
-    toggleIcons,
-    setToggleIcons,
+    showNavIcons,
+    setShowNavIcons,
   } = useContext(AppContext);
 
   const setLang = (lang) => {
@@ -59,10 +59,10 @@ export default function Settings({ show, hideModal }) {
         <Form.Group controlId={"iconsDisplay"}>
           <Form.Check
             custom
-            checked={toggleIcons}
-            onChange={(e) => setToggleIcons(e.target.checked)}
+            checked={showNavIcons}
+            onChange={(e) => setShowNavIcons(e.target.checked)}
             type="checkbox"
-            label={"Hide Icons"}
+            label={"Show navigation icons"}
           />
         </Form.Group>
         <Form.Group controlId="language">

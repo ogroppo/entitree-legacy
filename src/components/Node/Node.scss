@@ -178,8 +178,9 @@
   .counter .value,
   .counter .icon
   {
-    .toggleIcons & {
-      display: none;
+    display: none;
+    .showNavIcons & {
+      display: inline-block;
     }
   }
 }
