@@ -40,14 +40,14 @@ export default function Node({
 
   const [showModal, setShowModal] = useState(false);
 
-  const { showGenderColor, showNavIcons, showBirthName } = useContext(AppContext);
+  const { showGenderColor, showNavIcons, showBirthName, showFace, imageType } = useContext(AppContext);
 
   const hideModal = () => {
     setShowModal(false);
   };
 
   const {
-    data: { thumbnails, gender, isHuman },
+    data: { thumbnails, gender, isHuman, faceImage },
   } = node;
 
   return (
@@ -83,11 +83,22 @@ export default function Node({
           </span>
         )}
         {thumbnails[0] && (
+          <span>
+          {showFace && faceImage ? (
+
           <img
-            alt={thumbnails[0].alt}
-            src={thumbnails[0].url}
-            title={thumbnails[0].alt}
+            alt={faceImage.alt }
+            src={faceImage.url+ (imageType === 'head' ? '?factor=1.5' : '')}
+            title={faceImage.alt}
           />
+          ) : (
+            <img
+              alt={thumbnails[0].alt}
+              src={thumbnails[0].url}
+              title={thumbnails[0].alt}
+            />
+            )}
+          </span>
         )}
       </div>
       <div
