@@ -5,7 +5,11 @@ import { Button, Modal } from "react-bootstrap";
 import getItem from "../../wikidata/getItem";
 import getData from "../../axios/getData";
 import missingImagesLink from "../../lib/imageDatabase";
-export default function DetailsModal({ node, hideModal }) {
+export default function DetailsModal({
+  node,
+  hideModal,
+  reloadTreeFromFocused,
+}) {
   const { currentLang } = useContext(AppContext);
   const [images, setImages] = useState(node.data.images);
   const [birthPlace, setBirthPlace] = useState();
@@ -82,18 +86,6 @@ export default function DetailsModal({ node, hideModal }) {
           )}
         </p>
 
-        {/*{node.data.sitelink && node.data.sitelink.url && (*/}
-        {/*  <p>*/}
-        {/*    <a href={node.data.sitelink.url} target="_blank">*/}
-        {/*      Open Wikipedia page <FiExternalLink />*/}
-        {/*    </a>*/}
-        {/*  </p>*/}
-        {/*)}*/}
-        {/*<p>*/}
-        {/*  <a href={node.data.wikidataUrl} target="_blank">*/}
-        {/*    Open Wikidata item <FiExternalLink />*/}
-        {/*  </a>*/}
-        {/*</p>*/}
         {node.data.website && (
           <p>
             <a href={node.data.website} target="_blank">
@@ -117,6 +109,18 @@ export default function DetailsModal({ node, hideModal }) {
         )}
       </Modal.Body>
       <Modal.Footer>
+        {reloadTreeFromFocused && (
+          <Button
+            variant="light"
+            className="mr-auto"
+            onClick={() => {
+              reloadTreeFromFocused();
+              hideModal();
+            }}
+          >
+            Show tree from here
+          </Button>
+        )}
         <Button variant="primary" onClick={hideModal}>
           OK
         </Button>

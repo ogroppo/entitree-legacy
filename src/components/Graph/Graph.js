@@ -32,9 +32,15 @@ import sortByBirthDate from "../../lib/sortByBirthDate";
 import last from "../../lib/last";
 
 export default function GraphWrapper() {
-  const { showGenderColor, showNavIcons, showBirthName, showFace } = useContext(AppContext);
+  const { showGenderColor, showNavIcons, showBirthName } = useContext(
+    AppContext
+  );
   return (
-    <div className={`GraphWrapper ${showGenderColor ? "showGenderColor" : ""} ${showNavIcons ? "showNavIcons" : ""} ${showBirthName ? "showBirthName" : ""} ${showFace ? "showFace" : ""}`}>
+    <div
+      className={`GraphWrapper ${showGenderColor ? "showGenderColor" : ""} ${
+        showNavIcons ? "showNavIcons" : ""
+      } ${showBirthName ? "showBirthName" : ""} ${showFace ? "showFace" : ""}`}
+    >
       <TransformWrapper
         zoomIn={{ step: 20 }}
         zoomOut={{ step: 20 }}
@@ -438,10 +444,14 @@ const Graph = memo(
       setTransform(calculatedPositionX, calculatedPositionY, scale);
     };
 
-    const recenter = () => {
+    const reloadTreeFromFocused = () => {
       if (focusedNode.treeId !== root.treeId)
         setCurrentEntity(focusedNode.data);
       else centerPoint(focusedNode.x, focusedNode.y);
+    };
+
+    const recenter = () => {
+      centerPoint(focusedNode.x, focusedNode.y);
     };
 
     const {
@@ -553,6 +563,7 @@ const Graph = memo(
                       index={index}
                       key={node.treeId}
                       currentProp={currentProp}
+                      reloadTreeFromFocused={reloadTreeFromFocused}
                       toggleChildren={(node) => {
                         toggleChildren(node);
                       }}
@@ -572,6 +583,7 @@ const Graph = memo(
                       key={node.treeId}
                       index={index}
                       currentProp={currentProp}
+                      reloadTreeFromFocused={reloadTreeFromFocused}
                       toggleSpouses={(node) => {
                         toggleSpouses(node);
                       }}

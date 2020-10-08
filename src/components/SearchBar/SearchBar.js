@@ -195,7 +195,7 @@ export default function SearchBar() {
   const history = useHistory();
   useEffect(() => {
     if (currentEntity) {
-      setSearchTerm(currentEntity.label); //if updates from graph (recenter)
+      setSearchTerm(currentEntity.label); //if updates from graph (reloadTreeFromFocused)
       history.push({
         pathname: `/${currentLang.code}/${
           currentProp ? currentProp.slug : "all"
