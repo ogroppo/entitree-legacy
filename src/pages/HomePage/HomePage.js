@@ -65,7 +65,7 @@ export default function HomePage() {
           )}
           <meta
             property="og:image"
-            content={`https://www.entitree.com/${currentProp.slug}/${currentEntity.wikipediaSlug}.jpg`}
+            content={`${window.location.protocol}//${window.location.host}/${currentProp.slug}/${currentEntity.wikipediaSlug}.jpg`}
           />
         </Helmet>
       ) : (
