@@ -39,7 +39,7 @@ export default function GraphWrapper() {
     <div
       className={`GraphWrapper ${showGenderColor ? "showGenderColor" : ""} ${
         showNavIcons ? "showNavIcons" : ""
-      } ${showBirthName ? "showBirthName" : ""}`}
+      } ${showBirthName ? "showBirthName" : ""} ${showFace ? "showFace" : ""}`}
     >
       <TransformWrapper
         zoomIn={{ step: 20 }}

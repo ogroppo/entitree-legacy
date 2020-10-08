@@ -4,7 +4,7 @@ import { FiExternalLink } from "react-icons/fi";
 import { Button, Modal } from "react-bootstrap";
 import getItem from "../../wikidata/getItem";
 import getData from "../../axios/getData";
-
+import missingImagesLink from "../../lib/imageDatabase";
 export default function DetailsModal({
   node,
   hideModal,
@@ -60,6 +60,9 @@ export default function DetailsModal({
                 />
               ))}
           </div>
+        )}
+        {!images.length && (
+          <a target="_blank" href={missingImagesLink(node.data.id,node.data.label)}>Add missing image</a>
         )}
         {(node.data.birthDate ||
           birthPlace ||

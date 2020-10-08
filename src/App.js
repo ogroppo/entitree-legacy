@@ -27,7 +27,9 @@ export default class App extends Component {
     showGenderColor: false,
     showBirthName: false,
     showNavIcons: true,
+    showFace: false,
     loadingEntity: false,
+    imageType: "face",
   };
 
   componentDidMount() {}
@@ -52,6 +54,12 @@ export default class App extends Component {
     this.setState({
       currentLang,
       hasLanguageChanged: this.state.hasLanguageChanged + 1,
+    });
+  };
+
+  setImageType = (imageType) => {
+    this.setState({
+      imageType,
     });
   };
 
@@ -87,6 +95,9 @@ export default class App extends Component {
   setShowNavIcons = (showNavIcons) => {
     this.setState({ showNavIcons });
   };
+  setShowFace = (showFace) => {
+    this.setState({ showFace });
+  };
   render() {
     const {
       showError,
@@ -97,7 +108,9 @@ export default class App extends Component {
       setShowGenderColor,
       setShowBirthName,
       setShowNavIcons,
+      setShowFace,
       setLoadingEntity,
+      setImageType,
     } = this;
     const {
       currentLang,
@@ -109,6 +122,8 @@ export default class App extends Component {
       showGenderColor,
       showBirthName,
       showNavIcons,
+      showFace,
+      imageType,
       loadingEntity,
     } = this.state;
     return (
@@ -121,7 +136,9 @@ export default class App extends Component {
           setCurrentEntity,
           setShowGenderColor,
           setShowBirthName,
+          setShowFace,
           setShowNavIcons,
+          setImageType,
           setLoadingEntity,
           currentLang,
           currentProp,
@@ -130,6 +147,8 @@ export default class App extends Component {
           showGenderColor,
           showBirthName,
           showNavIcons,
+          showFace,
+          imageType,
           loadingEntity,
         }}
       >
