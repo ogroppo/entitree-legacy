@@ -5,10 +5,15 @@ import {
   HUMAN_SETTLEMENT_ID,
 } from "./entities";
 
+export const INSTANCE_OF_ID = "P31";
+
 export const SIBLINGS_ID = "P3373";
 export const SPOUSE_ID = "P26";
 export const BIRTH_DATE_ID = "P569";
+export const BIRTH_PLACE_ID = "P19";
 export const DEATH_DATE_ID = "P570";
+export const DEATH_PLACE_ID = "P20";
+export const BIRTH_NAME = "P1477";
 export const GENDER_ID = "P21";
 export const FATHER_ID = "P22";
 export const MOTHER_ID = "P25";
@@ -19,6 +24,11 @@ export const LOCATED_IN_ID = "P131";
 export const IMAGE_ID = "P18";
 export const LOGO_ID = "P154";
 export const TWITTER_ID = "P2002";
+export const START_DATE_ID = "P580";
+export const END_DATE_ID = "P582";
+export const INCEPTION_ID = "P571";
+export const DISSOLVED_ABOLISHED_DEMOLISHED_ID = "P576";
+export const WEBSITE_ID = "P856";
 
 export const FAMILY_IDS_MAP = {
   [CHILD_ID]: true,
@@ -30,8 +40,78 @@ export const FAMILY_IDS_MAP = {
 
 export const FAMILY_PROP = {
   id: CHILD_ID,
-  label: "child", //this is just a default, language label needs to be fetched!
-  overrideLabel: "Family tree", //how to translate this?!
+  slug: "family_tree",
+  label: "child",
+  overrideLabel: "family tree",
+  overrideLabels: {
+    "zh-hans": "家族树",
+    "zh-hant": "家族樹",
+    "zh-hk": "家族樹",
+    "zh-cn": "家族树",
+    "zh-sg": "家族树",
+    "zh-tw": "家族樹",
+    pl: "Drzewo genealogiczne",
+    eu: "Zuhaitz genealogiko",
+    es: "árbol genealógico",
+    or: "ବଂଶାବଳୀ",
+    hu: "családfa",
+    ms: "Salasilah keluarga",
+    it: "albero genealogico",
+    et: "Sugupuu",
+    de: "Stammbaum",
+    id: "Bagan silsilah",
+    br: "Gwezenn-gerentiezh",
+    el: "Γενεαλογικό δέντρο",
+    sh: "Obiteljsko stablo",
+    ar: "شجرة العائلة",
+    sv: "Släktträd",
+    nl: "stamboom",
+    pt: "árvore genealógica",
+    eo: "genealogia arbo",
+    sk: "Rodokmeň",
+    ru: "генеалогическое древо",
+    tt: "Шәҗәрә",
+    en: "family tree",
+    tr: "Soy ağacı",
+    ro: "Arbore genealogic",
+    ca: "arbre genealògic",
+    fi: "Sukupuu",
+    cy: "Coeden deulu",
+    sl: "Družinsko drevo",
+    cs: "rodokmen",
+    fa: "تبارنامه",
+    hr: "Obiteljsko stablo",
+    "kk-arab": "گەنەالوگىييالىك اعاش",
+    "kk-cn": "گەنەالوگىييالىك اعاش",
+    "kk-tr": "Genealogïyalık ağaş",
+    "kk-kz": "Генеалогиялык ағаш",
+    "kk-cyrl": "Генеалогиялык ағаш",
+    "kk-latn": "Genealogïyalık ağaş",
+    da: "Efterslægtstavle",
+    ko: "가계도",
+    kk: "Генеалогиялык ағаш",
+    sah: "Төрүччү",
+    zh: "谱系图",
+    gl: "Árbore xenealóxica",
+    bn: "কুলজিনামা",
+    uk: "Генеалогічне дерево",
+    ta: "குடும்ப மரம்",
+    fr: "arbre généalogique",
+    sr: "породично стабло",
+    "sr-ec": "породично стабло",
+    "sr-el": "porodično stablo",
+    lv: "Ciltskoks",
+    sco: "faimily tree",
+    az: "Nəsil şəcərəsi",
+    ja: "系図",
+    hi: "वंशावली",
+    he: "אילן יוחסין",
+    la: "Arbor familiaris",
+    nb: "stamtre",
+    hyw: "Տոհմածառ",
+    hy: "տոհմածառ",
+    vro: "Sugupuu",
+  },
   isFav: true,
 };
 
@@ -58,33 +138,21 @@ export const BUSINESS_PROPS = [
   },
 ];
 
-export const preferredProps = {
-  [HUMAN_ID]: [
-    {
-      id: CHILD_ID,
-      label: "family",
-      isFav: true,
-    },
-    {
-      id: STUDENT_ID,
-      label: "student",
-      isFav: true,
-    },
-  ],
-  [ORGANIZATION_ID]: BUSINESS_PROPS,
-  [BUSINESS_ID]: BUSINESS_PROPS,
-  [HUMAN_SETTLEMENT_ID]: [
-    {
-      id: LOCATED_IN_ID,
-      label: "location",
-      isFav: true,
-    },
-  ],
-};
-
 export const SOCIAL_PROPS_IDS = {
+  wikidata: {
+    title: "Open Wikidata item in a new tab",
+    iconName: "wikidata",
+    alt: "wikidata icon",
+    baseUrl: "",
+  },
+  wikipedia: {
+    title: "Open wikipedia article in a new tab",
+    iconName: "wikipedia",
+    alt: "wikipedia icon",
+    baseUrl: "",
+  },
   P6634: {
-    title: "Open Linkeding profile in a new tab",
+    title: "Open LinkedIn profile in a new tab",
     iconName: "linkedin",
     alt: "linkedin icon",
     baseUrl: "https://www.linkedin.com/in/",

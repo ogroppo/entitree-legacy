@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useContext, useState } from "react";
 import {
   IMAGE_SIZE,
   CARD_WIDTH,
@@ -14,11 +14,19 @@ import {
   FiChevronDown,
   FiChevronRight,
 } from "react-icons/fi";
+import { RiGroupLine, RiParentLine } from "react-icons/ri";
+import { GiBigDiamondRing } from "react-icons/gi";
+import { BsImage } from "react-icons/bs";
+import { MdChildCare } from "react-icons/md";
 import "./Node.scss";
+import { CHILD_ID } from "../../constants/properties";
+import DetailsModal from "../../modals/DetailsModal/DetailsModal";
+import { FaMale, FaFemale } from "react-icons/fa";
+import { GiPerson } from "react-icons/gi";
+import { AppContext } from "../../App";
 
 export default function Node({
   node,
-  index,
   currentProp,
   toggleParents,
   toggleChildren,
@@ -26,37 +34,23 @@ export default function Node({
   toggleSpouses,
   setFocusedNode,
   focusedNode,
+  reloadTreeFromFocused,
   debug,
 }) {
   if (debug) console.log(node);
 
-  //delay image rendering every 50 images of about 500ms
-  const [showImage, setShowImage] = useState(false);
-  const [genderColors, setGenderColors] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    let timer;
-    if (index !== undefined) {
-      let delay = Math.floor(index / 50) * 500;
-      timer = setTimeout(() => {
-        setShowImage(true);
-      }, delay);
-    } else {
-      setShowImage(true);
-    }
-    return () => clearTimeout(timer);
-  }, []);
+  const { showGenderColor, showNavIcons, showBirthName, showFace, imageType } = useContext(
+    AppContext
+  );
 
-  const [imageIndex, setImageIndex] = useState(0);
-  const nextImage = () => {
-    if (!node.data.images || !node.data.images.length) return;
-    let nextIndex = imageIndex + 1;
-    if (nextIndex === node.data.images.length) nextIndex = 0;
-    setImageIndex(nextIndex);
+  const hideModal = () => {
+    setShowModal(false);
   };
 
   const {
-    data: { images },
+    data: { thumbnails, gender, isHuman, faceImage },
   } = node;
 
   return (
@@ -70,83 +64,103 @@ export default function Node({
       }}
       className={`Node ${
         focusedNode && focusedNode.treeId === node.treeId ? "focused" : ""
-      } ${genderColors ? node.data.extraClass : ""}`}
+      } ${gender ? gender : ""}`}
       onClick={() => setFocusedNode(node)}
     >
       <div
         className="imgWrapper"
         style={{ height: IMAGE_SIZE, width: IMAGE_SIZE }}
-        onClick={nextImage}
+        onClick={() => setShowModal(true)}
       >
-        {!images || !images.length ? (
-          <span className="defaultImgMessage">no image</span>
-        ) : (
-          <>
-            {!showImage && (
-              <span className="defaultImgMessage">loading image</span>
-            )}
-            {showImage && (
+        {(!thumbnails || !thumbnails.length) && (
+          <span className="defaultImgMessage">
+            {isHuman && gender ? (
               <>
-                {images[imageIndex] && (
-                  <img
-                    alt={images[imageIndex].alt}
-                    src={images[imageIndex].url}
-                    title={images[imageIndex].alt}
-                  />
-                )}
-                {images && images.length > 1 && (
-                  <span className="imgMore">+{images.length - 1}</span>
-                )}
+                {gender === "male" && <FaMale />}
+                {gender === "female" && <FaFemale />}
+                {gender === "thirdgender" && <GiPerson />}
               </>
+            ) : (
+              <BsImage />
             )}
-          </>
+          </span>
+        )}
+        {thumbnails[0] && (
+          <span>
+          {showFace && faceImage ? (
+
+          <img
+            alt={faceImage.alt }
+            src={faceImage.url+ (imageType === 'head' ? '?factor=1.5' : '')}
+            title={faceImage.alt}
+          />
+          ) : (
+            <img
+              alt={thumbnails[0].alt}
+              src={thumbnails[0].url}
+              title={thumbnails[0].alt}
+            />
+            )}
+          </span>
         )}
       </div>
       <div
         className="content"
         style={{ height: IMAGE_SIZE, width: CARD_CONTENT_WIDTH }}
       >
-        <div className="label">
-          {node.data.label ? (
-            <a
-              target="_blank"
-              title={node.data.label}
-              href={`https://www.wikidata.org/wiki/${node.data.id}`}
+        <div className="four-line-clamp">
+          {node.isRoot ? (
+            <h1
+              className="label btn btn-link"
+              role="button"
+              tabIndex="0"
+              onClick={() => setShowModal(true)}
+              title={node.data.label ? `Show ${node.data.label} details` : null}
             >
-              {node.data.label}
-            </a>
+              {node.data.birthName && showBirthName ? (
+                node.data.birthName
+              ) : node.data.label ? (
+                node.data.label
+              ) : (
+                <i>Unlabelled</i>
+              )}
+            </h1>
           ) : (
-            <a
-              target="_blank"
-              title={"Unlabelled item"}
-              href={`https://www.wikidata.org/wiki/${node.data.id}`}
+            <span
+              className="label btn btn-link"
+              role="button"
+              tabIndex="0"
+              onClick={() => setShowModal(true)}
+              title={node.data.label ? `Show ${node.data.label} details` : null}
             >
-              <i>Unlabelled</i>
-            </a>
+              {node.data.birthName && showBirthName ? (
+                node.data.birthName
+              ) : node.data.label ? (
+                node.data.label
+              ) : (
+                <i>Unlabelled</i>
+              )}
+            </span>
+          )}
+
+          {node.data.description && (
+            <>
+              <br />
+              <span className="description" title={node.data.description}>
+                {node.data.description}
+              </span>
+            </>
           )}
         </div>
-        <div className="description" title={node.data.description}>
-          {node.data.description}
-        </div>
         <div className="dates">
-          {node.data.birthDate}
-          {node.data.birthDate && node.data.deathDate && " - "}
-          {node.data.deathDate && node.data.deathDate}
+          {node.data.lifeSpan
+            ? node.data.lifeSpan
+            : node.data.startEndSpan
+            ? node.data.startEndSpan
+            : node.data.inceptionAblishedSpan
+            ? node.data.inceptionAblishedSpan
+            : ""}
         </div>
-        {node.data.externalLinks && !!node.data.externalLinks.length && (
-          <div className="externalLinks">
-            {node.data.externalLinks.map((link) => (
-              <a
-                key={link.title}
-                target="_blank"
-                title={link.title}
-                href={link.url}
-              >
-                <img src={link.iconSrc} alt={link.alt} title={link.alt} />
-              </a>
-            ))}
-          </div>
-        )}
       </div>
       {node._parentsExpanded && currentProp && (
         <div className="upPropLabel" style={{ top: -CARD_VERTICAL_GAP / 2 }}>
@@ -161,132 +175,82 @@ export default function Node({
           <span>{currentProp.label}</span>
         </div>
       )}
-      <SiblingCounter
-        ids={node.data.leftIds}
-        node={node}
-        toggleFn={toggleSiblings}
-        className="siblingCount"
-      />
-      <SpouseCounter
-        ids={node.data.rightIds}
-        node={node}
-        toggleFn={toggleSpouses}
-        className="spouseCount"
-      />
-      <ParentCounter
-        ids={node.data.upIds}
-        node={node}
-        toggleFn={toggleParents}
-        className="parentCount"
-      />
-      <ChildCounter
-        ids={node.data.downIds}
-        node={node}
-        toggleFn={toggleChildren}
-        className="childrenCount"
-      />
+      {node.data.leftIds && !!node.data.leftIds.length && (
+        <Button
+          className={`siblingCount counter`}
+          variant={"link"}
+          disabled={node.loadingSiblings}
+          onClick={() => toggleSiblings(node)}
+        >
+          <div className="value">{node.data.leftIds.length}</div>
+          <div className="chevron mt-1 mb-1">
+            {node._siblingsExpanded ? <FiChevronRight /> : <FiChevronLeft />}
+          </div>
+          <div className="icon">
+            <RiGroupLine />
+          </div>
+        </Button>
+      )}
+      {node.data.rightIds && !!node.data.rightIds.length && (
+        <Button
+          className={`spouseCount counter`}
+          variant={"link"}
+          disabled={node.loadingSpouses}
+          onClick={() => toggleSpouses(node)}
+          title={(node._spousesExpanded ? "Collapse" : "Expand") + " spouses"}
+        >
+          <div className="value">{node.data.rightIds.length}</div>
+          <div className="chevron mt-1 mb-1">
+            {node._spousesExpanded ? <FiChevronLeft /> : <FiChevronRight />}
+          </div>
+          <div className="icon">
+            <GiBigDiamondRing />
+          </div>
+        </Button>
+      )}
+      {node.data.upIds && !!node.data.upIds.length && (
+        <Button
+          className={`parentCount counter`}
+          variant={"link"}
+          disabled={node.loadingParents}
+          onClick={() => toggleParents(node)}
+        >
+          <span className="value">{node.data.upIds.length}</span>
+          <span className="chevron ml-1 mr-1">
+            {node._parentsExpanded ? <FiChevronDown /> : <FiChevronUp />}
+          </span>
+          {currentProp && currentProp.id === CHILD_ID && (
+            <span className="icon">
+              <RiParentLine />
+            </span>
+          )}
+        </Button>
+      )}
+      {node.data.downIds && !!node.data.downIds.length && (
+        <Button
+          className={`childrenCount counter`}
+          variant={"link"}
+          disabled={node.loadingChildren}
+          onClick={() => toggleChildren(node)}
+        >
+          <span className="value">{node.data.downIds.length}</span>
+          <span className="chevron ml-1 mr-1">
+            {node._childrenExpanded ? <FiChevronUp /> : <FiChevronDown />}
+          </span>
+          {currentProp && currentProp.id === CHILD_ID && (
+            <span className="icon">
+              <MdChildCare />
+            </span>
+          )}
+        </Button>
+      )}
+      {showModal && (
+        <DetailsModal
+          hideModal={hideModal}
+          node={node}
+          reloadTreeFromFocused={reloadTreeFromFocused}
+        />
+      )}
     </div>
-  );
-}
-
-function SiblingCounter({ ids, node, toggleFn, className }) {
-  const [disabled, setDisabled] = React.useState(false);
-  if (!ids || !ids.length) return null;
-  return (
-    <Button
-      className={`${className} counter`}
-      variant={"link"}
-      disabled={disabled}
-      onClick={async () => {
-        setDisabled(true);
-        await toggleFn(node);
-        setDisabled(false);
-      }}
-    >
-      {node._siblingsExpanded ? (
-        <FiChevronRight />
-      ) : (
-        <>
-          <div>{ids.length}</div>
-          <FiChevronLeft />
-        </>
-      )}
-    </Button>
-  );
-}
-
-function ParentCounter({ ids, node, toggleFn, className }) {
-  const [disabled, setDisabled] = React.useState(false);
-  if (!ids || !ids.length) return null;
-  return (
-    <Button
-      className={`${className} counter`}
-      variant={"link"}
-      disabled={disabled}
-      onClick={async () => {
-        setDisabled(true);
-        await toggleFn(node);
-        setDisabled(false);
-      }}
-    >
-      {node._parentsExpanded ? (
-        <FiChevronDown />
-      ) : (
-        <>
-          {ids.length} <FiChevronUp />
-        </>
-      )}
-    </Button>
-  );
-}
-
-function SpouseCounter({ ids, node, toggleFn, className }) {
-  const [disabled, setDisabled] = React.useState(false);
-  if (!ids || !ids.length) return null;
-  return (
-    <Button
-      className={`${className} counter`}
-      variant={"link"}
-      disabled={disabled}
-      onClick={async () => {
-        setDisabled(true);
-        await toggleFn(node);
-        setDisabled(false);
-      }}
-    >
-      {node._spousesExpanded ? (
-        <FiChevronLeft />
-      ) : (
-        <>
-          <div>{ids.length}</div>
-          <FiChevronRight />
-        </>
-      )}
-    </Button>
-  );
-}
-
-function ChildCounter({ ids, node, toggleFn, className }) {
-  const [disabled, setDisabled] = React.useState(false);
-  if (!ids || !ids.length) return null;
-  return (
-    <Button
-      className={`${className} counter`}
-      variant={"link"}
-      disabled={disabled}
-      onClick={async () => {
-        setDisabled(true);
-        await toggleFn(node);
-        setDisabled(false);
-      }}
-    >
-      {node._childrenExpanded ? (
-        <FiChevronUp />
-      ) : (
-        <>
-          {ids.length} <FiChevronDown />
-        </>
-      )}
-    </Button>
   );
 }

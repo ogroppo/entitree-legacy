@@ -1,10 +1,10 @@
-import axios from "axios";
 import wdk from "wikidata-sdk";
 import formatEntity from "../lib/formatEntity";
 import { DEFAULT_LANGS_CODES } from "../constants/langs";
+import getData from "../axios/getData";
 
 export default async function getItem(id, languageCode) {
-  const url = await new Promise(function (resolve, reject) {
+  let url = await new Promise(function (resolve, reject) {
     try {
       resolve(
         wdk.getEntities({
@@ -18,9 +18,7 @@ export default async function getItem(id, languageCode) {
     }
   });
 
-  const {
-    data: { entities },
-  } = await axios.get(url);
+  const { entities } = await getData(url);
   const formattedEntity = await formatEntity(entities[id], languageCode);
   return formattedEntity;
 }

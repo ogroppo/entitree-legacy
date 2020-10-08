@@ -1,2 +1,10 @@
 .Footer {
+  height: 58px;
+  .navbar-nav {
+    flex-direction: row;
+    a {
+      padding-right: 0.5rem;
+      padding-left: 0.5rem;
+    }
+  }
 }

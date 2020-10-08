@@ -5,18 +5,26 @@
       position: relative;
     }
   }
-  .langDropdown {
+  .examplesButton {
     .dropdown-menu {
-      position: absolute;
-      min-width: 200px;
-      .langList {
-        max-height: 400px;
-        overflow-y: scroll;
+      top: 105%;
+    }
+    @media (max-width: 576px) {
+      .dropdown-menu {
+        left: 45px;
+        transform: translateX(-50%);
       }
     }
-    .filterWrapper {
-      padding: 0 1.3rem;
-      margin-bottom: 8px;
+  }
+  .settingsButton {
+    color: white;
+    &:hover {
+      background-color: lightgray;
+      color: #233;
+    }
+    svg {
+      position: relative;
+      top: -1px;
     }
   }
 }

@@ -1,6 +1,7 @@
 const DISAMBIGUATION_PAGE_DESC = {
   en: "Wikimedia disambiguation page",
   it: "pagina di disambiguazione di un progetto Wikimedia",
+  nl: "Wikimedia-doorverwijspagina",
 };
 
 const LANG_MAP = {
@@ -434,4 +435,4 @@ export const LANGS = Object.keys(LANG_MAP).map((code) => {
 });
 
 export const DEFAULT_LANG = LANGS.find(({ code }) => code === "en");
-export const DEFAULT_LANGS_CODES = ["en", "fr", "de", "it", "es", "nl"];
+export const DEFAULT_LANGS_CODES = ["en", "fr", "de", "it", "es", "nl", "pt"];

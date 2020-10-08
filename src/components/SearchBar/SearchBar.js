@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import useDebounce from "../../lib/useDebounce";
 import "./SearchBar.scss";
 import {
@@ -8,79 +8,180 @@ import {
   Dropdown,
   Container,
   InputGroup,
-  Modal,
+  Tooltip,
+  Overlay,
 } from "react-bootstrap";
-import { FiSliders } from "react-icons/fi";
-import qs from "query-string";
-import { useHistory, useLocation } from "react-router-dom";
-import { FAMILY_PROP, FAMILY_IDS_MAP } from "../../constants/properties";
+import { useHistory, useLocation, useRouteMatch } from "react-router-dom";
+import {
+  FAMILY_PROP,
+  FAMILY_IDS_MAP,
+  CHILD_ID,
+} from "../../constants/properties";
 import { AppContext } from "../../App";
-import { FaStar } from "react-icons/fa";
 import getItem from "../../wikidata/getItem";
 import getItemProps from "../../wikidata/getItemProps";
 import search from "../../wikidata/search";
-import { DEFAULT_LANG } from "../../constants/langs";
+import enSlugs from "../../sitemap/en-slugs.json";
+import getWikipediaArticle from "../../wikipedia/getWikipediaArticle";
 
-export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
-  const { currentLang, showError } = useContext(AppContext);
-  const [searchTerm, setSearchTerm] = React.useState("");
-  const [entity, setEntity] = React.useState(null);
-  const [prop, setProp] = React.useState(null);
-  const [loadingEntity, setLoadingEntity] = React.useState(false);
-  const [loadingProps, setLoadingProps] = React.useState(false);
-  const [loadingSuggestions, setLoadingSuggestions] = React.useState(false);
-  const [searchResults, setSearchResults] = React.useState([]);
-  const [showSuggestions, setShowSuggestions] = React.useState();
-  const [fromKeyboard, setFromKeyboard] = React.useState(true);
-  const [availableProps, setAvailableProps] = React.useState([]);
-  const [show, setShow] = React.useState(false);
+export default function SearchBar() {
+  const {
+    currentLang,
+    showError,
+    hasLanguageChanged,
+    setCurrentEntity,
+    setCurrentProp,
+    currentProp,
+    currentEntity,
+    setLoadingEntity,
+    loadingEntity,
+  } = useContext(AppContext);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loadingProps, setLoadingProps] = useState(false);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState();
+  const [fromKeyboard, setFromKeyboard] = useState(true);
+  const [availableProps, setAvailableProps] = useState([]);
 
   //Check on mount if there are params in the url
   const location = useLocation();
-  React.useEffect(() => {
+  const match = useRouteMatch();
+  useEffect(() => {
     (async () => {
       try {
-        let { q, p } = qs.parse(location.search);
-        if (q) {
-          //showInfo({ message: "Loading entity" });
-          await loadEntity(q);
+        let itemId;
+        if (match.params.itemSlug) {
+          if (match.params.itemSlug.match(/^Q\d+$/)) {
+            itemId = match.params.itemSlug;
+          } else {
+            const slugItem = enSlugs[match.params.itemSlug];
+            if (slugItem) {
+              itemId = slugItem.id;
+            } else {
+              const { wikibase_item } = await getWikipediaArticle(
+                match.params.itemSlug,
+                currentLang.code
+              );
+              if (wikibase_item) itemId = wikibase_item;
+            }
+          }
         }
-        if (p) {
-          setLoadingProps(true);
-          const { id, label } = await getItem(p, currentLang.code);
-          setProp({
-            id,
-            label,
-          });
-          setLoadingProps(false);
-        }
+
+        loadEntity(itemId, match.params.propSlug);
       } catch (error) {
         showError(error);
       }
     })();
   }, []);
 
-  const loadEntity = async (id) => {
-    setLoadingEntity(true);
-    const entity = await getItem(id, currentLang.code);
-    setLoadingEntity(false);
-    setFromKeyboard(false);
-    setSearchTerm(entity.label);
-    setEntity(entity);
+  //reload entity on lang change
+  useEffect(() => {
+    if (hasLanguageChanged) {
+      (async () => {
+        try {
+          if (currentEntity)
+            await loadEntity(
+              currentEntity.id,
+              null,
+              currentProp ? currentProp.id : null //this doesn't work if I switch language
+            );
+        } catch (error) {
+          showError(error);
+        }
+      })();
+    }
+  }, [hasLanguageChanged]);
+
+  const loadEntity = async (_currentEntityId, propSlug, propId) => {
+    if (!_currentEntityId) return;
+    try {
+      if (currentEntity && _currentEntityId !== currentEntity.id)
+        setCurrentEntity(null); //avoids weird caching behaviour, get a fresh one
+      // if(currentProp && propId !== currentProp.id)
+      //   setCurrentProp(null); //avoids weird caching behaviour, get a fresh one
+
+      setFromKeyboard(false);
+      setLoadingEntity(true);
+      setLoadingProps(true);
+
+      let [_currentEntity, itemProps] = await Promise.all([
+        getItem(_currentEntityId, currentLang.code),
+        getItemProps(_currentEntityId, currentLang.code),
+      ]);
+
+      itemProps.forEach((prop) => {
+        prop.slug = prop.label.replace(/\s/g, "_");
+      });
+
+      let _currentProp;
+      if (propSlug) {
+        _currentProp = itemProps.find(({ slug }) => slug === propSlug);
+      }
+      if (propId) {
+        _currentProp = itemProps.find(({ id }) => id === propId);
+      }
+
+      //currentProp belongs to family stuff
+      if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
+        //Remove all family-related props in favour of the custom
+        itemProps = itemProps.filter((prop) => {
+          if (prop.id === CHILD_ID) FAMILY_PROP.label = prop.label; //get translated child label
+          return !FAMILY_IDS_MAP[prop.id];
+        });
+
+        const translatedFamilyTree =
+          FAMILY_PROP.overrideLabels[currentLang.code];
+        if (translatedFamilyTree) {
+          FAMILY_PROP.overrideLabel = translatedFamilyTree;
+          FAMILY_PROP.slug = translatedFamilyTree.replace(/\s/g, "_");
+        }
+
+        //Add the Family tree fav currentProp
+        itemProps = [FAMILY_PROP].concat(itemProps);
+
+        //Select the family tree if no other currentProp is selected, or if it's a family currentProp
+        if (!_currentProp || FAMILY_IDS_MAP[_currentProp.id]) {
+          setCurrentProp(FAMILY_PROP);
+        } else {
+          setCurrentProp(_currentProp);
+        }
+      } else {
+        setCurrentProp(_currentProp);
+      }
+      setAvailableProps(itemProps);
+      //Set here (short after setCurrentProp) otherwise if there is a delay between entity and props graph will be called twice
+      setCurrentEntity(_currentEntity);
+    } catch (error) {
+      showError(error);
+    } finally {
+      setLoadingEntity(false);
+      setLoadingProps(false);
+    }
   };
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  React.useEffect(() => {
+  useEffect(() => {
     if (debouncedSearchTerm && fromKeyboard) {
       setShowSuggestions(true);
       setLoadingSuggestions(true);
       search(debouncedSearchTerm, currentLang.code).then(
-        ({ data: { search: searchResults } }) => {
-          if (currentLang.disambPageDesc) {
-            searchResults = searchResults.filter(
-              ({ description }) => description !== currentLang.disambPageDesc
-            );
-          }
+        ({ search: searchResults }) => {
+          searchResults = searchResults.filter(({ id, description }) => {
+            //remove current entity from results
+            if (currentEntity && id === currentEntity.id) {
+              return false;
+            }
+
+            //remove wikimedia disam pages
+            if (
+              currentLang.disambPageDesc &&
+              description === currentLang.disambPageDesc
+            )
+              return false;
+
+            return true;
+          });
           setLoadingSuggestions(false);
           setSearchResults(searchResults);
         }
@@ -91,64 +192,31 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
     }
   }, [debouncedSearchTerm]);
 
-  //Get new props on entity change
-  React.useEffect(() => {
-    if (entity) {
-      setProp(null);
-      (async () => {
-        setLoadingProps(true);
-        try {
-          let itemProps = await getItemProps(entity.id, currentLang.code);
-
-          //prop belongs to family stuff
-          if (itemProps.some((prop) => FAMILY_IDS_MAP[prop.id])) {
-            //Remove all family props
-            let translatedLabel;
-            itemProps = itemProps.filter((prop) => {
-              if (prop.id === FAMILY_PROP.id) translatedLabel = prop.label;
-              return !FAMILY_IDS_MAP[prop.id];
-            });
-
-            if (translatedLabel) FAMILY_PROP.label = translatedLabel;
-
-            //Add the Family tree fav prop
-            itemProps = [FAMILY_PROP].concat(itemProps);
-
-            //Select the family tree if no other prop is selected, or if it's a family prop
-            if (!prop || FAMILY_IDS_MAP[prop.id]) {
-              setProp(FAMILY_PROP);
-            }
-          }
-
-          setAvailableProps(itemProps);
-        } catch (error) {
-          showError(error);
-        } finally {
-          setLoadingProps(false);
-        }
-      })();
-    }
-  }, [entity]);
-
   const history = useHistory();
-  React.useEffect(() => {
-    if (entity) {
-      const query = { q: entity.id };
-      setCurrentEntity(entity);
-      if (prop) {
-        query.p = prop.id;
-        setCurrentProp(prop);
-      }
-      if (currentLang.code !== DEFAULT_LANG.code) query.l = currentLang.code;
-      const searchString = qs.stringify(query);
+  useEffect(() => {
+    if (currentEntity) {
+      setSearchTerm(currentEntity.label); //if updates from graph (reloadTreeFromFocused)
       history.push({
-        search: "?" + searchString,
+        pathname: `/${currentLang.code}/${
+          currentProp ? currentProp.slug : "all"
+        }/${
+          currentEntity.wikipediaSlug
+            ? currentEntity.wikipediaSlug
+            : currentEntity.id
+        }`,
       });
     }
-  }, [entity, prop]);
+  }, [currentEntity, currentProp]);
 
+  const propToggleRef = useRef();
   return (
-    <Form className="SearchBar">
+    <Form
+      className="SearchBar"
+      onSubmit={(e) => {
+        e.preventDefault();
+        setShowSuggestions(true);
+      }}
+    >
       <Container>
         <Form.Group className="searchBox" controlId="searchBox">
           <InputGroup>
@@ -163,27 +231,41 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
               placeholder="Start typing to search..."
               autoComplete="off"
             />
-            {entity && (
+            {currentEntity && (
               <InputGroup.Append>
                 <Dropdown>
+                  <Overlay
+                    placement={"bottom"}
+                    show={false}
+                    target={propToggleRef.current}
+                  >
+                    <Tooltip>Select a property to show a tree</Tooltip>
+                  </Overlay>
                   <Dropdown.Toggle
                     disabled={loadingProps}
                     variant="none"
+                    ref={propToggleRef}
                     id="dropdown-props"
+                    className={
+                      currentEntity &&
+                      !currentProp &&
+                      "shouldSelectProp btn-warning"
+                    }
                   >
                     {loadingProps
                       ? "loading props..."
-                      : prop
-                      ? prop.overrideLabel || prop.label
+                      : currentProp
+                      ? currentProp.overrideLabel || currentProp.label
                       : "Choose a property "}
                   </Dropdown.Toggle>
+
                   <Dropdown.Menu alignRight>
                     {availableProps.map((prop) => (
                       <Dropdown.Item
-                        key={prop.id + (prop.isFav ? "_fav" : "")}
-                        onClick={() => setProp(prop)}
+                        key={prop.id}
+                        className={prop.isFav ? "fav" : ""}
+                        onClick={() => setCurrentProp(prop)}
                       >
-                        {prop.isFav && <FaStar />}{" "}
                         {prop.overrideLabel || prop.label}
                       </Dropdown.Item>
                     ))}
@@ -191,86 +273,18 @@ export default function SearchBar({ setCurrentEntity, setCurrentProp }) {
                 </Dropdown>
               </InputGroup.Append>
             )}
-            <ModalSettings />
           </InputGroup>
           {showSuggestions && (
             <Suggestions
-              setFromKeyboard={setFromKeyboard}
-              setSearchTerm={setSearchTerm}
-              setShowSuggestions={setShowSuggestions}
-              loadEntity={loadEntity}
               loadingSuggestions={loadingSuggestions}
               searchResults={searchResults}
+              loadEntity={loadEntity}
+              setShowSuggestions={setShowSuggestions}
             />
           )}
         </Form.Group>
       </Container>
     </Form>
-  );
-}
-
-function ModalSettings() {
-  const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
-  const options = [
-    {
-      id: "genderColors",
-      label: "Use Color based on gender",
-    },
-    {
-      id: "birthName",
-      label: "Use Birthname",
-    },
-    {
-      id: "birthPlace",
-      label: "Show birthplace instead of hospital",
-    },
-  ];
-  const showButton = false;
-  return (
-    <>
-      <Button
-        variant="primary"
-        onClick={handleShow}
-        style={{ visibility: showButton ? "visible" : "hidden" }}
-      >
-        <FiSliders />
-      </Button>
-
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Settings</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          Please select (beta)
-          <br />
-          {options.map((option) => (
-            <div>
-              <label>
-                <input
-                  name="isGoing"
-                  type="checkbox"
-                  // checked={this.state.isGoing}
-                  // onChange={this.handleInputChange}
-                />
-                {option.label}
-              </label>
-            </div>
-          ))}
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
   );
 }
 

@@ -1,26 +1,38 @@
 export const EXAMPLES = [
   {
-    name: "Sudono Salim's descendants",
-    href: `?q=Q712401&p=P40&l=9`,
-  },
-  {
     name: "The Queen's family",
-    href: `?q=Q9682&p=P40&l=9`,
+    href: `/en/family_tree/Elizabeth_II`,
   },
   {
-    name: "Dhirendra of Nepal's family",
-    href: `?q=Q5269611&p=P40&l=9`,
+    name: "Sudono Salim's descendants",
+    href: `/en/family_tree/Sudono_Salim`,
+  },
+  {
+    name: "Dhirendra of Nepal's ancestors",
+    href: `/en/family_tree/Dhirendra_of_Nepal`,
+  },
+  {
+    name: "Jesus Christ's pedigree",
+    href: `/en/family_tree/Jesus`,
   },
   {
     name: "Trump's family",
-    href: `?q=Q3752663&p=P40&l=9`,
+    href: `/en/family_tree/Donald_Trump`,
   },
   {
-    name: "Pan Pan's family",
-    href: `?q=Q15928745&p=P40&l=9`,
+    name: "Mammal taxonomy",
+    href: "/en/parent_taxon/Mammal",
   },
   {
-    name: "Jesus Christ's family",
-    href: `?q=Q302&p=P40&l=9`,
+    name: "Pan Pan (giant panda) offspring",
+    href: `/en/family_tree/Pan_Pan_(giant_panda)`,
+  },
+  {
+    name: "Cola-Cola's etymology",
+    href: "/en/named_after/Coca-Cola",
+  },
+  {
+    name: "Walmart's subsidiaries",
+    href: "/en/subsidiary/Walmart",
   },
 ];

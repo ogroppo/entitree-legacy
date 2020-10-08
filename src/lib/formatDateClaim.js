@@ -1,8 +1,8 @@
-import moment from "moment";
+import moment from "moment/min/moment-with-locales";
 import wbk from "wikidata-sdk";
 import ordinalize from "ordinalize";
 
-export default function formatDateClaim(claim) {
+export default function formatDateClaim(claim, languageCode) {
   if (!claim) return;
 
   let cleanClaims = [];
@@ -30,7 +30,7 @@ export default function formatDateClaim(claim) {
 
   //console.log(JSON.stringify(claim));
 
-  return parseDate(value);
+  return parseDate(value, languageCode);
 }
 
 /**
@@ -38,9 +38,9 @@ export default function formatDateClaim(claim) {
  * @param wikidatatime
  * @returns {{output: null, dateObject: null}|{output: string, dateObject: number}|{output: *, dateObject: null}}
  */
-function parseDate(wikidatatime) {
+function parseDate(wikidatatime, languageCode) {
   //example of  valid object {time: "+1500-07-07T00:00:00Z" ,precision:8}
-
+  //https://www.wikidata.org/wiki/Help:Dates
   /*
     0 - billion years
     3 - million years
@@ -52,24 +52,13 @@ function parseDate(wikidatatime) {
     10 - month (only month);
     11 - day
     */
-  const momentFormat = {
-    6: "y [millennium]",
-    7: "y[th century]",
-    8: "y[s]",
-    9: "y",
-    10: "Y-MM",
-    11: "Y-MM-DD",
-  };
+
   const { precision, time } = wikidatatime;
 
+  //for precision < 6 this doesn't make sense
   const dateISOString = wbk.wikibaseTimeToISOString(time);
   const dateOnly = dateISOString.split("T")[0];
   let parsedDate = moment(dateOnly);
-
-  //if not covered with momentjs, try using simpleday
-  //example?!?!?
-  if (!parsedDate.isValid()) return wbk.wikibaseTimeToSimpleDay(wikidatatime);
-
   const year = parsedDate.year();
   let eraSuffix = ""; //moment has only BC
   if (year <= 0) {
@@ -78,21 +67,39 @@ function parseDate(wikidatatime) {
   }
 
   switch (precision) {
+    case 0:
+      let [b_, byear] = time.split("-");
+      let bya = parseFloat(+byear / 1e9);
+      return bya + " Bya";
+    case 2: //Earth Q2 has precision 2 WTF, not in docs
+      let [m_2, myear2] = time.split("-");
+      let mya2 = parseFloat(+myear2 / 1e6);
+      return mya2 + " Mya";
+    case 3:
+      let [m_, myear] = time.split("-");
+      let mya = parseFloat(+myear / 1e6);
+      return mya + " Mya";
+    case 4:
+      let [k_, kyear] = time.split("-");
+      let kya = parseFloat(+kyear / 1e3); //should be 1e5
+      return kya + " Kya";
     case 6:
-      return parsedDate
-        .set({ year: year / 1000 })
-        .format(momentFormat[precision]);
+      let millenniumIndex = Math.abs(Math.floor(year / 1000));
+      let millenniumNumber = year > 0 ? millenniumIndex + 1 : millenniumIndex;
+      return ordinalize(millenniumNumber) + " mill." + eraSuffix;
     case 7:
       let centuryIndex = Math.abs(Math.floor(year / 100));
       let centuryNumber = year > 0 ? centuryIndex + 1 : centuryIndex;
-      return ordinalize(centuryNumber) + " century" + eraSuffix;
-    case 10:
-      return parsedDate.format("MMM y") + eraSuffix;
-    case 11:
-      return parsedDate.format("D MMM y") + eraSuffix;
+      return ordinalize(centuryNumber) + " cent." + eraSuffix;
+    case 8:
+      return parsedDate.format("y") + "s" + eraSuffix;
     case 9:
       return parsedDate.format("y") + eraSuffix;
+    case 10:
+      return parsedDate.locale(languageCode).format("MMM y") + eraSuffix;
+    case 11:
+      return parsedDate.locale(languageCode).format("D MMM y") + eraSuffix;
     default:
-      return;//https://www.wikidata.org/wiki/Help:Dates
+      return wbk.wikibaseTimeToSimpleDay(wikidatatime);
   }
 }

@@ -1,20 +1,19 @@
 import wdk from "wikidata-sdk";
-import axios from "axios";
+import getData from "../axios/getData";
 
 export async function getSparql(query) {
   const url = wdk.sparqlQuery(query);
 
-  return axios.get(url)
-    .then(function (response) {
-      return wdk.simplify.sparqlResults(response, { minimize: false })
-    });
+  return getData(url).then(function (response) {
+    return wdk.simplify.sparqlResults(response, { minimize: false });
+  });
 }
 
 export default async function bidirectionalQuery() {
   return await getSparql(createForwardQuery("Q9682"));
 }
 
-function createBiQuery(id){
+function createBiQuery(id) {
   return `PREFIX gas: <http://www.bigdata.com/rdf/gas#>
   SELECT ?item ?itemLabel ?linkTo {
   { SERVICE gas:service {
