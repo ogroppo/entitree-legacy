@@ -17,7 +17,10 @@ app.get("*", function (request, response) {
       /\$OG_DESCRIPTION/g,
       "Visualize connected Wikidata items on a dynamic, navigable tree diagram. Discover properties of People, Organizations and Events with a direct link to Wikipedia Aticles."
     );
-    result = data.replace(/\$OG_IMAGE/g, "family_tree/Jeffrey_Epstein.jpg");
+    result = data.replace(
+      /\$OG_IMAGE/g,
+      "screenshot/family_tree/Jeffrey_Epstein.jpg"
+    );
     response.send(result);
   });
 });
