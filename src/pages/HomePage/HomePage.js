@@ -60,17 +60,17 @@ export default function HomePage() {
               : ""}{" "}
             - {SITE_TITLE}
           </title>
-          {true && (
-          <meta property="og:image" content={"screenshot/" + currentProp.slug + "/" + (currentEntity.wikipediaSlug
-            ? currentEntity.wikipediaSlug
-            : currentEntity.id) + ".png"} />
-          )}
+          {/*{true && (*/}
+          {/*<meta property="og:image" content={"screenshot/" + currentProp.slug + "/" + (currentEntity.wikipediaSlug*/}
+          {/*  ? currentEntity.wikipediaSlug*/}
+          {/*  : currentEntity.id) + ".png"} />*/}
+          {/*)}*/}
           {currentEntity.description && (
             <meta name="description" content={currentEntity.description} />
           )}
           <meta
             property="og:image"
-            content={`${window.location.protocol}//${window.location.host}/${currentProp.slug}/${currentEntity.wikipediaSlug}.jpg`}
+            content={`${window.location.protocol}//${window.location.host}/screenshot/${currentProp.slug}/${currentEntity.wikipediaSlug}.png`}
           />
         </Helmet>
       ) : (
