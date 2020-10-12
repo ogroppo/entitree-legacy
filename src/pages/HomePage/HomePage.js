@@ -62,6 +62,11 @@ export default function HomePage() {
               : ""}{" "}
             - {SITE_TITLE}
           </title>
+          {true && (
+          <meta property="og:image" content={"screenshot/" + currentProp.slug + "/" + (currentEntity.wikipediaSlug
+            ? currentEntity.wikipediaSlug
+            : currentEntity.id) + ".png"} />
+          )}
           {currentEntity.description && (
             <meta name="description" content={currentEntity.description} />
           )}
