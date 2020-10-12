@@ -49,8 +49,6 @@ export default function HomePage() {
 
   if (!loadedLang) return null;
 
-  //console.log(curcurrentEntity.description);
-
   return (
     <div className="HomePage">
       {currentEntity ? (
@@ -70,6 +68,10 @@ export default function HomePage() {
           {currentEntity.description && (
             <meta name="description" content={currentEntity.description} />
           )}
+          <meta
+            property="og:image"
+            content={`${window.location.protocol}//${window.location.host}/${currentProp.slug}/${currentEntity.wikipediaSlug}.jpg`}
+          />
         </Helmet>
       ) : (
         <Helmet>
