@@ -5,7 +5,7 @@ import ReactGA from "react-ga";
 import "./AboutPage.scss";
 import Header from "../../layout/Header/Header";
 import { Helmet } from "react-helmet";
-import { DEFAULT_DESC, SITE_TITLE } from "../../constants/meta";
+import { DEFAULT_DESC, SITE_NAME } from "../../constants/meta";
 
 export default function AboutPage() {
   const location = useLocation();
@@ -17,7 +17,7 @@ export default function AboutPage() {
   return (
     <div className="AboutPage">
       <Helmet>
-        <title>About - {SITE_TITLE}</title>
+        <title>About - {SITE_NAME}</title>
         <meta name="description" content={DEFAULT_DESC} />
       </Helmet>
       <Header simple />

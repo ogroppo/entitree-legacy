@@ -10,7 +10,7 @@ import { Spinner } from "react-bootstrap";
 import Header from "../../layout/Header/Header";
 import { LANGS } from "../../constants/langs";
 import { Helmet } from "react-helmet";
-import { DEFAULT_DESC, SITE_TITLE } from "../../constants/meta";
+import { DEFAULT_DESC, SITE_NAME } from "../../constants/meta";
 
 export default function HomePage() {
   const {
@@ -58,7 +58,7 @@ export default function HomePage() {
             {currentProp
               ? ` - ${currentProp.overrideLabel || currentProp.label}`
               : ""}{" "}
-            - {SITE_TITLE}
+            - {SITE_NAME}
           </title>
           {currentEntity.description && (
             <meta name="description" content={currentEntity.description} />

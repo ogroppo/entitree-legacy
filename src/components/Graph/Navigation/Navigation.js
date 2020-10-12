@@ -22,7 +22,7 @@ import {
   WhatsappIcon,
 } from "react-share";
 import "./Navigation.scss";
-import { SITE_TITLE } from "../../../constants/meta";
+import { SITE_NAME } from "../../../constants/meta";
 import { AppContext } from "../../../App";
 
 export default function Navigation({
@@ -122,7 +122,7 @@ export default function Navigation({
               <FacebookShareButton
                 url={window.location.href}
                 quote={document.title}
-                hashtag={SITE_TITLE}
+                hashtag={SITE_NAME}
               >
                 <FacebookIcon /> Share on Facebook
               </FacebookShareButton>
@@ -131,7 +131,7 @@ export default function Navigation({
               <TwitterShareButton
                 url={window.location.href}
                 title={document.title}
-                hashtags={[SITE_TITLE]}
+                hashtags={[SITE_NAME]}
               >
                 <TwitterIcon /> Share on Twitter
               </TwitterShareButton>
