@@ -37,7 +37,7 @@ export default function GraphWrapper() {
   );
   return (
     <div
-      className={`GraphWrapper ${showGenderColor ? "showGenderColor" : ""} ${
+      className={`GraphWrapper ${showGenderColor ? "showGenderColor" : ""}${
         showNavIcons ? "showNavIcons" : ""
       } ${showBirthName ? "showBirthName" : ""} ${showFace ? "showFace" : ""}`}
     >

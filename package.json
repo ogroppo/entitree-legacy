@@ -3,12 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^7.2.1",
     "axios": "^0.19.2",
     "bootstrap": "^4.5.0",
     "d3-hierarchy": "^1.1.9",
+    "express": "^4.17.1",
     "moment": "^2.26.0",
     "moment-timezone": "^0.5.31",
     "node-sass": "^4.14.1",
@@ -28,12 +26,14 @@
     "wikidata-sdk": "^7.6.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "sitemap": "babel-node src/sitemap/generator.js",
-    "import": "babel-node src/sitemap/processViews.js"
+    "import": "babel-node src/sitemap/processViews.js",
+    "start": "node server.js",
+    "heroku-postbuild": "npm install && npm run build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -51,6 +51,9 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
     "@babel/core": "^7.10.4",
     "@babel/node": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
