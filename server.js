@@ -4,9 +4,7 @@ const port = process.env.PORT || 5000;
 const path = require("path");
 const fs = require("fs");
 
-app.use(express.static(path.resolve(__dirname, "./build")));
-
-app.get("*", function (request, response) {
+app.get("/", function (request, response) {
   const filePath = path.resolve(__dirname, "./build", "index.html");
   fs.readFile(filePath, "utf8", function (err, data) {
     if (err) {
@@ -23,6 +21,13 @@ app.get("*", function (request, response) {
     );
     response.send(result);
   });
+});
+
+app.use(express.static(path.resolve(__dirname, "./build")));
+
+app.get("*", function (request, response) {
+  const filePath = path.resolve(__dirname, "./build", "index.html");
+  response.sendFile(filePath);
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

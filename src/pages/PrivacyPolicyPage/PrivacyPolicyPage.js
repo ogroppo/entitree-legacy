@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import ReactGA from "react-ga";
 import Header from "../../layout/Header/Header";
 import { Helmet } from "react-helmet";
-import { DEFAULT_DESC, SITE_TITLE } from "../../constants/meta";
+import { DEFAULT_DESC, SITE_NAME } from "../../constants/meta";
 
 export default function PrivacyPolicyPage() {
   const location = useLocation();
@@ -16,7 +16,7 @@ export default function PrivacyPolicyPage() {
   return (
     <div className="PrivacyPolicyPage">
       <Helmet>
-        <title>Privacy Policy - {SITE_TITLE}</title>
+        <title>Privacy Policy - {SITE_NAME}</title>
         <meta name="description" content={DEFAULT_DESC} />
       </Helmet>
       <Header simple />

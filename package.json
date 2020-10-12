@@ -2,6 +2,12 @@
   "name": "entitree",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "10.x"
+  },
+  "cacheDirectories": [
+    "node_modules"
+  ],
   "dependencies": {
     "axios": "^0.19.2",
     "bootstrap": "^4.5.0",
@@ -32,8 +38,7 @@
     "eject": "react-scripts eject",
     "sitemap": "babel-node src/sitemap/generator.js",
     "import": "babel-node src/sitemap/processViews.js",
-    "start": "node server.js",
-    "heroku-postbuild": "npm install --only=prod && npm run build"
+    "start": "node server.js"
   },
   "eslintConfig": {
     "extends": "react-app"

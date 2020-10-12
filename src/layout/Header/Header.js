@@ -13,7 +13,7 @@ import { EXAMPLES } from "../../constants/examples";
 import "./Header.scss";
 import Logo from "../../components/Logo/Logo";
 import Settings from "../../modals/Settings/Settings";
-import { SITE_TITLE } from "../../constants/meta";
+import { SITE_NAME } from "../../constants/meta";
 
 export default function Header({ simple }) {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -35,7 +35,7 @@ export default function Header({ simple }) {
     <Navbar className="Header" bg="dark" variant="dark" expand="lg">
       <Container>
         <Navbar.Brand href="/">
-          <Logo /> {SITE_TITLE}
+          <Logo /> {SITE_NAME}
         </Navbar.Brand>
         {!simple && (
           <DropdownButton
