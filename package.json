@@ -33,7 +33,7 @@
     "sitemap": "babel-node src/sitemap/generator.js",
     "import": "babel-node src/sitemap/processViews.js",
     "start": "node server.js",
-    "heroku-postbuild": "npm install && npm run build"
+    "heroku-postbuild": "npm install --only=prod && npm run build"
   },
   "eslintConfig": {
     "extends": "react-app"
