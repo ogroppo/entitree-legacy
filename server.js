@@ -11,6 +11,10 @@ function ucfirst(string)
 {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
+String.prototype.replaceAll = function(search, replacement) {
+  var target = this;
+  return target.replace(new RegExp(search, 'g'), replacement);
+};
 
 app.get("/:lang/:prop/:title", function (request, response) { // /:lang([a-z]{2})/:prop/:title to only match 2letter languages
   const filePath = path.resolve(__dirname, "./build", "index.html");
@@ -23,8 +27,8 @@ app.get("/:lang/:prop/:title", function (request, response) { // /:lang([a-z]{2}
     if (err) {
       return console.log(err);
     }
-    data = data.replace(/\$OG_TITLE/g, pageTitle + " - EntiTree");// - Grow your knowledge
-    data = data.replace(
+    data = data.replaceAll(/\$OG_TITLE/g, pageTitle + " - EntiTree");// - Grow your knowledge
+    data = data.replaceAll(
       /\$OG_DESCRIPTION/g,
       "Visualize connected Wikidata items on a dynamic, navigable tree diagram. Discover properties of People, Organizations and Events with a direct link to Wikipedia Aticles."
     );
