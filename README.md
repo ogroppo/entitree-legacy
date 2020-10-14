@@ -13,10 +13,11 @@ Language can be changed from the top right 'settings' button.
 git clone https://github.com/ogroppo/entitree
 cd entitree/
 npm install
+npm run build
 npm start
 ```
 
-Open [localhost:3000](http://localhost:3000/)
+Open [localhost:5000](http://localhost:5000/)
 
 ## Available Scripts
 
@@ -24,7 +25,7 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode. Open [http://localhost:3000](http://localhost:3000) to view it in the browser. The page will reload if you make edits.
+Runs the app in the development mode. Open [http://localhost:5000](http://localhost:5000) to view it in the browser. The page will reload if you make edits.
 
 ### `npm test`
 
@@ -39,7 +40,7 @@ It correctly bundles React in production mode and optimizes the build for the be
 The build is minified and the filenames include the hashes.<br />
 Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+This has been added to support featured images, however it is possible to run the app locally without running the server but only react under port 3000
 
 ## Authors
 
