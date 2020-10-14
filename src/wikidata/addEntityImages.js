@@ -23,7 +23,7 @@ export default async function getEntityImages(entity, currentLangCode) {
   var numericId = entity.id.substr(1);
   const imageDbServer = 'https://images.dataprick.com';
   entity.faceImage = null;
-  // if (entity.thumbnails.length === 0){
+  if (entity.thumbnails.length === 0){
     try {
       await getData(
         `${imageDbServer}/api/v1/image/info/wikidata/${numericId}`
@@ -46,7 +46,7 @@ export default async function getEntityImages(entity, currentLangCode) {
     }catch{
 
     }
-  // }
+  }
 
   const twitterClaim = entity.simpleClaims[TWITTER_ID];
   if (twitterClaim) {
