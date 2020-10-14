@@ -10,44 +10,41 @@ app.use(express.static(path.resolve(__dirname, "./build")));
 function ucfirst(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
-String.prototype.replaceAll = function (search, replacement) {
-  var target = this;
-  return target.replace(new RegExp(search, 'g'), replacement);
-};
 
-app.get("/:lang/:prop/:title", function (request, response) { // /:lang([a-z]{2})/:prop/:title to only match 2letter languages
+app.get("/:langCode/:propSlug/:titleSlug", function (request, response) {
+  // /:langCode([a-z]{2})/:propSlug/:titleSlug to only match 2letter languages
   const filePath = path.resolve(__dirname, "./build", "index.html");
   // const reqRoute = request.originalUrl.replace(/\?.*$/, '');
-  const {lang, prop, title} = request.params;
-  const featuredImageFile = "screenshot/" + prop + "/" + title + ".png";
-  const baseUrl = (request.connection && request.connection.encrypted ? 'https' : 'http') + '://' + request.headers.host + "/";
-  const pageTitle = (ucfirst(prop) + " of " + title).replaceAll('_', ' ');
+  const { langCode, propSlug, titleSlug } = request.params;
+  const featuredImageFile = "screenshot/" + propSlug + "/" + titleSlug + ".png";
+  const baseUrl =
+    (request.connection && request.connection.encrypted ? "https" : "http") +
+    "://" +
+    request.headers.host +
+    "/";
+
+  const propName = propSlug.replace(/_/g, " ");
+  const titleName = titleSlug.replace(/_/g, " ");
+  const pageTitle = ucfirst(propName) + " of " + titleName;
 
   fs.readFile(filePath, "utf8", function (err, data) {
     if (err) {
       return console.log(err);
     }
-    data = data.replaceAll(/\$OG_TITLE/g, pageTitle + " - EntiTree");// - Grow your knowledge
-    data = data.replaceAll(
+    data = data.replace(/\$OG_TITLE/g, pageTitle + " - EntiTree");
+    data = data.replace(
       /\$OG_DESCRIPTION/g,
-      "Visualize connected Wikidata items on a dynamic, navigable tree diagram. Discover properties of People, Organizations and Events with a direct link to Wikipedia Aticles."
+      `Visualize the ${propName} on a dynamic, navigable tree diagram.`
     );
     //only replace image if it's present
-    if (fs.existsSync(__dirname+"/public/"+featuredImageFile)) {
-    data = data.replace(
-      /\$OG_IMAGE/g,
-      baseUrl + featuredImageFile
-    );
-    }else{
-      data = data.replace(
-        /\$OG_IMAGE/g,
-       ''
-      );
+    if (fs.existsSync(__dirname + "/public/" + featuredImageFile)) {
+      data = data.replace(/\$OG_IMAGE/g, baseUrl + featuredImageFile);
+    } else {
+      data = data.replace(/\$OG_IMAGE/g, "");
     }
     response.send(data);
   });
 });
-
 
 app.get("*", function (request, response) {
   const filePath = path.resolve(__dirname, "./build", "index.html");
