@@ -7,11 +7,10 @@ const fs = require("fs");
 app.use(express.static(path.resolve(__dirname, "./build")));
 
 //first letter uppercase
-function ucfirst(string)
-{
+function ucfirst(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
-String.prototype.replaceAll = function(search, replacement) {
+String.prototype.replaceAll = function (search, replacement) {
   var target = this;
   return target.replace(new RegExp(search, 'g'), replacement);
 };
@@ -19,9 +18,10 @@ String.prototype.replaceAll = function(search, replacement) {
 app.get("/:lang/:prop/:title", function (request, response) { // /:lang([a-z]{2})/:prop/:title to only match 2letter languages
   const filePath = path.resolve(__dirname, "./build", "index.html");
   // const reqRoute = request.originalUrl.replace(/\?.*$/, '');
-  const { lang, prop, title } = request.params;
-  const featuredImageFile = "screenshot/"+prop+"/"+title+".png";
-  const pageTitle = (ucfirst(prop) + " of " + title).replaceAll('_',' ');
+  const {lang, prop, title} = request.params;
+  const featuredImageFile = "screenshot/" + prop + "/" + title + ".png";
+  const baseUrl = (request.connection && request.connection.encrypted ? 'https' : 'http') + '://' + request.headers.host + "/";
+  const pageTitle = (ucfirst(prop) + " of " + title).replaceAll('_', ' ');
 
   fs.readFile(filePath, "utf8", function (err, data) {
     if (err) {
@@ -34,9 +34,14 @@ app.get("/:lang/:prop/:title", function (request, response) { // /:lang([a-z]{2}
     );
     //only replace image if it's present
     if (fs.existsSync(__dirname+"/public/"+featuredImageFile)) {
+    data = data.replace(
+      /\$OG_IMAGE/g,
+      baseUrl + featuredImageFile
+    );
+    }else{
       data = data.replace(
         /\$OG_IMAGE/g,
-        featuredImageFile
+       ''
       );
     }
     response.send(data);
