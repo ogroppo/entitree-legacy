@@ -22,18 +22,23 @@ export default async function getEntityImages(entity, currentLangCode) {
 
   var numericId = entity.id.substr(1);
   const imageDbServer = 'https://images.dataprick.com';
+  entity.faceImage = null;
   if (entity.thumbnails.length === 0){
     try {
       await getData(
-        `${imageDbServer}/api/image/info/${numericId}`
+        `${imageDbServer}/api/v1/image/info/wikidata/${numericId}`
       ).then((data => {
         if (data.images.length > 0) {
+          entity.faceImage = {
+            url: `${imageDbServer}/api/v1/image/facecrop/wikidata/${numericId}`,
+            alt: `Image Database`,
+          };
           entity.thumbnails.push({
-            url: `${imageDbServer}/api/getImage/${numericId}`,
+            url: `${imageDbServer}/api/v1/image/thumbnail/wikidata/${numericId}`,
             alt: `Image Database`,
           });
           entity.images.push({
-            url: `${imageDbServer}/api/getImage/${numericId}`,
+            url: `${imageDbServer}/api/v1/image/thumbnail/wikidata/${numericId}`,
             alt: `Image Database`,
           });
         }
