@@ -17,7 +17,7 @@ app.get("/:lang/:prop/:title", function (request, response) { // /:lang([a-z]{2}
   // const reqRoute = request.originalUrl.replace(/\?.*$/, '');
   const { lang, prop, title } = request.params;
   const featuredImageFile = "screenshot/"+prop+"/"+title+".png";
-  const pageTitle = (ucfirst(prop) + " of " + title).replace('_',' ');
+  const pageTitle = (ucfirst(prop) + " of " + title).replaceAll('_',' ');
 
   fs.readFile(filePath, "utf8", function (err, data) {
     if (err) {
