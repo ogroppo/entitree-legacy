@@ -1,3 +1,5 @@
+# EntiTree.com
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 The app can be served from a node.js (express) server, which is only useful for Server-side rendering.
@@ -11,7 +13,7 @@ Test website here https://entitree-test.heorkuapp.com/
 Search for items (people, organizations, anything!) from the top search bar and then select a property from the dropdown.
 Language can be changed from the top right 'settings' button.
 
-## Install this app
+## Install
 
 ```
 git clone https://github.com/ogroppo/entitree
