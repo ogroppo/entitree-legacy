@@ -1,31 +1,46 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+The app can be served from a node.js (express) server, which is only useful for Server-side rendering.
+
 Live website here https://www.entitree.com/
+
+Test website here https://entitree-test.heorkuapp.com/
 
 ## User instructions
 
-Search for items (people, organizations, anything!) and then select a property.
+Search for items (people, organizations, anything!) from the top search bar and then select a property from the dropdown.
 Language can be changed from the top right 'settings' button.
 
 ## Install this app
 
-```console
+```
 git clone https://github.com/ogroppo/entitree
 cd entitree/
 npm install
+```
+
+## Run with server
+
+If you want the app served by node.js do:
+
+```
 npm run build
 npm start
 ```
 
 Open [localhost:5000](http://localhost:5000/)
 
+## Run with CRA's dev server (hot reload & stuff)
+
+```
+npm run dev
+```
+
+Open [localhost:3000](http://localhost:3000/)
+
 ## Available Scripts
 
 In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode. Open [http://localhost:5000](http://localhost:5000) to view it in the browser. The page will reload if you make edits.
 
 ### `npm test`
 
