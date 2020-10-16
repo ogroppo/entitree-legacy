@@ -1,5 +1,12 @@
 import React, { useContext, useState } from "react";
-import { Form, Button, Dropdown, Modal, FormControl, Col } from "react-bootstrap";
+import {
+  Form,
+  Button,
+  Dropdown,
+  Modal,
+  FormControl,
+  Col,
+} from "react-bootstrap";
 import { LANGS } from "../../constants/langs";
 import { AppContext } from "../../App";
 import "./Settings.scss";
@@ -70,65 +77,40 @@ export default function Settings({ show, hideModal }) {
           />
         </Form.Group>
         <Form.Row>
-        {/*<Form.Group controlId={"faceDisplay"}>*/}
           <Col xs="auto">
             <Form.Group controlId={"faceDisplay"}>
-          <Form.Check
-            custom
-            checked={showFace}
-            onChange={(e) => setShowFace(e.target.checked)}
-            type="checkbox"
-            label={"Zoom in picture"}
-          />
+              <Form.Check
+                custom
+                checked={showFace}
+                onChange={(e) => setShowFace(e.target.checked)}
+                type="checkbox"
+                label={"Zoom in picture"}
+              />
             </Form.Group>
           </Col>
-        {/*<Form.Group controlId={"faceDisplay"}>*/}
-        {/*  <Form.Check*/}
-        {/*    custom*/}
-        {/*    checked={showFace}*/}
-        {/*    onChange={(e) => setShowFace(e.target.checked)}*/}
-        {/*    type="checkbox"*/}
-        {/*    label={"Zoom in to the head"}*/}
-        {/*  />*/}
-        {/*</Form.Group>*/}
-          <Col xs="auto">
-            {/*{showFace ? (*/}
-            <Dropdown className="imageDropdown">
-              <Dropdown.Toggle as={CustomToggle}>
-                  <span className="imageDropdownLabel">
-                    show
-                  </span>{" "}
-                {imageType}
-              </Dropdown.Toggle>
-              <Dropdown.Menu as={CustomMenu}>
-                <Dropdown.Item
-                  key={"face"}
-                  // key={lang.code}
-                  // eventKey={index + 1}
-                  active={imageType === 'face'}
-                  onClick={() => setImageType('face')}
-                >
-                  Face
-                </Dropdown.Item>
-                <Dropdown.Item
-                  key={"head"}
-                  // key={lang.code}
-                  // eventKey={index + 1}
-                  active={imageType === 'head'}
-                  onClick={() => setImageType('head')}
-                >
-                  Head
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-            {/*):(*/}
-            {/*  <span>*/}
-
-            {/*  </span>*/}
-            {/*)}*/}
-          </Col>
-
-        {/*</Form.Group>*/}
+          {showFace && (
+            <Col xs="auto">
+              <Dropdown className="imageDropdown">
+                <Dropdown.Toggle as={CustomToggle}>
+                  <span className="imageDropdownLabel">show</span> {imageType}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item
+                    active={imageType === "face"}
+                    onClick={() => setImageType("face")}
+                  >
+                    Face
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    active={imageType === "head"}
+                    onClick={() => setImageType("head")}
+                  >
+                    Head
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </Col>
+          )}
         </Form.Row>
         <Form.Group controlId="language">
           <Dropdown className="langDropdown">
