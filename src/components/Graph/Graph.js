@@ -188,8 +188,9 @@ const Graph = memo(
               addRightIds: currentProp.id === CHILD_ID,
             }
           );
-
-          sortByBirthDate(entities);
+          if (currentProp.id === CHILD_ID) {
+            sortByBirthDate(entities);
+          }
           entities.forEach((entity, index) => {
             const childNode = hierarchy(entity);
             childNode.depth = node.depth + 1;
