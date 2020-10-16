@@ -28,7 +28,7 @@ import filterSpouses from "../../lib/filterSpouses";
 import addEntityConnectors from "../../lib/addEntityConnectors";
 import getUpMap from "../../wikidata/getUpMap";
 import Navigation from "./Navigation/Navigation";
-import sortByBirthDate from "../../lib/sortByBirthDate";
+import {sortByBirthDate , sortByGender} from "../../lib/sortEntities";
 import last from "../../lib/last";
 
 export default function GraphWrapper() {
@@ -235,6 +235,7 @@ const Graph = memo(
             }
           );
 
+          sortByGender(entities);
           entities.forEach((entity, index) => {
             const parentNode = hierarchy(entity);
             parentNode.isParent = true;
