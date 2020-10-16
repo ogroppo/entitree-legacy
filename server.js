@@ -18,7 +18,7 @@ app.get("/:langCode/:propSlug/:titleSlug", function (request, response) {
   const { langCode, propSlug, titleSlug } = request.params;
   const featuredImageFile = "screenshot/" + propSlug + "/" + titleSlug + ".png";
 
-  const baseUrl = request.protocol + "://" + request.get("host");
+  const baseUrl = request.protocol + "://" + request.get("host") + "/";
 
   const propName = propSlug.replace(/_/g, " ");
   const titleName = titleSlug.replace(/_/g, " ");

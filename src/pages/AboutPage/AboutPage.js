@@ -6,6 +6,7 @@ import "./AboutPage.scss";
 import Header from "../../layout/Header/Header";
 import { Helmet } from "react-helmet";
 import { DEFAULT_DESC, SITE_NAME } from "../../constants/meta";
+import { FaCreativeCommons, FaGithub } from "react-icons/fa";
 
 export default function AboutPage() {
   const location = useLocation();
@@ -75,12 +76,7 @@ export default function AboutPage() {
             rel="noopener noreferrer"
             href="https://github.com/ogroppo/entitree/issues"
           >
-            <img
-              alt=""
-              className="img img-fluid"
-              src="/icons/github.png"
-              style={{ maxHeight: 20 + "px" }}
-            />{" "}
+            <FaGithub />{" "}
             report a bug!
           </a>
         </p>
