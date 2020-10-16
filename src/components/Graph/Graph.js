@@ -234,8 +234,9 @@ const Graph = memo(
               addRightIds: currentProp.id === CHILD_ID,
             }
           );
-
-          sortByGender(entities);
+          if (currentProp.id === CHILD_ID) {
+            sortByGender(entities);
+          }
           entities.forEach((entity, index) => {
             const parentNode = hierarchy(entity);
             parentNode.isParent = true;
