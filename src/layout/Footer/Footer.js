@@ -1,6 +1,6 @@
 import React from "react";
 import { Navbar, Nav, Container } from "react-bootstrap";
-import { FaCreativeCommons } from "react-icons/fa";
+import { FaCreativeCommons, FaGithub } from "react-icons/fa";
 import "./Footer.scss";
 export default function Footer() {
   return (
@@ -19,6 +19,12 @@ export default function Footer() {
             href="https://creativecommons.org/licenses/by-sa/4.0/deed.en"
           >
             <FaCreativeCommons />
+          </Nav.Link>
+          <Nav.Link
+            target="_blank"
+            href="https://github.com/ogroppo/entitree"
+          >
+            <FaGithub />
           </Nav.Link>
         </Nav>
         <Nav className="ml-auto">
