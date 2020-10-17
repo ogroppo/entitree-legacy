@@ -7,7 +7,7 @@ import {
   CARD_HEIGHT,
   CARD_VERTICAL_GAP,
 } from "../../constants/tree";
-import { Button } from "react-bootstrap";
+import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import {
   FiChevronLeft,
   FiChevronUp,
@@ -233,7 +233,7 @@ export default function Node({
           disabled={node.loadingChildren}
           onClick={() => toggleChildren(node)}
         >
-          <span className="value">{node.data.downIds.length}</span>
+          <span className="value">{node.data.childrenCount}</span>
           <span className="chevron ml-1 mr-1">
             {node._childrenExpanded ? <FiChevronUp /> : <FiChevronDown />}
           </span>
@@ -243,6 +243,32 @@ export default function Node({
             </span>
           )}
         </Button>
+      )}
+      {node.data.downIds && !node.data.downIds.length && node.data.childrenCount > 0 && currentProp && currentProp.id === CHILD_ID (
+        <OverlayTrigger
+          key={"bottom"}
+          placement={"bottom"}
+          overlay={
+            <Tooltip id={`tooltip-bottom`}>
+              Children nodes not available, please add them on wikidata.org
+            </Tooltip>
+          }
+        >
+          <Button
+            className={`childrenCount counter`}
+            variant={"link"}
+            disabled={false}
+            // onClick={() => toggleChildren(node)}
+            // title={"Children nodes not available, please add them on wikidata.org"}
+          >
+            <span className="value">{node.data.childrenCount}</span>
+            {currentProp && currentProp.id === CHILD_ID && (
+              <span className="icon">
+                <MdChildCare />
+              </span>
+            )}
+          </Button>
+        </OverlayTrigger>
       )}
       {showModal && (
         <DetailsModal

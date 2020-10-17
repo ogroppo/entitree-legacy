@@ -18,6 +18,7 @@ export const GENDER_ID = "P21";
 export const FATHER_ID = "P22";
 export const MOTHER_ID = "P25";
 export const CHILD_ID = "P40";
+export const NUMBER_OF_CHILDREN_ID = "P1971";
 export const STUDENT_OF_ID = "P1066";
 export const STUDENT_ID = "P802";
 export const LOCATED_IN_ID = "P131";
