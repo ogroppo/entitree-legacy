@@ -28,8 +28,9 @@ import filterSpouses from "../../lib/filterSpouses";
 import addEntityConnectors from "../../lib/addEntityConnectors";
 import getUpMap from "../../wikidata/getUpMap";
 import Navigation from "./Navigation/Navigation";
-import {sortByBirthDate , sortByGender} from "../../lib/sortEntities";
+import { sortByBirthDate, sortByGender } from "../../lib/sortEntities";
 import last from "../../lib/last";
+import clsx from "clsx";
 
 export default function GraphWrapper() {
   const { showGenderColor, showNavIcons, showBirthName, showFace } = useContext(
@@ -37,9 +38,12 @@ export default function GraphWrapper() {
   );
   return (
     <div
-      className={`GraphWrapper ${showGenderColor ? "showGenderColor" : ""}${
-        showNavIcons ? "showNavIcons" : ""
-      } ${showBirthName ? "showBirthName" : ""} ${showFace ? "showFace" : ""}`}
+      className={clsx("GraphWrapper", {
+        showGenderColor,
+        showNavIcons,
+        showBirthName,
+        showFace,
+      })}
     >
       <TransformWrapper
         zoomIn={{ step: 20 }}
