@@ -244,30 +244,20 @@ export default function Node({
           )}
         </Button>
       )}
-      {/*{node.data.downIds && !node.data.downIds.length && node.data.childrenCount && node.data.childrenCount > 0 && currentProp && currentProp.id === CHILD_ID (*/}
-      {/*  <OverlayTrigger*/}
-      {/*    key={"bottom"}*/}
-      {/*    placement={"bottom"}*/}
-      {/*    overlay={*/}
-      {/*      <Tooltip id={`tooltip-bottom`}>*/}
-      {/*        Children nodes not available, please add them on wikidata.org*/}
-      {/*      </Tooltip>*/}
-      {/*    }*/}
-      {/*  >*/}
-      {/*    <Button*/}
-      {/*      className={`childrenCount counter`}*/}
-      {/*      variant={"link"}*/}
-      {/*      disabled={false}*/}
-      {/*      // onClick={() => toggleChildren(node)}*/}
-      {/*      // title={"Children nodes not available, please add them on wikidata.org"}*/}
-      {/*    >*/}
-      {/*      <span className="value">{node.data.childrenCount}</span>*/}
-      {/*        <span className="icon">*/}
-      {/*          /!*<MdChildCare />*!/*/}
-      {/*        </span>*/}
-      {/*    </Button>*/}
-      {/*  </OverlayTrigger>*/}
-      {/*)}*/}
+      {node.data.downIds && !node.data.downIds.length && node.data.childrenCount && node.data.childrenCount > 0 && currentProp && currentProp.id === CHILD_ID && (
+          <Button
+            className={`childrenCount counter`}
+            variant={"link"}
+            disabled={false}
+            // onClick={() => toggleChildren(node)}
+            title={"Children nodes not available, please add them on wikidata.org"}
+          >
+            <span className="value">{node.data.childrenCount}</span>
+              <span className="icon">
+                <MdChildCare />
+              </span>
+          </Button>
+      )}
       {showModal && (
         <DetailsModal
           hideModal={hideModal}
