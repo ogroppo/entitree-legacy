@@ -244,7 +244,7 @@ export default function Node({
           )}
         </Button>
       )}
-      {node.data.downIds && !node.data.downIds.length && node.data.childrenCount && node.data.childrenCount > 0 && currentProp && currentProp.id === CHILD_ID (
+      {node.data.downIds && !node.data.downIds.length && node.data.childrenCount && node.data.childrenCount > 0 && currentProp && currentProp.id === CHILD_ID && (
           <Button
             className={`childrenCount counter`}
             variant={"link"}
