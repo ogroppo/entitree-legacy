@@ -2,9 +2,9 @@
   box-sizing: border-box;
   position: absolute;
   transition: all ease-in-out 0.2s;
-  background-color: #eee;
+  background-color: rgb(250,238,222);
   border: 1px solid lightgrey;
-  border-radius: 5px;
+  border-radius: 3px;
   transform: translate(-50%, -50%);
   box-shadow: 4px 4px 10px lightgrey;
   &.focused {
@@ -51,6 +51,7 @@
   .content {
     float: left;
     padding-left: 4px;
+    padding-top: 3px;
     position: relative;
     .four-line-clamp {
       display: -webkit-box;
@@ -67,7 +68,7 @@
       display: inline;
       border: 0;
       padding: 0;
-      font-size: 13px;
+      font-size: 14px;
       line-height: 15px;
       font-weight: bold;
       vertical-align: top;

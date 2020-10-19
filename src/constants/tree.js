@@ -1,5 +1,5 @@
 export const CARD_WIDTH = 250;
-export const CARD_PADDING = 3;
+export const CARD_PADDING = 0;
 export const CARD_BORDER_WIDTH = 1;
 export const CARD_INNER_WIDTH =
   CARD_WIDTH - 2 * CARD_PADDING - 2 * CARD_BORDER_WIDTH;
