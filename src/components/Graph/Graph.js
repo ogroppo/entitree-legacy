@@ -10,7 +10,7 @@ import React, {
   memo,
 } from "react";
 import { TransformComponent } from "react-zoom-pan-pinch";
-import getItems from "../../wikidata/getItems";
+import { getItems } from "../../wikidata/getItems";
 import { hierarchy } from "d3-hierarchy";
 import {
   CARD_WIDTH,
