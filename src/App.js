@@ -30,128 +30,69 @@ export default class App extends Component {
     showFace: false,
     loadingEntity: false,
     imageType: "face",
+    setShowGenderColor: (showGenderColor) => {
+      this.setState({ showGenderColor });
+    },
+    setCurrentEntity: (currentEntity) => {
+      this.setState({ currentEntity });
+    },
+    setCurrentProp: (currentProp) => {
+      this.setState({ currentProp });
+    },
+    setLoadingEntity: (loadingEntity) => {
+      this.setState({ loadingEntity });
+    },
+    setCurrentLang: (currentLang) => {
+      this.setState({
+        currentLang,
+        hasLanguageChanged: this.state.hasLanguageChanged + 1,
+      });
+    },
+    setImageType: (imageType) => {
+      this.setState({
+        imageType,
+      });
+    },
+    showError: (error) => {
+      console.error(error);
+      this.setState(({ errors }) => ({
+        errors: errors.concat(error),
+      }));
+      setTimeout(() => {
+        this.setState(({ errors }) => ({
+          errors: errors.slice(1),
+        }));
+      }, 2500);
+    },
+    showInfo: ({ id, message }) => {
+      this.setState(({ infos }) => ({
+        infos: infos.concat({ id, message }),
+      }));
+      setTimeout(() => {
+        this.setState(({ infos }) => ({
+          infos: infos.slice(1),
+        }));
+      }, 2500);
+    },
+    setShowBirthName: (showBirthName) => {
+      this.setState({ showBirthName });
+    },
+    setShowNavIcons: (showNavIcons) => {
+      this.setState({ showNavIcons });
+    },
+    setShowFace: (showFace) => {
+      this.setState({ showFace });
+    },
   };
-
-  componentDidMount() {}
 
   componentDidCatch = (error) => {
-    this.showError(error);
+    this.state.showError(error);
   };
 
-  setCurrentEntity = (currentEntity) => {
-    this.setState({ currentEntity });
-  };
-
-  setCurrentProp = (currentProp) => {
-    this.setState({ currentProp });
-  };
-
-  setLoadingEntity = (loadingEntity) => {
-    this.setState({ loadingEntity });
-  };
-
-  setCurrentLang = (currentLang) => {
-    this.setState({
-      currentLang,
-      hasLanguageChanged: this.state.hasLanguageChanged + 1,
-    });
-  };
-
-  setImageType = (imageType) => {
-    this.setState({
-      imageType,
-    });
-  };
-
-  showError = (error) => {
-    console.error(error);
-    this.setState(({ errors }) => ({
-      errors: errors.concat(error),
-    }));
-    setTimeout(() => {
-      this.setState(({ errors }) => ({
-        errors: errors.slice(1),
-      }));
-    }, 2500);
-  };
-
-  showInfo = ({ id, message }) => {
-    this.setState(({ infos }) => ({
-      infos: infos.concat({ id, message }),
-    }));
-    setTimeout(() => {
-      this.setState(({ infos }) => ({
-        infos: infos.slice(1),
-      }));
-    }, 2500);
-  };
-
-  setShowGenderColor = (showGenderColor) => {
-    this.setState({ showGenderColor });
-  };
-  setShowBirthName = (showBirthName) => {
-    this.setState({ showBirthName });
-  };
-  setShowNavIcons = (showNavIcons) => {
-    this.setState({ showNavIcons });
-  };
-  setShowFace = (showFace) => {
-    this.setState({ showFace });
-  };
   render() {
-    const {
-      showError,
-      showInfo,
-      setCurrentLang,
-      setCurrentProp,
-      setCurrentEntity,
-      setShowGenderColor,
-      setShowBirthName,
-      setShowNavIcons,
-      setShowFace,
-      setLoadingEntity,
-      setImageType,
-    } = this;
-    const {
-      currentLang,
-      errors,
-      infos,
-      currentEntity,
-      currentProp,
-      hasLanguageChanged,
-      showGenderColor,
-      showBirthName,
-      showNavIcons,
-      showFace,
-      imageType,
-      loadingEntity,
-    } = this.state;
+    const { errors, infos } = this.state;
     return (
-      <AppContext.Provider
-        value={{
-          showError,
-          showInfo,
-          setCurrentLang,
-          setCurrentProp,
-          setCurrentEntity,
-          setShowGenderColor,
-          setShowBirthName,
-          setShowFace,
-          setShowNavIcons,
-          setImageType,
-          setLoadingEntity,
-          currentLang,
-          currentProp,
-          currentEntity,
-          hasLanguageChanged,
-          showGenderColor,
-          showBirthName,
-          showNavIcons,
-          showFace,
-          imageType,
-          loadingEntity,
-        }}
-      >
+      <AppContext.Provider value={this.state}>
         <Router history={browserHistory}>
           <div className="App">
             <div className="appBody">

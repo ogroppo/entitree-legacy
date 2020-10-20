@@ -24,6 +24,7 @@ import DetailsModal from "../../modals/DetailsModal/DetailsModal";
 import { FaMale, FaFemale } from "react-icons/fa";
 import { GiPerson } from "react-icons/gi";
 import { AppContext } from "../../App";
+import clsx from "clsx";
 
 export default function Node({
   node,
@@ -41,9 +42,7 @@ export default function Node({
 
   const [showModal, setShowModal] = useState(false);
 
-  const { showGenderColor, showNavIcons, showBirthName, showFace, imageType } = useContext(
-    AppContext
-  );
+  const { showBirthName, showFace, imageType } = useContext(AppContext);
 
   const hideModal = () => {
     setShowModal(false);
@@ -62,9 +61,10 @@ export default function Node({
         height: CARD_HEIGHT,
         padding: CARD_PADDING,
       }}
-      className={`Node ${
-        focusedNode && focusedNode.treeId === node.treeId ? "focused" : ""
-      } ${gender ? gender : ""}`}
+      className={clsx("Node", {
+        focused: focusedNode && focusedNode.treeId === node.treeId,
+        [gender]: gender,
+      })}
       onClick={() => setFocusedNode(node)}
     >
       <div
@@ -87,19 +87,20 @@ export default function Node({
         )}
         {thumbnails[0] && (
           <span>
-          {showFace && faceImage ? (
-
-          <img
-            alt={faceImage.alt }
-            src={faceImage.url+ (imageType === 'head' ? '?factor=1.5' : '')}
-            title={faceImage.alt}
-          />
-          ) : (
-            <img
-              alt={thumbnails[0].alt}
-              src={thumbnails[0].url}
-              title={thumbnails[0].alt}
-            />
+            {showFace && faceImage ? (
+              <img
+                alt={faceImage.alt}
+                src={
+                  faceImage.url + (imageType === "head" ? "?factor=1.5" : "")
+                }
+                title={faceImage.alt}
+              />
+            ) : (
+              <img
+                alt={thumbnails[0].alt}
+                src={thumbnails[0].url}
+                title={thumbnails[0].alt}
+              />
             )}
           </span>
         )}
@@ -244,20 +245,23 @@ export default function Node({
           )}
         </Button>
       )}
-      {node.data.downIds && !node.data.downIds.length && node.data.childrenCount && node.data.childrenCount > 0 && currentProp && currentProp.id === CHILD_ID && (
+      {node.data.downIds &&
+        !node.data.downIds.length &&
+        !!node.data.childrenCount &&
+        node.data.childrenCount > 0 &&
+        currentProp &&
+        currentProp.id === CHILD_ID && (
           <Button
             className={`childrenCount counter`}
             variant={"link"}
-            disabled={false}
-            // onClick={() => toggleChildren(node)}
-            title={"Children nodes not available, please add them on wikidata.org"}
+            title={"Children not available, please add them on wikidata.org"}
           >
             <span className="value">{node.data.childrenCount}</span>
-              <span className="icon">
-                <MdChildCare />
-              </span>
+            <span className="icon">
+              <MdChildCare />
+            </span>
           </Button>
-      )}
+        )}
       {showModal && (
         <DetailsModal
           hideModal={hideModal}
