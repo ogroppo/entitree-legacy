@@ -18,6 +18,8 @@ export default function Settings({ show, hideModal }) {
     setCurrentLang,
     showGenderColor,
     setShowGenderColor,
+    showEyeHairColors,
+    setShowEyeHairColors,
     showBirthName,
     setShowBirthName,
     showNavIcons,
@@ -56,6 +58,15 @@ export default function Settings({ show, hideModal }) {
             onChange={(e) => setShowGenderColor(e.target.checked)}
             type="checkbox"
             label={"Use background color based on gender"}
+          />
+        </Form.Group>
+        <Form.Group controlId={"eyeHairColors"}>
+          <Form.Check
+            custom
+            checked={showEyeHairColors}
+            onChange={(e) => setShowEyeHairColors(e.target.checked)}
+            type="checkbox"
+            label={"Add icons with eye and hair color (lacks data)"}
           />
         </Form.Group>
         <Form.Group controlId={"birthName"}>

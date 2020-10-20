@@ -25,6 +25,7 @@ export default class App extends Component {
     currentEntity: null,
     currentProp: null,
     showGenderColor: false,
+    showEyeHairColors: false,
     showBirthName: false,
     showNavIcons: true,
     showFace: false,
@@ -32,6 +33,9 @@ export default class App extends Component {
     imageType: "face",
     setShowGenderColor: (showGenderColor) => {
       this.setState({ showGenderColor });
+    },
+    setShowEyeHairColors: (showEyeHairColors) => {
+      this.setState({ showEyeHairColors });
     },
     setCurrentEntity: (currentEntity) => {
       this.setState({ currentEntity });

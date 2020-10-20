@@ -19,10 +19,11 @@ import { GiBigDiamondRing } from "react-icons/gi";
 import { BsImage } from "react-icons/bs";
 import { MdChildCare } from "react-icons/md";
 import "./Node.scss";
-import { CHILD_ID } from "../../constants/properties";
+import {CHILD_ID, EYE_COLOR_ID, HAIR_COLOR_ID} from "../../constants/properties";
 import DetailsModal from "../../modals/DetailsModal/DetailsModal";
-import { FaMale, FaFemale } from "react-icons/fa";
-import { GiPerson } from "react-icons/gi";
+import { FaMale, FaFemale, FaEye, FaHeadphones } from "react-icons/fa";
+import colorByProperty from "../../wikidata/colorByProperty";
+import { GiPerson, GiBeard } from "react-icons/gi";
 import { AppContext } from "../../App";
 import clsx from "clsx";
 
@@ -42,7 +43,7 @@ export default function Node({
 
   const [showModal, setShowModal] = useState(false);
 
-  const { showBirthName, showFace, imageType } = useContext(AppContext);
+  const { showBirthName, showEyeHairColors, showFace, imageType } = useContext(AppContext);
 
   const hideModal = () => {
     setShowModal(false);
@@ -51,6 +52,9 @@ export default function Node({
   const {
     data: { thumbnails, gender, isHuman, faceImage },
   } = node;
+
+  const eyeColor =  colorByProperty(node.data.simpleClaims[EYE_COLOR_ID]);
+  const hairColor = colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]);
 
   return (
     <div
@@ -109,6 +113,39 @@ export default function Node({
         className="content"
         style={{ height: IMAGE_SIZE, width: CARD_CONTENT_WIDTH }}
       >
+        {showEyeHairColors && (
+          <div
+            className="colorIcons"
+            style={{
+              position: "absolute",
+              bottom: 0,
+              right: '2px',
+            }}
+          >
+            {eyeColor && (
+              <span
+                className="eyeColor"
+                title={eyeColor.itemLabel + " eyes"}
+                style={{
+                  color: "#"+eyeColor.hex
+                }}
+              >
+          <FaEye/>
+        </span>
+            )}
+            {hairColor && (
+              <span
+                className="hairColor"
+                title={hairColor.itemLabel}
+                style={{
+                  color:  "#"+hairColor.hex
+                }}
+              >
+            <GiBeard />
+          </span>
+            )}
+          </div>
+        )}
         <div className="four-line-clamp">
           {node.isRoot ? (
             <h1
