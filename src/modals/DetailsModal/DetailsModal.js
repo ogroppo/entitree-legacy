@@ -62,7 +62,13 @@ export default function DetailsModal({
           </div>
         )}
         {!images.length && (
-          <a target="_blank" href={missingImagesLink(node.data.id,node.data.label)}>Add missing image</a>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={missingImagesLink(node.data.id, node.data.label)}
+          >
+            Add missing image
+          </a>
         )}
         {(node.data.birthDate ||
           birthPlace ||

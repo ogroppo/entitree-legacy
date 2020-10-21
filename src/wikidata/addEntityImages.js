@@ -21,13 +21,13 @@ export default async function getEntityImages(entity, currentLangCode) {
   }
 
   var numericId = entity.id.substr(1);
-  const imageDbServer = 'https://images.dataprick.com';
+  const imageDbServer = "https://images.dataprick.com";
   entity.faceImage = null;
-  if (entity.thumbnails.length === 0){
+  if (entity.thumbnails.length === 0) {
     try {
       await getData(
         `${imageDbServer}/api/v1/image/info/wikidata/${numericId}`
-      ).then((data => {
+      ).then((data) => {
         if (data.images.length > 0) {
           entity.faceImage = {
             url: `${imageDbServer}/api/v1/image/facecrop/wikidata/${numericId}`,
@@ -42,10 +42,8 @@ export default async function getEntityImages(entity, currentLangCode) {
             alt: `Image Database`,
           });
         }
-      }));
-    }catch{
-
-    }
+      });
+    } catch {}
   }
 
   const twitterClaim = entity.simpleClaims[TWITTER_ID];

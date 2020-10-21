@@ -11,6 +11,7 @@ import { DEFAULT_LANG } from "./constants/langs";
 import Logo from "./components/Logo/Logo";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import TutorialPage from "./pages/TutorialPage/TutorialPage";
+import clsx from "clsx";
 
 const browserHistory = createBrowserHistory();
 
@@ -30,8 +31,12 @@ export default class App extends Component {
     showFace: false,
     loadingEntity: false,
     imageType: "face",
+    currentTheme: "default",
     setShowGenderColor: (showGenderColor) => {
       this.setState({ showGenderColor });
+    },
+    setCurrentTheme: (currentTheme) => {
+      this.setState({ currentTheme });
     },
     setCurrentEntity: (currentEntity) => {
       this.setState({ currentEntity });
@@ -90,11 +95,11 @@ export default class App extends Component {
   };
 
   render() {
-    const { errors, infos } = this.state;
+    const { errors, infos, currentTheme } = this.state;
     return (
       <AppContext.Provider value={this.state}>
         <Router history={browserHistory}>
-          <div className="App">
+          <div className={clsx("App", currentTheme)}>
             <div className="appBody">
               <div className="messages">
                 {errors.map((error, index) => (

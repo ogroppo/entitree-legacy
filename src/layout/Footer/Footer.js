@@ -20,10 +20,7 @@ export default function Footer() {
           >
             <FaCreativeCommons />
           </Nav.Link>
-          <Nav.Link
-            target="_blank"
-            href="https://github.com/ogroppo/entitree"
-          >
+          <Nav.Link target="_blank" href="https://github.com/ogroppo/entitree">
             <FaGithub />
           </Nav.Link>
         </Nav>

@@ -1,5 +1,10 @@
 import getClaimIds from "./getClaimIds";
-import { SIBLINGS_ID, SPOUSE_ID, START_DATE_ID, NUMBER_OF_CHILDREN_ID } from "../constants/properties";
+import {
+  SIBLINGS_ID,
+  SPOUSE_ID,
+  START_DATE_ID,
+  NUMBER_OF_CHILDREN_ID,
+} from "../constants/properties";
 
 export default function addEntityConnectors(entity, propId, options = {}) {
   let _entity = { ...entity };
@@ -12,7 +17,9 @@ export default function addEntityConnectors(entity, propId, options = {}) {
     if (!propId) throw new Error("propId needed");
     _entity.downIds = getClaimIds(_entity, propId);
     //use number of children property, use count of children if not available
-    _entity.childrenCount = (_entity.simpleClaims[NUMBER_OF_CHILDREN_ID] ? _entity.simpleClaims[NUMBER_OF_CHILDREN_ID][0].value : _entity.downIds.length);
+    _entity.childrenCount = _entity.simpleClaims[NUMBER_OF_CHILDREN_ID]
+      ? _entity.simpleClaims[NUMBER_OF_CHILDREN_ID][0].value
+      : _entity.downIds.length;
   }
   if (options.addRightIds) addRightIds(_entity);
   if (options.addLeftIds) _entity.leftIds = getClaimIds(_entity, SIBLINGS_ID);

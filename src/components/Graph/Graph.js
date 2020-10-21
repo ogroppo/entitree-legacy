@@ -33,9 +33,13 @@ import last from "../../lib/last";
 import clsx from "clsx";
 
 export default function GraphWrapper() {
-  const { showGenderColor, showNavIcons, showBirthName, showFace } = useContext(
-    AppContext
-  );
+  const {
+    showGenderColor,
+    showNavIcons,
+    showBirthName,
+    showFace,
+    currentTheme,
+  } = useContext(AppContext);
   return (
     <div
       className={clsx("GraphWrapper", {
