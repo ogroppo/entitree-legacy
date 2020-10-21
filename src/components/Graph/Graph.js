@@ -10,7 +10,7 @@ import React, {
   memo,
 } from "react";
 import { TransformComponent } from "react-zoom-pan-pinch";
-import getItems from "../../wikidata/getItems";
+import { getItems } from "../../wikidata/getItems";
 import { hierarchy } from "d3-hierarchy";
 import {
   CARD_WIDTH,
@@ -33,13 +33,14 @@ import last from "../../lib/last";
 import clsx from "clsx";
 
 export default function GraphWrapper() {
-  const { showGenderColor, showNavIcons, showBirthName, showFace } = useContext(
+  const { showGenderColor, showEyeHairColors, showNavIcons, showBirthName, showFace } = useContext(
     AppContext
   );
   return (
     <div
       className={clsx("GraphWrapper", {
         showGenderColor,
+        showEyeHairColors,
         showNavIcons,
         showBirthName,
         showFace,

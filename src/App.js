@@ -21,10 +21,12 @@ export default class App extends Component {
     errors: [],
     infos: [],
     currentLang: DEFAULT_LANG,
+    secondLang: null,
     hasLanguageChanged: 0,
     currentEntity: null,
     currentProp: null,
     showGenderColor: false,
+    showEyeHairColors: false,
     showBirthName: false,
     showNavIcons: true,
     showFace: false,
@@ -32,6 +34,9 @@ export default class App extends Component {
     imageType: "face",
     setShowGenderColor: (showGenderColor) => {
       this.setState({ showGenderColor });
+    },
+    setShowEyeHairColors: (showEyeHairColors) => {
+      this.setState({ showEyeHairColors });
     },
     setCurrentEntity: (currentEntity) => {
       this.setState({ currentEntity });
@@ -47,6 +52,9 @@ export default class App extends Component {
         currentLang,
         hasLanguageChanged: this.state.hasLanguageChanged + 1,
       });
+    },
+    setSecondLang: (secondLang) => {
+      this.setState({ secondLang });
     },
     setImageType: (imageType) => {
       this.setState({
