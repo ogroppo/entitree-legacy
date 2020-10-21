@@ -21,6 +21,7 @@ export default class App extends Component {
     errors: [],
     infos: [],
     currentLang: DEFAULT_LANG,
+    secondLang: null,
     hasLanguageChanged: 0,
     currentEntity: null,
     currentProp: null,
@@ -51,6 +52,9 @@ export default class App extends Component {
         currentLang,
         hasLanguageChanged: this.state.hasLanguageChanged + 1,
       });
+    },
+    setSecondLang: (secondLang) => {
+      this.setState({ secondLang });
     },
     setImageType: (imageType) => {
       this.setState({
