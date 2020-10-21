@@ -147,28 +147,28 @@ export default function Settings({ show, hideModal }) {
             </Dropdown.Menu>
           </Dropdown>
         </Form.Group>
-        {/*<Form.Group controlId="language">*/}
-        {/*  <Dropdown className="langDropdown">*/}
-        {/*    <Dropdown.Toggle as={CustomToggle}>*/}
-        {/*      <span className="langLabel">*/}
-        {/*        Add second language label where possible in*/}
-        {/*      </span>{" "}*/}
-        {/*      {secondLang.name}*/}
-        {/*    </Dropdown.Toggle>*/}
-        {/*    <Dropdown.Menu alignRight as={CustomMenu}>*/}
-        {/*      {LANGS.map((lang, index) => (*/}
-        {/*        <Dropdown.Item*/}
-        {/*          key={lang.code}*/}
-        {/*          eventKey={index + 1}*/}
-        {/*          active={lang.code === secondLang.code}*/}
-        {/*          onClick={() => setSecondLang(lang)}*/}
-        {/*        >*/}
-        {/*          {lang.name}*/}
-        {/*        </Dropdown.Item>*/}
-        {/*      ))}*/}
-        {/*    </Dropdown.Menu>*/}
-        {/*  </Dropdown>*/}
-        {/*</Form.Group>*/}
+        {/* <Form.Group controlId="language">
+          <Dropdown className="langDropdown">
+            <Dropdown.Toggle as={CustomToggle}>
+              <span className="langLabel">
+                Add second language label where possible in
+              </span>{" "}
+              {secondLang.name}
+            </Dropdown.Toggle>
+            <Dropdown.Menu alignRight as={CustomMenu}>
+              {LANGS.map((lang, index) => (
+                <Dropdown.Item
+                  key={lang.code}
+                  eventKey={index + 1}
+                  active={lang.code === secondLang.code}
+                  onClick={() => setSecondLang(lang)}
+                >
+                  {lang.name}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        </Form.Group> */}
       </Modal.Body>
       <Modal.Footer>
         <Button variant="link" className="mr-auto ml-0" onClick={hideModal}>
