@@ -57,14 +57,15 @@
     ]
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^7.2.1",
     "@babel/core": "^7.10.4",
     "@babel/node": "^7.10.4",
     "@babel/preset-env": "^7.10.4",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
     "babel-cli": "^6.26.0",
     "babel-register": "^6.26.0",
+    "prettier": "^2.1.2",
     "puppeteer": "^5.3.1",
     "react-router-sitemap": "^1.2.0"
   }

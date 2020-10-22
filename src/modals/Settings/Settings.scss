@@ -22,6 +22,16 @@
       margin-bottom: 8px;
     }
   }
+  .themeDropdown {
+    .dropdown-toggle {
+      display: inline-block;
+      padding-left: 0;
+      padding-right: 0;
+      .themeLabel {
+        color: #212529;
+      }
+    }
+  }
   .imageDropdown {
     .dropdown-toggle {
       display: inline-block;

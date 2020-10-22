@@ -1,6 +1,6 @@
-import {BIRTH_DATE_ID, GENDER_ID} from "../constants/properties";
+import { BIRTH_DATE_ID, GENDER_ID } from "../constants/properties";
 import getDateNumber from "./getDateNumber";
-import {HUMAN_MALE_ID} from "../constants/entities";
+import { HUMAN_MALE_ID } from "../constants/entities";
 export function sortByBirthDate(entities) {
   entities.sort((a, b) => {
     try {
@@ -16,11 +16,13 @@ export function sortByBirthDate(entities) {
   });
 }
 
-
 export function sortByGender(entities) {
   entities.sort((a, b) => {
     try {
-      return a.claims[GENDER_ID][0].mainsnak.datavalue.value.id === HUMAN_MALE_ID ? -1 : 1;
+      return a.claims[GENDER_ID][0].mainsnak.datavalue.value.id ===
+        HUMAN_MALE_ID
+        ? -1
+        : 1;
     } catch (error) {
       return -1;
     }
