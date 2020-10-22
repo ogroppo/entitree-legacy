@@ -10,7 +10,7 @@ export default function Footer() {
           <Navbar.Brand target="_blank" href="https://www.wikidata.org">
             <img
               height="30"
-              src={"/powered-by-light.svg"}
+              src={"/powered-by-wikidata-light.png"}
               alt="Powered By Wikidata"
             />
           </Navbar.Brand>
