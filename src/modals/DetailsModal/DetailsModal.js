@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { AppContext } from "../../App";
 import { FiExternalLink } from "react-icons/fi";
 import { Button, Modal } from "react-bootstrap";
-import getItemsLabels from "../../wikidata/getItemsLabels";
+import getItemsLabel from "../../wikidata/getItemsLabel";
 import missingImagesLink from "../../lib/imageDatabase";
 import getWikipediaArticle from "../../wikipedia/getWikipediaArticle";
 export default function DetailsModal({
@@ -38,7 +38,7 @@ export default function DetailsModal({
 
   useEffect(() => {
     if (node.data.birthPlaceId || node.data.deathPlaceId) {
-      getItemsLabels(
+      getItemsLabel(
         [node.data.birthPlaceId, node.data.deathPlaceId],
         currentLang.code
       ).then(([birthPlaceLabel, deathPlaceLabel]) => {

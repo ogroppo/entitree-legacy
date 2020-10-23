@@ -2,9 +2,9 @@ import { DEFAULT_LANGS_CODES } from "../constants/langs";
 import addLabel from "../lib/addLabel";
 import getEntitiesFromWikidata from "./getEntitiesFromWikidata";
 
-export default async function getItemsLabels(ids, languageCode) {
+export default async function getItemsLabel(ids, languageCode) {
   if (!ids || !ids.length)
-    throw new Error("You need valid ids to getItemsLabels");
+    throw new Error("You need valid ids to getItemsLabel");
 
   const allentities = await getEntitiesFromWikidata({
     ids,
