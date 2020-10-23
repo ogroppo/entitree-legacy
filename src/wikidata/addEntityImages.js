@@ -1,7 +1,12 @@
-import {IMAGE_ID, LOGO_ID, TWITTER_ID, WIKITREE_ID} from "../constants/properties";
+import {
+  IMAGE_ID,
+  LOGO_ID,
+  TWITTER_ID,
+  WIKITREE_ID,
+} from "../constants/properties";
 import { IMAGE_SIZE } from "../constants/tree";
 import getData from "../axios/getData";
-import getWikitreeComImages from "../wikitree/wikitree";
+import getWikitreeImageUrl from "../wikitree/getWikitreeImageUrl";
 
 export default async function getEntityImages(entity, currentLangCode) {
   entity.thumbnails = [];
@@ -49,8 +54,8 @@ export default async function getEntityImages(entity, currentLangCode) {
 
   const wikitreeId = entity.simpleClaims[WIKITREE_ID];
   if (wikitreeId) {
-    const wikitreeImage = await getWikitreeComImages(wikitreeId[0].value);
-    if(wikitreeImage) {
+    const wikitreeImage = await getWikitreeImageUrl(wikitreeId[0].value);
+    if (wikitreeImage) {
       const img = {
         url: wikitreeImage,
         alt: `Wikitree.com image`,
