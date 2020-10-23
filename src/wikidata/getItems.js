@@ -3,7 +3,7 @@ import { DEFAULT_LANGS_CODES } from "../constants/langs";
 import addEntityConnectors from "../lib/addEntityConnectors";
 import getEntitiesFromWikidata from "./getEntitiesFromWikidata";
 
-export async function getItems(
+export default async function getItems(
   ids,
   languageCode,
   propId,
@@ -29,16 +29,4 @@ export async function getItems(
   );
 
   return entities;
-}
-
-export async function getLabels(
-  ids,
-  languageCode,
-) {
-  const allentities = await getEntitiesFromWikidata({
-    ids: ids,
-    languages: [languageCode],
-    props: ["labels"],
-  });
-  return allentities;
 }
