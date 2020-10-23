@@ -7,7 +7,7 @@ import {
   CARD_HEIGHT,
   CARD_VERTICAL_GAP,
 } from "../../constants/tree";
-import { Button } from "react-bootstrap";
+import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import {
   FiChevronLeft,
   FiChevronUp,
@@ -19,11 +19,13 @@ import { GiBigDiamondRing } from "react-icons/gi";
 import { BsImage } from "react-icons/bs";
 import { MdChildCare } from "react-icons/md";
 import "./Node.scss";
-import { CHILD_ID } from "../../constants/properties";
+import {CHILD_ID, EYE_COLOR_ID, HAIR_COLOR_ID} from "../../constants/properties";
 import DetailsModal from "../../modals/DetailsModal/DetailsModal";
-import { FaMale, FaFemale } from "react-icons/fa";
-import { GiPerson } from "react-icons/gi";
+import { FaMale, FaFemale, FaEye, FaHeadphones } from "react-icons/fa";
+import colorByProperty from "../../wikidata/colorByProperty";
+import { GiPerson, GiBeard } from "react-icons/gi";
 import { AppContext } from "../../App";
+import clsx from "clsx";
 
 export default function Node({
   node,
@@ -41,9 +43,7 @@ export default function Node({
 
   const [showModal, setShowModal] = useState(false);
 
-  const { showGenderColor, showNavIcons, showBirthName, showFace, imageType } = useContext(
-    AppContext
-  );
+  const { showBirthName, showEyeHairColors, showFace, imageType } = useContext(AppContext);
 
   const hideModal = () => {
     setShowModal(false);
@@ -52,6 +52,9 @@ export default function Node({
   const {
     data: { thumbnails, gender, isHuman, faceImage },
   } = node;
+
+  const eyeColor =  colorByProperty(node.data.simpleClaims[EYE_COLOR_ID]);
+  const hairColor = colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]);
 
   return (
     <div
@@ -62,9 +65,10 @@ export default function Node({
         height: CARD_HEIGHT,
         padding: CARD_PADDING,
       }}
-      className={`Node ${
-        focusedNode && focusedNode.treeId === node.treeId ? "focused" : ""
-      } ${gender ? gender : ""}`}
+      className={clsx("Node", {
+        focused: focusedNode && focusedNode.treeId === node.treeId,
+        [gender]: gender,
+      })}
       onClick={() => setFocusedNode(node)}
     >
       <div
@@ -87,19 +91,20 @@ export default function Node({
         )}
         {thumbnails[0] && (
           <span>
-          {showFace && faceImage ? (
-
-          <img
-            alt={faceImage.alt }
-            src={faceImage.url+ (imageType === 'head' ? '?factor=1.5' : '')}
-            title={faceImage.alt}
-          />
-          ) : (
-            <img
-              alt={thumbnails[0].alt}
-              src={thumbnails[0].url}
-              title={thumbnails[0].alt}
-            />
+            {showFace && faceImage ? (
+              <img
+                alt={faceImage.alt}
+                src={
+                  faceImage.url + (imageType === "head" ? "?factor=1.5" : "")
+                }
+                title={faceImage.alt}
+              />
+            ) : (
+              <img
+                alt={thumbnails[0].alt}
+                src={thumbnails[0].url}
+                title={thumbnails[0].alt}
+              />
             )}
           </span>
         )}
@@ -108,6 +113,39 @@ export default function Node({
         className="content"
         style={{ height: IMAGE_SIZE, width: CARD_CONTENT_WIDTH }}
       >
+        {showEyeHairColors && (
+          <div
+            className="colorIcons"
+            style={{
+              position: "absolute",
+              bottom: 0,
+              right: '2px',
+            }}
+          >
+            {eyeColor && (
+              <span
+                className="eyeColor"
+                title={eyeColor.itemLabel + " eyes"}
+                style={{
+                  color: "#"+eyeColor.hex
+                }}
+              >
+          <FaEye/>
+        </span>
+            )}
+            {hairColor && (
+              <span
+                className="hairColor"
+                title={hairColor.itemLabel}
+                style={{
+                  color:  "#"+hairColor.hex
+                }}
+              >
+            <GiBeard />
+          </span>
+            )}
+          </div>
+        )}
         <div className="four-line-clamp">
           {node.isRoot ? (
             <h1
@@ -233,7 +271,7 @@ export default function Node({
           disabled={node.loadingChildren}
           onClick={() => toggleChildren(node)}
         >
-          <span className="value">{node.data.downIds.length}</span>
+          <span className="value">{node.data.childrenCount}</span>
           <span className="chevron ml-1 mr-1">
             {node._childrenExpanded ? <FiChevronUp /> : <FiChevronDown />}
           </span>
@@ -244,6 +282,23 @@ export default function Node({
           )}
         </Button>
       )}
+      {node.data.downIds &&
+        !node.data.downIds.length &&
+        !!node.data.childrenCount &&
+        node.data.childrenCount > 0 &&
+        currentProp &&
+        currentProp.id === CHILD_ID && (
+          <Button
+            className={`childrenCount counter`}
+            variant={"link"}
+            title={"Children not available, please add them on wikidata.org"}
+          >
+            <span className="value">{node.data.childrenCount}</span>
+            <span className="icon">
+              <MdChildCare />
+            </span>
+          </Button>
+        )}
       {showModal && (
         <DetailsModal
           hideModal={hideModal}

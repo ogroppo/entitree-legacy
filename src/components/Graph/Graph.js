@@ -10,7 +10,7 @@ import React, {
   memo,
 } from "react";
 import { TransformComponent } from "react-zoom-pan-pinch";
-import getItems from "../../wikidata/getItems";
+import { getItems } from "../../wikidata/getItems";
 import { hierarchy } from "d3-hierarchy";
 import {
   CARD_WIDTH,
@@ -28,18 +28,29 @@ import filterSpouses from "../../lib/filterSpouses";
 import addEntityConnectors from "../../lib/addEntityConnectors";
 import getUpMap from "../../wikidata/getUpMap";
 import Navigation from "./Navigation/Navigation";
-import {sortByBirthDate , sortByGender} from "../../lib/sortEntities";
+import { sortByBirthDate, sortByGender } from "../../lib/sortEntities";
 import last from "../../lib/last";
+import clsx from "clsx";
 
 export default function GraphWrapper() {
-  const { showGenderColor, showNavIcons, showBirthName, showFace } = useContext(
-    AppContext
-  );
+  const {
+    showGenderColor,
+    showEyeHairColors,
+    showNavIcons,
+    showBirthName,
+    showFace,
+    currentTheme,
+  } = useContext(AppContext);
+
   return (
     <div
-      className={`GraphWrapper ${showGenderColor ? "showGenderColor" : ""}${
-        showNavIcons ? "showNavIcons" : ""
-      } ${showBirthName ? "showBirthName" : ""} ${showFace ? "showFace" : ""}`}
+      className={clsx("GraphWrapper", {
+        showGenderColor,
+        showEyeHairColors,
+        showNavIcons,
+        showBirthName,
+        showFace,
+      })}
     >
       <TransformWrapper
         zoomIn={{ step: 20 }}

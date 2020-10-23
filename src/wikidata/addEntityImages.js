@@ -1,6 +1,12 @@
-import { IMAGE_ID, LOGO_ID, TWITTER_ID } from "../constants/properties";
+import {
+  IMAGE_ID,
+  LOGO_ID,
+  TWITTER_ID,
+  WIKITREE_ID,
+} from "../constants/properties";
 import { IMAGE_SIZE } from "../constants/tree";
 import getData from "../axios/getData";
+import getWikitreeImageUrl from "../wikitree/getWikitreeImageUrl";
 
 export default async function getEntityImages(entity, currentLangCode) {
   entity.thumbnails = [];
@@ -21,13 +27,13 @@ export default async function getEntityImages(entity, currentLangCode) {
   }
 
   var numericId = entity.id.substr(1);
-  const imageDbServer = 'https://images.dataprick.com';
+  const imageDbServer = "https://images.dataprick.com";
   entity.faceImage = null;
-  if (entity.thumbnails.length === 0){
+  if (entity.thumbnails.length === 0) {
     try {
       await getData(
         `${imageDbServer}/api/v1/image/info/wikidata/${numericId}`
-      ).then((data => {
+      ).then((data) => {
         if (data.images.length > 0) {
           entity.faceImage = {
             url: `${imageDbServer}/api/v1/image/facecrop/wikidata/${numericId}`,
@@ -42,9 +48,20 @@ export default async function getEntityImages(entity, currentLangCode) {
             alt: `Image Database`,
           });
         }
-      }));
-    }catch{
+      });
+    } catch {}
+  }
 
+  const wikitreeId = entity.simpleClaims[WIKITREE_ID];
+  if (wikitreeId) {
+    const wikitreeImage = await getWikitreeImageUrl(wikitreeId[0].value);
+    if (wikitreeImage) {
+      const img = {
+        url: wikitreeImage,
+        alt: `Wikitree.com image`,
+      };
+      entity.thumbnails.push(img);
+      entity.images.push(img);
     }
   }
 

@@ -11,6 +11,7 @@ import { DEFAULT_LANG } from "./constants/langs";
 import Logo from "./components/Logo/Logo";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import TutorialPage from "./pages/TutorialPage/TutorialPage";
+import clsx from "clsx";
 
 const browserHistory = createBrowserHistory();
 
@@ -21,139 +22,92 @@ export default class App extends Component {
     errors: [],
     infos: [],
     currentLang: DEFAULT_LANG,
+    secondLang: null,
     hasLanguageChanged: 0,
     currentEntity: null,
     currentProp: null,
     showGenderColor: false,
+    showEyeHairColors: false,
     showBirthName: false,
     showNavIcons: true,
     showFace: false,
     loadingEntity: false,
     imageType: "face",
+    currentTheme: "default",
+    setShowGenderColor: (showGenderColor) => {
+      this.setState({ showGenderColor });
+    },
+    setCurrentTheme: (currentTheme) => {
+      this.setState({ currentTheme });
+    },
+    setShowEyeHairColors: (showEyeHairColors) => {
+      this.setState({ showEyeHairColors });
+    },
+    setCurrentEntity: (currentEntity) => {
+      this.setState({ currentEntity });
+    },
+    setCurrentProp: (currentProp) => {
+      this.setState({ currentProp });
+    },
+    setLoadingEntity: (loadingEntity) => {
+      this.setState({ loadingEntity });
+    },
+    setCurrentLang: (currentLang) => {
+      this.setState({
+        currentLang,
+        hasLanguageChanged: this.state.hasLanguageChanged + 1,
+      });
+    },
+    setSecondLang: (secondLang) => {
+      this.setState({ secondLang });
+    },
+    setImageType: (imageType) => {
+      this.setState({
+        imageType,
+      });
+    },
+    showError: (error) => {
+      console.error(error);
+      this.setState(({ errors }) => ({
+        errors: errors.concat(error),
+      }));
+      setTimeout(() => {
+        this.setState(({ errors }) => ({
+          errors: errors.slice(1),
+        }));
+      }, 2500);
+    },
+    showInfo: ({ id, message }) => {
+      this.setState(({ infos }) => ({
+        infos: infos.concat({ id, message }),
+      }));
+      setTimeout(() => {
+        this.setState(({ infos }) => ({
+          infos: infos.slice(1),
+        }));
+      }, 2500);
+    },
+    setShowBirthName: (showBirthName) => {
+      this.setState({ showBirthName });
+    },
+    setShowNavIcons: (showNavIcons) => {
+      this.setState({ showNavIcons });
+    },
+    setShowFace: (showFace) => {
+      this.setState({ showFace });
+    },
   };
-
-  componentDidMount() {}
 
   componentDidCatch = (error) => {
-    this.showError(error);
+    this.state.showError(error);
   };
 
-  setCurrentEntity = (currentEntity) => {
-    this.setState({ currentEntity });
-  };
-
-  setCurrentProp = (currentProp) => {
-    this.setState({ currentProp });
-  };
-
-  setLoadingEntity = (loadingEntity) => {
-    this.setState({ loadingEntity });
-  };
-
-  setCurrentLang = (currentLang) => {
-    this.setState({
-      currentLang,
-      hasLanguageChanged: this.state.hasLanguageChanged + 1,
-    });
-  };
-
-  setImageType = (imageType) => {
-    this.setState({
-      imageType,
-    });
-  };
-
-  showError = (error) => {
-    console.error(error);
-    this.setState(({ errors }) => ({
-      errors: errors.concat(error),
-    }));
-    setTimeout(() => {
-      this.setState(({ errors }) => ({
-        errors: errors.slice(1),
-      }));
-    }, 2500);
-  };
-
-  showInfo = ({ id, message }) => {
-    this.setState(({ infos }) => ({
-      infos: infos.concat({ id, message }),
-    }));
-    setTimeout(() => {
-      this.setState(({ infos }) => ({
-        infos: infos.slice(1),
-      }));
-    }, 2500);
-  };
-
-  setShowGenderColor = (showGenderColor) => {
-    this.setState({ showGenderColor });
-  };
-  setShowBirthName = (showBirthName) => {
-    this.setState({ showBirthName });
-  };
-  setShowNavIcons = (showNavIcons) => {
-    this.setState({ showNavIcons });
-  };
-  setShowFace = (showFace) => {
-    this.setState({ showFace });
-  };
   render() {
-    const {
-      showError,
-      showInfo,
-      setCurrentLang,
-      setCurrentProp,
-      setCurrentEntity,
-      setShowGenderColor,
-      setShowBirthName,
-      setShowNavIcons,
-      setShowFace,
-      setLoadingEntity,
-      setImageType,
-    } = this;
-    const {
-      currentLang,
-      errors,
-      infos,
-      currentEntity,
-      currentProp,
-      hasLanguageChanged,
-      showGenderColor,
-      showBirthName,
-      showNavIcons,
-      showFace,
-      imageType,
-      loadingEntity,
-    } = this.state;
+    const { errors, infos, currentTheme } = this.state;
     return (
-      <AppContext.Provider
-        value={{
-          showError,
-          showInfo,
-          setCurrentLang,
-          setCurrentProp,
-          setCurrentEntity,
-          setShowGenderColor,
-          setShowBirthName,
-          setShowFace,
-          setShowNavIcons,
-          setImageType,
-          setLoadingEntity,
-          currentLang,
-          currentProp,
-          currentEntity,
-          hasLanguageChanged,
-          showGenderColor,
-          showBirthName,
-          showNavIcons,
-          showFace,
-          imageType,
-          loadingEntity,
-        }}
-      >
+      <AppContext.Provider value={this.state}>
         <Router history={browserHistory}>
-          <div className="App">
+          <div className={clsx("App", currentTheme)}>
             <div className="appBody">
               <div className="messages">
                 {errors.map((error, index) => (

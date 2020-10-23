@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { AppContext } from "../../App";
 import { FiExternalLink } from "react-icons/fi";
 import { Button, Modal } from "react-bootstrap";
-import getItem from "../../wikidata/getItem";
+import { getLabels } from "../../wikidata/getItems";
 import getData from "../../axios/getData";
 import missingImagesLink from "../../lib/imageDatabase";
 export default function DetailsModal({
@@ -30,14 +30,14 @@ export default function DetailsModal({
         }
       });
 
-    if (node.data.birthPlaceId) {
-      getItem(node.data.birthPlaceId, currentLang.code).then(({ label }) => {
-        setBirthPlace(label);
-      });
-    }
-    if (node.data.deathPlaceId) {
-      getItem(node.data.deathPlaceId, currentLang.code).then(({ label }) => {
-        setDeathPlace(label);
+    if (node.data.birthPlaceId || node.data.deathPlaceId) {
+      getLabels([node.data.birthPlaceId, node.data.deathPlaceId], currentLang.code).then(entities => {
+        if (node.data.birthPlaceId) {
+          setBirthPlace(entities[node.data.birthPlaceId].labels[currentLang.code].value);
+        }
+        if (node.data.deathPlaceId) {
+          setDeathPlace(entities[node.data.deathPlaceId].labels[currentLang.code].value);
+        }
       });
     }
   }, []);
@@ -62,7 +62,13 @@ export default function DetailsModal({
           </div>
         )}
         {!images.length && (
-          <a target="_blank" href={missingImagesLink(node.data.id,node.data.label)}>Add missing image</a>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href={missingImagesLink(node.data.id, node.data.label)}
+          >
+            Add missing image
+          </a>
         )}
         {(node.data.birthDate ||
           birthPlace ||

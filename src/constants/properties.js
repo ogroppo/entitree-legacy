@@ -15,9 +15,12 @@ export const DEATH_DATE_ID = "P570";
 export const DEATH_PLACE_ID = "P20";
 export const BIRTH_NAME = "P1477";
 export const GENDER_ID = "P21";
+export const EYE_COLOR_ID = "P1340";
+export const HAIR_COLOR_ID = "P1884";
 export const FATHER_ID = "P22";
 export const MOTHER_ID = "P25";
 export const CHILD_ID = "P40";
+export const NUMBER_OF_CHILDREN_ID = "P1971";
 export const STUDENT_OF_ID = "P1066";
 export const STUDENT_ID = "P802";
 export const LOCATED_IN_ID = "P131";
@@ -29,6 +32,7 @@ export const END_DATE_ID = "P582";
 export const INCEPTION_ID = "P571";
 export const DISSOLVED_ABOLISHED_DEMOLISHED_ID = "P576";
 export const WEBSITE_ID = "P856";
+export const WIKITREE_ID = "P2949";
 
 export const FAMILY_IDS_MAP = {
   [CHILD_ID]: true,

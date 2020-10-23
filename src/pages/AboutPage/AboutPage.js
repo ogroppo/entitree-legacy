@@ -76,8 +76,7 @@ export default function AboutPage() {
             rel="noopener noreferrer"
             href="https://github.com/ogroppo/entitree/issues"
           >
-            <FaGithub />{" "}
-            report a bug!
+            <FaGithub /> report a bug!
           </a>
         </p>
         <p>

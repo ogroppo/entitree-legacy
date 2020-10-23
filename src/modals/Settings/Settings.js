@@ -8,6 +8,7 @@ import {
   Col,
 } from "react-bootstrap";
 import { LANGS } from "../../constants/langs";
+import { THEMES } from "../../constants/themes";
 import { AppContext } from "../../App";
 import "./Settings.scss";
 import ReactGA from "react-ga";
@@ -15,9 +16,13 @@ import ReactGA from "react-ga";
 export default function Settings({ show, hideModal }) {
   const {
     currentLang,
+    secondLang,
+    setSecondLang,
     setCurrentLang,
     showGenderColor,
     setShowGenderColor,
+    showEyeHairColors,
+    setShowEyeHairColors,
     showBirthName,
     setShowBirthName,
     showNavIcons,
@@ -26,6 +31,8 @@ export default function Settings({ show, hideModal }) {
     setShowFace,
     imageType,
     setImageType,
+    currentTheme,
+    setCurrentTheme,
   } = useContext(AppContext);
 
   const setLang = (lang) => {
@@ -56,6 +63,15 @@ export default function Settings({ show, hideModal }) {
             onChange={(e) => setShowGenderColor(e.target.checked)}
             type="checkbox"
             label={"Use background color based on gender"}
+          />
+        </Form.Group>
+        <Form.Group controlId={"eyeHairColors"}>
+          <Form.Check
+            custom
+            checked={showEyeHairColors}
+            onChange={(e) => setShowEyeHairColors(e.target.checked)}
+            type="checkbox"
+            label={"Add icons with eye and hair color (lacks data)"}
           />
         </Form.Group>
         <Form.Group controlId={"birthName"}>
@@ -112,7 +128,7 @@ export default function Settings({ show, hideModal }) {
             </Col>
           )}
         </Form.Row>
-        <Form.Group controlId="language">
+        <div>
           <Dropdown className="langDropdown">
             <Dropdown.Toggle as={CustomToggle}>
               <span className="langLabel">
@@ -133,7 +149,48 @@ export default function Settings({ show, hideModal }) {
               ))}
             </Dropdown.Menu>
           </Dropdown>
-        </Form.Group>
+        </div>
+        <div>
+          <Dropdown className="themeDropdown">
+            <Dropdown.Toggle as={CustomToggle}>
+              <span className="themeLabel">Choose theme</span> {currentTheme}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              {THEMES.map((theme, index) => (
+                <Dropdown.Item
+                  key={theme}
+                  eventKey={index + 1}
+                  active={theme === currentTheme}
+                  onClick={() => setCurrentTheme(theme)}
+                >
+                  {theme}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+        {/* <Form.Group controlId="language">
+          <Dropdown className="langDropdown">
+            <Dropdown.Toggle as={CustomToggle}>
+              <span className="langLabel">
+                Add second language label where possible in
+              </span>{" "}
+              {secondLang.name}
+            </Dropdown.Toggle>
+            <Dropdown.Menu alignRight as={CustomMenu}>
+              {LANGS.map((lang, index) => (
+                <Dropdown.Item
+                  key={lang.code}
+                  eventKey={index + 1}
+                  active={lang.code === secondLang.code}
+                  onClick={() => setSecondLang(lang)}
+                >
+                  {lang.name}
+                  </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        </Form.Group> */}
       </Modal.Body>
       <Modal.Footer>
         <Button variant="link" className="mr-auto ml-0" onClick={hideModal}>
