@@ -77,6 +77,7 @@ const Graph = memo(
       currentEntity,
       currentProp,
       setCurrentEntity,
+      setCurrentEntityId,
       setLoadingEntity,
     } = useContext(AppContext);
 
@@ -174,6 +175,7 @@ const Graph = memo(
           }
         })();
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentEntity, currentProp, graphWidth]);
 
     const toggleChildren = async (node, options = {}) => {
@@ -460,7 +462,7 @@ const Graph = memo(
 
     const reloadTreeFromFocused = () => {
       if (focusedNode.treeId !== root.treeId)
-        setCurrentEntity(focusedNode.data);
+        setCurrentEntityId(focusedNode.data.id);
       else centerPoint(focusedNode.x, focusedNode.y);
     };
 
