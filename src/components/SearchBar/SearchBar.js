@@ -18,7 +18,7 @@ import {
   CHILD_ID,
 } from "../../constants/properties";
 import { AppContext } from "../../App";
-import getItem from "../../wikidata/getItem";
+import getItems from "../../wikidata/getItems";
 import getItemProps from "../../wikidata/getItemProps";
 import search from "../../wikidata/search";
 import enSlugs from "../../sitemap/en-slugs.json";
@@ -106,9 +106,10 @@ export default function SearchBar() {
       setLoadingProps(true);
 
       let [_currentEntity, itemProps] = await Promise.all([
-        getItem(_currentEntityId, currentLang.code),
+        getItems([_currentEntityId], [currentLang.code, secondLang.code]),
         getItemProps(_currentEntityId, currentLang.code),
       ]);
+      _currentEntity = _currentEntity[0];
 
       itemProps.forEach((prop) => {
         prop.slug = prop.label.replace(/\s/g, "_");
