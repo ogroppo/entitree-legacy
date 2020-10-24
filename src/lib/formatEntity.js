@@ -30,12 +30,13 @@ import addAbolishedDate from "./addAbolishedDate";
 import addInceptionAbolishedSpan from "./addInceptionAbolishedSpan";
 import addDeathPlaceId from "./addDeathPlaceId";
 import addBirthName from "./addBirthName";
+import addSecondLangLabel from "./addSecondLangLabel";
 
-export default async function formatEntity(entity, languageCode) {
+export default async function formatEntity(entity, languageCodes) {
   if (entity.missing !== undefined) return undefined;
 
   if (!entity) throw new Error("Entity is required");
-  if (!languageCode) throw new Error("Language code missing");
+  if (!languageCodes) throw new Error("Language code missing");
 
   const simpleClaims = wbk.simplify.claims(entity.claims, {
     keepQualifiers: true,
@@ -46,7 +47,11 @@ export default async function formatEntity(entity, languageCode) {
     simpleClaims,
   };
 
+  const languageCode = languageCodes[0];
+  const secondLanguageCode = languageCodes[1];
+
   addLabel(formattedEntity, languageCode);
+  addSecondLangLabel(formattedEntity, secondLanguageCode);
   addDescription(formattedEntity, languageCode);
 
   addBirthDate(formattedEntity, languageCode);

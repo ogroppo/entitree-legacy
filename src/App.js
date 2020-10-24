@@ -22,7 +22,10 @@ export default class App extends Component {
     errors: [],
     infos: [],
     currentLang: DEFAULT_LANG,
-    secondLang: null,
+    secondLang: {
+      name: "none",
+      code: 0,
+    },
     hasLanguageChanged: 0,
     currentEntity: null,
     currentProp: null,
@@ -59,6 +62,11 @@ export default class App extends Component {
       });
     },
     setSecondLang: (secondLang) => {
+      try {
+        localStorage.setItem("userSecondLangCode", secondLang.code);
+      } catch (error) {
+        //localstorage not working
+      }
       this.setState({ secondLang });
     },
     setImageType: (imageType) => {

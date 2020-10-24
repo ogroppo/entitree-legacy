@@ -76,10 +76,17 @@ const Graph = memo(
       currentLang,
       currentEntity,
       currentProp,
+      secondLang,
       setCurrentEntity,
       setLoadingEntity,
     } = useContext(AppContext);
 
+    let currentLangs;
+    if (secondLang.code !== 0) {
+      currentLangs = [currentLang.code, secondLang.code];
+    } else {
+      currentLangs = [currentLang.code];
+    }
     const [graph, dispatchGraph] = useReducer(graphReducer, initialState);
     const [focusedNode, setFocusedNode] = useState();
 
@@ -192,7 +199,7 @@ const Graph = memo(
         try {
           const entities = await getItems(
             node.data.downIds,
-            currentLang.code,
+            currentLangs,
             currentProp.id,
             {
               addDownIds: true,
@@ -238,7 +245,7 @@ const Graph = memo(
         try {
           const entities = await getItems(
             node.data.upIds,
-            currentLang.code,
+            currentLangs,
             currentProp.id,
             {
               upMap: upMap.current,
@@ -286,7 +293,7 @@ const Graph = memo(
         dispatchGraph({ type: "expandSpouses", node });
       } else {
         try {
-          const entities = await getItems(node.data.rightIds, currentLang.code);
+          const entities = await getItems(node.data.rightIds, currentLangs);
           entities.forEach((entity, index) => {
             const spouseNode = getSpouseNode(entity);
             spouseNode.depth = node.depth;
@@ -322,7 +329,7 @@ const Graph = memo(
         dispatchGraph({ type: "expandSiblings", node });
       } else {
         try {
-          const entities = await getItems(node.data.leftIds, currentLang.code);
+          const entities = await getItems(node.data.leftIds, currentLangs);
           sortByBirthDate(entities);
           entities.forEach((entity, index) => {
             const siblingNode = getSiblingNode(entity, index);
@@ -356,7 +363,7 @@ const Graph = memo(
         dispatchGraph({ type: "expandRootSpouses", root });
       } else {
         try {
-          const entities = await getItems(root.data.rightIds, currentLang.code);
+          const entities = await getItems(root.data.rightIds, currentLangs);
           const baseX = CARD_WIDTH * SIBLING_SPOUSE_SEPARATION;
           entities.forEach((entity, index) => {
             const spouseNode = getSpouseNode(entity);
@@ -390,7 +397,7 @@ const Graph = memo(
         dispatchGraph({ type: "expandRootSiblings", root });
       } else {
         try {
-          const entities = await getItems(root.data.leftIds, currentLang.code);
+          const entities = await getItems(root.data.leftIds, currentLangs);
           const baseX = -(CARD_WIDTH * SIBLING_SPOUSE_SEPARATION);
           sortByBirthDate(entities);
           entities.forEach((entity, index, { length }) => {

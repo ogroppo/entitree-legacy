@@ -27,6 +27,7 @@ import getWikipediaArticle from "../../wikipedia/getWikipediaArticle";
 export default function SearchBar() {
   const {
     currentLang,
+    secondLang,
     showError,
     hasLanguageChanged,
     setCurrentEntity,

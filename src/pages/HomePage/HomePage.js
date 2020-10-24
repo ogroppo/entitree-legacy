@@ -18,6 +18,7 @@ export default function HomePage() {
     currentEntity,
     loadingEntity,
     setCurrentLang,
+    setSecondLang,
     currentProp,
   } = useContext(AppContext);
 
@@ -27,6 +28,7 @@ export default function HomePage() {
   useEffect(() => {
     let { langCode } = match.params;
     let currentLangCode;
+    let currentSecondLangCode;
     if (langCode) {
       currentLangCode = langCode;
     } else {
@@ -37,9 +39,21 @@ export default function HomePage() {
       }
     }
 
+    try {
+      currentSecondLangCode = localStorage.getItem("userSecondLangCode");
+    } catch (error) {
+      //localstorage not working
+    }
+
     if (currentLangCode) {
       const currentLang = LANGS.find(({ code }) => code === currentLangCode);
       if (currentLang) setCurrentLang(currentLang);
+    }
+    if (currentSecondLangCode) {
+      const currentSecondLang = LANGS.find(
+        ({ code }) => code === currentSecondLangCode
+      );
+      if (currentSecondLang) setSecondLang(currentSecondLang);
     }
     setLoadedLang(true);
   }, []);

@@ -169,7 +169,7 @@ export default function Settings({ show, hideModal }) {
             </Dropdown.Menu>
           </Dropdown>
         </div>
-        {/* <Form.Group controlId="language">
+        <Form.Group controlId="language">
           <Dropdown className="langDropdown">
             <Dropdown.Toggle as={CustomToggle}>
               <span className="langLabel">
@@ -178,6 +178,13 @@ export default function Settings({ show, hideModal }) {
               {secondLang.name}
             </Dropdown.Toggle>
             <Dropdown.Menu alignRight as={CustomMenu}>
+              <Dropdown.Item
+                key={0}
+                active={0 === secondLang.code}
+                onClick={() => setSecondLang({ code: 0, name: "none" })}
+              >
+                none
+              </Dropdown.Item>
               {LANGS.map((lang, index) => (
                 <Dropdown.Item
                   key={lang.code}
@@ -186,11 +193,11 @@ export default function Settings({ show, hideModal }) {
                   onClick={() => setSecondLang(lang)}
                 >
                   {lang.name}
-                  </Dropdown.Item>
+                </Dropdown.Item>
               ))}
             </Dropdown.Menu>
           </Dropdown>
-        </Form.Group> */}
+        </Form.Group>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="link" className="mr-auto ml-0" onClick={hideModal}>
