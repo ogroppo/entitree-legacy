@@ -1,25 +1,12 @@
-import React, { useEffect } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Button,
-  CardGroup,
-  CardColumns,
-} from "react-bootstrap";
-import { useLocation } from "react-router-dom";
-import ReactGA from "react-ga";
+import React from "react";
+import { Container, Card, CardColumns } from "react-bootstrap";
 import Header from "../../layout/Header/Header";
 import { Helmet } from "react-helmet";
 import { DEFAULT_DESC, SITE_NAME } from "../../constants/meta";
+import usePageView from "../../lib/usePageView";
 
-export default function AboutPage() {
-  const location = useLocation();
-  useEffect(() => {
-    ReactGA.set({ page: location.pathname });
-    ReactGA.pageview(location.pathname);
-  }, []);
+export default function TutorialPage() {
+  usePageView();
 
   return (
     <div className="AboutPage">

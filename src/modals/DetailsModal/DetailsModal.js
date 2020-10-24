@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { AppContext } from "../../App";
 import { FiExternalLink } from "react-icons/fi";
 import { Button, Modal } from "react-bootstrap";
-import { getLabels } from "../../wikidata/getItems";
-import getData from "../../axios/getData";
+import getItemsLabel from "../../wikidata/getItemsLabel";
 import missingImagesLink from "../../lib/imageDatabase";
+import getWikipediaArticle from "../../wikipedia/getWikipediaArticle";
 export default function DetailsModal({
   node,
   hideModal,
@@ -18,29 +18,35 @@ export default function DetailsModal({
 
   useEffect(() => {
     if (node.data.wikipediaSlug)
-      getData(
-        `https://${currentLang.code}.wikipedia.org/api/rest_v1/page/summary/${node.data.wikipediaSlug}`
-      ).then(({ extract, thumbnail }) => {
-        if (extract) setWikipediaExtract(extract);
-        if (thumbnail && !images.length) {
-          setImages({
-            url: thumbnail.source,
-            alt: `${node.data.label}'s Wikipedia image`,
-          });
+      getWikipediaArticle(node.data.wikipediaSlug, currentLang.code).then(
+        ({ extract, thumbnail }) => {
+          if (extract) setWikipediaExtract(extract);
+          if (thumbnail && !images.length) {
+            setImages({
+              url: thumbnail.source,
+              alt: `${node.data.label}'s Wikipedia image`,
+            });
+          }
         }
-      });
+      );
+  }, [
+    currentLang.code,
+    images.length,
+    node.data.wikipediaSlug,
+    node.data.label,
+  ]);
 
+  useEffect(() => {
     if (node.data.birthPlaceId || node.data.deathPlaceId) {
-      getLabels([node.data.birthPlaceId, node.data.deathPlaceId], currentLang.code).then(entities => {
-        if (node.data.birthPlaceId) {
-          setBirthPlace(entities[node.data.birthPlaceId].labels[currentLang.code].value);
-        }
-        if (node.data.deathPlaceId) {
-          setDeathPlace(entities[node.data.deathPlaceId].labels[currentLang.code].value);
-        }
+      getItemsLabel(
+        [node.data.birthPlaceId, node.data.deathPlaceId],
+        currentLang.code
+      ).then(([birthPlaceLabel, deathPlaceLabel]) => {
+        setBirthPlace(birthPlaceLabel);
+        setDeathPlace(deathPlaceLabel);
       });
     }
-  }, []);
+  }, [currentLang.code, node.data.birthPlaceId, node.data.deathPlaceId]);
 
   return (
     <Modal show={true} onHide={hideModal} className="DetailsModal">
@@ -94,7 +100,11 @@ export default function DetailsModal({
 
         {node.data.website && (
           <p>
-            <a href={node.data.website} target="_blank">
+            <a
+              href={node.data.website}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Open official website <FiExternalLink />
             </a>
           </p>
@@ -105,6 +115,7 @@ export default function DetailsModal({
               <a
                 key={node.treeId + index}
                 target="_blank"
+                rel="noopener noreferrer"
                 title={link.title}
                 href={link.url}
               >

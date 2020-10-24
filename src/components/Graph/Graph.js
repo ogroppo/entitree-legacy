@@ -10,7 +10,7 @@ import React, {
   memo,
 } from "react";
 import { TransformComponent } from "react-zoom-pan-pinch";
-import { getItems } from "../../wikidata/getItems";
+import getItems from "../../wikidata/getItems";
 import { hierarchy } from "d3-hierarchy";
 import {
   CARD_WIDTH,
@@ -540,6 +540,7 @@ const Graph = memo(
                         node={node}
                         setFocusedNode={setFocusedNode}
                         focusedNode={focusedNode}
+                        reloadTreeFromFocused={reloadTreeFromFocused}
                       />
                     ))}
                   {root && (
@@ -569,6 +570,7 @@ const Graph = memo(
                         key={node.treeId}
                         node={node}
                         setFocusedNode={setFocusedNode}
+                        reloadTreeFromFocused={reloadTreeFromFocused}
                         focusedNode={focusedNode}
                       />
                     ))}

@@ -1,19 +1,14 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Container } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
-import ReactGA from "react-ga";
-import "./AboutPage.scss";
 import Header from "../../layout/Header/Header";
 import { Helmet } from "react-helmet";
 import { DEFAULT_DESC, SITE_NAME } from "../../constants/meta";
-import { FaCreativeCommons, FaGithub } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
+import usePageView from "../../lib/usePageView";
+import "./AboutPage.scss";
 
 export default function AboutPage() {
-  const location = useLocation();
-  useEffect(() => {
-    ReactGA.set({ page: location.pathname });
-    ReactGA.pageview(location.pathname);
-  }, []);
+  usePageView();
 
   return (
     <div className="AboutPage">
@@ -36,33 +31,55 @@ export default function AboutPage() {
         <ul>
           <li>
             researchers of any level that want to explore wikidata connections
-            in a visual way 🧪
+            in a visual way{" "}
+            <span role="img" aria-label="research icon">
+              🧪
+            </span>
           </li>
           <li>
             scientists that are keen to use an interactive taxonomy tree 🔬
           </li>
-          <li>historians investigating royal families 👑</li>
+          <li>
+            historians investigating royal families{" "}
+            <span role="img" aria-label="crown icon">
+              👑
+            </span>
+          </li>
           <li>
             students of any kind of discipline, that want to enrich they
             knowledge 🎓
           </li>
           <li>
             curious random and non English-speaking people from around the
-            globe, thanks to the multilingual feature 🌎🌍🌏
+            globe, thanks to the multilingual feature{" "}
+            <span role="img" aria-label="world icon">
+              🌎🌍🌏
+            </span>
           </li>
           <li>
             Wikidata editors and contributors, especially if they are interested
-            in spotting missing or duplicate links 🤓
+            in spotting missing or duplicate links{" "}
+            <span role="img" aria-label="nerd icon">
+              🤓
+            </span>
           </li>
         </ul>
         <p>
           Please feel free to get in touch with any member of the team, for
           technical queries or help around the user interface{" "}
-          <a href="https://github.com/ogroppo" target="_blank">
+          <a
+            href="https://github.com/ogroppo"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Orlando
           </a>{" "}
           is the right guy, for anything related to (wiki)data{" "}
-          <a href="https://github.com/mshd" target="_blank">
+          <a
+            href="https://github.com/mshd"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Martin
           </a>{" "}
           will be more than happy to help you.

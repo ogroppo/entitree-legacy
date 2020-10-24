@@ -1,6 +1,7 @@
 import { DEFAULT_LANGS_CODES } from "../constants/langs";
 
 export default function addLabel(entity, languageCode) {
+  if (!entity) throw new Error("You need valid entity to addLabel");
   const { labels } = entity;
   if (!labels) return;
 

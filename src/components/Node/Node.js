@@ -7,7 +7,7 @@ import {
   CARD_HEIGHT,
   CARD_VERTICAL_GAP,
 } from "../../constants/tree";
-import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import {
   FiChevronLeft,
   FiChevronUp,
@@ -19,9 +19,13 @@ import { GiBigDiamondRing } from "react-icons/gi";
 import { BsImage } from "react-icons/bs";
 import { MdChildCare } from "react-icons/md";
 import "./Node.scss";
-import {CHILD_ID, EYE_COLOR_ID, HAIR_COLOR_ID} from "../../constants/properties";
+import {
+  CHILD_ID,
+  EYE_COLOR_ID,
+  HAIR_COLOR_ID,
+} from "../../constants/properties";
 import DetailsModal from "../../modals/DetailsModal/DetailsModal";
-import { FaMale, FaFemale, FaEye, FaHeadphones } from "react-icons/fa";
+import { FaMale, FaFemale, FaEye } from "react-icons/fa";
 import colorByProperty from "../../wikidata/colorByProperty";
 import { GiPerson, GiBeard } from "react-icons/gi";
 import { AppContext } from "../../App";
@@ -43,7 +47,9 @@ export default function Node({
 
   const [showModal, setShowModal] = useState(false);
 
-  const { showBirthName, showEyeHairColors, showFace, imageType } = useContext(AppContext);
+  const { showBirthName, showEyeHairColors, showFace, imageType } = useContext(
+    AppContext
+  );
 
   const hideModal = () => {
     setShowModal(false);
@@ -53,7 +59,7 @@ export default function Node({
     data: { thumbnails, gender, isHuman, faceImage },
   } = node;
 
-  const eyeColor =  colorByProperty(node.data.simpleClaims[EYE_COLOR_ID]);
+  const eyeColor = colorByProperty(node.data.simpleClaims[EYE_COLOR_ID]);
   const hairColor = colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]);
 
   return (
@@ -119,7 +125,7 @@ export default function Node({
             style={{
               position: "absolute",
               bottom: 0,
-              right: '2px',
+              right: "2px",
             }}
           >
             {eyeColor && (
@@ -127,22 +133,22 @@ export default function Node({
                 className="eyeColor"
                 title={eyeColor.itemLabel + " eyes"}
                 style={{
-                  color: "#"+eyeColor.hex
+                  color: "#" + eyeColor.hex,
                 }}
               >
-          <FaEye/>
-        </span>
+                <FaEye />
+              </span>
             )}
             {hairColor && (
               <span
                 className="hairColor"
                 title={hairColor.itemLabel}
                 style={{
-                  color:  "#"+hairColor.hex
+                  color: "#" + hairColor.hex,
                 }}
               >
-            <GiBeard />
-          </span>
+                <GiBeard />
+              </span>
             )}
           </div>
         )}
