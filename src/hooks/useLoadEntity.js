@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { useRouteMatch } from "react-router-dom";
 import { AppContext } from "../App";
 import getItem from "../wikidata/getItem";
@@ -12,6 +12,7 @@ const useLoadEntity = () => {
     currentLang,
     showError,
     currentEntityId,
+    currentEntity,
     setLoadingEntity,
     currentPropId,
     setState,
@@ -19,19 +20,25 @@ const useLoadEntity = () => {
   } = useContext(AppContext);
 
   const match = useRouteMatch();
+
+  const getItemMemo = useMemo(() => {
+    if (currentEntityId)
+      return Promise.all([
+        getItem(currentEntityId, currentLang.code),
+        getItemProps(currentEntityId, currentLang.code),
+      ]);
+  }, [currentEntityId, currentLang]);
+
   useEffect(() => {
     const loadEntity = async () => {
       try {
-        setState({
-          currentEntity: null,
-          loadingEntity: true,
-        });
+        if (currentEntity && currentEntityId !== currentEntity.id)
+          setState({
+            currentEntity: null,
+            loadingEntity: true,
+          });
 
-        // TODO: cache this
-        let [_currentEntity, itemProps] = await Promise.all([
-          getItem(currentEntityId, currentLang.code),
-          getItemProps(currentEntityId, currentLang.code),
-        ]);
+        let [_currentEntity, itemProps] = await getItemMemo;
 
         if (!_currentEntity) {
           throw new Error(`Entity not found ${currentEntityId}`);
@@ -92,7 +99,6 @@ const useLoadEntity = () => {
           setCurrentUpMap(upMap);
         }
 
-        //Set here (short after setCurrentProp) otherwise if there is a delay between entity and props graph will be called twice
         setState({
           currentProp: _currentProp,
           currentEntity: _currentEntity,

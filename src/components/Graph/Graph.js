@@ -75,7 +75,6 @@ const Graph = memo(
       currentLang,
       currentEntity,
       currentProp,
-      setCurrentEntityId,
       setLoadingEntity,
       currentUpMap,
     } = useContext(AppContext);
