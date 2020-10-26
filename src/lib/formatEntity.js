@@ -48,7 +48,10 @@ export default async function formatEntity(entity, languageCode, options = {}) {
   };
 
   addLabel(formattedEntity, languageCode);
-  addSecondLangLabel(formattedEntity, options.secondLanguage);
+  addSecondLangLabel(
+    formattedEntity,
+    options.secondLang ? options.secondLang.code : null
+  );
   addDescription(formattedEntity, languageCode);
 
   addBirthDate(formattedEntity, languageCode);

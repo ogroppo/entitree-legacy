@@ -6,7 +6,7 @@ import getEntitiesFromWikidata from "./getEntitiesFromWikidata";
 export default async function getItems(
   ids,
   languageCode,
-  propId,
+  propId, // propId should go in options!!!
   options = {}
 ) {
   if (!ids || !ids.length) throw new Error("You need valid ids to getItems");
@@ -18,7 +18,7 @@ export default async function getItems(
   const allentities = await getEntitiesFromWikidata({
     ids,
     languages,
-    props: ["labels", "descriptions", "claims", "sitelinks/urls"],
+    props: ["labels", "descriptions", "claims", "sitelinks/urls"], // should go in options with default
   });
 
   const entities = await Promise.all(

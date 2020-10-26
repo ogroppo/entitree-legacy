@@ -25,7 +25,7 @@ const useLoadEntity = () => {
   const getItemMemo = useMemo(() => {
     if (currentEntityId)
       return Promise.all([
-        getItem(currentEntityId, currentLang.code, secondLang),
+        getItem(currentEntityId, currentLang.code, { secondLang }),
         getItemProps(currentEntityId, currentLang.code),
       ]);
   }, [currentEntityId, currentLang, secondLang]);
@@ -33,11 +33,15 @@ const useLoadEntity = () => {
   useEffect(() => {
     const loadEntity = async () => {
       try {
+        // show loading when whe changed entity from searchbar
         if (currentEntity && currentEntityId !== currentEntity.id)
           setState({
             currentEntity: null,
             loadingEntity: true,
           });
+
+        // show loading when coming from url
+        if (!currentEntity) setLoadingEntity(true);
 
         let [_currentEntity, itemProps] = await getItemMemo;
 
@@ -114,7 +118,7 @@ const useLoadEntity = () => {
       loadEntity();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentLang, currentEntityId, currentPropId]);
+  }, [currentLang, secondLang, currentEntityId, currentPropId]);
 };
 
 export default useLoadEntity;
