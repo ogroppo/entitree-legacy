@@ -7,7 +7,7 @@ import {
   CARD_HEIGHT,
   CARD_VERTICAL_GAP,
 } from "../../constants/tree";
-import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import {
   FiChevronLeft,
   FiChevronUp,
@@ -19,9 +19,13 @@ import { GiBigDiamondRing } from "react-icons/gi";
 import { BsImage } from "react-icons/bs";
 import { MdChildCare } from "react-icons/md";
 import "./Node.scss";
-import {CHILD_ID, EYE_COLOR_ID, HAIR_COLOR_ID} from "../../constants/properties";
+import {
+  CHILD_ID,
+  EYE_COLOR_ID,
+  HAIR_COLOR_ID,
+} from "../../constants/properties";
 import DetailsModal from "../../modals/DetailsModal/DetailsModal";
-import { FaMale, FaFemale, FaEye, FaHeadphones } from "react-icons/fa";
+import { FaMale, FaFemale, FaEye } from "react-icons/fa";
 import colorByProperty from "../../wikidata/colorByProperty";
 import { GiPerson, GiBeard } from "react-icons/gi";
 import { AppContext } from "../../App";
@@ -36,14 +40,19 @@ export default function Node({
   toggleSpouses,
   setFocusedNode,
   focusedNode,
-  reloadTreeFromFocused,
   debug,
 }) {
   if (debug) console.log(node);
 
   const [showModal, setShowModal] = useState(false);
 
-  const { showBirthName, showEyeHairColors, showFace, imageType } = useContext(AppContext);
+  const {
+    showBirthName,
+    showEyeHairColors,
+    showFace,
+    imageType,
+    secondLang,
+  } = useContext(AppContext);
 
   const hideModal = () => {
     setShowModal(false);
@@ -53,7 +62,7 @@ export default function Node({
     data: { thumbnails, gender, isHuman, faceImage },
   } = node;
 
-  const eyeColor =  colorByProperty(node.data.simpleClaims[EYE_COLOR_ID]);
+  const eyeColor = colorByProperty(node.data.simpleClaims[EYE_COLOR_ID]);
   const hairColor = colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]);
 
   return (
@@ -70,6 +79,8 @@ export default function Node({
         [gender]: gender,
       })}
       onClick={() => setFocusedNode(node)}
+      //data-id={node.data.id}
+      //data-tree-id={node.treeId}
     >
       <div
         className="imgWrapper"
@@ -119,7 +130,7 @@ export default function Node({
             style={{
               position: "absolute",
               bottom: 0,
-              right: '2px',
+              right: "2px",
             }}
           >
             {eyeColor && (
@@ -127,22 +138,22 @@ export default function Node({
                 className="eyeColor"
                 title={eyeColor.itemLabel + " eyes"}
                 style={{
-                  color: "#"+eyeColor.hex
+                  color: "#" + eyeColor.hex,
                 }}
               >
-          <FaEye/>
-        </span>
+                <FaEye />
+              </span>
             )}
             {hairColor && (
               <span
                 className="hairColor"
                 title={hairColor.itemLabel}
                 style={{
-                  color:  "#"+hairColor.hex
+                  color: "#" + hairColor.hex,
                 }}
               >
-            <GiBeard />
-          </span>
+                <GiBeard />
+              </span>
             )}
           </div>
         )}
@@ -180,7 +191,16 @@ export default function Node({
               )}
             </span>
           )}
-
+          {secondLang &&
+            node.data.secondLangLabel &&
+            node.data.label !== node.data.secondLangLabel && (
+              <>
+                <br />
+                <span className="label labelSecondLang">
+                  {node.data.secondLangLabel}
+                </span>
+              </>
+            )}
           {node.data.description && (
             <>
               <br />
@@ -200,7 +220,7 @@ export default function Node({
             : ""}
         </div>
       </div>
-      {node._parentsExpanded && currentProp && (
+      {/* {node._parentsExpanded && currentProp && (
         <div className="upPropLabel" style={{ top: -CARD_VERTICAL_GAP / 2 }}>
           <span>{currentProp.label}</span>
         </div>
@@ -212,7 +232,7 @@ export default function Node({
         >
           <span>{currentProp.label}</span>
         </div>
-      )}
+      )} */}
       {node.data.leftIds && !!node.data.leftIds.length && (
         <Button
           className={`siblingCount counter`}
@@ -299,13 +319,7 @@ export default function Node({
             </span>
           </Button>
         )}
-      {showModal && (
-        <DetailsModal
-          hideModal={hideModal}
-          node={node}
-          reloadTreeFromFocused={reloadTreeFromFocused}
-        />
-      )}
+      {showModal && <DetailsModal hideModal={hideModal} node={node} />}
     </div>
   );
 }

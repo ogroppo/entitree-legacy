@@ -1,6 +1,6 @@
 import { Button, OverlayTrigger, Tooltip, Modal } from "react-bootstrap";
 import ReactGA from "react-ga";
-import React, { useState, useContext } from "react";
+import React, { memo, useState } from "react";
 import { FiMinus, FiPlus, FiPrinter } from "react-icons/fi";
 import { FaRegShareSquare } from "react-icons/fa";
 import { IoMdExpand } from "react-icons/io";
@@ -10,30 +10,25 @@ import {
   RedditShareButton,
   TelegramShareButton,
   TwitterShareButton,
-  PinterestShareButton,
   WhatsappShareButton,
 } from "react-share";
 import {
   FacebookIcon,
   RedditIcon,
-  PinterestIcon,
   TelegramIcon,
   TwitterIcon,
   WhatsappIcon,
 } from "react-share";
 import "./Navigation.scss";
 import { SITE_NAME } from "../../../constants/meta";
-import { AppContext } from "../../../App";
 
-export default function Navigation({
+export default memo(function Navigation({
   zoomIn,
   zoomOut,
   focusedNode,
   recenter,
   fitTree,
 }) {
-  const { currentEntity, currentProp } = useContext(AppContext);
-
   const [showShareTooltip, setShowShareTooltip] = useState(false);
   const zoomInWrapper = (e) => {
     ReactGA.event({
@@ -179,4 +174,4 @@ export default function Navigation({
       )}
     </div>
   );
-}
+});

@@ -129,31 +129,62 @@ export default function Settings({ show, hideModal }) {
           )}
         </Form.Row>
         <div>
+          {currentLang && (
+            <Dropdown className="langDropdown">
+              <Dropdown.Toggle as={CustomToggle}>
+                <span className="label">
+                  Translate labels where possible in
+                </span>{" "}
+                {currentLang.name}
+              </Dropdown.Toggle>
+              <Dropdown.Menu alignRight as={CustomMenu}>
+                {LANGS.map((lang, index) => (
+                  <Dropdown.Item
+                    key={lang.code}
+                    eventKey={index + 1}
+                    active={lang.code === currentLang.code}
+                    onClick={() => setLang(lang)}
+                  >
+                    {lang.name}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
+        </div>
+
+        <Form.Group controlId="language">
           <Dropdown className="langDropdown">
             <Dropdown.Toggle as={CustomToggle}>
-              <span className="langLabel">
-                Translate labels where possible in
-              </span>{" "}
-              {currentLang.name}
+              <span className="label">Add second language for labels</span>{" "}
+              {secondLang ? secondLang.name : <i>no</i>}
             </Dropdown.Toggle>
             <Dropdown.Menu alignRight as={CustomMenu}>
+              <Dropdown.Item
+                active={!secondLang}
+                onClick={() => setSecondLang(null)}
+              >
+                - no second language -
+              </Dropdown.Item>
               {LANGS.map((lang, index) => (
                 <Dropdown.Item
                   key={lang.code}
                   eventKey={index + 1}
-                  active={lang.code === currentLang.code}
-                  onClick={() => setLang(lang)}
+                  active={secondLang && lang.code === secondLang.code}
+                  onClick={() => setSecondLang(lang)}
+                  disabled={currentLang && currentLang.code === lang.code}
                 >
                   {lang.name}
                 </Dropdown.Item>
               ))}
             </Dropdown.Menu>
           </Dropdown>
-        </div>
+        </Form.Group>
+        <hr />
         <div>
           <Dropdown className="themeDropdown">
             <Dropdown.Toggle as={CustomToggle}>
-              <span className="themeLabel">Choose theme</span> {currentTheme}
+              <span className="label">Choose theme</span> {currentTheme}
             </Dropdown.Toggle>
             <Dropdown.Menu>
               {THEMES.map((theme, index) => (
@@ -169,28 +200,6 @@ export default function Settings({ show, hideModal }) {
             </Dropdown.Menu>
           </Dropdown>
         </div>
-        {/* <Form.Group controlId="language">
-          <Dropdown className="langDropdown">
-            <Dropdown.Toggle as={CustomToggle}>
-              <span className="langLabel">
-                Add second language label where possible in
-              </span>{" "}
-              {secondLang.name}
-            </Dropdown.Toggle>
-            <Dropdown.Menu alignRight as={CustomMenu}>
-              {LANGS.map((lang, index) => (
-                <Dropdown.Item
-                  key={lang.code}
-                  eventKey={index + 1}
-                  active={lang.code === secondLang.code}
-                  onClick={() => setSecondLang(lang)}
-                >
-                  {lang.name}
-                  </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-        </Form.Group> */}
       </Modal.Body>
       <Modal.Footer>
         <Button variant="link" className="mr-auto ml-0" onClick={hideModal}>
@@ -205,11 +214,10 @@ export default function Settings({ show, hideModal }) {
 }
 
 const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
-  <a
-    href=""
+  <Button
+    variant="link"
     aria-haspopup="true"
     ref={ref}
-    role="button"
     className="dropdown-toggle nav-link"
     onClick={(e) => {
       e.preventDefault();
@@ -217,7 +225,7 @@ const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
     }}
   >
     {children}
-  </a>
+  </Button>
 ));
 
 const CustomMenu = React.forwardRef(
@@ -247,7 +255,7 @@ const CustomMenu = React.forwardRef(
             autoComplete="off"
           />
         </div>
-        <ul className="list-unstyled langList">
+        <ul className="list-unstyled list">
           {React.Children.toArray(children).filter(
             (child) =>
               !value || child.props.children.toLowerCase().startsWith(value)

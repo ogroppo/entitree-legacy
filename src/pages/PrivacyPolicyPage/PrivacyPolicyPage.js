@@ -1,17 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Container } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
-import ReactGA from "react-ga";
 import Header from "../../layout/Header/Header";
 import { Helmet } from "react-helmet";
 import { DEFAULT_DESC, SITE_NAME } from "../../constants/meta";
+import usePageView from "../../lib/usePageView";
 
 export default function PrivacyPolicyPage() {
-  const location = useLocation();
-  useEffect(() => {
-    ReactGA.set({ page: location.pathname });
-    ReactGA.pageview(location.pathname);
-  }, []);
+  usePageView();
 
   return (
     <div className="PrivacyPolicyPage">

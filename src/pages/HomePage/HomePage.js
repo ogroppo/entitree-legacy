@@ -1,53 +1,25 @@
-import React, { useEffect, useContext, useState } from "react";
+import React, { useContext } from "react";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import Graph from "../../components/Graph/Graph";
-import "./HomePage.scss";
-import ReactGA from "react-ga";
-import { useLocation, useRouteMatch } from "react-router-dom";
 import { AppContext } from "../../App";
 import { GiFamilyTree } from "react-icons/gi";
 import { Spinner } from "react-bootstrap";
 import Header from "../../layout/Header/Header";
-import { LANGS } from "../../constants/langs";
 import { Helmet } from "react-helmet";
 import { DEFAULT_DESC, SITE_NAME } from "../../constants/meta";
+import usePageView from "../../lib/usePageView";
+import "./HomePage.scss";
+import useLoadFromUrl from "../../hooks/useLoadFromUrl";
+import useCurrentLang from "../../hooks/useCurrentLang";
+import useUpdateUrl from "../../hooks/useUpdateUrl";
+import useLoadEntity from "../../hooks/useLoadEntity";
 
-export default function HomePage() {
-  const {
-    currentEntity,
-    loadingEntity,
-    setCurrentLang,
-    currentProp,
-  } = useContext(AppContext);
-
-  const [loadedLang, setLoadedLang] = useState(false);
-  const location = useLocation();
-  const match = useRouteMatch();
-
-  useEffect(() => {
-    ReactGA.set({ page: location.pathname });
-    ReactGA.pageview(location.pathname);
-
-    let { langCode } = match.params;
-    let currentLangCode;
-    if (langCode) {
-      currentLangCode = langCode;
-    } else {
-      try {
-        currentLangCode = localStorage.getItem("userLangCode");
-      } catch (error) {
-        //localstorage not working
-      }
-    }
-
-    if (currentLangCode) {
-      const currentLang = LANGS.find(({ code }) => code === currentLangCode);
-      if (currentLang) setCurrentLang(currentLang);
-    }
-    setLoadedLang(true);
-  }, []);
-
-  if (!loadedLang) return null;
+function HomePage() {
+  usePageView();
+  useUpdateUrl();
+  useLoadFromUrl();
+  useLoadEntity();
+  const { currentEntity, loadingEntity, currentProp } = useContext(AppContext);
 
   return (
     <div className="HomePage">
@@ -90,4 +62,13 @@ export default function HomePage() {
       {currentEntity && <Graph />}
     </div>
   );
+}
+
+export default function HomePageWrapper() {
+  useCurrentLang();
+  const { currentLang } = useContext(AppContext);
+
+  if (!currentLang) return null;
+
+  return <HomePage />;
 }

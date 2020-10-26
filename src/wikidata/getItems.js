@@ -3,42 +3,34 @@ import { DEFAULT_LANGS_CODES } from "../constants/langs";
 import addEntityConnectors from "../lib/addEntityConnectors";
 import getEntitiesFromWikidata from "./getEntitiesFromWikidata";
 
-export async function getItems(
+export default async function getItems(
   ids,
   languageCode,
-  propId,
+  propId, // propId should go in options!!!
   options = {}
 ) {
   if (!ids || !ids.length) throw new Error("You need valid ids to getItems");
 
+  const languages = DEFAULT_LANGS_CODES.concat(languageCode);
+
+  if (options.secondLang) languages.push(options.secondLang.code);
+
   const allentities = await getEntitiesFromWikidata({
-    ids: ids,
-    languages: [languageCode].concat(DEFAULT_LANGS_CODES),
-    props: ["labels", "descriptions", "claims", "sitelinks/urls"],
+    ids,
+    languages,
+    props: ["labels", "descriptions", "claims", "sitelinks/urls"], // should go in options with default
   });
 
   const entities = await Promise.all(
     ids.map(async (id) => {
-      let entity = await formatEntity(allentities[id], languageCode);
+      let entity = await formatEntity(allentities[id], languageCode, options);
       //siblings and spouses don't need connectors, so no propId is passed
       if (propId) {
-        entity = addEntityConnectors(entity, propId, options);
+        addEntityConnectors(entity, propId, options);
       }
       return entity;
     })
   );
 
   return entities;
-}
-
-export async function getLabels(
-  ids,
-  languageCode,
-) {
-  const allentities = await getEntitiesFromWikidata({
-    ids: ids,
-    languages: [languageCode],
-    props: ["labels"],
-  });
-  return allentities;
 }

@@ -24,7 +24,7 @@ export default function Footer() {
             <FaGithub />
           </Nav.Link>
         </Nav>
-        <Nav className="ml-auto">
+        <Nav className="ml-auto rightLinks">
           <Nav.Link href="/about">About</Nav.Link>
           <Nav.Link href="/privacy">Privacy Policy</Nav.Link>
         </Nav>

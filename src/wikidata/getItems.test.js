@@ -1,6 +1,6 @@
 import getItems from "./getItems";
 
-test("getItems", async () => {
+test("getItems with 50 elements limit", async () => {
   let ids = [];
   for (let index = 1; index <= 51; index++) {
     ids.push(`Q${index}`);
