@@ -31,7 +31,6 @@
     "react-scripts": "3.4.1",
     "react-share": "^4.2.0",
     "react-zoom-pan-pinch": "^1.6.1",
-    "use-async-memo": "^1.2.2",
     "wikidata-sdk": "^7.6.0"
   },
   "scripts": {
