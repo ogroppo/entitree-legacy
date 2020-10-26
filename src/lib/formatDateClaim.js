@@ -38,7 +38,7 @@ export default function formatDateClaim(claim, languageCode) {
  * @param wikidatatime
  * @returns {{output: null, dateObject: null}|{output: string, dateObject: number}|{output: *, dateObject: null}}
  */
-function parseDate(wikidatatime, languageCode) {
+function parseDate(wikidatatime, languageCode = "en") {
   //example of  valid object {time: "+1500-07-07T00:00:00Z" ,precision:8}
   //https://www.wikidata.org/wiki/Help:Dates
   /*
@@ -68,19 +68,19 @@ function parseDate(wikidatatime, languageCode) {
 
   switch (precision) {
     case 0:
-      let [b_, byear] = time.split("-");
+      let [, byear] = time.split("-");
       let bya = parseFloat(+byear / 1e9);
       return bya + " Bya";
     case 2: //Earth Q2 has precision 2 WTF, not in docs
-      let [m_2, myear2] = time.split("-");
+      let [, myear2] = time.split("-");
       let mya2 = parseFloat(+myear2 / 1e6);
       return mya2 + " Mya";
     case 3:
-      let [m_, myear] = time.split("-");
+      let [, myear] = time.split("-");
       let mya = parseFloat(+myear / 1e6);
       return mya + " Mya";
     case 4:
-      let [k_, kyear] = time.split("-");
+      let [, kyear] = time.split("-");
       let kya = parseFloat(+kyear / 1e3); //should be 1e5
       return kya + " Kya";
     case 6:
@@ -97,8 +97,9 @@ function parseDate(wikidatatime, languageCode) {
       return parsedDate.format("y") + eraSuffix;
     case 10:
       return parsedDate.locale(languageCode).format("MMM y") + eraSuffix;
-    case 11:
+    case 11: {
       return parsedDate.locale(languageCode).format("D MMM y") + eraSuffix;
+    }
     default:
       return wbk.wikibaseTimeToSimpleDay(wikidatatime);
   }

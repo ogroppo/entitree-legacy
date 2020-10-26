@@ -1,4 +1,3 @@
-import React from "react";
 import formatDateClaim from "./formatDateClaim";
 
 test("JESUS birth date", () => {
