@@ -7,7 +7,6 @@ import "./App.scss";
 import AboutPage from "./pages/AboutPage/AboutPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage/PrivacyPolicyPage";
 import Footer from "./layout/Footer/Footer";
-import { DEFAULT_LANG } from "./constants/langs";
 import Logo from "./components/Logo/Logo";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import TutorialPage from "./pages/TutorialPage/TutorialPage";
@@ -21,11 +20,12 @@ export default class App extends Component {
   state = {
     errors: [],
     infos: [],
-    currentLang: DEFAULT_LANG,
+    currentLang: null,
     secondLang: null,
-    hasLanguageChanged: 0,
     currentEntity: null,
+    currentEntityId: null,
     currentProp: null,
+    currentPropId: null,
     showGenderColor: false,
     showEyeHairColors: false,
     showBirthName: false,
@@ -34,6 +34,16 @@ export default class App extends Component {
     loadingEntity: false,
     imageType: "face",
     currentTheme: "default",
+    currentUpMap: null,
+    setState: (state) => {
+      this.setState({ ...state });
+    },
+    setCurrentUpMap: (currentUpMap) => {
+      this.setState({ currentUpMap });
+    },
+    setCurrentPropId: (currentPropId) => {
+      this.setState({ currentPropId });
+    },
     setShowGenderColor: (showGenderColor) => {
       this.setState({ showGenderColor });
     },
@@ -46,6 +56,9 @@ export default class App extends Component {
     setCurrentEntity: (currentEntity) => {
       this.setState({ currentEntity });
     },
+    setCurrentEntityId: (currentEntityId) => {
+      this.setState({ currentEntityId });
+    },
     setCurrentProp: (currentProp) => {
       this.setState({ currentProp });
     },
@@ -55,7 +68,6 @@ export default class App extends Component {
     setCurrentLang: (currentLang) => {
       this.setState({
         currentLang,
-        hasLanguageChanged: this.state.hasLanguageChanged + 1,
       });
     },
     setSecondLang: (secondLang) => {
