@@ -22,7 +22,7 @@ export default async function getItems(
       let entity = await formatEntity(allentities[id], languageCode);
       //siblings and spouses don't need connectors, so no propId is passed
       if (propId) {
-        entity = addEntityConnectors(entity, propId, options);
+        addEntityConnectors(entity, propId, options);
       }
       return entity;
     })

@@ -26,7 +26,6 @@ export default class App extends Component {
     currentEntityId: null,
     currentProp: null,
     currentPropId: null,
-    currentPropSlug: null,
     showGenderColor: false,
     showEyeHairColors: false,
     showBirthName: false,
@@ -35,6 +34,16 @@ export default class App extends Component {
     loadingEntity: false,
     imageType: "face",
     currentTheme: "default",
+    currentUpMap: null,
+    setState: (state) => {
+      this.setState({ ...state });
+    },
+    setCurrentUpMap: (currentUpMap) => {
+      this.setState({ currentUpMap });
+    },
+    setCurrentPropId: (currentPropId) => {
+      this.setState({ currentPropId });
+    },
     setShowGenderColor: (showGenderColor) => {
       this.setState({ showGenderColor });
     },
@@ -52,12 +61,6 @@ export default class App extends Component {
     },
     setCurrentProp: (currentProp) => {
       this.setState({ currentProp });
-    },
-    setCurrentPropId: (currentPropId) => {
-      this.setState({ currentPropId });
-    },
-    setCurrentPropSlug: (currentPropSlug) => {
-      this.setState({ currentPropSlug });
     },
     setLoadingEntity: (loadingEntity) => {
       this.setState({ loadingEntity });

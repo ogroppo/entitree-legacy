@@ -17,7 +17,7 @@ import search from "../../wikidata/search";
 export default function SearchBar() {
   const {
     currentLang,
-    setCurrentProp,
+    setCurrentPropId,
     currentProp,
     currentEntity,
     loadingEntity,
@@ -122,7 +122,7 @@ export default function SearchBar() {
                       <Dropdown.Item
                         key={prop.id}
                         className={prop.isFav ? "fav" : ""}
-                        onClick={() => setCurrentProp(prop)}
+                        onClick={() => setCurrentPropId(prop.id)}
                       >
                         {prop.overrideLabel || prop.label}
                       </Dropdown.Item>

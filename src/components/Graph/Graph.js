@@ -25,12 +25,11 @@ import { CHILD_ID } from "../../constants/properties";
 import graphReducer, { initialState } from "./graphReducer";
 import getNodeUniqueId from "../../lib/getNodeUniqueId";
 import filterSpouses from "../../lib/filterSpouses";
-import addEntityConnectors from "../../lib/addEntityConnectors";
-import getUpMap from "../../wikidata/getUpMap";
 import Navigation from "./Navigation/Navigation";
 import { sortByBirthDate, sortByGender } from "../../lib/sortEntities";
 import last from "../../lib/last";
 import clsx from "clsx";
+import debounce from "lodash.debounce";
 
 export default function GraphWrapper() {
   const {
@@ -76,9 +75,9 @@ const Graph = memo(
       currentLang,
       currentEntity,
       currentProp,
-      setCurrentEntity,
       setCurrentEntityId,
       setLoadingEntity,
+      currentUpMap,
     } = useContext(AppContext);
 
     const [graph, dispatchGraph] = useReducer(graphReducer, initialState);
@@ -87,13 +86,12 @@ const Graph = memo(
     const graphRef = useRef();
     const [graphWidth, setGraphWidth] = useState(0);
     const [graphHeight, setGraphHeight] = useState(0);
-    const upMap = useRef();
 
     useEffect(() => {
-      const handleResize = () => {
+      const handleResize = debounce(() => {
         setGraphWidth(graphRef.current.offsetWidth);
         setGraphHeight(graphRef.current.offsetHeight);
-      };
+      }, 500);
       handleResize();
 
       window.addEventListener("resize", handleResize); //debounce this
@@ -106,40 +104,26 @@ const Graph = memo(
     //GET ROOT
     useEffect(() => {
       //also wait until the container size has been set
-      if (currentEntity && graphWidth) {
+      if (currentEntity) {
         (async () => {
           try {
-            let root;
+            let root = hierarchy(currentEntity);
+            const rootId = getNodeUniqueId(root, 0);
+            root.treeId = rootId;
+            root.isRoot = true;
+            root.x = 0;
+            root.y = 0;
+
             //property has been selected/changed from dropdown or is available from url
             if (currentProp) {
-              //show "loading tree" spinner a bit more
-              setLoadingEntity(true);
-              upMap.current = await getUpMap(currentEntity.id, currentProp.id);
-              const rootItem = addEntityConnectors(
-                currentEntity,
-                currentProp.id,
-                {
-                  upMap: upMap.current,
-                  addDownIds: true,
-                  addRightIds: currentProp.id === CHILD_ID,
-                  addLeftIds: currentProp.id === CHILD_ID,
-                }
-              );
-              root = hierarchy(rootItem);
-              const rootId = getNodeUniqueId(root, 0);
-              root.treeId = rootId;
-              root.isRoot = true;
-              root.x = 0;
-              root.y = 0;
-
               //annoyingly a repetition but correct in order to have separate trees
-              let childTree = hierarchy(rootItem);
+              let childTree = hierarchy(currentEntity);
               childTree.treeId = rootId;
               childTree.isRoot = true;
               childTree.x = 0;
               childTree.y = 0;
 
-              let parentTree = hierarchy(rootItem);
+              let parentTree = hierarchy(currentEntity);
               parentTree.treeId = rootId;
               parentTree.isRoot = true;
               parentTree.x = 0;
@@ -160,8 +144,6 @@ const Graph = memo(
               setLoadingEntity(false);
             } else {
               //currentEntity has changed from searchBox
-              root = hierarchy(currentEntity);
-              root.treeId = getNodeUniqueId(root, 0);
               dispatchGraph({
                 type: "set",
                 root,
@@ -169,14 +151,13 @@ const Graph = memo(
             }
 
             setFocusedNode(root);
-            centerPoint(0, 0);
           } catch (error) {
             showError(error);
           }
         })();
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentEntity, currentProp, graphWidth]);
+    }, [currentEntity, currentProp]);
 
     const toggleChildren = async (node, options = {}) => {
       if (!node.data.downIds || !node.data.downIds.length) return;
@@ -243,7 +224,7 @@ const Graph = memo(
             currentLang.code,
             currentProp.id,
             {
-              upMap: upMap.current,
+              upMap: currentUpMap,
               addLeftIds: currentProp.id === CHILD_ID,
               addRightIds: currentProp.id === CHILD_ID,
             }
@@ -290,7 +271,7 @@ const Graph = memo(
         try {
           const entities = await getItems(node.data.rightIds, currentLang.code);
           entities.forEach((entity, index) => {
-            const spouseNode = getSpouseNode(entity);
+            const spouseNode = getSpouseNode(entity, index);
             spouseNode.depth = node.depth;
             spouseNode.virtualParent = node;
             spouseNode.parent = node.parent;
@@ -361,7 +342,7 @@ const Graph = memo(
           const entities = await getItems(root.data.rightIds, currentLang.code);
           const baseX = CARD_WIDTH * SIBLING_SPOUSE_SEPARATION;
           entities.forEach((entity, index) => {
-            const spouseNode = getSpouseNode(entity);
+            const spouseNode = getSpouseNode(entity, index);
             spouseNode.x = baseX + baseX * index;
             spouseNode.y = 0;
             spouseNode.depth = 0;
@@ -460,12 +441,6 @@ const Graph = memo(
       setTransform(calculatedPositionX, calculatedPositionY, scale);
     };
 
-    const reloadTreeFromFocused = () => {
-      if (focusedNode.treeId !== root.treeId)
-        setCurrentEntityId(focusedNode.data.id);
-      else centerPoint(focusedNode.x, focusedNode.y);
-    };
-
     const recenter = () => {
       centerPoint(focusedNode.x, focusedNode.y);
     };
@@ -542,7 +517,6 @@ const Graph = memo(
                         node={node}
                         setFocusedNode={setFocusedNode}
                         focusedNode={focusedNode}
-                        reloadTreeFromFocused={reloadTreeFromFocused}
                       />
                     ))}
                   {root && (
@@ -572,7 +546,6 @@ const Graph = memo(
                         key={node.treeId}
                         node={node}
                         setFocusedNode={setFocusedNode}
-                        reloadTreeFromFocused={reloadTreeFromFocused}
                         focusedNode={focusedNode}
                       />
                     ))}
@@ -581,7 +554,6 @@ const Graph = memo(
                       index={index}
                       key={node.treeId}
                       currentProp={currentProp}
-                      reloadTreeFromFocused={reloadTreeFromFocused}
                       toggleChildren={(node) => {
                         toggleChildren(node);
                       }}
@@ -601,7 +573,6 @@ const Graph = memo(
                       key={node.treeId}
                       index={index}
                       currentProp={currentProp}
-                      reloadTreeFromFocused={reloadTreeFromFocused}
                       toggleSpouses={(node) => {
                         toggleSpouses(node);
                       }}

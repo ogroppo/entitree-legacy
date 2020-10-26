@@ -7,24 +7,30 @@ import {
 } from "../constants/properties";
 
 export default function addEntityConnectors(entity, propId, options = {}) {
-  let _entity = { ...entity };
-
   if (options.upMap) {
     if (!propId) throw new Error("propId needed");
-    _entity.upIds = options.upMap[_entity.id];
+    entity.upIds = options.upMap[entity.id];
+  } else {
+    delete entity.upIds;
   }
+
   if (options.addDownIds) {
     if (!propId) throw new Error("propId needed");
-    _entity.downIds = getClaimIds(_entity, propId);
+    entity.downIds = getClaimIds(entity, propId);
     //use number of children property, use count of children if not available
-    _entity.childrenCount = _entity.simpleClaims[NUMBER_OF_CHILDREN_ID]
-      ? _entity.simpleClaims[NUMBER_OF_CHILDREN_ID][0].value
-      : _entity.downIds.length;
+    entity.childrenCount = entity.simpleClaims[NUMBER_OF_CHILDREN_ID]
+      ? entity.simpleClaims[NUMBER_OF_CHILDREN_ID][0].value
+      : entity.downIds.length;
+  } else {
+    delete entity.downIds;
   }
-  if (options.addRightIds) addRightIds(_entity);
-  if (options.addLeftIds) _entity.leftIds = getClaimIds(_entity, SIBLINGS_ID);
 
-  return _entity;
+  if (options.addRightIds) addRightIds(entity);
+  else {
+    delete entity.rightIds;
+  }
+  if (options.addLeftIds) entity.leftIds = getClaimIds(entity, SIBLINGS_ID);
+  else delete entity.leftIds;
 }
 
 function addRightIds(entity) {
