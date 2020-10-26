@@ -1,41 +1,38 @@
 .Settings {
-  .langDropdown {
-    .dropdown-toggle {
-      display: inline-block;
-      padding-left: 0;
-      padding-right: 0;
-      .langLabel {
-        color: #212529;
-      }
+  .dropdown-toggle {
+    display: inline-block;
+    padding: 0.4rem 0;
+    .label {
+      color: #212529;
     }
-    .dropdown-menu {
-      position: relative;
-      width: 100%;
-      .langList {
-        max-height: 200px;
-        overflow-y: scroll;
-        margin-bottom: 0;
-      }
-    }
+  }
+  .dropdown-menu {
+    position: relative;
+    width: 100%;
     .filterWrapper {
       padding: 0 1.3rem;
       margin-bottom: 8px;
     }
-  }
-  .themeDropdown {
-    .dropdown-toggle {
-      display: inline-block;
-      padding-left: 0;
-      padding-right: 0;
-      .themeLabel {
-        color: #212529;
-      }
+    .list {
+      max-height: 200px;
+      overflow-y: scroll;
+      margin-bottom: 0;
     }
   }
   .imageDropdown {
+    .dropdown-menu {
+      position: absolute;
+    }
     .dropdown-toggle {
+      vertical-align: top;
       display: inline-block;
       padding: 0;
+    }
+  }
+  .themeDropdown {
+    .dropdown-menu {
+      position: absolute;
+      width: initial;
     }
   }
 }
