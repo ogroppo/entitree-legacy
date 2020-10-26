@@ -132,7 +132,7 @@ export default function Settings({ show, hideModal }) {
           {currentLang && (
             <Dropdown className="langDropdown">
               <Dropdown.Toggle as={CustomToggle}>
-                <span className="langLabel">
+                <span className="label">
                   Translate labels where possible in
                 </span>{" "}
                 {currentLang.name}
@@ -156,7 +156,7 @@ export default function Settings({ show, hideModal }) {
         <Form.Group controlId="language">
           <Dropdown className="langDropdown">
             <Dropdown.Toggle as={CustomToggle}>
-              <span className="langLabel">Add second language for labels</span>{" "}
+              <span className="label">Add second language for labels</span>{" "}
               {secondLang ? secondLang.name : <i>no</i>}
             </Dropdown.Toggle>
             <Dropdown.Menu alignRight as={CustomMenu}>
@@ -164,7 +164,7 @@ export default function Settings({ show, hideModal }) {
                 active={!secondLang}
                 onClick={() => setSecondLang(null)}
               >
-                no
+                - no second language -
               </Dropdown.Item>
               {LANGS.map((lang, index) => (
                 <Dropdown.Item
@@ -172,6 +172,7 @@ export default function Settings({ show, hideModal }) {
                   eventKey={index + 1}
                   active={secondLang && lang.code === secondLang.code}
                   onClick={() => setSecondLang(lang)}
+                  disabled={currentLang && currentLang.code === lang.code}
                 >
                   {lang.name}
                 </Dropdown.Item>
@@ -183,7 +184,7 @@ export default function Settings({ show, hideModal }) {
         <div>
           <Dropdown className="themeDropdown">
             <Dropdown.Toggle as={CustomToggle}>
-              <span className="themeLabel">Choose theme</span> {currentTheme}
+              <span className="label">Choose theme</span> {currentTheme}
             </Dropdown.Toggle>
             <Dropdown.Menu>
               {THEMES.map((theme, index) => (
@@ -213,11 +214,10 @@ export default function Settings({ show, hideModal }) {
 }
 
 const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
-  <a
-    href="#"
+  <Button
+    variant="link"
     aria-haspopup="true"
     ref={ref}
-    role="button"
     className="dropdown-toggle nav-link"
     onClick={(e) => {
       e.preventDefault();
@@ -225,7 +225,7 @@ const CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
     }}
   >
     {children}
-  </a>
+  </Button>
 ));
 
 const CustomMenu = React.forwardRef(
@@ -255,13 +255,11 @@ const CustomMenu = React.forwardRef(
             autoComplete="off"
           />
         </div>
-        <ul className="list-unstyled langList">
-          {React.Children.toArray(children).filter((child) => {
-            console.log(child.props.children);
-            return (
+        <ul className="list-unstyled list">
+          {React.Children.toArray(children).filter(
+            (child) =>
               !value || child.props.children.toLowerCase().startsWith(value)
-            );
-          })}
+          )}
         </ul>
       </div>
     );

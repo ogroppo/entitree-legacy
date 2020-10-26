@@ -220,7 +220,7 @@ export default function Node({
             : ""}
         </div>
       </div>
-      {node._parentsExpanded && currentProp && (
+      {/* {node._parentsExpanded && currentProp && (
         <div className="upPropLabel" style={{ top: -CARD_VERTICAL_GAP / 2 }}>
           <span>{currentProp.label}</span>
         </div>
@@ -232,7 +232,7 @@ export default function Node({
         >
           <span>{currentProp.label}</span>
         </div>
-      )}
+      )} */}
       {node.data.leftIds && !!node.data.leftIds.length && (
         <Button
           className={`siblingCount counter`}
