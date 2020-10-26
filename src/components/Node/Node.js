@@ -40,7 +40,6 @@ export default function Node({
   toggleSpouses,
   setFocusedNode,
   focusedNode,
-  reloadTreeFromFocused,
   debug,
 }) {
   if (debug) console.log(node);
@@ -80,6 +79,8 @@ export default function Node({
         [gender]: gender,
       })}
       onClick={() => setFocusedNode(node)}
+      //data-id={node.data.id}
+      //data-tree-id={node.treeId}
     >
       <div
         className="imgWrapper"
@@ -190,13 +191,15 @@ export default function Node({
               )}
             </span>
           )}
-          {secondLang.code !== 0 &&
+          {secondLang &&
             node.data.secondLangLabel &&
             node.data.label !== node.data.secondLangLabel && (
-              <span className="labelSecondLang">
+              <>
                 <br />
-                {node.data.secondLangLabel}
-              </span>
+                <span className="label labelSecondLang">
+                  {node.data.secondLangLabel}
+                </span>
+              </>
             )}
           {node.data.description && (
             <>
@@ -316,13 +319,7 @@ export default function Node({
             </span>
           </Button>
         )}
-      {showModal && (
-        <DetailsModal
-          hideModal={hideModal}
-          node={node}
-          reloadTreeFromFocused={reloadTreeFromFocused}
-        />
-      )}
+      {showModal && <DetailsModal hideModal={hideModal} node={node} />}
     </div>
   );
 }

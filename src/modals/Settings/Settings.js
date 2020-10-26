@@ -129,26 +129,28 @@ export default function Settings({ show, hideModal }) {
           )}
         </Form.Row>
         <div>
-          <Dropdown className="langDropdown">
-            <Dropdown.Toggle as={CustomToggle}>
-              <span className="langLabel">
-                Translate labels where possible in
-              </span>{" "}
-              {currentLang.name}
-            </Dropdown.Toggle>
-            <Dropdown.Menu alignRight as={CustomMenu}>
-              {LANGS.map((lang, index) => (
-                <Dropdown.Item
-                  key={lang.code}
-                  eventKey={index + 1}
-                  active={lang.code === currentLang.code}
-                  onClick={() => setLang(lang)}
-                >
-                  {lang.name}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
+          {currentLang && (
+            <Dropdown className="langDropdown">
+              <Dropdown.Toggle as={CustomToggle}>
+                <span className="langLabel">
+                  Translate labels where possible in
+                </span>{" "}
+                {currentLang.name}
+              </Dropdown.Toggle>
+              <Dropdown.Menu alignRight as={CustomMenu}>
+                {LANGS.map((lang, index) => (
+                  <Dropdown.Item
+                    key={lang.code}
+                    eventKey={index + 1}
+                    active={lang.code === currentLang.code}
+                    onClick={() => setLang(lang)}
+                  >
+                    {lang.name}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
         </div>
         <div>
           <Dropdown className="themeDropdown">
@@ -175,13 +177,12 @@ export default function Settings({ show, hideModal }) {
               <span className="langLabel">
                 Add second language label where possible in
               </span>{" "}
-              {secondLang.name}
+              {secondLang ? secondLang.name : "none"}
             </Dropdown.Toggle>
             <Dropdown.Menu alignRight as={CustomMenu}>
               <Dropdown.Item
-                key={0}
-                active={0 === secondLang.code}
-                onClick={() => setSecondLang({ code: 0, name: "none" })}
+                active={!secondLang}
+                onClick={() => setSecondLang(null)}
               >
                 none
               </Dropdown.Item>
@@ -189,7 +190,7 @@ export default function Settings({ show, hideModal }) {
                 <Dropdown.Item
                   key={lang.code}
                   eventKey={index + 1}
-                  active={lang.code === secondLang.code}
+                  active={secondLang && lang.code === secondLang.code}
                   onClick={() => setSecondLang(lang)}
                 >
                   {lang.name}

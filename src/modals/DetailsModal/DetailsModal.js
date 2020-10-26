@@ -5,12 +5,11 @@ import { Button, Modal } from "react-bootstrap";
 import getItemsLabel from "../../wikidata/getItemsLabel";
 import missingImagesLink from "../../lib/imageDatabase";
 import getWikipediaArticle from "../../wikipedia/getWikipediaArticle";
-export default function DetailsModal({
-  node,
-  hideModal,
-  reloadTreeFromFocused,
-}) {
-  const { currentLang } = useContext(AppContext);
+
+export default function DetailsModal({ node, hideModal }) {
+  const { currentLang, setCurrentEntityId, currentEntity } = useContext(
+    AppContext
+  );
   const [images, setImages] = useState(node.data.images);
   const [birthPlace, setBirthPlace] = useState();
   const [deathPlace, setDeathPlace] = useState();
@@ -126,12 +125,12 @@ export default function DetailsModal({
         )}
       </Modal.Body>
       <Modal.Footer>
-        {reloadTreeFromFocused && (
+        {node.data.id !== currentEntity.id && (
           <Button
             variant="light"
             className="mr-auto"
             onClick={() => {
-              reloadTreeFromFocused();
+              setCurrentEntityId(node.data.id);
               hideModal();
             }}
           >

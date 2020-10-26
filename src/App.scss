@@ -26,6 +26,9 @@
   .dropdown-toggle::after {
     vertical-align: middle;
   }
+  .navbar-brand {
+    margin-right: 0;
+  }
 
   &.light {
     .Node {
