@@ -11,15 +11,19 @@ export default async function getItems(
 ) {
   if (!ids || !ids.length) throw new Error("You need valid ids to getItems");
 
+  const languages = DEFAULT_LANGS_CODES.concat(languageCode);
+
+  if (options.secondLang) languages.push(options.secondLang.code);
+
   const allentities = await getEntitiesFromWikidata({
-    ids: ids,
-    languages: [languageCode].concat(DEFAULT_LANGS_CODES),
+    ids,
+    languages,
     props: ["labels", "descriptions", "claims", "sitelinks/urls"],
   });
 
   const entities = await Promise.all(
     ids.map(async (id) => {
-      let entity = await formatEntity(allentities[id], languageCode);
+      let entity = await formatEntity(allentities[id], languageCode, options);
       //siblings and spouses don't need connectors, so no propId is passed
       if (propId) {
         addEntityConnectors(entity, propId, options);

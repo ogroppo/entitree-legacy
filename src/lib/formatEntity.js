@@ -30,8 +30,9 @@ import addAbolishedDate from "./addAbolishedDate";
 import addInceptionAbolishedSpan from "./addInceptionAbolishedSpan";
 import addDeathPlaceId from "./addDeathPlaceId";
 import addBirthName from "./addBirthName";
+import addSecondLangLabel from "./addSecondLangLabel";
 
-export default async function formatEntity(entity, languageCode) {
+export default async function formatEntity(entity, languageCode, options = {}) {
   if (entity.missing !== undefined) return undefined;
 
   if (!entity) throw new Error("Entity is required");
@@ -47,6 +48,7 @@ export default async function formatEntity(entity, languageCode) {
   };
 
   addLabel(formattedEntity, languageCode);
+  addSecondLangLabel(formattedEntity, options.secondLanguage);
   addDescription(formattedEntity, languageCode);
 
   addBirthDate(formattedEntity, languageCode);

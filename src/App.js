@@ -71,6 +71,11 @@ export default class App extends Component {
       });
     },
     setSecondLang: (secondLang) => {
+      try {
+        localStorage.setItem("userSecondLangCode", secondLang.code);
+      } catch (error) {
+        //localstorage not working
+      }
       this.setState({ secondLang });
     },
     setImageType: (imageType) => {

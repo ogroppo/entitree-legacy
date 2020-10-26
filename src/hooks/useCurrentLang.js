@@ -4,7 +4,7 @@ import { AppContext } from "../App";
 import { DEFAULT_LANG, LANGS } from "../constants/langs";
 
 const useCurrentLang = () => {
-  const { setCurrentLang } = useContext(AppContext);
+  const { setCurrentLang, setSecondLang } = useContext(AppContext);
 
   const match = useRouteMatch();
   let { langCode } = match.params;
@@ -27,6 +27,18 @@ const useCurrentLang = () => {
       else setCurrentLang(DEFAULT_LANG);
     } else {
       setCurrentLang(DEFAULT_LANG);
+    }
+
+    try {
+      const secondLangCode = localStorage.getItem("userSecondLangCode");
+      if (secondLangCode) {
+        const currentSecondLang = LANGS.find(
+          ({ code }) => code === secondLangCode
+        );
+        if (currentSecondLang) setSecondLang(currentSecondLang);
+      }
+    } catch (error) {
+      //localstorage not working
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

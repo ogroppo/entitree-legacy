@@ -17,6 +17,7 @@ const useLoadEntity = () => {
     currentPropId,
     setState,
     setCurrentUpMap,
+    secondLang,
   } = useContext(AppContext);
 
   const match = useRouteMatch();
@@ -24,10 +25,10 @@ const useLoadEntity = () => {
   const getItemMemo = useMemo(() => {
     if (currentEntityId)
       return Promise.all([
-        getItem(currentEntityId, currentLang.code),
+        getItem(currentEntityId, currentLang.code, secondLang),
         getItemProps(currentEntityId, currentLang.code),
       ]);
-  }, [currentEntityId, currentLang]);
+  }, [currentEntityId, currentLang, secondLang]);
 
   useEffect(() => {
     const loadEntity = async () => {

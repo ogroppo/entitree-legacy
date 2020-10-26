@@ -46,9 +46,13 @@ export default function Node({
 
   const [showModal, setShowModal] = useState(false);
 
-  const { showBirthName, showEyeHairColors, showFace, imageType } = useContext(
-    AppContext
-  );
+  const {
+    showBirthName,
+    showEyeHairColors,
+    showFace,
+    imageType,
+    secondLang,
+  } = useContext(AppContext);
 
   const hideModal = () => {
     setShowModal(false);
@@ -187,7 +191,16 @@ export default function Node({
               )}
             </span>
           )}
-
+          {secondLang &&
+            node.data.secondLangLabel &&
+            node.data.label !== node.data.secondLangLabel && (
+              <>
+                <br />
+                <span className="label labelSecondLang">
+                  {node.data.secondLangLabel}
+                </span>
+              </>
+            )}
           {node.data.description && (
             <>
               <br />
