@@ -92,6 +92,15 @@ export default function Settings({ show, hideModal }) {
             label={"Show navigation icons"}
           />
         </Form.Group>
+        <Form.Group controlId={"showExternalImages"}>
+          <Form.Check
+            custom
+            checked={settings.showExternalImages}
+            onChange={(e) => setSetting("showExternalImages", e.target.checked)}
+            type="checkbox"
+            label={"Show external images"}
+          />
+        </Form.Group>
         <Form.Row>
           <Col xs="auto">
             <Form.Group controlId={"faceDisplay"}>
