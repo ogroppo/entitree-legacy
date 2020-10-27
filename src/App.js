@@ -26,13 +26,16 @@ export default class App extends Component {
     currentEntityId: null,
     currentProp: null,
     currentPropId: null,
-    showGenderColor: false,
-    showEyeHairColors: false,
-    showBirthName: false,
-    showNavIcons: true,
-    showFace: false,
+    settings: {
+      showGenderColor: false,
+      showEyeHairColors: false,
+      showBirthName: false,
+      showNavIcons: true,
+      showExternalImages: false,
+      showFace: false,
+      imageType: "face",
+    },
     loadingEntity: false,
-    imageType: "face",
     currentTheme: "default",
     currentUpMap: null,
     setState: (state) => {
@@ -44,14 +47,8 @@ export default class App extends Component {
     setCurrentPropId: (currentPropId) => {
       this.setState({ currentPropId });
     },
-    setShowGenderColor: (showGenderColor) => {
-      this.setState({ showGenderColor });
-    },
     setCurrentTheme: (currentTheme) => {
       this.setState({ currentTheme });
-    },
-    setShowEyeHairColors: (showEyeHairColors) => {
-      this.setState({ showEyeHairColors });
     },
     setCurrentEntity: (currentEntity) => {
       this.setState({ currentEntity });
@@ -65,6 +62,20 @@ export default class App extends Component {
     setLoadingEntity: (loadingEntity) => {
       this.setState({ loadingEntity });
     },
+    setSetting: (settingKey, settingValue) => {
+      let states = {
+        settings: { ...this.state.settings, [settingKey]: settingValue },
+      };
+      try {
+        localStorage.setItem(settingKey, settingValue);
+      } catch (error) {
+        //localstorage not working
+      }
+      console.log(states);
+      this.setState({
+        settings: { ...this.state.settings, [settingKey]: settingValue },
+      });
+    },
     setCurrentLang: (currentLang) => {
       this.setState({
         currentLang,
@@ -77,11 +88,6 @@ export default class App extends Component {
         //localstorage not working
       }
       this.setState({ secondLang });
-    },
-    setImageType: (imageType) => {
-      this.setState({
-        imageType,
-      });
     },
     showError: (error) => {
       console.error(error);
@@ -103,15 +109,6 @@ export default class App extends Component {
           infos: infos.slice(1),
         }));
       }, 2500);
-    },
-    setShowBirthName: (showBirthName) => {
-      this.setState({ showBirthName });
-    },
-    setShowNavIcons: (showNavIcons) => {
-      this.setState({ showNavIcons });
-    },
-    setShowFace: (showFace) => {
-      this.setState({ showFace });
     },
   };
 

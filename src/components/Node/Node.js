@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   IMAGE_SIZE,
   CARD_WIDTH,
@@ -50,13 +50,7 @@ export default function Node({
 
   const [showModal, setShowModal] = useState(false);
 
-  const {
-    showBirthName,
-    showEyeHairColors,
-    showFace,
-    imageType,
-    secondLang,
-  } = useContext(AppContext);
+  const { settings, secondLang } = useContext(AppContext);
 
   const hideModal = () => {
     setShowModal(false);
@@ -139,11 +133,12 @@ export default function Node({
         )}
         {thumbnails[0] && (
           <span>
-            {showFace && faceImage ? (
+            {settings.showFace && faceImage ? (
               <img
                 alt={faceImage.alt}
                 src={
-                  faceImage.url + (imageType === "head" ? "?factor=1.5" : "")
+                  faceImage.url +
+                  (settings.imageType === "head" ? "?factor=1.5" : "")
                 }
                 title={faceImage.alt}
               />
@@ -161,7 +156,7 @@ export default function Node({
         className="content"
         style={{ height: IMAGE_SIZE, width: CARD_CONTENT_WIDTH }}
       >
-        {showEyeHairColors && (
+        {settings.showEyeHairColors && (
           <div
             className="colorIcons"
             style={{
@@ -178,10 +173,10 @@ export default function Node({
                   color: "#" + eyeColor.hex,
                 }}
               >
-                <FaEye />
+                <FaEye size={25} />
               </span>
             )}
-            {hairColor && (
+            {/*{hairColor && (
               <span
                 className="hairColor"
                 title={hairColor.itemLabel}
@@ -191,7 +186,7 @@ export default function Node({
               >
                 <GiBeard />
               </span>
-            )}
+            )}*/}
           </div>
         )}
         <div className="four-line-clamp">
@@ -203,7 +198,7 @@ export default function Node({
               onClick={() => setShowModal(true)}
               title={node.data.label ? `Show ${node.data.label} details` : null}
             >
-              {node.data.birthName && showBirthName ? (
+              {node.data.birthName && settings.showBirthName ? (
                 node.data.birthName
               ) : node.data.label ? (
                 node.data.label
@@ -219,7 +214,7 @@ export default function Node({
               onClick={() => setShowModal(true)}
               title={node.data.label ? `Show ${node.data.label} details` : null}
             >
-              {node.data.birthName && showBirthName ? (
+              {node.data.birthName && settings.showBirthName ? (
                 node.data.birthName
               ) : node.data.label ? (
                 node.data.label

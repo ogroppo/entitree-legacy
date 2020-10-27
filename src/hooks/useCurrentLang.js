@@ -4,12 +4,32 @@ import { AppContext } from "../App";
 import { DEFAULT_LANG, LANGS } from "../constants/langs";
 
 const useCurrentLang = () => {
-  const { setCurrentLang, setSecondLang } = useContext(AppContext);
+  const { setCurrentLang, setSecondLang, settings, setSetting } = useContext(
+    AppContext
+  );
 
   const match = useRouteMatch();
   let { langCode } = match.params;
 
   useEffect(() => {
+    try {
+      let settingsFromStorage = {};
+      for (var setting in settings) {
+        // console.log([setting,(typeof settings[setting] === "boolean" ? (localStorage.getItem(setting) === "true") : localStorage.getItem(setting))]);
+        // setSetting(setting,(typeof settings[setting] === "boolean" ? (localStorage.getItem(setting) === "true") : localStorage.getItem(setting)));
+        settingsFromStorage[setting] =
+          typeof settings[setting] === "boolean"
+            ? localStorage.getItem(setting) === "true"
+            : localStorage.getItem(setting);
+      }
+      console.log(settingsFromStorage);
+      this.setState({
+        settings: settingsFromStorage,
+      });
+    } catch (error) {
+      //localstorage not working
+    }
+
     let currentLangCode;
     if (langCode) {
       currentLangCode = langCode;
