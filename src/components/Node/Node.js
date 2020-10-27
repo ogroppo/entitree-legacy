@@ -22,7 +22,9 @@ import "./Node.scss";
 import {
   CHILD_ID,
   EYE_COLOR_ID,
+  GENI_ID,
   HAIR_COLOR_ID,
+  WIKITREE_ID,
 } from "../../constants/properties";
 import DetailsModal from "../../modals/DetailsModal/DetailsModal";
 import { FaMale, FaFemale, FaEye } from "react-icons/fa";
@@ -30,6 +32,8 @@ import colorByProperty from "../../wikidata/colorByProperty";
 import { GiPerson, GiBeard } from "react-icons/gi";
 import { AppContext } from "../../App";
 import clsx from "clsx";
+import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
+import getGeniImage from "../../geni/getGeniImage";
 
 export default function Node({
   node,
@@ -64,6 +68,39 @@ export default function Node({
 
   const eyeColor = colorByProperty(node.data.simpleClaims[EYE_COLOR_ID]);
   const hairColor = colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]);
+  useEffect(() => {
+    if (settings.showExternalImages) {
+      console.log("start loading");
+      const wikitreeId = node.data.simpleClaims[WIKITREE_ID];
+      if (wikitreeId) {
+        getWikitreeImageUrl(wikitreeId[0].value).then((wikitreeImage) => {
+          if (wikitreeImage) {
+            const img = {
+              url: wikitreeImage,
+              alt: `Wikitree.com image`,
+            };
+            console.log("push");
+            thumbnails.push(img);
+            // entity.images.push(img);
+          }
+        });
+      }
+
+      const geniId = node.data.simpleClaims[GENI_ID];
+      if (geniId) {
+        getGeniImage(geniId[0].value).then((geniImage) => {
+          if (geniImage) {
+            const geniImg = {
+              url: geniImage,
+              alt: `Geni.com image`,
+            };
+            thumbnails.push(geniImg);
+            // entity.images.push(geniImg);
+          }
+        });
+      }
+    }
+  }, [node.data.id]);
 
   return (
     <div
