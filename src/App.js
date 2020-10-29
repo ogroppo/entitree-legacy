@@ -63,17 +63,15 @@ export default class App extends Component {
       this.setState({ loadingEntity });
     },
     setSetting: (settingKey, settingValue) => {
-      let states = {
-        settings: { ...this.state.settings, [settingKey]: settingValue },
-      };
+      const settings = { ...this.state.settings, [settingKey]: settingValue };
       try {
         localStorage.setItem(settingKey, settingValue);
       } catch (error) {
         //localstorage not working
       }
-      console.log(states);
+      console.log(settings);
       this.setState({
-        settings: { ...this.state.settings, [settingKey]: settingValue },
+        settings,
       });
     },
     setCurrentLang: (currentLang) => {
