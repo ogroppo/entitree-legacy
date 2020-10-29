@@ -37,8 +37,7 @@ export default function GraphWrapper() {
   return (
     <div
       className={clsx("GraphWrapper", {
-        showGenderColor: settings.showGenderColor,
-        showNavIcons: settings.showNavIcons,
+        settings,
       })}
     >
       <TransformWrapper
