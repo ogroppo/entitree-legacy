@@ -56,9 +56,6 @@ export default function Node({
     setShowModal(false);
   };
 
-  const {
-    data: { thumbnails, gender, isHuman, faceImage },
-  } = node;
 
   const eyeColor = colorByProperty(node.data.simpleClaims[EYE_COLOR_ID]);
   const hairColor = colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]);
@@ -74,8 +71,8 @@ export default function Node({
               alt: `Wikitree.com image`,
             };
             console.log("push");
-            thumbnails.push(img);
-            // entity.images.push(img);
+            node.data.thumbnails.push(img);
+            node.data.images.push(img);
           }
         });
       }
@@ -88,13 +85,17 @@ export default function Node({
               url: geniImage,
               alt: `Geni.com image`,
             };
-            thumbnails.push(geniImg);
-            // entity.images.push(geniImg);
+            node.data.thumbnails.push(geniImg);
+            node.data.images.push(geniImg);
           }
         });
       }
     }
-  }, [node.data.id]);
+  }, []);
+
+  const {
+    data: { thumbnails, gender, isHuman, faceImage },
+  } = node;
 
   return (
     <div
