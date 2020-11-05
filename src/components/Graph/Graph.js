@@ -32,14 +32,10 @@ import clsx from "clsx";
 import debounce from "lodash.debounce";
 
 export default function GraphWrapper() {
-  const { settings, currentTheme } = useContext(AppContext);
+  const { settings } = useContext(AppContext);
 
   return (
-    <div
-      className={clsx("GraphWrapper", {
-        settings,
-      })}
-    >
+    <div className={clsx("GraphWrapper", settings)}>
       <TransformWrapper
         zoomIn={{ step: 20 }}
         zoomOut={{ step: 20 }}

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Form,
   Button,
@@ -20,29 +20,18 @@ export default function Settings({ show, hideModal }) {
     setSecondLang,
     setCurrentLang,
     settings,
-    showFace,
-    setShowFace,
-    imageType,
     setSetting,
-    setImageType,
     currentTheme,
     setCurrentTheme,
   } = useContext(AppContext);
 
-  const setLang = (lang) => {
+  useEffect(() => {
     ReactGA.event({
-      category: "Language",
-      action: `Changed`,
-      label: lang.code,
+      category: "Settings",
+      action: `User interaction`,
+      label: "modal opened",
     });
-
-    try {
-      localStorage.setItem("userLangCode", lang.code);
-    } catch (error) {
-      //localstorage not working
-    }
-    setCurrentLang(lang);
-  };
+  }, []);
 
   return (
     <Modal show={show} onHide={hideModal} className="Settings">
@@ -147,7 +136,7 @@ export default function Settings({ show, hideModal }) {
                     key={lang.code}
                     eventKey={index + 1}
                     active={lang.code === currentLang.code}
-                    onClick={() => setLang(lang)}
+                    onClick={() => setCurrentLang(lang)}
                   >
                     {lang.name}
                   </Dropdown.Item>

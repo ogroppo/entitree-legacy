@@ -11,6 +11,8 @@ import Logo from "./components/Logo/Logo";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import TutorialPage from "./pages/TutorialPage/TutorialPage";
 import clsx from "clsx";
+import ls from "local-storage";
+import ReactGA from "react-ga";
 
 const browserHistory = createBrowserHistory();
 
@@ -26,6 +28,7 @@ export default class App extends Component {
     currentEntityId: null,
     currentProp: null,
     currentPropId: null,
+    currentTheme: "default",
     settings: {
       showGenderColor: false,
       showEyeHairColors: false,
@@ -36,7 +39,6 @@ export default class App extends Component {
       imageType: "face",
     },
     loadingEntity: false,
-    currentTheme: "default",
     currentUpMap: null,
     setState: (state) => {
       this.setState({ ...state });
@@ -47,7 +49,15 @@ export default class App extends Component {
     setCurrentPropId: (currentPropId) => {
       this.setState({ currentPropId });
     },
-    setCurrentTheme: (currentTheme) => {
+    setCurrentTheme: (currentTheme, isUser = true) => {
+      if (isUser) {
+        ReactGA.event({
+          category: "Settings",
+          action: `Updated`,
+          label: `theme: ${currentTheme}`,
+        });
+        ls("storedTheme", currentTheme);
+      }
       this.setState({ currentTheme });
     },
     setCurrentEntity: (currentEntity) => {
@@ -62,29 +72,39 @@ export default class App extends Component {
     setLoadingEntity: (loadingEntity) => {
       this.setState({ loadingEntity });
     },
+    setSettings: (settings) => {
+      this.setState({ settings });
+    },
     setSetting: (settingKey, settingValue) => {
       const settings = { ...this.state.settings, [settingKey]: settingValue };
-      try {
-        localStorage.setItem(settingKey, settingValue);
-      } catch (error) {
-        //localstorage not working
-      }
-      console.log(settings);
+      ReactGA.event({
+        category: "Settings",
+        action: `Updated`,
+        label: `${settingKey}: ${settingValue}`,
+      });
+      ls("settings", settings);
       this.setState({
         settings,
       });
     },
     setCurrentLang: (currentLang) => {
+      ReactGA.event({
+        category: "Language",
+        action: `Changed`,
+        label: currentLang.code,
+      });
+      ls("storedLangCode", currentLang.code);
       this.setState({
         currentLang,
       });
     },
     setSecondLang: (secondLang) => {
-      try {
-        localStorage.setItem("userSecondLangCode", secondLang.code);
-      } catch (error) {
-        //localstorage not working
-      }
+      ReactGA.event({
+        category: "Second Language",
+        action: `Changed`,
+        label: secondLang.code,
+      });
+      ls("storedSecondLangCode", secondLang.code);
       this.setState({ secondLang });
     },
     showError: (error) => {
