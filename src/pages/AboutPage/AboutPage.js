@@ -82,7 +82,15 @@ export default function AboutPage() {
           >
             Martin
           </a>{" "}
-          will be more than happy to help you.
+          will be more than happy to help you. You can follow us on{" "}
+          <a
+            href="https://twitter.com/EntitreeApp"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Twitter
+          </a>{" "}
+          too.
         </p>
         <p>
           If you notice any strange behaviour in the interface or you think

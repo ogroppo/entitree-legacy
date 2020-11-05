@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Form,
   Button,
@@ -19,36 +19,19 @@ export default function Settings({ show, hideModal }) {
     secondLang,
     setSecondLang,
     setCurrentLang,
-    showGenderColor,
-    setShowGenderColor,
-    showEyeHairColors,
-    setShowEyeHairColors,
-    showBirthName,
-    setShowBirthName,
-    showNavIcons,
-    setShowNavIcons,
-    showFace,
-    setShowFace,
-    imageType,
-    setImageType,
+    settings,
+    setSetting,
     currentTheme,
     setCurrentTheme,
   } = useContext(AppContext);
 
-  const setLang = (lang) => {
+  useEffect(() => {
     ReactGA.event({
-      category: "Language",
-      action: `Changed`,
-      label: lang.code,
+      category: "Settings",
+      action: `User interaction`,
+      label: "modal opened",
     });
-
-    try {
-      localStorage.setItem("userLangCode", lang.code);
-    } catch (error) {
-      //localstorage not working
-    }
-    setCurrentLang(lang);
-  };
+  }, []);
 
   return (
     <Modal show={show} onHide={hideModal} className="Settings">
@@ -59,8 +42,8 @@ export default function Settings({ show, hideModal }) {
         <Form.Group controlId={"genderColors"}>
           <Form.Check
             custom
-            checked={showGenderColor}
-            onChange={(e) => setShowGenderColor(e.target.checked)}
+            checked={settings.showGenderColor}
+            onChange={(e) => setSetting("showGenderColor", e.target.checked)}
             type="checkbox"
             label={"Use background color based on gender"}
           />
@@ -68,8 +51,8 @@ export default function Settings({ show, hideModal }) {
         <Form.Group controlId={"eyeHairColors"}>
           <Form.Check
             custom
-            checked={showEyeHairColors}
-            onChange={(e) => setShowEyeHairColors(e.target.checked)}
+            checked={settings.showEyeHairColors}
+            onChange={(e) => setSetting("showEyeHairColors", e.target.checked)}
             type="checkbox"
             label={"Add icons with eye and hair color (lacks data)"}
           />
@@ -77,8 +60,8 @@ export default function Settings({ show, hideModal }) {
         <Form.Group controlId={"birthName"}>
           <Form.Check
             custom
-            checked={showBirthName}
-            onChange={(e) => setShowBirthName(e.target.checked)}
+            checked={settings.showBirthName}
+            onChange={(e) => setSetting("showBirthName", e.target.checked)}
             type="checkbox"
             label={"Show birth name instead of label"}
           />
@@ -86,10 +69,19 @@ export default function Settings({ show, hideModal }) {
         <Form.Group controlId={"iconsDisplay"}>
           <Form.Check
             custom
-            checked={showNavIcons}
-            onChange={(e) => setShowNavIcons(e.target.checked)}
+            checked={settings.showNavIcons}
+            onChange={(e) => setSetting("showNavIcons", e.target.checked)}
             type="checkbox"
             label={"Show navigation icons"}
+          />
+        </Form.Group>
+        <Form.Group controlId={"showExternalImages"}>
+          <Form.Check
+            custom
+            checked={settings.showExternalImages}
+            onChange={(e) => setSetting("showExternalImages", e.target.checked)}
+            type="checkbox"
+            label={"Show external images"}
           />
         </Form.Group>
         <Form.Row>
@@ -97,31 +89,32 @@ export default function Settings({ show, hideModal }) {
             <Form.Group controlId={"faceDisplay"}>
               <Form.Check
                 custom
-                checked={showFace}
-                onChange={(e) => setShowFace(e.target.checked)}
+                checked={settings.showFace}
+                onChange={(e) => setSetting("showFace", e.target.checked)}
                 type="checkbox"
                 label={"Zoom in picture"}
               />
             </Form.Group>
           </Col>
-          {showFace && (
+          {settings.showFace && (
             <Col xs="auto">
               <Dropdown className="imageDropdown">
                 <Dropdown.Toggle as={CustomToggle}>
-                  <span className="imageDropdownLabel">show</span> {imageType}
+                  <span className="imageDropdownLabel">show</span>{" "}
+                  {settings.imageType}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item
-                    active={imageType === "face"}
-                    onClick={() => setImageType("face")}
-                  >
-                    Face
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    active={imageType === "head"}
-                    onClick={() => setImageType("head")}
+                    active={settings.imageType === "head"}
+                    onClick={() => setSetting("imageType", "head")}
                   >
                     Head
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    active={settings.imageType === "face"}
+                    onClick={() => setSetting("imageType", "face")}
+                  >
+                    Face
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
@@ -143,7 +136,7 @@ export default function Settings({ show, hideModal }) {
                     key={lang.code}
                     eventKey={index + 1}
                     active={lang.code === currentLang.code}
-                    onClick={() => setLang(lang)}
+                    onClick={() => setCurrentLang(lang)}
                   >
                     {lang.name}
                   </Dropdown.Item>

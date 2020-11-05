@@ -1,11 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   IMAGE_SIZE,
   CARD_WIDTH,
   CARD_PADDING,
   CARD_CONTENT_WIDTH,
   CARD_HEIGHT,
-  CARD_VERTICAL_GAP,
 } from "../../constants/tree";
 import { Button } from "react-bootstrap";
 import {
@@ -22,14 +21,19 @@ import "./Node.scss";
 import {
   CHILD_ID,
   EYE_COLOR_ID,
+  GENI_ID,
   HAIR_COLOR_ID,
+  WIKITREE_ID,
 } from "../../constants/properties";
 import DetailsModal from "../../modals/DetailsModal/DetailsModal";
 import { FaMale, FaFemale, FaEye } from "react-icons/fa";
 import colorByProperty from "../../wikidata/colorByProperty";
-import { GiPerson, GiBeard } from "react-icons/gi";
+import { GiPerson } from "react-icons/gi";
 import { AppContext } from "../../App";
 import clsx from "clsx";
+import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
+import getGeniImage from "../../geni/getGeniImage";
+import { Thumbnail } from "react-bootstrap";
 
 export default function Node({
   node,
@@ -45,25 +49,61 @@ export default function Node({
   if (debug) console.log(node);
 
   const [showModal, setShowModal] = useState(false);
+  const [thumbnails, setThumbnails] = useState(node.data.thumbnails);
+  const [thumbnailIndex, setThumbnailIndex] = useState(0);
 
-  const {
-    showBirthName,
-    showEyeHairColors,
-    showFace,
-    imageType,
-    secondLang,
-  } = useContext(AppContext);
+  const { settings, secondLang } = useContext(AppContext);
 
   const hideModal = () => {
     setShowModal(false);
   };
 
+  const eyeColor = useMemo(
+    () => colorByProperty(node.data.simpleClaims[EYE_COLOR_ID]),
+    [node.data.simpleClaims]
+  );
+  const hairColor = useMemo(
+    () => colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]),
+    [node.data.simpleClaims]
+  );
+  useEffect(() => {
+    if (settings.showExternalImages) {
+      const wikitreeId = node.data.simpleClaims[WIKITREE_ID];
+      if (wikitreeId) {
+        getWikitreeImageUrl(wikitreeId[0].value).then((wikitreeImage) => {
+          if (wikitreeImage) {
+            const img = {
+              url: wikitreeImage,
+              alt: `Wikitree.com image`,
+            };
+            setThumbnails(thumbnails.concat(img));
+            node.data.images.push(img); //turn this into state
+          }
+        });
+      }
+
+      const geniId = node.data.simpleClaims[GENI_ID];
+      if (geniId) {
+        getGeniImage(geniId[0].value).then((geniImage) => {
+          if (geniImage) {
+            const geniImg = {
+              url: geniImage,
+              alt: `Geni.com image`,
+            };
+            setThumbnails(thumbnails.concat(geniImg));
+            node.data.images.push(geniImg); //turn this into state
+          }
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const {
-    data: { thumbnails, gender, isHuman, faceImage },
+    data: { gender, isHuman, faceImage },
   } = node;
 
-  const eyeColor = colorByProperty(node.data.simpleClaims[EYE_COLOR_ID]);
-  const hairColor = colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]);
+  const currentThumbnail = thumbnails[thumbnailIndex];
 
   return (
     <div
@@ -85,7 +125,9 @@ export default function Node({
       <div
         className="imgWrapper"
         style={{ height: IMAGE_SIZE, width: IMAGE_SIZE }}
-        onClick={() => setShowModal(true)}
+        onClick={() =>
+          setThumbnailIndex((thumbnailIndex + 1) % thumbnails.length)
+        }
       >
         {(!thumbnails || !thumbnails.length) && (
           <span className="defaultImgMessage">
@@ -100,21 +142,22 @@ export default function Node({
             )}
           </span>
         )}
-        {thumbnails[0] && (
+        {currentThumbnail && (
           <span>
-            {showFace && faceImage ? (
+            {settings.showFace && faceImage ? (
               <img
                 alt={faceImage.alt}
                 src={
-                  faceImage.url + (imageType === "head" ? "?factor=1.5" : "")
+                  faceImage.url +
+                  (settings.imageType === "head" ? "?factor=1.5" : "")
                 }
                 title={faceImage.alt}
               />
             ) : (
               <img
-                alt={thumbnails[0].alt}
-                src={thumbnails[0].url}
-                title={thumbnails[0].alt}
+                alt={currentThumbnail.alt}
+                src={currentThumbnail.url}
+                title={currentThumbnail.alt}
               />
             )}
           </span>
@@ -124,7 +167,7 @@ export default function Node({
         className="content"
         style={{ height: IMAGE_SIZE, width: CARD_CONTENT_WIDTH }}
       >
-        {showEyeHairColors && (
+        {settings.showEyeHairColors && (
           <div
             className="colorIcons"
             style={{
@@ -141,10 +184,10 @@ export default function Node({
                   color: "#" + eyeColor.hex,
                 }}
               >
-                <FaEye />
+                <FaEye size={25} />
               </span>
             )}
-            {hairColor && (
+            {/*{hairColor && (
               <span
                 className="hairColor"
                 title={hairColor.itemLabel}
@@ -154,7 +197,7 @@ export default function Node({
               >
                 <GiBeard />
               </span>
-            )}
+            )}*/}
           </div>
         )}
         <div className="four-line-clamp">
@@ -166,7 +209,7 @@ export default function Node({
               onClick={() => setShowModal(true)}
               title={node.data.label ? `Show ${node.data.label} details` : null}
             >
-              {node.data.birthName && showBirthName ? (
+              {node.data.birthName && settings.showBirthName ? (
                 node.data.birthName
               ) : node.data.label ? (
                 node.data.label
@@ -182,7 +225,7 @@ export default function Node({
               onClick={() => setShowModal(true)}
               title={node.data.label ? `Show ${node.data.label} details` : null}
             >
-              {node.data.birthName && showBirthName ? (
+              {node.data.birthName && settings.showBirthName ? (
                 node.data.birthName
               ) : node.data.label ? (
                 node.data.label

@@ -26,7 +26,7 @@ export default function Footer() {
         </Nav>
         <Nav className="ml-auto rightLinks">
           <Nav.Link href="/about">About</Nav.Link>
-          <Nav.Link href="/privacy">Privacy Policy</Nav.Link>
+          <Nav.Link href="/privacy">Privacy</Nav.Link>
         </Nav>
       </Container>
     </Navbar>
