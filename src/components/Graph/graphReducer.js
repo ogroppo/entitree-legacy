@@ -1,5 +1,6 @@
 import treeLayout from "../../lib/getTreeLayout";
 import { CARD_WIDTH, CARD_HEIGHT } from "../../constants/tree";
+import cloneDeep from "lodash.clonedeep";
 
 export const initialState = {
   maxLeft: -CARD_WIDTH,
@@ -27,6 +28,12 @@ export default function graphReducer(graph, { type, ...arg }) {
         ...initialState,
         ...arg,
       };
+    case "setGraph": {
+      let { graph } = arg;
+      return {
+        ...graph,
+      };
+    }
     case "expandChildren": {
       let { node } = arg;
       if (node._childrenExpanded) return graph; //no-op
@@ -98,6 +105,7 @@ export default function graphReducer(graph, { type, ...arg }) {
       node._spousesExpanded = true;
       if (node._spouses) {
         const spouseIndex = node.parent.children.indexOf(node) + 1;
+        //add spouses after the node index, so that the node stays on the left
         node.parent.children.splice(spouseIndex, 0, ...node._spouses);
         node._spouses = null;
       }
@@ -111,8 +119,8 @@ export default function graphReducer(graph, { type, ...arg }) {
       let { node } = arg;
       node._spousesExpanded = false;
       node.loadingSpouses = false;
-      var spouses = [];
-      var rest = [];
+      const spouses = [];
+      const rest = [];
       node.parent.children.forEach((adjacent) => {
         if (adjacent.isSpouse && adjacent.virtualParent === node) {
           spouses.push(adjacent);
@@ -135,29 +143,15 @@ export default function graphReducer(graph, { type, ...arg }) {
       let { node } = arg;
       node._siblingsExpanded = true;
       if (node._siblings) {
-        const siblingIndex = node.parent.children.indexOf(node); //it will keep prepending to the node index
-        node.parent.children.splice(siblingIndex, 0, ...node._siblings);
+        const nodeAsSiblingIndex = node.parent.children.indexOf(node);
+        //add siblings before the node index, so that the node stays on the right
+        node.parent.children.splice(nodeAsSiblingIndex, 0, ...node._siblings);
         node._siblings = null;
       }
       if (node.isChild) recalcChildren(graph);
       if (node.isParent) recalcParents(graph);
       node.loadingSiblings = false;
       return { ...graph };
-    }
-    case "collapseSiblings": {
-      let newGraph = { ...graph };
-      let { node } = arg;
-      node._siblingsExpanded = false;
-      node._siblings = node.parent.children.filter(
-        (sibling) => sibling.isSibling && sibling.virtualParent === node
-      );
-      node.parent.children = node.parent.children.filter(
-        (sibling) => !(sibling.isSibling && sibling.virtualParent === node)
-      );
-      if (node.isChild) recalcChildren(newGraph);
-      if (node.isParent) recalcParents(newGraph);
-      node.loadingSiblings = false;
-      return newGraph;
     }
     case "expandRootSpouses": {
       let { root } = arg;
@@ -179,7 +173,8 @@ export default function graphReducer(graph, { type, ...arg }) {
     case "collapseRootSiblings": {
       let { root } = arg;
       root._siblingsExpanded = false;
-      root._siblings = root.siblings;
+      console.log(root.siblings);
+      root._siblings = [...root.siblings];
       root.siblings = null;
       calcBounds(graph);
       root.loadingSiblings = false;
@@ -187,9 +182,9 @@ export default function graphReducer(graph, { type, ...arg }) {
     }
     case "expandRootSiblings": {
       let { root } = arg;
-      root._siblingsExpanded = true;
       if (root._siblings) root.siblings = root._siblings;
       calcBounds(graph);
+      root._siblingsExpanded = true;
       root.loadingSiblings = false;
       return { ...graph };
     }
@@ -198,14 +193,39 @@ export default function graphReducer(graph, { type, ...arg }) {
   }
 }
 
-const recalcChildren = (graph) => {
+export const collapseSiblings = (graph, node) => {
+  const siblings = [];
+  const rest = [];
+  node.parent.children.forEach((adjecent) => {
+    if (adjecent.isSibling && adjecent.virtualParent === node)
+      siblings.push(adjecent);
+    else rest.push(adjecent);
+  });
+  node._siblings = siblings;
+  node.parent.children = rest;
+  if (node.isChild) recalcChildren(graph);
+  if (node.isParent) recalcParents(graph);
+  node.loadingSiblings = false;
+  node._siblingsExpanded = false;
+};
+
+export const collapseRootSiblings = (graph, root) => {
+  root._siblingsExpanded = false;
+  console.log(root.siblings);
+  root._siblings = root.siblings;
+  root.siblings = null;
+  calcBounds(graph);
+  root.loadingSiblings = false;
+};
+
+export const recalcChildren = (graph) => {
   treeLayout(graph.childTree);
   graph.childNodes = graph.childTree.descendants().slice(1);
   graph.childRels = graph.childTree.links();
   calcBounds(graph);
 };
 
-const recalcParents = (graph) => {
+export const recalcParents = (graph) => {
   treeLayout(graph.parentTree);
   graph.parentNodes = graph.parentTree.descendants().slice(1);
   graph.parentRels = graph.parentTree.links();

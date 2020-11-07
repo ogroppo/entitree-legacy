@@ -99,12 +99,16 @@ export default class App extends Component {
       });
     },
     setSecondLang: (secondLang) => {
-      ReactGA.event({
-        category: "Second Language",
-        action: `Changed`,
-        label: secondLang.code,
-      });
-      ls("storedSecondLangCode", secondLang.code);
+      if (secondLang) {
+        ReactGA.event({
+          category: "Second Language",
+          action: `Changed`,
+          label: secondLang.code,
+        });
+        ls("storedSecondLangCode", secondLang.code);
+      } else {
+        ls.remove("storedSecondLangCode");
+      }
       this.setState({ secondLang });
     },
     showError: (error) => {
