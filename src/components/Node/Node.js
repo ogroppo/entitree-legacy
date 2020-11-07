@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { memo, useContext, useEffect, useMemo, useState } from "react";
 import {
   IMAGE_SIZE,
   CARD_WIDTH,
@@ -33,9 +33,8 @@ import { AppContext } from "../../App";
 import clsx from "clsx";
 import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
 import getGeniImage from "../../geni/getGeniImage";
-import { Thumbnail } from "react-bootstrap";
 
-export default function Node({
+export default memo(function Node({
   node,
   currentProp,
   toggleParents,
@@ -365,4 +364,4 @@ export default function Node({
       {showModal && <DetailsModal hideModal={hideModal} node={node} />}
     </div>
   );
-}
+});
