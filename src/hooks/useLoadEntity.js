@@ -60,8 +60,11 @@ const useLoadEntity = () => {
         } else {
           //is coming from url
           const { propSlug } = match.params;
-          if (propSlug && propSlug !== "all")
-            _currentProp = itemProps.find(({ slug }) => slug === propSlug);
+          const decodedPropSlug = decodeURIComponent(propSlug);
+          if (decodedPropSlug && decodedPropSlug !== "all")
+            _currentProp = itemProps.find(
+              ({ slug }) => slug === decodedPropSlug
+            );
         }
 
         //currentProp belongs to family stuff
