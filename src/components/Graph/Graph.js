@@ -22,7 +22,11 @@ import {
 import Node from "../Node/Node";
 import Rel from "../Rel/Rel";
 import { CHILD_ID } from "../../constants/properties";
-import graphReducer, { initialState } from "./graphReducer";
+import graphReducer, {
+  initialState,
+  collapseRootSiblings,
+  collapseSiblings,
+} from "./graphReducer";
 import getNodeUniqueId from "../../lib/getNodeUniqueId";
 import filterSpouses from "../../lib/filterSpouses";
 import Navigation from "./Navigation/Navigation";
@@ -32,25 +36,10 @@ import clsx from "clsx";
 import debounce from "lodash.debounce";
 
 export default function GraphWrapper() {
-  const {
-    showGenderColor,
-    showEyeHairColors,
-    showNavIcons,
-    showBirthName,
-    showFace,
-    currentTheme,
-  } = useContext(AppContext);
+  const { settings } = useContext(AppContext);
 
   return (
-    <div
-      className={clsx("GraphWrapper", {
-        showGenderColor,
-        showEyeHairColors,
-        showNavIcons,
-        showBirthName,
-        showFace,
-      })}
-    >
+    <div className={clsx("GraphWrapper", settings)}>
       <TransformWrapper
         zoomIn={{ step: 20 }}
         zoomOut={{ step: 20 }}
@@ -293,9 +282,10 @@ const Graph = memo(
       }
 
       let newx = node.x;
-      if (node._spousesExpanded && lastSpouse) {
-        newx = (newx + lastSpouse.x) / 2;
-      }
+      // I don't think the current node should move from the center
+      // if (node._spousesExpanded && lastSpouse) {
+      //   newx = (newx + lastSpouse.x) / 2;
+      // }
       if (!options.noRecenter) centerPoint(newx);
     };
 
@@ -306,12 +296,15 @@ const Graph = memo(
 
       let firstSibling;
       if (node._siblingsExpanded) {
-        dispatchGraph({ type: "collapseSiblings", node });
+        // edit the node (ref to a node in the graph) and then update the state
+        collapseSiblings(graph, node);
+        dispatchGraph({ type: "setGraph", graph });
       } else if (node._siblings) {
         firstSibling = node._siblings[0];
         dispatchGraph({ type: "expandSiblings", node });
       } else {
         try {
+          //TODO: mode this in a function
           const entities = await getItems(
             node.data.leftIds,
             currentLang.code,
@@ -335,8 +328,9 @@ const Graph = memo(
       }
 
       let newx = node.x;
-      if (node._siblingsExpanded && firstSibling)
-        newx = (newx + firstSibling.x) / 2;
+      // I don't think the current node should move from the center
+      // if (node._siblingsExpanded && firstSibling)
+      //   newx = (newx + firstSibling.x) / 2;
       if (!options.noRecenter) centerPoint(newx);
     };
 
@@ -374,8 +368,8 @@ const Graph = memo(
       }
 
       let newx = root.x;
-      if (root.spouses)
-        newx = (newx + root.spouses[root.spouses.length - 1].x) / 2;
+      // if (root.spouses)
+      //   newx = (newx + root.spouses[root.spouses.length - 1].x) / 2;
       if (!options.noRecenter) centerPoint(newx);
     };
 
@@ -385,7 +379,8 @@ const Graph = memo(
       dispatchGraph({ type: "setLoadingSiblings", node: root });
 
       if (root._siblingsExpanded) {
-        dispatchGraph({ type: "collapseRootSiblings", root });
+        collapseRootSiblings(graph, root);
+        dispatchGraph({ type: "setGraph", graph });
       } else if (root._siblings) {
         dispatchGraph({ type: "expandRootSiblings", root });
       } else {
@@ -412,7 +407,7 @@ const Graph = memo(
       }
 
       let newx = root.x;
-      if (root.siblings) newx = (newx + root.siblings[0].x) / 2;
+      // if (root._siblingsExpanded) newx = (newx + root.siblings[0].x) / 2;
       if (!options.noRecenter) centerPoint(newx);
     };
 

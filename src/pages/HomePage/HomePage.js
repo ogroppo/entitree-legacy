@@ -11,6 +11,7 @@ import usePageView from "../../lib/usePageView";
 import "./HomePage.scss";
 import useLoadFromUrl from "../../hooks/useLoadFromUrl";
 import useCurrentLang from "../../hooks/useCurrentLang";
+import useSettings from "../../hooks/useSettings";
 import useUpdateUrl from "../../hooks/useUpdateUrl";
 import useLoadEntity from "../../hooks/useLoadEntity";
 
@@ -66,6 +67,7 @@ function HomePage() {
 
 export default function HomePageWrapper() {
   useCurrentLang();
+  useSettings();
   const { currentLang } = useContext(AppContext);
 
   if (!currentLang) return null;

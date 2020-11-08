@@ -1,15 +1,7 @@
 export default function getPathD(
   { x: startX, y: startY },
-  { x: endX, y: endY },
-  options = {}
+  { x: endX, y: endY }
 ) {
-  if (options.offsetStartY) {
-    startY += options.offsetStartY;
-  }
-  if (options.offsetEndY) {
-    endY += options.offsetEndY;
-  }
-
   if (startX === endX) return `M${startX},${startY} V${endY}`;
   if (startY === endY) return `M${startX},${startY} H${endX}`;
   const yDiff = endY - startY;

@@ -2,23 +2,21 @@ import { useContext, useEffect } from "react";
 import { useRouteMatch } from "react-router-dom";
 import { AppContext } from "../App";
 import { DEFAULT_LANG, LANGS } from "../constants/langs";
+import ls from "local-storage";
 
 const useCurrentLang = () => {
   const { setCurrentLang, setSecondLang } = useContext(AppContext);
 
   const match = useRouteMatch();
-  let { langCode } = match.params;
 
   useEffect(() => {
+    //Set primary language
+    const { langCode } = match.params;
     let currentLangCode;
     if (langCode) {
       currentLangCode = langCode;
     } else {
-      try {
-        currentLangCode = localStorage.getItem("userLangCode");
-      } catch (error) {
-        //localstorage not working
-      }
+      currentLangCode = ls("storedLangCode");
     }
 
     if (currentLangCode) {
@@ -29,17 +27,15 @@ const useCurrentLang = () => {
       setCurrentLang(DEFAULT_LANG);
     }
 
-    try {
-      const secondLangCode = localStorage.getItem("userSecondLangCode");
-      if (secondLangCode) {
-        const currentSecondLang = LANGS.find(
-          ({ code }) => code === secondLangCode
-        );
-        if (currentSecondLang) setSecondLang(currentSecondLang);
-      }
-    } catch (error) {
-      //localstorage not working
+    //Set second language
+    const secondLangCode = ls("storedSecondLangCode");
+    if (secondLangCode) {
+      const currentSecondLang = LANGS.find(
+        ({ code }) => code === secondLangCode
+      );
+      if (currentSecondLang) setSecondLang(currentSecondLang);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 };

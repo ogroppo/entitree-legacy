@@ -11,6 +11,8 @@ import Logo from "./components/Logo/Logo";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import TutorialPage from "./pages/TutorialPage/TutorialPage";
 import clsx from "clsx";
+import ls from "local-storage";
+import ReactGA from "react-ga";
 
 const browserHistory = createBrowserHistory();
 
@@ -26,14 +28,17 @@ export default class App extends Component {
     currentEntityId: null,
     currentProp: null,
     currentPropId: null,
-    showGenderColor: false,
-    showEyeHairColors: false,
-    showBirthName: false,
-    showNavIcons: true,
-    showFace: false,
-    loadingEntity: false,
-    imageType: "face",
     currentTheme: "default",
+    settings: {
+      showGenderColor: false,
+      showEyeHairColors: false,
+      showBirthName: false,
+      showNavIcons: true,
+      showExternalImages: false,
+      showFace: false,
+      imageType: "face",
+    },
+    loadingEntity: false,
     currentUpMap: null,
     setState: (state) => {
       this.setState({ ...state });
@@ -44,14 +49,16 @@ export default class App extends Component {
     setCurrentPropId: (currentPropId) => {
       this.setState({ currentPropId });
     },
-    setShowGenderColor: (showGenderColor) => {
-      this.setState({ showGenderColor });
-    },
-    setCurrentTheme: (currentTheme) => {
+    setCurrentTheme: (currentTheme, isUser = true) => {
+      if (isUser) {
+        ReactGA.event({
+          category: "Settings",
+          action: `Updated`,
+          label: `theme: ${currentTheme}`,
+        });
+        ls("storedTheme", currentTheme);
+      }
       this.setState({ currentTheme });
-    },
-    setShowEyeHairColors: (showEyeHairColors) => {
-      this.setState({ showEyeHairColors });
     },
     setCurrentEntity: (currentEntity) => {
       this.setState({ currentEntity });
@@ -65,23 +72,44 @@ export default class App extends Component {
     setLoadingEntity: (loadingEntity) => {
       this.setState({ loadingEntity });
     },
+    setSettings: (settings) => {
+      this.setState({ settings });
+    },
+    setSetting: (settingKey, settingValue) => {
+      const settings = { ...this.state.settings, [settingKey]: settingValue };
+      ReactGA.event({
+        category: "Settings",
+        action: `Updated`,
+        label: `${settingKey}: ${settingValue}`,
+      });
+      ls("settings", settings);
+      this.setState({
+        settings,
+      });
+    },
     setCurrentLang: (currentLang) => {
+      ReactGA.event({
+        category: "Language",
+        action: `Changed`,
+        label: currentLang.code,
+      });
+      ls("storedLangCode", currentLang.code);
       this.setState({
         currentLang,
       });
     },
     setSecondLang: (secondLang) => {
-      try {
-        localStorage.setItem("userSecondLangCode", secondLang.code);
-      } catch (error) {
-        //localstorage not working
+      if (secondLang) {
+        ReactGA.event({
+          category: "Second Language",
+          action: `Changed`,
+          label: secondLang.code,
+        });
+        ls("storedSecondLangCode", secondLang.code);
+      } else {
+        ls.remove("storedSecondLangCode");
       }
       this.setState({ secondLang });
-    },
-    setImageType: (imageType) => {
-      this.setState({
-        imageType,
-      });
     },
     showError: (error) => {
       console.error(error);
@@ -103,15 +131,6 @@ export default class App extends Component {
           infos: infos.slice(1),
         }));
       }, 2500);
-    },
-    setShowBirthName: (showBirthName) => {
-      this.setState({ showBirthName });
-    },
-    setShowNavIcons: (showNavIcons) => {
-      this.setState({ showNavIcons });
-    },
-    setShowFace: (showFace) => {
-      this.setState({ showFace });
     },
   };
 

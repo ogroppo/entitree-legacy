@@ -1,4 +1,5 @@
 import {
+  GENI_ID,
   IMAGE_ID,
   LOGO_ID,
   TWITTER_ID,
@@ -7,6 +8,7 @@ import {
 import { IMAGE_SIZE } from "../constants/tree";
 import getData from "../axios/getData";
 import getWikitreeImageUrl from "../wikitree/getWikitreeImageUrl";
+import getGeniImage from "../geni/getGeniImage";
 
 export default async function getEntityImages(entity, currentLangCode) {
   entity.thumbnails = [];
@@ -52,18 +54,31 @@ export default async function getEntityImages(entity, currentLangCode) {
     } catch {}
   }
 
-  const wikitreeId = entity.simpleClaims[WIKITREE_ID];
-  if (wikitreeId) {
-    const wikitreeImage = await getWikitreeImageUrl(wikitreeId[0].value);
-    if (wikitreeImage) {
-      const img = {
-        url: wikitreeImage,
-        alt: `Wikitree.com image`,
-      };
-      entity.thumbnails.push(img);
-      entity.images.push(img);
-    }
-  }
+  // const wikitreeId = entity.simpleClaims[WIKITREE_ID];
+  // if (wikitreeId) {
+  //   const wikitreeImage = await getWikitreeImageUrl(wikitreeId[0].value);
+  //   if (wikitreeImage) {
+  //     const img = {
+  //       url: wikitreeImage,
+  //       alt: `Wikitree.com image`,
+  //     };
+  //     entity.thumbnails.push(img);
+  //     entity.images.push(img);
+  //   }
+  // }
+  //
+  // const geniId = entity.simpleClaims[GENI_ID];
+  // if (geniId) {
+  //   const geniImage = await getGeniImage(geniId[0].value);
+  //   if (geniImage) {
+  //     const geniImg = {
+  //       url: geniImage,
+  //       alt: `Geni.com image`,
+  //     };
+  //     entity.thumbnails.push(geniImg);
+  //     entity.images.push(geniImg);
+  //   }
+  // }
 
   const twitterClaim = entity.simpleClaims[TWITTER_ID];
   if (twitterClaim) {
