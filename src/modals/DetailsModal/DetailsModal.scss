@@ -1,0 +1,24 @@
+.DetailsModal {
+  .allImages {
+    margin-bottom: 8px;
+    overflow: hidden;
+    img {
+      max-height: 164px;
+      max-width: 100%;
+      margin-right: 4px;
+      margin-bottom: 4px;
+    }
+  }
+  .externalLinks {
+    a {
+      padding: 1px;
+      margin-right: 10px;
+      display: inline-block;
+      line-height: 1;
+      img {
+        vertical-align: middle;
+        width: 32px;
+      }
+    }
+  }
+}
