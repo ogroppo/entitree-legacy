@@ -173,7 +173,6 @@ export default function graphReducer(graph, { type, ...arg }) {
     case "collapseRootSiblings": {
       let { root } = arg;
       root._siblingsExpanded = false;
-      console.log(root.siblings);
       root._siblings = [...root.siblings];
       root.siblings = null;
       calcBounds(graph);
@@ -211,7 +210,6 @@ export const collapseSiblings = (graph, node) => {
 
 export const collapseRootSiblings = (graph, root) => {
   root._siblingsExpanded = false;
-  console.log(root.siblings);
   root._siblings = root.siblings;
   root.siblings = null;
   calcBounds(graph);
