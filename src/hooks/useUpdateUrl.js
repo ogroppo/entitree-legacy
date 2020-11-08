@@ -10,7 +10,7 @@ const useUpdateUrl = () => {
     if (currentEntity) {
       history.push({
         pathname: `/${currentLang.code}/${
-          currentProp ? currentProp.slug : "all"
+          currentProp ? encodeURIComponent(currentProp.slug) : "all"
         }/${
           currentEntity.wikipediaSlug
             ? currentEntity.wikipediaSlug

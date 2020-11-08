@@ -5,12 +5,15 @@ import { Button, Modal } from "react-bootstrap";
 import getItemsLabel from "../../wikidata/getItemsLabel";
 import missingImagesLink from "../../lib/imageDatabase";
 import getWikipediaArticle from "../../wikipedia/getWikipediaArticle";
+import "./DetailsModal.scss";
 
-export default function DetailsModal({ node, hideModal }) {
+export default function DetailsModal({ node, hideModal, nodeImages }) {
   const { currentLang, setCurrentEntityId, currentEntity } = useContext(
     AppContext
   );
-  const [images, setImages] = useState(node.data.images);
+
+  console.log(nodeImages);
+  const [images, setImages] = useState(nodeImages);
   const [birthPlace, setBirthPlace] = useState();
   const [deathPlace, setDeathPlace] = useState();
   const [wikipediaExtract, setWikipediaExtract] = useState();
@@ -68,6 +71,7 @@ export default function DetailsModal({ node, hideModal }) {
         )}
         {!images.length && (
           <a
+            className="addImages"
             target="_blank"
             rel="noopener noreferrer"
             href={missingImagesLink(node.data.id, node.data.label)}

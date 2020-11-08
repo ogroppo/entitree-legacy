@@ -49,6 +49,7 @@ export default memo(function Node({
 
   const [showModal, setShowModal] = useState(false);
   const [thumbnails, setThumbnails] = useState(node.data.thumbnails);
+  const [images, setImages] = useState(node.data.images);
   const [thumbnailIndex, setThumbnailIndex] = useState(0);
 
   const { settings, secondLang } = useContext(AppContext);
@@ -76,7 +77,7 @@ export default memo(function Node({
               alt: `Wikitree.com image`,
             };
             setThumbnails(thumbnails.concat(img));
-            node.data.images.push(img); //turn this into state
+            setImages(images.concat(img));
           }
         });
       }
@@ -90,7 +91,7 @@ export default memo(function Node({
               alt: `Geni.com image`,
             };
             setThumbnails(thumbnails.concat(geniImg));
-            node.data.images.push(geniImg); //turn this into state
+            setImages(images.concat(geniImg));
           }
         });
       }
@@ -103,6 +104,11 @@ export default memo(function Node({
   } = node;
 
   const currentThumbnail = thumbnails[thumbnailIndex];
+
+  const onThumbClick =
+    thumbnails.length > 1
+      ? () => setThumbnailIndex((thumbnailIndex + 1) % thumbnails.length)
+      : null;
 
   return (
     <div
@@ -122,11 +128,9 @@ export default memo(function Node({
       //data-tree-id={node.treeId}
     >
       <div
-        className="imgWrapper"
+        className={clsx("imgWrapper", { hasThumbnails: thumbnails.length > 1 })}
         style={{ height: IMAGE_SIZE, width: IMAGE_SIZE }}
-        onClick={() =>
-          setThumbnailIndex((thumbnailIndex + 1) % thumbnails.length)
-        }
+        onClick={onThumbClick}
       >
         {(!thumbnails || !thumbnails.length) && (
           <span className="defaultImgMessage">
@@ -158,6 +162,11 @@ export default memo(function Node({
                 src={currentThumbnail.url}
                 title={currentThumbnail.alt}
               />
+            )}
+            {thumbnails.length > 1 && (
+              <span className="imgMore">
+                {thumbnailIndex + 1}/{thumbnails.length}
+              </span>
             )}
           </span>
         )}
@@ -361,7 +370,9 @@ export default memo(function Node({
             </span>
           </Button>
         )}
-      {showModal && <DetailsModal hideModal={hideModal} node={node} />}
+      {showModal && (
+        <DetailsModal hideModal={hideModal} node={node} nodeImages={images} />
+      )}
     </div>
   );
 });

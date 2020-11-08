@@ -16,7 +16,9 @@
     overflow: hidden;
     position: relative;
     display: flex;
-    cursor: pointer;
+    &.hasThumbnails {
+      cursor: pointer;
+    }
     .defaultImgMessage {
       position: absolute;
       top: -4px;
@@ -180,34 +182,6 @@
     display: none;
     .showNavIcons & {
       display: inline-block;
-    }
-  }
-}
-
-.DetailsModal {
-  .allImages {
-    width: 100%;
-    margin-bottom: 8px;
-    overflow: hidden;
-    height: 164px;
-    img {
-      height: 100%;
-      float: left;
-      margin-right: 4px;
-      margin-bottom: 4px;
-      max-width: 100%;
-    }
-  }
-  .externalLinks {
-    a {
-      padding: 1px;
-      margin-right: 10px;
-      display: inline-block;
-      line-height: 1;
-      img {
-        vertical-align: middle;
-        width: 32px;
-      }
     }
   }
 }
