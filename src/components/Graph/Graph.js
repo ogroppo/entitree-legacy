@@ -175,17 +175,19 @@ const Graph = memo(
           if (currentProp.id === CHILD_ID) {
             sortByBirthDate(entities);
           }
-          entities.forEach((entity, index) => {
-            const childNode = hierarchy(entity);
-            childNode.depth = node.depth + 1;
-            childNode.parent = node;
-            childNode.treeId = getNodeUniqueId(childNode, index);
-            childNode.isChild = true;
-            if (!node.children) {
-              node.children = [];
-            }
-            node.children.push(childNode);
-          });
+          entities
+            .filter((x) => x)
+            .forEach((entity, index) => {
+              const childNode = hierarchy(entity);
+              childNode.depth = node.depth + 1;
+              childNode.parent = node;
+              childNode.treeId = getNodeUniqueId(childNode, index);
+              childNode.isChild = true;
+              if (!node.children) {
+                node.children = [];
+              }
+              node.children.push(childNode);
+            });
 
           dispatchGraph({ type: "expandChildren", node });
         } catch (error) {
