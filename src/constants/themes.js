@@ -1,1 +1,1 @@
-export const THEMES = ["default", "big", "light", "dark"];
+export const THEMES = ["default", "big", "light", "dark", "onlyLabel"];

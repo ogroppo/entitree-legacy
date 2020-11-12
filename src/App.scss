@@ -44,6 +44,22 @@
     }
   }
 
+  &.onlyLabel {
+    .Node {
+      .content {
+        .label {
+          color: black;
+          font-size: 22px;
+          line-height: 22px;
+        }
+        .dates,
+        .description {
+          display: none;
+        }
+      }
+    }
+  }
+
   $darkColor: #343a40;
   &.big {
     .Node {
