@@ -25,7 +25,7 @@ export default async function getItems(
     ids.map(async (id) => {
       let entity = await formatEntity(allentities[id], languageCode, options);
       //siblings and spouses don't need connectors, so no propId is passed
-      if (propId) {
+      if (propId && entity) {
         addEntityConnectors(entity, propId, options);
       }
       return entity;
