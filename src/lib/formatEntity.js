@@ -56,6 +56,16 @@ export default async function formatEntity(entity, languageCode, options = {}) {
 
   addBirthDate(formattedEntity, languageCode);
   addDeathDate(formattedEntity, languageCode);
+  //only show children that didn't die young
+  // var age = null;
+  // if (simpleClaims[DEATH_DATE_ID] && simpleClaims[BIRTH_DATE_ID]) {
+  //   age =
+  //     simpleClaims[DEATH_DATE_ID][0].value.slice(0, 4) -
+  //     simpleClaims[BIRTH_DATE_ID][0].value.slice(0, 4);
+  //   if (age < 5) {
+  //     return;
+  //   }
+  // }
   addLifeSpan(formattedEntity);
 
   addBirthPlaceId(formattedEntity, languageCode);
