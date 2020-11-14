@@ -1,1 +1,26 @@
-export const THEMES = ["default", "big", "light", "dark", "onlyLabel"];
+export const THEMES = [
+  {
+    name: "Default",
+    cardHeight: 82 + 3 * 2,
+    cardWidth: 250,
+    thumbSize: 82,
+    labelFontSize: 13,
+    contentWidth: 162,
+    cardPadding: 3,
+    cardVerticalSpacing: 80,
+  },
+  {
+    name: "Big",
+    cardHeight: 84,
+    cardWidth: 240,
+    thumbSize: 84,
+    labelFontSize: 16,
+    contentWidth: 156,
+    displayDescription: "none",
+    cardPadding: 0,
+    cardVerticalSpacing: 170,
+  },
+  { name: "Light", disabled: true },
+  { name: "Dark", disabled: true },
+  { name: "Only Label", disabled: true },
+];

@@ -13,6 +13,7 @@ import TutorialPage from "./pages/TutorialPage/TutorialPage";
 import clsx from "clsx";
 import ls from "local-storage";
 import ReactGA from "react-ga";
+import treeLayout from "./lib/getTreeLayout";
 
 const browserHistory = createBrowserHistory();
 
@@ -28,7 +29,7 @@ export default class App extends Component {
     currentEntityId: null,
     currentProp: null,
     currentPropId: null,
-    currentTheme: "default",
+    currentTheme: null,
     settings: {
       showGenderColor: false,
       showEyeHairColors: false,
@@ -56,8 +57,12 @@ export default class App extends Component {
           action: `Updated`,
           label: `theme: ${currentTheme}`,
         });
-        ls("storedTheme", currentTheme);
+        ls("storedThemeKey", currentTheme.name);
       }
+      treeLayout.nodeSize([
+        currentTheme.cardWidth,
+        currentTheme.cardHeight + currentTheme.cardVerticalSpacing,
+      ]);
       this.setState({ currentTheme });
     },
     setCurrentEntity: (currentEntity) => {
@@ -139,11 +144,11 @@ export default class App extends Component {
   };
 
   render() {
-    const { errors, infos, currentTheme } = this.state;
+    const { errors, infos } = this.state;
     return (
       <AppContext.Provider value={this.state}>
         <Router history={browserHistory}>
-          <div className={clsx("App", currentTheme)}>
+          <div className={clsx("App")}>
             <div className="appBody">
               <div className="messages">
                 {errors.map((error, index) => (

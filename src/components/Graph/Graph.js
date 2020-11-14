@@ -13,7 +13,6 @@ import { TransformComponent } from "react-zoom-pan-pinch";
 import getItems from "../../wikidata/getItems";
 import { hierarchy } from "d3-hierarchy";
 import {
-  CARD_WIDTH,
   SIBLING_SPOUSE_SEPARATION,
   MAX_SCALE,
   MIN_SCALE,
@@ -23,7 +22,7 @@ import Node from "../Node/Node";
 import Rel from "../Rel/Rel";
 import { CHILD_ID } from "../../constants/properties";
 import graphReducer, {
-  initialState,
+  getInitialState,
   collapseRootSiblings,
   collapseSiblings,
 } from "./graphReducer";
@@ -34,6 +33,7 @@ import { sortByBirthDate, sortByGender } from "../../lib/sortEntities";
 import last from "../../lib/last";
 import clsx from "clsx";
 import debounce from "lodash.debounce";
+import { useTheme } from "styled-components";
 
 export default function GraphWrapper() {
   const { settings } = useContext(AppContext);
@@ -68,8 +68,12 @@ const Graph = memo(
       setLoadingEntity,
       currentUpMap,
     } = useContext(AppContext);
+    const theme = useTheme();
 
-    const [graph, dispatchGraph] = useReducer(graphReducer, initialState);
+    const [graph, dispatchGraph] = useReducer(
+      graphReducer,
+      getInitialState(theme)
+    );
     const [focusedNode, setFocusedNode] = useState();
 
     const graphRef = useRef();
@@ -120,6 +124,7 @@ const Graph = memo(
 
               dispatchGraph({
                 type: "set",
+                theme,
                 root,
                 childTree,
                 parentTree,
@@ -135,6 +140,7 @@ const Graph = memo(
               //currentEntity has changed from searchBox
               dispatchGraph({
                 type: "set",
+                theme,
                 root,
               });
             }
@@ -146,20 +152,20 @@ const Graph = memo(
         })();
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentEntity, currentProp]);
+    }, [currentEntity, currentProp, theme]);
 
     const toggleChildren = async (node, options = {}) => {
       if (!node.data.downIds || !node.data.downIds.length) return;
 
-      dispatchGraph({ type: "setLoadingChildren", node });
+      dispatchGraph({ type: "setLoadingChildren", node, theme });
 
       if (node._childrenExpanded) {
-        dispatchGraph({ type: "collapseChildren", node });
+        dispatchGraph({ type: "collapseChildren", node, theme });
       } else if (node._children) {
         //has cached data
         node.children = node._children;
         node._children = null;
-        dispatchGraph({ type: "expandChildren", node });
+        dispatchGraph({ type: "expandChildren", node, theme });
       } else {
         try {
           const entities = await getItems(
@@ -189,7 +195,7 @@ const Graph = memo(
               node.children.push(childNode);
             });
 
-          dispatchGraph({ type: "expandChildren", node });
+          dispatchGraph({ type: "expandChildren", node, theme });
         } catch (error) {
           showError(error);
         }
@@ -200,15 +206,15 @@ const Graph = memo(
     const toggleParents = async (node, options = {}) => {
       if (!node.data.upIds || !node.data.upIds.length) return;
 
-      dispatchGraph({ type: "setLoadingParents", node });
+      dispatchGraph({ type: "setLoadingParents", node, theme });
 
       if (node._parentsExpanded) {
-        dispatchGraph({ type: "collapseParents", node });
+        dispatchGraph({ type: "collapseParents", node, theme });
       } else if (node._parents) {
         //has cached data
         node.children = node._parents;
         node._parents = null;
-        dispatchGraph({ type: "expandParents", node });
+        dispatchGraph({ type: "expandParents", node, theme });
       } else {
         try {
           const entities = await getItems(
@@ -239,7 +245,7 @@ const Graph = memo(
           if (currentProp.id === CHILD_ID) {
             filterSpouses(node);
           }
-          dispatchGraph({ type: "expandParents", node });
+          dispatchGraph({ type: "expandParents", node, theme });
         } catch (error) {
           showError(error);
         }
@@ -251,15 +257,15 @@ const Graph = memo(
     const toggleSpouses = async (node, options = {}) => {
       if (!node.data.rightIds || !node.data.rightIds.length) return;
 
-      dispatchGraph({ type: "setLoadingSpouses", node });
+      dispatchGraph({ type: "setLoadingSpouses", node, theme });
 
       let lastSpouse;
       if (node._spousesExpanded) {
-        dispatchGraph({ type: "collapseSpouses", node });
+        dispatchGraph({ type: "collapseSpouses", node, theme });
       } else if (node._spouses) {
         //cached
         lastSpouse = last(node._spouses);
-        dispatchGraph({ type: "expandSpouses", node });
+        dispatchGraph({ type: "expandSpouses", node, theme });
       } else {
         try {
           const entities = await getItems(
@@ -277,7 +283,7 @@ const Graph = memo(
             node.parent.children.splice(spouseIndex, 0, spouseNode);
             lastSpouse = spouseNode;
           });
-          dispatchGraph({ type: "expandSpouses", node });
+          dispatchGraph({ type: "expandSpouses", node, theme });
         } catch (error) {
           showError(error);
         }
@@ -294,16 +300,16 @@ const Graph = memo(
     const toggleSiblings = async (node, options = {}) => {
       if (!node.data.leftIds || !node.data.leftIds.length) return;
 
-      dispatchGraph({ type: "setLoadingSiblings", node });
+      dispatchGraph({ type: "setLoadingSiblings", node, theme });
 
       let firstSibling;
       if (node._siblingsExpanded) {
         // edit the node (ref to a node in the graph) and then update the state
         collapseSiblings(graph, node);
-        dispatchGraph({ type: "setGraph", graph });
+        dispatchGraph({ type: "setGraph", graph, theme });
       } else if (node._siblings) {
         firstSibling = node._siblings[0];
-        dispatchGraph({ type: "expandSiblings", node });
+        dispatchGraph({ type: "expandSiblings", node, theme });
       } else {
         try {
           //TODO: mode this in a function
@@ -323,7 +329,7 @@ const Graph = memo(
             node.parent.children.splice(siblingIndex, 0, siblingNode);
             if (!firstSibling) firstSibling = siblingNode;
           });
-          dispatchGraph({ type: "expandSiblings", node });
+          dispatchGraph({ type: "expandSiblings", node, theme });
         } catch (error) {
           showError(error);
         }
@@ -339,12 +345,12 @@ const Graph = memo(
     const toggleRootSpouses = async (root, options = {}) => {
       if (!root.data.rightIds || !root.data.rightIds.length) return;
 
-      dispatchGraph({ type: "setLoadingSpouses", node: root });
+      dispatchGraph({ type: "setLoadingSpouses", node: root, theme });
 
       if (root._spousesExpanded) {
-        dispatchGraph({ type: "collapseRootSpouses", root });
+        dispatchGraph({ type: "collapseRootSpouses", root, theme });
       } else if (root._spouses) {
-        dispatchGraph({ type: "expandRootSpouses", root });
+        dispatchGraph({ type: "expandRootSpouses", root, theme });
       } else {
         try {
           const entities = await getItems(
@@ -353,7 +359,7 @@ const Graph = memo(
             null,
             { secondLang }
           );
-          const baseX = CARD_WIDTH * SIBLING_SPOUSE_SEPARATION;
+          const baseX = theme.cardWidth * SIBLING_SPOUSE_SEPARATION;
           entities.forEach((entity, index) => {
             const spouseNode = getSpouseNode(entity, index);
             spouseNode.x = baseX + baseX * index;
@@ -363,7 +369,7 @@ const Graph = memo(
             if (!root.spouses) root.spouses = [];
             root.spouses.push(spouseNode);
           });
-          dispatchGraph({ type: "expandRootSpouses", root });
+          dispatchGraph({ type: "expandRootSpouses", root, theme });
         } catch (error) {
           showError(error);
         }
@@ -378,13 +384,13 @@ const Graph = memo(
     const toggleRootSiblings = async (root, options = {}) => {
       if (!root.data.leftIds || !root.data.leftIds.length) return;
 
-      dispatchGraph({ type: "setLoadingSiblings", node: root });
+      dispatchGraph({ type: "setLoadingSiblings", node: root, theme });
 
       if (root._siblingsExpanded) {
         collapseRootSiblings(graph, root);
         dispatchGraph({ type: "setGraph", graph });
       } else if (root._siblings) {
-        dispatchGraph({ type: "expandRootSiblings", root });
+        dispatchGraph({ type: "expandRootSiblings", root, theme });
       } else {
         try {
           const entities = await getItems(
@@ -393,7 +399,7 @@ const Graph = memo(
             null,
             { secondLang }
           );
-          const baseX = -(CARD_WIDTH * SIBLING_SPOUSE_SEPARATION);
+          const baseX = -(theme.cardWidth * SIBLING_SPOUSE_SEPARATION);
           sortByBirthDate(entities);
           entities.forEach((entity, index, { length }) => {
             const siblingNode = getSiblingNode(entity, index);
@@ -402,7 +408,7 @@ const Graph = memo(
             if (!root.siblings) root.siblings = [];
             root.siblings.push(siblingNode);
           });
-          dispatchGraph({ type: "expandRootSiblings", root });
+          dispatchGraph({ type: "expandRootSiblings", root, theme });
         } catch (error) {
           showError(error);
         }
@@ -428,10 +434,10 @@ const Graph = memo(
     };
 
     const fitTree = () => {
-      const leftEdge = graph.maxLeft - CARD_WIDTH; //should be CARD_WIDTH / 2 but give some padding
-      const topEdge = graph.maxTop - CARD_WIDTH / 2;
-      const rightEdge = graph.maxRight + CARD_WIDTH;
-      const bottomEdge = graph.maxBottom + CARD_WIDTH / 2;
+      const leftEdge = graph.maxLeft - theme.cardWidth; //should be theme.cardWidth / 2 but give some padding
+      const topEdge = graph.maxTop - theme.cardWidth / 2;
+      const rightEdge = graph.maxRight + theme.cardWidth;
+      const bottomEdge = graph.maxBottom + theme.cardWidth / 2;
       const treeWidth = rightEdge - leftEdge;
       const treeHeight = bottomEdge - topEdge;
 

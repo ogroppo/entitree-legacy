@@ -110,7 +110,5 @@ export default async function getEntityImages(entity, currentLangCode) {
 }
 
 function getCommonsUrlByFile(filename, size = IMAGE_SIZE) {
-  return `https://commons.wikimedia.org/wiki/Special:FilePath/${filename}${
-    size ? `?width=${size}px` : ""
-  }`;
+  return `https://commons.wikimedia.org/wiki/Special:FilePath/${filename}?width=${size}px`;
 }

@@ -1,11 +1,4 @@
 import React, { memo, useContext, useEffect, useMemo, useState } from "react";
-import {
-  IMAGE_SIZE,
-  CARD_WIDTH,
-  CARD_PADDING,
-  CARD_CONTENT_WIDTH,
-  CARD_HEIGHT,
-} from "../../constants/tree";
 import { Button } from "react-bootstrap";
 import {
   FiChevronLeft,
@@ -33,6 +26,7 @@ import { AppContext } from "../../App";
 import clsx from "clsx";
 import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
 import getGeniImage from "../../geni/getGeniImage";
+import styled from "styled-components";
 
 export default memo(function Node({
   node,
@@ -111,13 +105,10 @@ export default memo(function Node({
       : null;
 
   return (
-    <div
+    <ThemedNode
       style={{
         left: node.x,
         top: node.y,
-        width: CARD_WIDTH,
-        height: CARD_HEIGHT,
-        padding: CARD_PADDING,
       }}
       className={clsx("Node", {
         focused: focusedNode && focusedNode.treeId === node.treeId,
@@ -127,9 +118,8 @@ export default memo(function Node({
       //data-id={node.data.id}
       //data-tree-id={node.treeId}
     >
-      <div
+      <ThemedThumbnail
         className={clsx("imgWrapper", { hasThumbnails: thumbnails.length > 1 })}
-        style={{ height: IMAGE_SIZE, width: IMAGE_SIZE }}
         onClick={onThumbClick}
       >
         {(!thumbnails || !thumbnails.length) && (
@@ -146,7 +136,7 @@ export default memo(function Node({
           </span>
         )}
         {currentThumbnail && (
-          <span>
+          <>
             {settings.showFace && faceImage ? (
               <img
                 alt={faceImage.alt}
@@ -168,13 +158,10 @@ export default memo(function Node({
                 {thumbnailIndex + 1}/{thumbnails.length}
               </span>
             )}
-          </span>
+          </>
         )}
-      </div>
-      <div
-        className="content"
-        style={{ height: IMAGE_SIZE, width: CARD_CONTENT_WIDTH }}
-      >
+      </ThemedThumbnail>
+      <ThemedContent className="content">
         {settings.showEyeHairColors && (
           <div
             className="colorIcons"
@@ -270,7 +257,7 @@ export default memo(function Node({
             ? node.data.inceptionAblishedSpan
             : ""}
         </div>
-      </div>
+      </ThemedContent>
       {/* {node._parentsExpanded && currentProp && (
         <div className="upPropLabel" style={{ top: -CARD_VERTICAL_GAP / 2 }}>
           <span>{currentProp.label}</span>
@@ -373,6 +360,23 @@ export default memo(function Node({
       {showModal && (
         <DetailsModal hideModal={hideModal} node={node} nodeImages={images} />
       )}
-    </div>
+    </ThemedNode>
   );
 });
+
+const ThemedNode = styled.div`
+  width: ${({ theme }) => theme.cardWidth}px;
+  padding: ${({ theme }) => theme.cardPadding}px;
+`;
+
+const ThemedThumbnail = styled.div`
+  width: ${({ theme }) => theme.thumbSize}px;
+  height: ${({ theme }) => theme.thumbSize}px;
+`;
+
+const ThemedContent = styled.div`
+  width: ${({ theme }) => theme.contentWidth}px;
+  .label {
+    font-size: ${({ theme }) => theme.labelFontSize}px;
+  }
+`;
