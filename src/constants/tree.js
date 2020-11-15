@@ -1,6 +1,6 @@
 export const CARD_PADDING = 3;
 export const CARD_BORDER_WIDTH = 1;
-export const IMAGE_SIZE = 82; // :( use by entity image url
+export const DEFAULT_THUMB_WIDTH = 80;
 export const SIBLING_SPOUSE_SEPARATION = 1.1;
 export const SAME_GROUP_SEPARATION = 1.16;
 export const COUSINS_SEPARATION = 1.3;
