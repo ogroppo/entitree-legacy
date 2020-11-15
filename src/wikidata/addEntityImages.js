@@ -5,7 +5,7 @@ import {
   TWITTER_ID,
   WIKITREE_ID,
 } from "../constants/properties";
-import { IMAGE_SIZE } from "../constants/tree";
+import { DEFAULT_THUMB_WIDTH } from "../constants/tree";
 import getData from "../axios/getData";
 import getWikitreeImageUrl from "../wikitree/getWikitreeImageUrl";
 import getGeniImage from "../geni/getGeniImage";
@@ -18,11 +18,11 @@ export default async function addEntityImages(entity, currentLangCode, theme) {
   if (imageClaim) {
     imageClaim.forEach((image, index) => {
       entity.thumbnails.push({
-        url: getCommonsUrlByFile(image.value, theme.thumbWidth),
+        url: getCommonsUrlByFile(image.value, theme?.thumbWidth),
         alt: `${entity.label}'s Image ${index + 1} from Wikimedia Commons`,
       });
       entity.images.push({
-        url: getCommonsUrlByFile(image.value, theme.thumbWidth * 2),
+        url: getCommonsUrlByFile(image.value, theme?.thumbWidth * 2),
         alt: `${entity.label}'s Image ${index + 1} from Wikimedia Commons`,
       });
     });
@@ -98,17 +98,17 @@ export default async function addEntityImages(entity, currentLangCode, theme) {
   if (logoClaim) {
     logoClaim.forEach((image, index) => {
       entity.thumbnails.push({
-        url: getCommonsUrlByFile(image.value, theme.thumbWidth),
+        url: getCommonsUrlByFile(image.value, theme?.thumbWidth),
         alt: `${entity.label}'s Logo ${index + 1} from Wikimedia Commons`,
       });
       entity.images.push({
-        url: getCommonsUrlByFile(image.value, theme.thumbWidth * 2),
+        url: getCommonsUrlByFile(image.value, theme?.thumbWidth * 2),
         alt: `${entity.label}'s Logo ${index + 1} from Wikimedia Commons`,
       });
     });
   }
 }
 
-function getCommonsUrlByFile(filename, size) {
+function getCommonsUrlByFile(filename, size = DEFAULT_THUMB_WIDTH) {
   return `https://commons.wikimedia.org/wiki/Special:FilePath/${filename}?width=${size}px`;
 }
