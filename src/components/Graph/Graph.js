@@ -387,7 +387,7 @@ const Graph = memo(
       dispatchGraph({ type: "setLoadingSiblings", node: root, theme });
 
       if (root._siblingsExpanded) {
-        collapseRootSiblings(graph, root);
+        collapseRootSiblings(graph, root, theme);
         dispatchGraph({ type: "setGraph", graph });
       } else if (root._siblings) {
         dispatchGraph({ type: "expandRootSiblings", root, theme });
