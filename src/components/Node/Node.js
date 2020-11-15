@@ -26,7 +26,7 @@ import { AppContext } from "../../App";
 import clsx from "clsx";
 import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
 import getGeniImage from "../../geni/getGeniImage";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 export default memo(function Node({
   node,
@@ -45,6 +45,7 @@ export default memo(function Node({
   const [thumbnails, setThumbnails] = useState(node.data.thumbnails);
   const [images, setImages] = useState(node.data.images);
   const [thumbnailIndex, setThumbnailIndex] = useState(0);
+  const theme = useTheme();
 
   const { settings, secondLang } = useContext(AppContext);
 
@@ -108,7 +109,6 @@ export default memo(function Node({
     secondLang &&
     node.data.secondLangLabel &&
     node.data.label !== node.data.secondLangLabel;
-
   return (
     <ThemedNode
       style={{
@@ -253,7 +253,9 @@ export default memo(function Node({
         </div>
         <div className="dates">
           {node.data.lifeSpan
-            ? node.data.lifeSpan
+            ? theme.yearOnly
+              ? node.data.lifeSpanInYears
+              : node.data.lifeSpan
             : node.data.startEndSpan
             ? node.data.startEndSpan
             : node.data.inceptionAblishedSpan
@@ -394,5 +396,6 @@ const ThemedContent = styled.div`
   }
   .dates {
     display: ${({ theme }) => theme.datesDisplay};
+    font-size: ${({ theme }) => theme.datesFontSize}px;
   }
 `;
