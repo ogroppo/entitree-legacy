@@ -7,6 +7,7 @@ export default async function getItems(
   ids,
   languageCode,
   propId, // propId should go in options!!!
+  theme,
   options = {}
 ) {
   if (!ids || !ids.length) throw new Error("You need valid ids to getItems");
@@ -23,7 +24,12 @@ export default async function getItems(
 
   const entities = await Promise.all(
     ids.map(async (id) => {
-      let entity = await formatEntity(allentities[id], languageCode, options);
+      let entity = await formatEntity(
+        allentities[id],
+        languageCode,
+        theme,
+        options
+      );
       //siblings and spouses don't need connectors, so no propId is passed
       if (propId && entity) {
         addEntityConnectors(entity, propId, options);

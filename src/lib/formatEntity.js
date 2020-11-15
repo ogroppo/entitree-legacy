@@ -32,7 +32,12 @@ import addDeathPlaceId from "./addDeathPlaceId";
 import addBirthName from "./addBirthName";
 import addSecondLangLabel from "./addSecondLangLabel";
 
-export default async function formatEntity(entity, languageCode, options = {}) {
+export default async function formatEntity(
+  entity,
+  languageCode,
+  theme,
+  options = {}
+) {
   if (entity.missing !== undefined) return undefined;
 
   if (!entity) throw new Error("Entity is required");
@@ -95,7 +100,7 @@ export default async function formatEntity(entity, languageCode, options = {}) {
 
   addIsHuman(formattedEntity);
 
-  await addEntityImages(formattedEntity, languageCode);
+  await addEntityImages(formattedEntity, languageCode, theme);
 
   return formattedEntity;
 }

@@ -171,6 +171,7 @@ const Graph = memo(
             node.data.downIds,
             currentLang.code,
             currentProp.id,
+            theme,
             {
               addDownIds: true,
               addRightIds: currentProp.id === CHILD_ID,
@@ -219,6 +220,7 @@ const Graph = memo(
             node.data.upIds,
             currentLang.code,
             currentProp.id,
+            theme,
             {
               upMap: currentUpMap,
               addLeftIds: currentProp.id === CHILD_ID,
@@ -270,6 +272,7 @@ const Graph = memo(
             node.data.rightIds,
             currentLang.code,
             null,
+            theme,
             { secondLang }
           );
           entities.forEach((entity, index) => {
@@ -315,6 +318,7 @@ const Graph = memo(
             node.data.leftIds,
             currentLang.code,
             null,
+            theme,
             { secondLang }
           );
           sortByBirthDate(entities);
@@ -355,6 +359,7 @@ const Graph = memo(
             root.data.rightIds,
             currentLang.code,
             null,
+            theme,
             { secondLang }
           );
           const baseX = theme.cardWidth * SIBLING_SPOUSE_SEPARATION;
@@ -395,6 +400,7 @@ const Graph = memo(
             root.data.leftIds,
             currentLang.code,
             null,
+            theme,
             { secondLang }
           );
           const baseX = -(theme.cardWidth * SIBLING_SPOUSE_SEPARATION);

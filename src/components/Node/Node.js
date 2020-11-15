@@ -370,8 +370,8 @@ const ThemedNode = styled.div`
 `;
 
 const ThemedThumbnail = styled.div`
-  width: ${({ theme }) => theme.thumbSize}px;
-  height: ${({ theme }) => theme.thumbSize}px;
+  width: ${({ theme }) => theme.thumbWidth}px;
+  height: ${({ theme }) => theme.thumbHeight}px;
 `;
 
 const ThemedContent = styled.div`

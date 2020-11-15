@@ -1,9 +1,9 @@
 export const THEMES = [
   {
     name: "Default",
-    cardHeight: 82 + 3 * 2,
     cardWidth: 250,
-    thumbSize: 82,
+    thumbWidth: 82,
+    thumbHeight: 82,
     labelFontSize: 13,
     cardPadding: 3,
     descriptionDisplay: "inline",
@@ -12,9 +12,9 @@ export const THEMES = [
   },
   {
     name: "Big",
-    cardHeight: 84,
     cardWidth: 240,
-    thumbSize: 84,
+    thumbWidth: 84,
+    thumbHeight: 84,
     labelFontSize: 16,
     descriptionDisplay: "inline",
     datesDisplay: "block",
@@ -23,9 +23,9 @@ export const THEMES = [
   },
   {
     name: "Light",
-    cardHeight: 84,
     cardWidth: 240,
-    thumbSize: 84,
+    thumbWidth: 120,
+    thumbHeight: 84,
     labelFontSize: 16,
     descriptionDisplay: "inline",
     datesDisplay: "block",
@@ -36,13 +36,18 @@ export const THEMES = [
   { name: "Dark", disabled: true },
   {
     name: "Only Label",
-    cardHeight: 84,
     cardWidth: 200,
-    thumbSize: 84,
+    thumbWidth: 84,
+    thumbHeight: 84,
     labelFontSize: 18,
     descriptionDisplay: "none",
     datesDisplay: "none",
     cardPadding: 0,
     cardVerticalSpacing: 60,
   },
-];
+].map((theme) => {
+  return {
+    ...theme,
+    cardHeight: theme.thumbHeight + 2 * (theme.cardPadding || 0),
+  };
+});
