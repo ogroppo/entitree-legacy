@@ -115,3 +115,33 @@ test("NAPOLEON birth date deprecated first", () => {
   const formatted = formatDateClaim(claim);
   expect(formatted).toBe("15 Aug 1769");
 });
+
+
+test("test born in the 20th century", () => {
+  const claim = [
+    {
+      "mainsnak": {
+        "snaktype": "value",
+        "property": "P569",
+        "hash": "45fa3edcac7fab894cee68fb6704dc9c13de3261",
+        "datavalue": {
+          "value": {
+            "time": "+2000-01-01T00:00:00Z",
+            "timezone": 0,
+            "before": 0,
+            "after": 0,
+            "precision": 7,
+            "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+          },
+          "type": "time"
+        },
+        "datatype": "time"
+      },
+      "type": "statement",
+      "id": "Q15840139$55B101EE-CBF7-4117-A2C2-84E6D72A273B",
+      "rank": "normal",
+    },
+  ];
+  const formatted = formatDateClaim(claim);
+  expect(formatted).toBe("20th cent.");
+});
