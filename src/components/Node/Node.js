@@ -367,6 +367,7 @@ export default memo(function Node({
 const ThemedNode = styled.div`
   width: ${({ theme }) => theme.cardWidth}px;
   padding: ${({ theme }) => theme.cardPadding}px;
+  background-color: ${({ theme }) => theme.backgroundColor};
 `;
 
 const ThemedThumbnail = styled.div`
@@ -378,5 +379,9 @@ const ThemedContent = styled.div`
   width: ${({ theme }) => theme.contentWidth}px;
   .label {
     font-size: ${({ theme }) => theme.labelFontSize}px;
+  }
+  .dates,
+  .description {
+    display: ${({ theme }) => theme.showDescription};
   }
 `;
