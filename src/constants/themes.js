@@ -24,7 +24,7 @@ export const THEMES = [
   {
     name: "Light",
     cardWidth: 260,
-    thumbWidth: 120,
+    thumbWidth: 60,
     thumbHeight: 84,
     labelFontSize: 16,
     descriptionDisplay: "inline",

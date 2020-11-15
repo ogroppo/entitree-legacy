@@ -104,6 +104,11 @@ export default memo(function Node({
       ? () => setThumbnailIndex((thumbnailIndex + 1) % thumbnails.length)
       : null;
 
+  const hasSecondLang =
+    secondLang &&
+    node.data.secondLangLabel &&
+    node.data.label !== node.data.secondLangLabel;
+
   return (
     <ThemedNode
       style={{
@@ -161,7 +166,7 @@ export default memo(function Node({
           </>
         )}
       </ThemedThumbnail>
-      <ThemedContent className="content">
+      <ThemedContent className="content" hasSecondLang={hasSecondLang}>
         {settings.showEyeHairColors && (
           <div
             className="colorIcons"
@@ -229,16 +234,14 @@ export default memo(function Node({
               )}
             </span>
           )}
-          {secondLang &&
-            node.data.secondLangLabel &&
-            node.data.label !== node.data.secondLangLabel && (
-              <>
-                <br />
-                <span className="label labelSecondLang">
-                  {node.data.secondLangLabel}
-                </span>
-              </>
-            )}
+          {hasSecondLang && (
+            <>
+              <br />
+              <span className="label labelSecondLang">
+                {node.data.secondLangLabel}
+              </span>
+            </>
+          )}
           {node.data.description && (
             <>
               <br />
@@ -380,8 +383,10 @@ const ThemedContent = styled.div`
     font-size: ${({ theme }) => theme.labelFontSize}px;
     //if there is no description we can have this block and have the dots of the same color of the text
     //but only ONE can be display block
-    display: ${({ theme }) =>
-      theme.descriptionDisplay === "none" ? "block" : "inline"};
+    display: ${({ theme, hasSecondLang }) =>
+      theme.descriptionDisplay === "none" && !hasSecondLang
+        ? "block"
+        : "inline"};
   }
   .description {
     //if "block" the dots will have the same color of the text
