@@ -34,6 +34,14 @@ export default function graphReducer(graph, { type, theme, ...arg }) {
         ...graph,
       };
     }
+    case "relayoutGraph": {
+      let { graph } = arg;
+      recalcChildren(graph, theme);
+      recalcParents(graph, theme);
+      return {
+        ...graph,
+      };
+    }
     case "expandChildren": {
       let { node } = arg;
       if (node._childrenExpanded) return graph; //no-op

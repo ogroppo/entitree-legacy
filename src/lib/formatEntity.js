@@ -56,16 +56,7 @@ export default async function formatEntity(entity, languageCode, options = {}) {
 
   addBirthDate(formattedEntity, languageCode);
   addDeathDate(formattedEntity, languageCode);
-  //only show children that didn't die young
-  // var age = null;
-  // if (simpleClaims[DEATH_DATE_ID] && simpleClaims[BIRTH_DATE_ID]) {
-  //   age =
-  //     simpleClaims[DEATH_DATE_ID][0].value.slice(0, 4) -
-  //     simpleClaims[BIRTH_DATE_ID][0].value.slice(0, 4);
-  //   if (age < 5) {
-  //     return;
-  //   }
-  // }
+  addIsInfantDeath(formattedEntity);
   addLifeSpan(formattedEntity);
 
   addBirthPlaceId(formattedEntity, languageCode);
@@ -115,6 +106,18 @@ function addIsHuman(entity) {
       ({ value }) => value === HUMAN_ID //add all other IDS of person subclass?
     );
   } catch (error) {}
+}
+
+function addIsInfantDeath(entity) {
+  if (
+    entity.simpleClaims[DEATH_DATE_ID] &&
+    entity.simpleClaims[BIRTH_DATE_ID]
+  ) {
+    entity.isInfantDeath =
+      parseInt(entity.simpleClaims[DEATH_DATE_ID][0].value.slice(0, 4)) -
+        parseInt(entity.simpleClaims[BIRTH_DATE_ID][0].value.slice(0, 4)) <
+      5;
+  }
 }
 
 function addWebsite(entity) {

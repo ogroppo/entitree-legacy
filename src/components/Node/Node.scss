@@ -15,6 +15,7 @@
     border-radius: 3px;
     overflow: hidden;
     position: relative;
+    flex-shrink: 0;
     &.hasThumbnails {
       cursor: pointer;
     }
@@ -51,21 +52,22 @@
   .content {
     position: relative;
     padding-left: 4px;
+    flex-grow: 1;
     .four-line-clamp {
       display: -webkit-box;
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 4;
-      line-height: 15px;
+      line-height: 1; // leave 1, the children will be proportional to this
       overflow: hidden;
-      //max-height: 62px; //line h * 4 + 2?
     }
     .label {
-      display: inline;
+      //do not set display, will come from theme
+      vertical-align: text-top; //allow text start from top despite the line height
+      text-align: left; //override .btn style
       border: 0;
       padding: 0;
-      line-height: 1.2;
       font-weight: bold;
-      vertical-align: top;
+      line-height: 1.2;
       @media print {
         color: gray;
       }
@@ -77,13 +79,14 @@
       }
     }
     .description {
-      //display: inline;
+      //do not set display, will come from theme
+      line-height: 1.2;
       font-size: 12px;
       line-height: 15px;
       color: #666;
     }
     .dates {
-      margin-top: 3px;
+      //do not set display, will come from theme
       font-size: 10px;
       color: #666;
       white-space: nowrap;

@@ -94,7 +94,6 @@ const Graph = memo(
       };
     }, [graphRef]);
 
-    //GET ROOT
     useEffect(() => {
       //also wait until the container size has been set
       if (currentEntity) {
@@ -181,19 +180,18 @@ const Graph = memo(
           if (currentProp.id === CHILD_ID) {
             sortByBirthDate(entities);
           }
-          entities
-            .filter((x) => x)
-            .forEach((entity, index) => {
-              const childNode = hierarchy(entity);
-              childNode.depth = node.depth + 1;
-              childNode.parent = node;
-              childNode.treeId = getNodeUniqueId(childNode, index);
-              childNode.isChild = true;
-              if (!node.children) {
-                node.children = [];
-              }
-              node.children.push(childNode);
-            });
+          entities.forEach((entity, index) => {
+            if (entity.isHuman && entity.isInfantDeath) return;
+            const childNode = hierarchy(entity);
+            childNode.depth = node.depth + 1;
+            childNode.parent = node;
+            childNode.treeId = getNodeUniqueId(childNode, index);
+            childNode.isChild = true;
+            if (!node.children) {
+              node.children = [];
+            }
+            node.children.push(childNode);
+          });
 
           dispatchGraph({ type: "expandChildren", node, theme });
         } catch (error) {

@@ -198,7 +198,7 @@ export default memo(function Node({
         <div className="four-line-clamp">
           {node.isRoot ? (
             <h1
-              className="label btn btn-link"
+              className="label btn btn-link mb-0"
               role="button"
               tabIndex="0"
               onClick={() => setShowModal(true)}
@@ -233,7 +233,6 @@ export default memo(function Node({
             node.data.secondLangLabel &&
             node.data.label !== node.data.secondLangLabel && (
               <>
-                <br />
                 <span className="label labelSecondLang">
                   {node.data.secondLangLabel}
                 </span>
@@ -376,12 +375,18 @@ const ThemedThumbnail = styled.div`
 `;
 
 const ThemedContent = styled.div`
-  width: ${({ theme }) => theme.contentWidth}px;
   .label {
     font-size: ${({ theme }) => theme.labelFontSize}px;
+    //if there is no description we can have this block and have the dots of the same color of the text
+    //but only ONE can be display block
+    display: ${({ theme }) =>
+      theme.descriptionDisplay === "none" ? "block" : "inline"};
   }
-  .dates,
   .description {
-    display: ${({ theme }) => theme.showDescription};
+    //if "block" the dots will have the same color of the text
+    display: ${({ theme }) => theme.descriptionDisplay};
+  }
+  .dates {
+    display: ${({ theme }) => theme.datesDisplay};
   }
 `;
