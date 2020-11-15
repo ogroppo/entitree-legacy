@@ -233,6 +233,7 @@ export default memo(function Node({
             node.data.secondLangLabel &&
             node.data.label !== node.data.secondLangLabel && (
               <>
+                <br />
                 <span className="label labelSecondLang">
                   {node.data.secondLangLabel}
                 </span>

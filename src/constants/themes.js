@@ -2,10 +2,10 @@ export const THEMES = [
   {
     name: "Default",
     cardWidth: 250,
-    thumbWidth: 82,
-    thumbHeight: 82,
+    thumbWidth: 84,
+    thumbHeight: 84,
     labelFontSize: 13,
-    cardPadding: 3,
+    cardPadding: 2,
     descriptionDisplay: "inline",
     datesDisplay: "block",
     cardVerticalSpacing: 80,
@@ -23,7 +23,7 @@ export const THEMES = [
   },
   {
     name: "Light",
-    cardWidth: 240,
+    cardWidth: 260,
     thumbWidth: 120,
     thumbHeight: 84,
     labelFontSize: 16,
