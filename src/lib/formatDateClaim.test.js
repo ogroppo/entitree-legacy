@@ -145,3 +145,33 @@ test("test born in the 20th century", () => {
   const formatted = formatDateClaim(claim);
   expect(formatted).toBe("20th cent.");
 });
+
+test("1940s", () => {
+  const claim = [
+    {
+      "mainsnak": {
+        "snaktype": "value",
+        "property": "P569",
+        "hash": "a50d5838fbddc159755964cc3ce72426cabf5deb",
+        "datavalue": {
+          "value": {
+            "time": "+1945-00-00T00:00:00Z",
+            "timezone": 0,
+            "before": 0,
+            "after": 0,
+            "precision": 8,
+            "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+          },
+          "type": "time"
+        },
+        "datatype": "time"
+      },
+      "type": "statement",
+      "id": "Q35723119$d9342525-4d64-b1d7-b2e9-88e734c2c5a8",
+      "rank": "normal",
+    },
+  ];
+  const formatted = formatDateClaim(claim);
+  expect(formatted).toBe("1940s");
+});
+
