@@ -53,5 +53,9 @@ function addRightIds(entity) {
         return null;
       }
     })
-    .filter((id) => id); //filter out 'No value' and 'Unknown'
+    .filter((id, index, ids) => {
+      // Filter out 'No value' and 'Unknown'
+      // Filter people married twice with same person (e.g. elon musk)
+      return id && ids.indexOf(id) === index;
+    });
 }
