@@ -57,7 +57,7 @@
       -webkit-line-clamp: 4;
       line-height: 15px;
       overflow: hidden;
-      max-height: 62px; //line h * 4 + 2?
+      //max-height: 62px; //line h * 4 + 2?
     }
     .label {
       display: inline;
@@ -77,7 +77,7 @@
       }
     }
     .description {
-      display: inline;
+      //display: inline;
       font-size: 12px;
       line-height: 15px;
       color: #666;
