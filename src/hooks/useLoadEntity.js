@@ -6,6 +6,7 @@ import getItemProps from "../wikidata/getItemProps";
 import { FAMILY_PROP, FAMILY_IDS_MAP, CHILD_ID } from "../constants/properties";
 import getUpMap from "../wikidata/getUpMap";
 import addEntityConnectors from "../lib/addEntityConnectors";
+import { useTheme } from "styled-components";
 
 const useLoadEntity = () => {
   const {
@@ -21,14 +22,15 @@ const useLoadEntity = () => {
   } = useContext(AppContext);
 
   const match = useRouteMatch();
+  const theme = useTheme();
 
   const getItemMemo = useMemo(() => {
     if (currentEntityId)
       return Promise.all([
-        getItem(currentEntityId, currentLang.code, { secondLang }),
+        getItem(currentEntityId, currentLang.code, theme, { secondLang }),
         getItemProps(currentEntityId, currentLang.code),
       ]);
-  }, [currentEntityId, currentLang, secondLang]);
+  }, [currentEntityId, currentLang.code, secondLang, theme]);
 
   useEffect(() => {
     const loadEntity = async () => {

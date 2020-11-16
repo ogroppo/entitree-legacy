@@ -4,4 +4,5 @@ import { BIRTH_DATE_ID } from "../constants/properties";
 export default function addBirthDate(entity, languageCode) {
   const claim = entity.claims[BIRTH_DATE_ID];
   if (claim) entity.birthDate = formatDateClaim(claim, languageCode);
+  if (claim) entity.birthYear = formatDateClaim(claim, languageCode, true);
 }
