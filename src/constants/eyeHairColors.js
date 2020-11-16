@@ -85,7 +85,7 @@ export const EYE_AND_HAIR_COLORS = [
   },
   {
     item: "http://www.wikidata.org/entity/Q81744936",
-    itemLabel: "cyan",
+    itemLabel: "cyan hair",
     colorLabel: "cyan",
     hex: "00FFFF",
   },
@@ -202,6 +202,12 @@ export const EYE_AND_HAIR_COLORS = [
     itemLabel: "dark green hair",
     colorLabel: "dark green",
     hex: "006400",
+  },
+  {
+    item: "http://www.wikidata.org/entity/Q79483632",
+    itemLabel: "light brown hair",
+    colorLabel: "light brown",
+    hex: "B5651D",
   },
   {
     item: "http://www.wikidata.org/entity/Q27777837",
@@ -361,7 +367,7 @@ export const EYE_AND_HAIR_COLORS = [
   },
   {
     item: "http://www.wikidata.org/entity/Q100292098",
-    itemLabel: "coffe (eye color)",
+    itemLabel: "coffee",
     colorLabel: "coffee",
     hex: "6F4E37",
   },
@@ -442,6 +448,12 @@ export const EYE_AND_HAIR_COLORS = [
     itemLabel: "hazel",
     colorLabel: "hazel",
     hex: "B5AE6E",
+  },
+  {
+    item: "http://www.wikidata.org/entity/Q79399164",
+    itemLabel: "light brown",
+    colorLabel: "light brown",
+    hex: "B5651D",
   },
 ];
 

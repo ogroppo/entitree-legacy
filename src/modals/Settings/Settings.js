@@ -54,7 +54,7 @@ export default function Settings({ show, hideModal }) {
             checked={settings.showEyeHairColors}
             onChange={(e) => setSetting("showEyeHairColors", e.target.checked)}
             type="checkbox"
-            label={"Add icons with eye and hair color (lacks data)"}
+            label={"Show eye colors (lacks data)"}
           />
         </Form.Group>
         <Form.Group controlId={"birthName"}>
