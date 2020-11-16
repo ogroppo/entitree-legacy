@@ -7,5 +7,6 @@ export default function addDescription(entity, languageCode) {
 
   if (descriptionObject.value.startsWith("Peerage person ID=")) return;
 
-  entity.description = descriptionObject.value;
+  //remove dates/years from description
+  entity.description = descriptionObject.value.replace(/\((.*)\d{4}(.*)\)/g,'');
 }
