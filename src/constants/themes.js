@@ -8,6 +8,7 @@ const defaultTheme = {
   datesDisplay: "block",
   datesFontSize: 11,
   cardVerticalSpacing: 80,
+  nodeDisplay: "flex",
 };
 export const THEMES = [
   {
@@ -36,16 +37,33 @@ export const THEMES = [
     ...defaultTheme,
     name: "Only Label",
     cardWidth: 200,
-    labelFontSize: 18,
+    labelFontSize: 16,
     descriptionDisplay: "none",
     datesFontSize: 14,
     yearOnly: true,
     cardPadding: 0,
     cardVerticalSpacing: 60,
   },
+  {
+    ...defaultTheme,
+    name: "Matt's theme",
+    graphBackgroundColor: "#eae1c7",
+    thumbWidth: 80,
+    thumbHeight: 80,
+    cardWidth: 82,
+    cardHeight: 132,
+    labelFontSize: 14,
+    descriptionDisplay: "none",
+    datesDisplay: "none",
+    cardPadding: 0,
+    cardVerticalSpacing: 60,
+    nodeDisplay: "",
+  },
 ].map((theme) => {
   return {
     ...theme,
-    cardHeight: theme.thumbHeight + 2 * (theme.cardPadding || 0),
+    cardHeight: theme.cardHeight
+      ? theme.cardHeight
+      : theme.thumbHeight + 2 * (theme.cardPadding || 0),
   };
 });

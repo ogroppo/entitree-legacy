@@ -370,6 +370,8 @@ export default memo(function Node({
 });
 
 const ThemedNode = styled.div`
+  display: ${({ theme }) => theme.nodeDisplay};
+  height: ${({ theme }) => theme.cardHeight}px;
   width: ${({ theme }) => theme.cardWidth}px;
   padding: ${({ theme }) => theme.cardPadding}px;
   background-color: ${({ theme }) => theme.backgroundColor};

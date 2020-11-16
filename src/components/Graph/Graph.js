@@ -33,7 +33,7 @@ import { sortByBirthDate, sortByGender } from "../../lib/sortEntities";
 import last from "../../lib/last";
 import clsx from "clsx";
 import debounce from "lodash.debounce";
-import { useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 export default function GraphWrapper() {
   const { settings } = useContext(AppContext);
@@ -486,7 +486,7 @@ const Graph = memo(
     } = graph;
 
     return (
-      <div className="Graph" ref={graphRef}>
+      <ThemedGraph className="Graph" ref={graphRef}>
         <TransformComponent>
           <div className="center">
             <svg className="svgContainer" style={containerStyle}>
@@ -628,7 +628,7 @@ const Graph = memo(
           recenter={recenter}
           fitTree={fitTree}
         />
-      </div>
+      </ThemedGraph>
     );
   },
   (prevProps, nextProps) => {
@@ -636,3 +636,7 @@ const Graph = memo(
     return true; //better performance but inconsistent scale
   }
 );
+
+const ThemedGraph = styled.div`
+  background-color: ${({ theme }) => theme.graphBackgroundColor};
+`;
