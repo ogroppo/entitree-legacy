@@ -44,6 +44,7 @@ app.get("/:langCode/:propSlug/:titleSlug", function (request, response) {
     propSlug,
     titleSlug + ".png"
   );
+  const logoImageFile = path.join("icons", "entitree_square.png");
 
   const propName = propSlug.replace(/_/g, " ");
   const titleName = titleSlug.replace(/_/g, " ");
@@ -66,7 +67,8 @@ app.get("/:langCode/:propSlug/:titleSlug", function (request, response) {
         getFullUrl(request, featuredImageFile)
       );
     } else {
-      page = page.replace(/\$OG_IMAGE/g, "");
+      page = page.replace(/\$OG_IMAGE/g, getFullUrl(request, logoImageFile));
+      page = page.replace(/summary_large_image/g, "summary");
     }
     response.send(page);
   });
