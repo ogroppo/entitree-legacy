@@ -54,7 +54,7 @@ export default function Settings({ show, hideModal }) {
             checked={settings.showEyeHairColors}
             onChange={(e) => setSetting("showEyeHairColors", e.target.checked)}
             type="checkbox"
-            label={"Add icons with eye and hair color (lacks data)"}
+            label={"Show eye colors (lacks data)"}
           />
         </Form.Group>
         <Form.Group controlId={"birthName"}>
@@ -177,17 +177,18 @@ export default function Settings({ show, hideModal }) {
         <div>
           <Dropdown className="themeDropdown">
             <Dropdown.Toggle as={CustomToggle}>
-              <span className="label">Choose theme</span> {currentTheme}
+              <span className="label">Choose theme</span> {currentTheme.name}
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              {THEMES.map((theme, index) => (
+              {Object.values(THEMES).map((theme, index) => (
                 <Dropdown.Item
-                  key={theme}
+                  key={theme.name}
                   eventKey={index + 1}
-                  active={theme === currentTheme}
+                  active={theme.name === currentTheme.name}
+                  disabled={theme.disabled}
                   onClick={() => setCurrentTheme(theme)}
                 >
-                  {theme}
+                  {theme.name}
                 </Dropdown.Item>
               ))}
             </Dropdown.Menu>

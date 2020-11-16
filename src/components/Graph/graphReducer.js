@@ -1,35 +1,43 @@
 import treeLayout from "../../lib/getTreeLayout";
-import { CARD_WIDTH, CARD_HEIGHT } from "../../constants/tree";
-import cloneDeep from "lodash.clonedeep";
 
-export const initialState = {
-  maxLeft: -CARD_WIDTH,
-  maxRight: CARD_WIDTH,
-  maxTop: -CARD_HEIGHT,
-  maxBottom: CARD_HEIGHT,
-  childNodes: [],
-  childRels: [],
-  parentNodes: [],
-  parentRels: [],
-  childTree: {},
-  parentTree: {},
-  containerStyle: {
-    width: 2 * CARD_WIDTH,
-    height: 2 * CARD_HEIGHT,
-  },
-  root: null,
+export const getInitialState = (theme) => {
+  return {
+    maxLeft: -theme.cardWidth,
+    maxRight: theme.cardWidth,
+    maxTop: -theme.cardHeight,
+    maxBottom: theme.cardHeight,
+    childNodes: [],
+    childRels: [],
+    parentNodes: [],
+    parentRels: [],
+    childTree: {},
+    parentTree: {},
+    containerStyle: {
+      width: 2 * theme.cardWidth,
+      height: 2 * theme.cardHeight,
+    },
+    root: null,
+  };
 };
 
-export default function graphReducer(graph, { type, ...arg }) {
+export default function graphReducer(graph, { type, theme, ...arg }) {
   //console.log({ type });
   switch (type) {
     case "set":
       return {
-        ...initialState,
+        ...getInitialState(theme),
         ...arg,
       };
     case "setGraph": {
       let { graph } = arg;
+      return {
+        ...graph,
+      };
+    }
+    case "relayoutGraph": {
+      let { graph } = arg;
+      recalcChildren(graph, theme);
+      recalcParents(graph, theme);
       return {
         ...graph,
       };
@@ -43,7 +51,7 @@ export default function graphReducer(graph, { type, ...arg }) {
         graph.root._childrenExpanded = true;
         graph.root.loadingChildren = false;
       }
-      recalcChildren(graph);
+      recalcChildren(graph, theme);
       return { ...graph };
     }
     case "collapseChildren": {
@@ -54,8 +62,8 @@ export default function graphReducer(graph, { type, ...arg }) {
         newGraph.root._childrenExpanded = false;
         newGraph.root.loadingChildren = false;
       }
-      collapseChildren(node);
-      recalcChildren(newGraph);
+      collapseChildren(node, theme);
+      recalcChildren(newGraph, theme);
       return newGraph;
     }
     case "setLoadingChildren": {
@@ -80,7 +88,7 @@ export default function graphReducer(graph, { type, ...arg }) {
         graph.root._parentsExpanded = true;
         graph.root.loadingParents = false;
       }
-      recalcParents(graph);
+      recalcParents(graph, theme);
       return { ...graph };
     }
     case "collapseParents": {
@@ -91,8 +99,8 @@ export default function graphReducer(graph, { type, ...arg }) {
         graph.root._parentsExpanded = false;
         graph.root.loadingParents = false;
       }
-      collapseParents(node);
-      recalcParents(graph);
+      collapseParents(node, theme);
+      recalcParents(graph, theme);
       return { ...graph };
     }
     case "setLoadingSpouses": {
@@ -109,8 +117,8 @@ export default function graphReducer(graph, { type, ...arg }) {
         node.parent.children.splice(spouseIndex, 0, ...node._spouses);
         node._spouses = null;
       }
-      if (node.isChild) recalcChildren(graph);
-      if (node.isParent) recalcParents(graph);
+      if (node.isChild) recalcChildren(graph, theme);
+      if (node.isParent) recalcParents(graph, theme);
       node.loadingSpouses = false;
       return { ...graph };
     }
@@ -130,8 +138,8 @@ export default function graphReducer(graph, { type, ...arg }) {
       });
       node._spouses = spouses;
       node.parent.children = rest;
-      if (node.isChild) recalcChildren(newGraph);
-      if (node.isParent) recalcParents(newGraph);
+      if (node.isChild) recalcChildren(newGraph, theme);
+      if (node.isParent) recalcParents(newGraph, theme);
       return newGraph;
     }
     case "setLoadingSiblings": {
@@ -148,8 +156,8 @@ export default function graphReducer(graph, { type, ...arg }) {
         node.parent.children.splice(nodeAsSiblingIndex, 0, ...node._siblings);
         node._siblings = null;
       }
-      if (node.isChild) recalcChildren(graph);
-      if (node.isParent) recalcParents(graph);
+      if (node.isChild) recalcChildren(graph, theme);
+      if (node.isParent) recalcParents(graph, theme);
       node.loadingSiblings = false;
       return { ...graph };
     }
@@ -157,7 +165,7 @@ export default function graphReducer(graph, { type, ...arg }) {
       let { root } = arg;
       root._spousesExpanded = true;
       if (root._spouses) root.spouses = root._spouses;
-      calcBounds(graph);
+      calcBounds(graph, theme);
       root.loadingSpouses = false;
       return { ...graph };
     }
@@ -166,24 +174,23 @@ export default function graphReducer(graph, { type, ...arg }) {
       root._spousesExpanded = false;
       root._spouses = root.spouses;
       root.spouses = null;
-      calcBounds(graph);
+      calcBounds(graph, theme);
       root.loadingSpouses = false;
       return { ...graph };
     }
     case "collapseRootSiblings": {
       let { root } = arg;
       root._siblingsExpanded = false;
-      console.log(root.siblings);
       root._siblings = [...root.siblings];
       root.siblings = null;
-      calcBounds(graph);
+      calcBounds(graph, theme);
       root.loadingSiblings = false;
       return { ...graph };
     }
     case "expandRootSiblings": {
       let { root } = arg;
       if (root._siblings) root.siblings = root._siblings;
-      calcBounds(graph);
+      calcBounds(graph, theme);
       root._siblingsExpanded = true;
       root.loadingSiblings = false;
       return { ...graph };
@@ -193,7 +200,7 @@ export default function graphReducer(graph, { type, ...arg }) {
   }
 }
 
-export const collapseSiblings = (graph, node) => {
+export const collapseSiblings = (graph, node, theme) => {
   const siblings = [];
   const rest = [];
   node.parent.children.forEach((adjecent) => {
@@ -203,36 +210,35 @@ export const collapseSiblings = (graph, node) => {
   });
   node._siblings = siblings;
   node.parent.children = rest;
-  if (node.isChild) recalcChildren(graph);
-  if (node.isParent) recalcParents(graph);
+  if (node.isChild) recalcChildren(graph, theme);
+  if (node.isParent) recalcParents(graph, theme);
   node.loadingSiblings = false;
   node._siblingsExpanded = false;
 };
 
-export const collapseRootSiblings = (graph, root) => {
+export const collapseRootSiblings = (graph, root, theme) => {
   root._siblingsExpanded = false;
-  console.log(root.siblings);
   root._siblings = root.siblings;
   root.siblings = null;
-  calcBounds(graph);
+  calcBounds(graph, theme);
   root.loadingSiblings = false;
 };
 
-export const recalcChildren = (graph) => {
+export const recalcChildren = (graph, theme) => {
   treeLayout(graph.childTree);
   graph.childNodes = graph.childTree.descendants().slice(1);
   graph.childRels = graph.childTree.links();
-  calcBounds(graph);
+  calcBounds(graph, theme);
 };
 
-export const recalcParents = (graph) => {
+export const recalcParents = (graph, theme) => {
   treeLayout(graph.parentTree);
   graph.parentNodes = graph.parentTree.descendants().slice(1);
   graph.parentRels = graph.parentTree.links();
-  calcBounds(graph);
+  calcBounds(graph, theme);
 };
 
-const calcBounds = (graph) => {
+const calcBounds = (graph, theme) => {
   graph.maxRight = 0;
   graph.maxLeft = 0;
   graph.maxBottom = 0;
@@ -251,8 +257,10 @@ const calcBounds = (graph) => {
   if (graph.childNodes) graph.childNodes.forEach(compare);
 
   graph.containerStyle = {
-    width: 2 * Math.max(Math.abs(graph.maxLeft), graph.maxRight) + CARD_WIDTH,
-    height: 2 * Math.max(Math.abs(graph.maxTop), graph.maxBottom) + CARD_HEIGHT,
+    width:
+      2 * Math.max(Math.abs(graph.maxLeft), graph.maxRight) + theme.cardWidth,
+    height:
+      2 * Math.max(Math.abs(graph.maxTop), graph.maxBottom) + theme.cardHeight,
   };
 };
 

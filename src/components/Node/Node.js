@@ -1,11 +1,4 @@
 import React, { memo, useContext, useEffect, useMemo, useState } from "react";
-import {
-  IMAGE_SIZE,
-  CARD_WIDTH,
-  CARD_PADDING,
-  CARD_CONTENT_WIDTH,
-  CARD_HEIGHT,
-} from "../../constants/tree";
 import { Button } from "react-bootstrap";
 import {
   FiChevronLeft,
@@ -33,6 +26,7 @@ import { AppContext } from "../../App";
 import clsx from "clsx";
 import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
 import getGeniImage from "../../geni/getGeniImage";
+import styled, { useTheme } from "styled-components";
 
 export default memo(function Node({
   node,
@@ -51,6 +45,7 @@ export default memo(function Node({
   const [thumbnails, setThumbnails] = useState(node.data.thumbnails);
   const [images, setImages] = useState(node.data.images);
   const [thumbnailIndex, setThumbnailIndex] = useState(0);
+  const theme = useTheme();
 
   const { settings, secondLang } = useContext(AppContext);
 
@@ -110,14 +105,15 @@ export default memo(function Node({
       ? () => setThumbnailIndex((thumbnailIndex + 1) % thumbnails.length)
       : null;
 
+  const hasSecondLang =
+    secondLang &&
+    node.data.secondLangLabel &&
+    node.data.label !== node.data.secondLangLabel;
   return (
-    <div
+    <ThemedNode
       style={{
         left: node.x,
         top: node.y,
-        width: CARD_WIDTH,
-        height: CARD_HEIGHT,
-        padding: CARD_PADDING,
       }}
       className={clsx("Node", {
         focused: focusedNode && focusedNode.treeId === node.treeId,
@@ -127,9 +123,8 @@ export default memo(function Node({
       //data-id={node.data.id}
       //data-tree-id={node.treeId}
     >
-      <div
+      <ThemedThumbnail
         className={clsx("imgWrapper", { hasThumbnails: thumbnails.length > 1 })}
-        style={{ height: IMAGE_SIZE, width: IMAGE_SIZE }}
         onClick={onThumbClick}
       >
         {(!thumbnails || !thumbnails.length) && (
@@ -146,7 +141,7 @@ export default memo(function Node({
           </span>
         )}
         {currentThumbnail && (
-          <span>
+          <>
             {settings.showFace && faceImage ? (
               <img
                 alt={faceImage.alt}
@@ -168,13 +163,10 @@ export default memo(function Node({
                 {thumbnailIndex + 1}/{thumbnails.length}
               </span>
             )}
-          </span>
+          </>
         )}
-      </div>
-      <div
-        className="content"
-        style={{ height: IMAGE_SIZE, width: CARD_CONTENT_WIDTH }}
-      >
+      </ThemedThumbnail>
+      <ThemedContent className="content" hasSecondLang={hasSecondLang}>
         {settings.showEyeHairColors && (
           <div
             className="colorIcons"
@@ -211,7 +203,7 @@ export default memo(function Node({
         <div className="four-line-clamp">
           {node.isRoot ? (
             <h1
-              className="label btn btn-link"
+              className="label btn btn-link mb-0"
               role="button"
               tabIndex="0"
               onClick={() => setShowModal(true)}
@@ -242,16 +234,14 @@ export default memo(function Node({
               )}
             </span>
           )}
-          {secondLang &&
-            node.data.secondLangLabel &&
-            node.data.label !== node.data.secondLangLabel && (
-              <>
-                <br />
-                <span className="label labelSecondLang">
-                  {node.data.secondLangLabel}
-                </span>
-              </>
-            )}
+          {hasSecondLang && (
+            <>
+              <br />
+              <span className="label labelSecondLang">
+                {node.data.secondLangLabel}
+              </span>
+            </>
+          )}
           {node.data.description && (
             <>
               <br />
@@ -263,14 +253,16 @@ export default memo(function Node({
         </div>
         <div className="dates">
           {node.data.lifeSpan
-            ? node.data.lifeSpan
+            ? theme.yearOnly
+              ? node.data.lifeSpanInYears
+              : node.data.lifeSpan
             : node.data.startEndSpan
             ? node.data.startEndSpan
             : node.data.inceptionAblishedSpan
             ? node.data.inceptionAblishedSpan
             : ""}
         </div>
-      </div>
+      </ThemedContent>
       {/* {node._parentsExpanded && currentProp && (
         <div className="upPropLabel" style={{ top: -CARD_VERTICAL_GAP / 2 }}>
           <span>{currentProp.label}</span>
@@ -373,6 +365,37 @@ export default memo(function Node({
       {showModal && (
         <DetailsModal hideModal={hideModal} node={node} nodeImages={images} />
       )}
-    </div>
+    </ThemedNode>
   );
 });
+
+const ThemedNode = styled.div`
+  width: ${({ theme }) => theme.cardWidth}px;
+  padding: ${({ theme }) => theme.cardPadding}px;
+  background-color: ${({ theme }) => theme.backgroundColor};
+`;
+
+const ThemedThumbnail = styled.div`
+  width: ${({ theme }) => theme.thumbWidth}px;
+  height: ${({ theme }) => theme.thumbHeight}px;
+`;
+
+const ThemedContent = styled.div`
+  .label {
+    font-size: ${({ theme }) => theme.labelFontSize}px;
+    //if there is no description we can have this block and have the dots of the same color of the text
+    //but only ONE can be display block
+    display: ${({ theme, hasSecondLang }) =>
+      theme.descriptionDisplay === "none" && !hasSecondLang
+        ? "block"
+        : "inline"};
+  }
+  .description {
+    //if "block" the dots will have the same color of the text
+    display: ${({ theme }) => theme.descriptionDisplay};
+  }
+  .dates {
+    display: ${({ theme }) => theme.datesDisplay};
+    font-size: ${({ theme }) => theme.datesFontSize}px;
+  }
+`;

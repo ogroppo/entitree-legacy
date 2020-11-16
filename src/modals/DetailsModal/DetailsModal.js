@@ -12,7 +12,6 @@ export default function DetailsModal({ node, hideModal, nodeImages }) {
     AppContext
   );
 
-  console.log(nodeImages);
   const [images, setImages] = useState(nodeImages);
   const [birthPlace, setBirthPlace] = useState();
   const [deathPlace, setDeathPlace] = useState();

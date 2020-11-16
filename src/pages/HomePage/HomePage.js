@@ -1,25 +1,27 @@
+import "./HomePage.scss";
+import { AppContext } from "../../App";
+import { DEFAULT_DESC, SITE_NAME } from "../../constants/meta";
+import { GiFamilyTree } from "react-icons/gi";
+import { Helmet } from "react-helmet";
+import { Spinner } from "react-bootstrap";
+import { ThemeProvider } from "styled-components";
+import Graph from "../../components/Graph/Graph";
+import Header from "../../layout/Header/Header";
 import React, { useContext } from "react";
 import SearchBar from "../../components/SearchBar/SearchBar";
-import Graph from "../../components/Graph/Graph";
-import { AppContext } from "../../App";
-import { GiFamilyTree } from "react-icons/gi";
-import { Spinner } from "react-bootstrap";
-import Header from "../../layout/Header/Header";
-import { Helmet } from "react-helmet";
-import { DEFAULT_DESC, SITE_NAME } from "../../constants/meta";
-import usePageView from "../../lib/usePageView";
-import "./HomePage.scss";
-import useLoadFromUrl from "../../hooks/useLoadFromUrl";
 import useCurrentLang from "../../hooks/useCurrentLang";
-import useSettings from "../../hooks/useSettings";
-import useUpdateUrl from "../../hooks/useUpdateUrl";
 import useLoadEntity from "../../hooks/useLoadEntity";
+import useLoadFromUrl from "../../hooks/useLoadFromUrl";
+import useLoadSettings from "../../hooks/useLoadSettings";
+import useLoadTheme from "../../hooks/useLoadTheme";
+import usePageView from "../../lib/usePageView";
+import useUpdateUrl from "../../hooks/useUpdateUrl";
 
 function HomePage() {
+  useLoadEntity();
+  useLoadFromUrl();
   usePageView();
   useUpdateUrl();
-  useLoadFromUrl();
-  useLoadEntity();
   const { currentEntity, loadingEntity, currentProp } = useContext(AppContext);
 
   return (
@@ -67,10 +69,16 @@ function HomePage() {
 
 export default function HomePageWrapper() {
   useCurrentLang();
-  useSettings();
-  const { currentLang } = useContext(AppContext);
+  useLoadSettings();
+  useLoadTheme();
+  const { currentLang, currentTheme } = useContext(AppContext);
 
   if (!currentLang) return null;
+  if (!currentTheme) return null;
 
-  return <HomePage />;
+  return (
+    <ThemeProvider theme={currentTheme}>
+      <HomePage />
+    </ThemeProvider>
+  );
 }

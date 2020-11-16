@@ -2,7 +2,7 @@ import moment from "moment/min/moment-with-locales";
 import wbk from "wikidata-sdk";
 import ordinalize from "ordinalize";
 
-export default function formatDateClaim(claim, languageCode) {
+export default function formatDateClaim(claim, languageCode, yearOnly = false) {
   if (!claim) return;
 
   let cleanClaims = [];
@@ -30,7 +30,7 @@ export default function formatDateClaim(claim, languageCode) {
 
   //console.log(JSON.stringify(claim));
 
-  return parseDate(value, languageCode);
+  return parseDate(value, languageCode, yearOnly);
 }
 
 /**
@@ -38,7 +38,7 @@ export default function formatDateClaim(claim, languageCode) {
  * @param wikidatatime
  * @returns {{output: null, dateObject: null}|{output: string, dateObject: number}|{output: *, dateObject: null}}
  */
-function parseDate(wikidatatime, languageCode = "en") {
+function parseDate(wikidatatime, languageCode = "en", yearOnly = false) {
   //example of  valid object {time: "+1500-07-07T00:00:00Z" ,precision:8}
   //https://www.wikidata.org/wiki/Help:Dates
   /*
@@ -53,7 +53,7 @@ function parseDate(wikidatatime, languageCode = "en") {
     11 - day
     */
 
-  const { precision, time } = wikidatatime;
+  let { precision, time } = wikidatatime;
 
   //for precision < 6 this doesn't make sense
   const dateISOString = wbk.wikibaseTimeToISOString(time);
@@ -65,7 +65,9 @@ function parseDate(wikidatatime, languageCode = "en") {
     parsedDate.add(1, "year"); //adjust moment wrong year formatting for BCE
     eraSuffix = " BCE";
   }
-
+  if (yearOnly && precision > 9) {
+    precision = 9;
+  }
   switch (precision) {
     case 0:
       let [, byear] = time.split("-");
@@ -89,10 +91,10 @@ function parseDate(wikidatatime, languageCode = "en") {
       return ordinalize(millenniumNumber) + " mill." + eraSuffix;
     case 7:
       let centuryIndex = Math.abs(Math.floor(year / 100));
-      let centuryNumber = year > 0 ? centuryIndex + 1 : centuryIndex;
+      let centuryNumber = year > 0 ? Math.ceil(year/ 100) : Math.abs(Math.floor(year/ 100));
       return ordinalize(centuryNumber) + " cent." + eraSuffix;
     case 8:
-      return parsedDate.format("y") + "s" + eraSuffix;
+      return Math.floor(year / 10) + "0s" + eraSuffix;
     case 9:
       return parsedDate.format("y") + eraSuffix;
     case 10:

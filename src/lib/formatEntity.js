@@ -32,7 +32,12 @@ import addDeathPlaceId from "./addDeathPlaceId";
 import addBirthName from "./addBirthName";
 import addSecondLangLabel from "./addSecondLangLabel";
 
-export default async function formatEntity(entity, languageCode, options = {}) {
+export default async function formatEntity(
+  entity,
+  languageCode,
+  theme,
+  options = {}
+) {
   if (entity.missing !== undefined) return undefined;
 
   if (!entity) throw new Error("Entity is required");
@@ -56,6 +61,7 @@ export default async function formatEntity(entity, languageCode, options = {}) {
 
   addBirthDate(formattedEntity, languageCode);
   addDeathDate(formattedEntity, languageCode);
+  addIsInfantDeath(formattedEntity);
   addLifeSpan(formattedEntity);
 
   addBirthPlaceId(formattedEntity, languageCode);
@@ -94,7 +100,7 @@ export default async function formatEntity(entity, languageCode, options = {}) {
 
   addIsHuman(formattedEntity);
 
-  await addEntityImages(formattedEntity, languageCode);
+  await addEntityImages(formattedEntity, languageCode, theme);
 
   return formattedEntity;
 }
@@ -105,6 +111,20 @@ function addIsHuman(entity) {
       ({ value }) => value === HUMAN_ID //add all other IDS of person subclass?
     );
   } catch (error) {}
+}
+
+function addIsInfantDeath(entity) {
+  if (
+    entity.simpleClaims[DEATH_DATE_ID] &&
+    entity.simpleClaims[BIRTH_DATE_ID]
+  ) {
+    try {
+      entity.isInfantDeath =
+        parseInt(entity.simpleClaims[DEATH_DATE_ID][0].value.slice(0, 4)) -
+          parseInt(entity.simpleClaims[BIRTH_DATE_ID][0].value.slice(0, 4)) <
+        5;
+    } catch (error) {}
+  }
 }
 
 function addWebsite(entity) {

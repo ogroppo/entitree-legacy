@@ -3,49 +3,77 @@ const app = express();
 const port = process.env.PORT || 5000;
 const path = require("path");
 const fs = require("fs");
+const urljoin = require("url-join");
 
-app.use(express.static(path.resolve(__dirname, "./build")));
+const indexFilePath = path.resolve(__dirname, "./build", "index.html");
 
-//first letter uppercase
-function ucfirst(string) {
+const getFullUrl = (request, url) => {
+  return urljoin(request.protocol + "://" + request.get("host"), url);
+};
+
+const capitalise = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
-}
+};
 
-app.get("/:langCode/:propSlug/:titleSlug", function (request, response) {
-  // /:langCode([a-z]{2})/:propSlug/:titleSlug to only match 2letter languages
-  const filePath = path.resolve(__dirname, "./build", "index.html");
-  // const reqRoute = request.originalUrl.replace(/\?.*$/, '');
-  const { langCode, propSlug, titleSlug } = request.params;
-  const featuredImageFile = "screenshot/" + propSlug + "/" + titleSlug + ".png";
-
-  const baseUrl = request.protocol + "://" + request.get("host") + "/";
-
-  const propName = propSlug.replace(/_/g, " ");
-  const titleName = titleSlug.replace(/_/g, " ");
-  const pageTitle = ucfirst(propName) + " of " + titleName;
-
-  fs.readFile(filePath, "utf8", function (err, data) {
+app.get("/", function (request, response) {
+  fs.readFile(indexFilePath, "utf8", function (err, template) {
     if (err) {
       return console.log(err);
     }
-    data = data.replace(/\$OG_TITLE/g, pageTitle + " - EntiTree");
-    data = data.replace(
-      /\$OG_DESCRIPTION/g,
-      `Visualize the ${propName} on a dynamic, navigable tree diagram.`
-    );
-    //only replace image if it's present
-    if (fs.existsSync(__dirname + "/public/" + featuredImageFile)) {
-      data = data.replace(/\$OG_IMAGE/g, baseUrl + featuredImageFile);
-    } else {
-      data = data.replace(/\$OG_IMAGE/g, "");
+    let page = template
+      .replace(/\$OG_TITLE/g, "EntiTree - Grow you knowledge")
+      .replace(
+        /\$OG_DESCRIPTION/g,
+        "Visualize connected Wikidata items on a dynamic, navigable tree diagram. Discover properties of People, Organizations and Events with a direct link to Wikipedia Aticles."
+      )
+      .replace(/\$OG_IMAGE/g, getFullUrl(request, "logo.png"));
+
+    response.send(page);
+  });
+});
+
+//don't move it from here
+app.use(express.static(path.resolve(__dirname, "./build")));
+
+app.get("/:langCode/:propSlug/:titleSlug", function (request, response) {
+  // /:langCode([a-z]{2})/:propSlug/:titleSlug to only match 2letter languages
+  // const reqRoute = request.originalUrl.replace(/\?.*$/, '');
+  const { langCode, propSlug, titleSlug } = request.params;
+  const featuredImageFile = path.join(
+    "screenshot",
+    propSlug,
+    titleSlug + ".png"
+  );
+
+  const propName = propSlug.replace(/_/g, " ");
+  const titleName = titleSlug.replace(/_/g, " ");
+  const pageTitle = capitalise(propName) + " of " + titleName;
+
+  fs.readFile(indexFilePath, "utf8", function (err, template) {
+    if (err) {
+      return console.log(err);
     }
-    response.send(data);
+    let page = template
+      .replace(/\$OG_TITLE/g, pageTitle + " - EntiTree")
+      .replace(
+        /\$OG_DESCRIPTION/g,
+        `Visualize the ${propName} on a dynamic, navigable tree diagram.`
+      );
+    //only replace image if it's present
+    if (fs.existsSync(path.resolve(__dirname, "/public/", featuredImageFile))) {
+      page = page.replace(
+        /\$OG_IMAGE/g,
+        getFullUrl(request, featuredImageFile)
+      );
+    } else {
+      page = page.replace(/\$OG_IMAGE/g, "");
+    }
+    response.send(page);
   });
 });
 
 app.get("*", function (request, response) {
-  const filePath = path.resolve(__dirname, "./build", "index.html");
-  response.sendFile(filePath);
+  response.sendFile(indexFilePath);
 });
 
-app.listen(port, () => console.log(`Listening on port ${port}`));
+app.listen(port, () => console.log(`http://localhost:${port}`));

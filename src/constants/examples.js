@@ -1,6 +1,6 @@
 export const EXAMPLES = [
   {
-    name: "The Queen's family",
+    name: "The Queen's Royal family",
     href: `/en/family_tree/Elizabeth_II`,
   },
   {
@@ -14,6 +14,10 @@ export const EXAMPLES = [
   {
     name: "Jesus Christ's pedigree",
     href: `/en/family_tree/Jesus`,
+  },
+  {
+    name: "Joe Biden's family",
+    href: `/en/family_tree/Joe_Biden`,
   },
   {
     name: "Trump's family",
