@@ -61,7 +61,7 @@ app.get("/:langCode/:propSlug/:titleSlug", function (request, response) {
         `Visualize the ${propName} on a dynamic, navigable tree diagram.`
       );
     //only replace image if it's present
-    if (fs.existsSync(path.resolve(__dirname, "/public/", featuredImageFile))) {
+    if (fs.existsSync(path.join(__dirname, "public", featuredImageFile))) {
       page = page.replace(
         /\$OG_IMAGE/g,
         getFullUrl(request, featuredImageFile)
