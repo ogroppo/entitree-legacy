@@ -306,7 +306,7 @@ const Graph = memo(
       let firstSibling;
       if (node._siblingsExpanded) {
         // edit the node (ref to a node in the graph) and then update the state
-        collapseSiblings(graph, node);
+        collapseSiblings(graph, node, theme);
         dispatchGraph({ type: "setGraph", graph, theme });
       } else if (node._siblings) {
         firstSibling = node._siblings[0];
