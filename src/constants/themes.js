@@ -53,11 +53,11 @@ export const THEMES = [
     cardWidth: 82,
     cardHeight: 132,
     labelFontSize: 14,
+    flexDirection: "column",
     descriptionDisplay: "none",
     datesDisplay: "none",
     cardPadding: 0,
     cardVerticalSpacing: 60,
-    nodeDisplay: "",
   },
 ].map((theme) => {
   return {
