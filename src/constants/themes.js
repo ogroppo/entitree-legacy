@@ -10,6 +10,9 @@ const defaultTheme = {
   cardVerticalSpacing: 80,
   nodeDisplay: "flex",
   imageCounter: "block",
+  siblingSpouseSeparation: 1.1,
+  sameGroupSeparation: 1.36,
+  cousinsSeparation: 1.3,
 };
 export const THEMES = [
   {
@@ -37,7 +40,7 @@ export const THEMES = [
   {
     ...defaultTheme,
     name: "Only Label",
-    cardWidth: 200,
+    cardWidth: 170,
     labelFontSize: 16,
     descriptionDisplay: "none",
     datesFontSize: 14,
@@ -57,10 +60,15 @@ export const THEMES = [
     labelFontSize: 14,
     flexDirection: "column",
     descriptionDisplay: "none",
-    datesDisplay: "none",
+    // datesDisplay: "none",
+    yearOnly: true,
+    datesFontSize: 14,
     cardPadding: 0,
     imageCounter: "none",
     cardVerticalSpacing: 60,
+    siblingSpouseSeparation: 1.25,
+    sameGroupSeparation: 1.25,
+    cousinsSeparation: 1.35,
   },
 ].map((theme) => {
   return {

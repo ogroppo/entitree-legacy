@@ -14,6 +14,11 @@ import clsx from "clsx";
 import ls from "local-storage";
 import ReactGA from "react-ga";
 import treeLayout from "./lib/getTreeLayout";
+import {
+  COUSINS_SEPARATION,
+  SAME_GROUP_SEPARATION,
+  SIBLING_SPOUSE_SEPARATION,
+} from "./constants/tree";
 
 const browserHistory = createBrowserHistory();
 
@@ -63,6 +68,20 @@ export default class App extends Component {
         currentTheme.cardWidth,
         currentTheme.cardHeight + currentTheme.cardVerticalSpacing,
       ]);
+      treeLayout.separation((next, prev) => {
+        if (next.isSpouse) return currentTheme.siblingSpouseSeparation;
+        if (prev.isSpouse && !next.isSpouse)
+          return currentTheme.cousinsSeparation;
+
+        if (prev.isSibling) return currentTheme.siblingSpouseSeparation;
+        if (next.isSibling && !prev.isSibling)
+          return currentTheme.cousinsSeparation;
+
+        if (next.parent === prev.parent)
+          return currentTheme.sameGroupSeparation;
+
+        if (next.parent !== prev.parent) return currentTheme.cousinsSeparation;
+      });
       this.setState({ currentTheme });
     },
     setCurrentEntity: (currentEntity) => {
