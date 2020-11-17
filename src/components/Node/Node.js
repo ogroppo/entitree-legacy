@@ -381,6 +381,9 @@ const ThemedNode = styled.div`
 const ThemedThumbnail = styled.div`
   width: ${({ theme }) => theme.thumbWidth}px;
   height: ${({ theme }) => theme.thumbHeight}px;
+  .imgMore {
+    display: ${({ theme }) => theme.imageCounter};
+  }
 `;
 
 const ThemedContent = styled.div`

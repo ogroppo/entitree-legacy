@@ -9,6 +9,7 @@ const defaultTheme = {
   datesFontSize: 11,
   cardVerticalSpacing: 80,
   nodeDisplay: "flex",
+  imageCounter: "block",
 };
 export const THEMES = [
   {
@@ -42,6 +43,7 @@ export const THEMES = [
     datesFontSize: 14,
     yearOnly: true,
     cardPadding: 0,
+    imageCounter: "none",
     cardVerticalSpacing: 60,
   },
   {
@@ -57,6 +59,7 @@ export const THEMES = [
     descriptionDisplay: "none",
     datesDisplay: "none",
     cardPadding: 0,
+    imageCounter: "none",
     cardVerticalSpacing: 60,
   },
 ].map((theme) => {
