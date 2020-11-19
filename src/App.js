@@ -14,11 +14,6 @@ import clsx from "clsx";
 import ls from "local-storage";
 import ReactGA from "react-ga";
 import treeLayout from "./lib/getTreeLayout";
-import {
-  COUSINS_SEPARATION,
-  SAME_GROUP_SEPARATION,
-  SIBLING_SPOUSE_SEPARATION,
-} from "./constants/tree";
 
 const browserHistory = createBrowserHistory();
 
