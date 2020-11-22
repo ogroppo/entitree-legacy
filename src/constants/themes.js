@@ -11,7 +11,7 @@ const defaultTheme = {
   nodeDisplay: "flex",
   imageCounter: "block",
   siblingSpouseSeparation: 1.1,
-  sameGroupSeparation: 1.36,
+  sameGroupSeparation: 1.16,
   cousinsSeparation: 1.3,
 };
 export const THEMES = [
@@ -23,7 +23,7 @@ export const THEMES = [
     ...defaultTheme,
     name: "Big",
     labelFontSize: 16,
-    datesFontSize: 13,
+    datesFontSize: 9,
     cardPadding: 0,
   },
   {
@@ -60,7 +60,7 @@ export const THEMES = [
     labelFontSize: 14,
     flexDirection: "column",
     descriptionDisplay: "none",
-    // datesDisplay: "none",
+    datesDisplay: "none",
     yearOnly: true,
     datesFontSize: 14,
     cardPadding: 0,
