@@ -12,12 +12,7 @@ import React, {
 import { TransformComponent } from "react-zoom-pan-pinch";
 import getItems from "../../wikidata/getItems";
 import { hierarchy } from "d3-hierarchy";
-import {
-  SIBLING_SPOUSE_SEPARATION,
-  MAX_SCALE,
-  MIN_SCALE,
-  DEFAULT_SCALE,
-} from "../../constants/tree";
+import { MAX_SCALE, MIN_SCALE, DEFAULT_SCALE } from "../../constants/tree";
 import Node from "../Node/Node";
 import Rel from "../Rel/Rel";
 import { CHILD_ID } from "../../constants/properties";
@@ -362,7 +357,7 @@ const Graph = memo(
             theme,
             { secondLang }
           );
-          const baseX = theme.cardWidth * SIBLING_SPOUSE_SEPARATION;
+          const baseX = theme.cardWidth * theme.siblingSpouseSeparation;
           entities.forEach((entity, index) => {
             const spouseNode = getSpouseNode(entity, index);
             spouseNode.x = baseX + baseX * index;
@@ -403,7 +398,7 @@ const Graph = memo(
             theme,
             { secondLang }
           );
-          const baseX = -(theme.cardWidth * SIBLING_SPOUSE_SEPARATION);
+          const baseX = -(theme.cardWidth * theme.siblingSpouseSeparation);
           sortByBirthDate(entities);
           entities.forEach((entity, index, { length }) => {
             const siblingNode = getSiblingNode(entity, index);

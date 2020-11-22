@@ -61,7 +61,7 @@ export default async function formatEntity(
 
   addBirthDate(formattedEntity, languageCode);
   addDeathDate(formattedEntity, languageCode);
-  addIsInfantDeath(formattedEntity);
+  // addIsInfantDeath(formattedEntity);
   addLifeSpan(formattedEntity);
 
   addBirthPlaceId(formattedEntity, languageCode);

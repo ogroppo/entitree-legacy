@@ -159,7 +159,7 @@ export default memo(function Node({
               />
             )}
             {thumbnails.length > 1 && (
-              <span className="imgMore">
+              <span className="thumbnailCounter">
                 {thumbnailIndex + 1}/{thumbnails.length}
               </span>
             )}
@@ -371,6 +371,7 @@ export default memo(function Node({
 
 const ThemedNode = styled.div`
   display: ${({ theme }) => theme.nodeDisplay};
+  flex-direction: ${({ theme }) => theme.flexDirection};
   height: ${({ theme }) => theme.cardHeight}px;
   width: ${({ theme }) => theme.cardWidth}px;
   padding: ${({ theme }) => theme.cardPadding}px;
@@ -380,6 +381,9 @@ const ThemedNode = styled.div`
 const ThemedThumbnail = styled.div`
   width: ${({ theme }) => theme.thumbWidth}px;
   height: ${({ theme }) => theme.thumbHeight}px;
+  .thumbnailCounter {
+    display: ${({ theme }) => theme.imageCounter};
+  }
 `;
 
 const ThemedContent = styled.div`

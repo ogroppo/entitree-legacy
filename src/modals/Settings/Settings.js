@@ -39,6 +39,27 @@ export default function Settings({ show, hideModal }) {
         <Modal.Title>Settings</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        <div>
+          <Dropdown className="themeDropdown">
+            <Dropdown.Toggle as={CustomToggle}>
+              <span className="label">Choose theme</span> {currentTheme.name}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              {Object.values(THEMES).map((theme, index) => (
+                <Dropdown.Item
+                  key={theme.name}
+                  eventKey={index + 1}
+                  active={theme.name === currentTheme.name}
+                  disabled={theme.disabled}
+                  onClick={() => setCurrentTheme(theme)}
+                >
+                  {theme.name}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+        <hr />
         <Form.Group controlId={"genderColors"}>
           <Form.Check
             custom
@@ -173,27 +194,7 @@ export default function Settings({ show, hideModal }) {
             </Dropdown.Menu>
           </Dropdown>
         </Form.Group>
-        <hr />
-        <div>
-          <Dropdown className="themeDropdown">
-            <Dropdown.Toggle as={CustomToggle}>
-              <span className="label">Choose theme</span> {currentTheme.name}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {Object.values(THEMES).map((theme, index) => (
-                <Dropdown.Item
-                  key={theme.name}
-                  eventKey={index + 1}
-                  active={theme.name === currentTheme.name}
-                  disabled={theme.disabled}
-                  onClick={() => setCurrentTheme(theme)}
-                >
-                  {theme.name}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
+
       </Modal.Body>
       <Modal.Footer>
         <Button variant="link" className="mr-auto ml-0" onClick={hideModal}>

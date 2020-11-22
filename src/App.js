@@ -63,6 +63,20 @@ export default class App extends Component {
         currentTheme.cardWidth,
         currentTheme.cardHeight + currentTheme.cardVerticalSpacing,
       ]);
+      treeLayout.separation((next, prev) => {
+        if (next.isSpouse) return currentTheme.siblingSpouseSeparation;
+        if (prev.isSpouse && !next.isSpouse)
+          return currentTheme.cousinsSeparation;
+
+        if (prev.isSibling) return currentTheme.siblingSpouseSeparation;
+        if (next.isSibling && !prev.isSibling)
+          return currentTheme.cousinsSeparation;
+
+        if (next.parent === prev.parent)
+          return currentTheme.sameGroupSeparation;
+
+        if (next.parent !== prev.parent) return currentTheme.cousinsSeparation;
+      });
       this.setState({ currentTheme });
     },
     setCurrentEntity: (currentEntity) => {
