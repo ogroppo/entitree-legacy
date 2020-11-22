@@ -282,6 +282,7 @@ export default memo(function Node({
           variant={"link"}
           disabled={node.loadingSiblings}
           onClick={() => toggleSiblings(node)}
+          title={(node._spousesExpanded ? "Collapse" : "Expand") + " siblings"}
         >
           <div className="value">{node.data.leftIds.length}</div>
           <div className="chevron mt-1 mb-1">
@@ -388,6 +389,7 @@ const ThemedThumbnail = styled.div`
 
 const ThemedContent = styled.div`
   .label {
+    // word-break: break-all;
     font-size: ${({ theme }) => theme.labelFontSize}px;
     //if there is no description we can have this block and have the dots of the same color of the text
     //but only ONE can be display block
