@@ -5,7 +5,6 @@ import {
   TWITTER_ID,
   WIKITREE_ID,
 } from "../constants/properties";
-import { DEFAULT_THUMB_WIDTH } from "../constants/tree";
 import getData from "../axios/getData";
 import getWikitreeImageUrl from "../wikitree/getWikitreeImageUrl";
 import getGeniImage from "../geni/getGeniImage";
@@ -109,6 +108,6 @@ export default async function addEntityImages(entity, currentLangCode, theme) {
   }
 }
 
-function getCommonsUrlByFile(filename, size = DEFAULT_THUMB_WIDTH) {
+function getCommonsUrlByFile(filename, size) {
   return `https://commons.wikimedia.org/wiki/Special:FilePath/${filename}?width=${size}px`;
 }

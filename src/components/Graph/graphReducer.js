@@ -2,10 +2,10 @@ import treeLayout from "../../lib/getTreeLayout";
 
 export const getInitialState = (theme) => {
   return {
-    maxLeft: -theme.cardWidth,
-    maxRight: theme.cardWidth,
-    maxTop: -theme.cardHeight,
-    maxBottom: theme.cardHeight,
+    maxLeft: -theme.nodeWidth,
+    maxRight: theme.nodeWidth,
+    maxTop: -theme.nodeHeight,
+    maxBottom: theme.nodeHeight,
     childNodes: [],
     childRels: [],
     parentNodes: [],
@@ -13,8 +13,8 @@ export const getInitialState = (theme) => {
     childTree: {},
     parentTree: {},
     containerStyle: {
-      width: 2 * theme.cardWidth,
-      height: 2 * theme.cardHeight,
+      width: 2 * theme.nodeWidth,
+      height: 2 * theme.nodeHeight,
     },
     root: null,
   };
@@ -258,9 +258,9 @@ const calcBounds = (graph, theme) => {
 
   graph.containerStyle = {
     width:
-      2 * Math.max(Math.abs(graph.maxLeft), graph.maxRight) + theme.cardWidth,
+      2 * Math.max(Math.abs(graph.maxLeft), graph.maxRight) + theme.nodeWidth,
     height:
-      2 * Math.max(Math.abs(graph.maxTop), graph.maxBottom) + theme.cardHeight,
+      2 * Math.max(Math.abs(graph.maxTop), graph.maxBottom) + theme.nodeHeight,
   };
 };
 
