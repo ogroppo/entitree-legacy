@@ -82,7 +82,7 @@ const Graph = memo(
       }, 500);
       handleResize();
 
-      window.addEventListener("resize", handleResize); //debounce this
+      window.addEventListener("resize", handleResize);
 
       return () => {
         window.removeEventListener("resize", handleResize);
@@ -357,7 +357,7 @@ const Graph = memo(
             theme,
             { secondLang }
           );
-          const baseX = theme.cardWidth * theme.siblingSpouseSeparation;
+          const baseX = theme.nodeWidth * theme.siblingSpouseSeparation;
           entities.forEach((entity, index) => {
             const spouseNode = getSpouseNode(entity, index);
             spouseNode.x = baseX + baseX * index;
@@ -398,7 +398,7 @@ const Graph = memo(
             theme,
             { secondLang }
           );
-          const baseX = -(theme.cardWidth * theme.siblingSpouseSeparation);
+          const baseX = -(theme.nodeWidth * theme.siblingSpouseSeparation);
           sortByBirthDate(entities);
           entities.forEach((entity, index, { length }) => {
             const siblingNode = getSiblingNode(entity, index);
@@ -433,10 +433,10 @@ const Graph = memo(
     };
 
     const fitTree = () => {
-      const leftEdge = graph.maxLeft - theme.cardWidth; //should be theme.cardWidth / 2 but give some padding
-      const topEdge = graph.maxTop - theme.cardWidth / 2;
-      const rightEdge = graph.maxRight + theme.cardWidth;
-      const bottomEdge = graph.maxBottom + theme.cardWidth / 2;
+      const leftEdge = graph.maxLeft - theme.nodeWidth; //should be theme.nodeWidth / 2 but give some padding
+      const topEdge = graph.maxTop - theme.nodeWidth / 2;
+      const rightEdge = graph.maxRight + theme.nodeWidth;
+      const bottomEdge = graph.maxBottom + theme.nodeWidth / 2;
       const treeWidth = rightEdge - leftEdge;
       const treeHeight = bottomEdge - topEdge;
 
