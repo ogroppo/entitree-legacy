@@ -14,6 +14,7 @@ import clsx from "clsx";
 import ls from "local-storage";
 import ReactGA from "react-ga";
 import treeLayout from "./lib/getTreeLayout";
+import { customTheme } from "./constants/themes";
 
 const browserHistory = createBrowserHistory();
 
@@ -30,6 +31,7 @@ export default class App extends Component {
     currentProp: null,
     currentPropId: null,
     currentTheme: null,
+    customTheme,
     settings: {
       showGenderColor: false,
       showEyeHairColors: false,
@@ -60,8 +62,8 @@ export default class App extends Component {
         ls("storedThemeKey", currentTheme.name);
       }
       treeLayout.nodeSize([
-        currentTheme.cardWidth,
-        currentTheme.cardHeight + currentTheme.cardVerticalSpacing,
+        currentTheme.nodeWidth,
+        currentTheme.nodeHeight + currentTheme.nodeVerticalSpacing,
       ]);
       treeLayout.separation((next, prev) => {
         if (next.isSpouse) return currentTheme.siblingSpouseSeparation;
@@ -104,6 +106,21 @@ export default class App extends Component {
       ls("settings", settings);
       this.setState({
         settings,
+      });
+    },
+    setCustomTheme: (customTheme) => {
+      this.setState({
+        customTheme,
+      });
+    },
+    setCustomThemeProp: (themeKey, themeValue) => {
+      const customTheme = {
+        ...this.state.customTheme,
+        [themeKey]: themeValue,
+      };
+      ls("customTheme", customTheme);
+      this.setState({
+        customTheme,
       });
     },
     setCurrentLang: (currentLang) => {

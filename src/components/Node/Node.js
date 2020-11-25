@@ -110,7 +110,7 @@ export default memo(function Node({
     node.data.secondLangLabel &&
     node.data.label !== node.data.secondLangLabel;
   return (
-    <ThemedNode
+    <ThemedNodeOuter
       style={{
         left: node.x,
         top: node.y,
@@ -123,71 +123,74 @@ export default memo(function Node({
       //data-id={node.data.id}
       //data-tree-id={node.treeId}
     >
-      <ThemedThumbnail
-        className={clsx("imgWrapper", { hasThumbnails: thumbnails.length > 1 })}
-        onClick={onThumbClick}
-      >
-        {(!thumbnails || !thumbnails.length) && (
-          <span className="defaultImgMessage">
-            {isHuman && gender ? (
-              <>
-                {gender === "male" && <FaMale />}
-                {gender === "female" && <FaFemale />}
-                {gender === "thirdgender" && <GiPerson />}
-              </>
-            ) : (
-              <BsImage />
-            )}
-          </span>
-        )}
-        {currentThumbnail && (
-          <>
-            {settings.showFace && faceImage ? (
-              <img
-                alt={faceImage.alt}
-                src={
-                  faceImage.url +
-                  (settings.imageType === "head" ? "?factor=1.5" : "")
-                }
-                title={faceImage.alt}
-              />
-            ) : (
-              <img
-                alt={currentThumbnail.alt}
-                src={currentThumbnail.url}
-                title={currentThumbnail.alt}
-              />
-            )}
-            {thumbnails.length > 1 && (
-              <span className="thumbnailCounter">
-                {thumbnailIndex + 1}/{thumbnails.length}
-              </span>
-            )}
-          </>
-        )}
-      </ThemedThumbnail>
-      <ThemedContent className="content" hasSecondLang={hasSecondLang}>
-        {settings.showEyeHairColors && (
-          <div
-            className="colorIcons"
-            style={{
-              position: "absolute",
-              bottom: 0,
-              right: "2px",
-            }}
-          >
-            {eyeColor && (
-              <span
-                className="eyeColor"
-                title={eyeColor.itemLabel + " eyes"}
-                style={{
-                  color: "#" + eyeColor.hex,
-                }}
-              >
-                <FaEye size={25} />
-              </span>
-            )}
-            {/*{hairColor && (
+      <ThemedNodeInner>
+        <ThemedThumbnail
+          className={clsx("imgWrapper", {
+            hasThumbnails: thumbnails.length > 1,
+          })}
+          onClick={onThumbClick}
+        >
+          {(!thumbnails || !thumbnails.length) && (
+            <span className="defaultImgMessage">
+              {isHuman && gender ? (
+                <>
+                  {gender === "male" && <FaMale />}
+                  {gender === "female" && <FaFemale />}
+                  {gender === "thirdgender" && <GiPerson />}
+                </>
+              ) : (
+                <BsImage />
+              )}
+            </span>
+          )}
+          {currentThumbnail && (
+            <>
+              {settings.showFace && faceImage ? (
+                <img
+                  alt={faceImage.alt}
+                  src={
+                    faceImage.url +
+                    (settings.imageType === "head" ? "?factor=1.5" : "")
+                  }
+                  title={faceImage.alt}
+                />
+              ) : (
+                <img
+                  alt={currentThumbnail.alt}
+                  src={currentThumbnail.url}
+                  title={currentThumbnail.alt}
+                />
+              )}
+              {thumbnails.length > 1 && (
+                <span className="thumbnailCounter">
+                  {thumbnailIndex + 1}/{thumbnails.length}
+                </span>
+              )}
+            </>
+          )}
+        </ThemedThumbnail>
+        <ThemedContent className="content" hasSecondLang={hasSecondLang}>
+          {settings.showEyeHairColors && (
+            <div
+              className="colorIcons"
+              style={{
+                position: "absolute",
+                bottom: 0,
+                right: "2px",
+              }}
+            >
+              {eyeColor && (
+                <span
+                  className="eyeColor"
+                  title={eyeColor.itemLabel + " eyes"}
+                  style={{
+                    color: "#" + eyeColor.hex,
+                  }}
+                >
+                  <FaEye size={25} />
+                </span>
+              )}
+              {/*{hairColor && (
               <span
                 className="hairColor"
                 title={hairColor.itemLabel}
@@ -198,71 +201,76 @@ export default memo(function Node({
                 <GiBeard />
               </span>
             )}*/}
+            </div>
+          )}
+          <div className="four-line-clamp">
+            {node.isRoot ? (
+              <h1
+                className="label btn btn-link mb-0"
+                role="button"
+                tabIndex="0"
+                onClick={() => setShowModal(true)}
+                title={
+                  node.data.label ? `Show ${node.data.label} details` : null
+                }
+              >
+                {node.data.birthName && settings.showBirthName ? (
+                  node.data.birthName
+                ) : node.data.label ? (
+                  node.data.label
+                ) : (
+                  <i>Unlabelled</i>
+                )}
+              </h1>
+            ) : (
+              <span
+                className="label btn btn-link"
+                role="button"
+                tabIndex="0"
+                onClick={() => setShowModal(true)}
+                title={
+                  node.data.label ? `Show ${node.data.label} details` : null
+                }
+              >
+                {node.data.birthName && settings.showBirthName ? (
+                  node.data.birthName
+                ) : node.data.label ? (
+                  node.data.label
+                ) : (
+                  <i>Unlabelled</i>
+                )}
+              </span>
+            )}
+            {hasSecondLang && (
+              <>
+                <br />
+                <span className="label labelSecondLang">
+                  {node.data.secondLangLabel}
+                </span>
+              </>
+            )}
+            {node.data.description && (
+              <>
+                <br />
+                <span className="description" title={node.data.description}>
+                  {node.data.description}
+                </span>
+              </>
+            )}
           </div>
-        )}
-        <div className="four-line-clamp">
-          {node.isRoot ? (
-            <h1
-              className="label btn btn-link mb-0"
-              role="button"
-              tabIndex="0"
-              onClick={() => setShowModal(true)}
-              title={node.data.label ? `Show ${node.data.label} details` : null}
-            >
-              {node.data.birthName && settings.showBirthName ? (
-                node.data.birthName
-              ) : node.data.label ? (
-                node.data.label
-              ) : (
-                <i>Unlabelled</i>
-              )}
-            </h1>
-          ) : (
-            <span
-              className="label btn btn-link"
-              role="button"
-              tabIndex="0"
-              onClick={() => setShowModal(true)}
-              title={node.data.label ? `Show ${node.data.label} details` : null}
-            >
-              {node.data.birthName && settings.showBirthName ? (
-                node.data.birthName
-              ) : node.data.label ? (
-                node.data.label
-              ) : (
-                <i>Unlabelled</i>
-              )}
-            </span>
-          )}
-          {hasSecondLang && (
-            <>
-              <br />
-              <span className="label labelSecondLang">
-                {node.data.secondLangLabel}
-              </span>
-            </>
-          )}
-          {node.data.description && (
-            <>
-              <br />
-              <span className="description" title={node.data.description}>
-                {node.data.description}
-              </span>
-            </>
-          )}
-        </div>
-        <div className="dates">
-          {node.data.lifeSpan
-            ? theme.yearOnly
-              ? node.data.lifeSpanInYears
-              : node.data.lifeSpan
-            : node.data.startEndSpan
-            ? node.data.startEndSpan
-            : node.data.inceptionAblishedSpan
-            ? node.data.inceptionAblishedSpan
-            : ""}
-        </div>
-      </ThemedContent>
+          <div className="dates">
+            {node.data.lifeSpan
+              ? theme.datesYearOnly
+                ? node.data.lifeSpanInYears
+                : node.data.lifeSpan
+              : node.data.startEndSpan
+              ? node.data.startEndSpan
+              : node.data.inceptionAblishedSpan
+              ? node.data.inceptionAblishedSpan
+              : ""}
+          </div>
+        </ThemedContent>
+      </ThemedNodeInner>
       {/* {node._parentsExpanded && currentProp && (
         <div className="upPropLabel" style={{ top: -CARD_VERTICAL_GAP / 2 }}>
           <span>{currentProp.label}</span>
@@ -366,28 +374,46 @@ export default memo(function Node({
       {showModal && (
         <DetailsModal hideModal={hideModal} node={node} nodeImages={images} />
       )}
-    </ThemedNode>
+    </ThemedNodeOuter>
   );
 });
 
-const ThemedNode = styled.div`
-  display: ${({ theme }) => theme.nodeDisplay};
-  flex-direction: ${({ theme }) => theme.flexDirection};
-  height: ${({ theme }) => theme.cardHeight}px;
-  width: ${({ theme }) => theme.cardWidth}px;
-  padding: ${({ theme }) => theme.cardPadding}px;
-  background-color: ${({ theme }) => theme.backgroundColor};
+const ThemedNodeOuter = styled.div`
+  height: ${({ theme }) => theme.nodeHeight}px;
+  width: ${({ theme }) => theme.nodeWidth}px;
+  background-color: ${({ theme }) => theme.nodebackgroundColor};
+  display: flex;
+  ${({ theme }) => theme.nodeFlexDirection === "row" && `align-items: center`};
+  ${({ theme }) =>
+    theme.nodeFlexDirection === "column" && `justify-content: center`};
+`;
+
+const ThemedNodeInner = styled.div`
+  display: flex;
+  flex-direction: ${({ theme }) => theme.nodeFlexDirection};
+  ${({ theme }) =>
+    theme.nodeFlexDirection === "row" && `height: ${theme.thumbHeight}px`};
+  ${({ theme }) =>
+    theme.nodeFlexDirection === "column" && `width: ${theme.thumbWidth}px`};
 `;
 
 const ThemedThumbnail = styled.div`
   width: ${({ theme }) => theme.thumbWidth}px;
   height: ${({ theme }) => theme.thumbHeight}px;
+  ${({ theme }) =>
+    theme.nodeFlexDirection === "row" &&
+    `margin-left: ${(theme.nodeHeight - theme.thumbHeight) / 2}px`};
+  ${({ theme }) =>
+    theme.nodeFlexDirection === "column" &&
+    `margin-top: ${(theme.nodeWidth - theme.thumbWidth) / 2}px`};
   .thumbnailCounter {
-    display: ${({ theme }) => theme.imageCounter};
+    display: ${({ theme }) => theme.thumbCounterDisplay};
   }
 `;
 
 const ThemedContent = styled.div`
+  ${({ theme }) => theme.nodeFlexDirection === "row" && `padding-left: 4px`};
+  ${({ theme }) => theme.nodeFlexDirection === "column" && `padding-top: 4px`};
   .label {
     // word-break: break-all;
     font-size: ${({ theme }) => theme.labelFontSize}px;
