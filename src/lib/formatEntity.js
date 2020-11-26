@@ -1,4 +1,4 @@
-import formatDateClaim from "./formatDateClaim";
+//import formatDateClaim from "./formatDateClaim";
 import addEntityImages from "../wikidata/addEntityImages";
 import {
   BIRTH_DATE_ID,

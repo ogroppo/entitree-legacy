@@ -9,12 +9,17 @@ export default function getPathD(
 
   let r = Math.min(
     (theme.nodeWidth * theme.sameGroupSeparation) / 4,
-    Math.abs(yDiff) / 3 // cap radius to this limit
+    Math.abs(yDiff) / 4 // cap radius to this limit
   );
 
   let halfY = yDiff / 2 + startY;
   let arcStartY = halfY - r * Math.sign(yDiff);
   let arcEndY = halfY + r * Math.sign(yDiff);
+
+  //if there is not enough space for arc use cubic line
+  if (Math.abs(startX - endX) < 2 * r) {
+    return `M${startX},${startY} C${startX},${arcStartY} ${endX},${arcEndY} ${endX},${endY}`;
+  }
 
   const isLeft = startX > endX;
   const isDown = startY > endY;
