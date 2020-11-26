@@ -33,7 +33,7 @@ export const defaultTheme: Theme = {
   nodeFlexDirection: "row",
   nodeVerticalSpacing: 80,
   nodeWidth: 250,
-  nodeHeight: 88,
+  nodeHeight: 90,
   sameGroupSeparation: 1.16,
   siblingSpouseSeparation: 1.1,
   thumbCounterDisplay: "block",
