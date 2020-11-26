@@ -1,15 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Form,
-  Button,
-  Dropdown,
-  Modal,
-  FormControl,
-  Col,
-} from "react-bootstrap";
+import { Form, Button, Dropdown, Modal, FormControl } from "react-bootstrap";
 import { LANGS } from "../../constants/langs";
 import { THEMES } from "../../constants/themes";
 import { AppContext } from "../../App";
+import CustomThemeForm from "./CustomThemeForm";
 import "./Settings.scss";
 import ReactGA from "react-ga";
 
@@ -23,6 +17,7 @@ export default function Settings({ show, hideModal }) {
     setSetting,
     currentTheme,
     setCurrentTheme,
+    customTheme,
   } = useContext(AppContext);
 
   useEffect(() => {
@@ -39,14 +34,85 @@ export default function Settings({ show, hideModal }) {
         <Modal.Title>Settings</Modal.Title>
       </Modal.Header>
       <Modal.Body>
+        <Dropdown className="themeDropdown">
+          <Dropdown.Toggle as={CustomToggle}>
+            <span className="label">Use Theme</span>
+            &nbsp;&nbsp;
+            {currentTheme.name}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {Object.values(THEMES).map((theme, index) => (
+              <Dropdown.Item
+                key={theme.name}
+                eventKey={index + 1}
+                active={theme.name === currentTheme.name}
+                disabled={theme.disabled}
+                onClick={() =>
+                  setCurrentTheme(theme.isCustom ? customTheme : theme)
+                }
+              >
+                {theme.name}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
+        {currentTheme.isCustom && <CustomThemeForm />}
+        <hr />
+        <Dropdown className="langDropdown">
+          <Dropdown.Toggle as={CustomToggle}>
+            <span className="label">Translate labels where possible in</span>{" "}
+            {currentLang.name}
+          </Dropdown.Toggle>
+          <Dropdown.Menu alignRight as={CustomMenu}>
+            {LANGS.map((lang, index) => (
+              <Dropdown.Item
+                key={lang.code}
+                eventKey={index + 1}
+                active={lang.code === currentLang.code}
+                onClick={() => setCurrentLang(lang)}
+              >
+                {lang.name}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
+        <Dropdown className="langDropdown">
+          <Dropdown.Toggle as={CustomToggle}>
+            <span className="label">Add second language for labels</span>{" "}
+            {secondLang ? secondLang.name : <i>no</i>}
+          </Dropdown.Toggle>
+          <Dropdown.Menu alignRight as={CustomMenu}>
+            <Dropdown.Item
+              active={!secondLang}
+              onClick={() => setSecondLang(null)}
+            >
+              - no second language -
+            </Dropdown.Item>
+            {LANGS.map((lang, index) => (
+              <Dropdown.Item
+                key={lang.code}
+                eventKey={index + 1}
+                active={secondLang && lang.code === secondLang.code}
+                onClick={() => setSecondLang(lang)}
+                disabled={currentLang && currentLang.code === lang.code}
+              >
+                {lang.name}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
+        <hr />
         <Form.Group controlId={"genderColors"}>
           <Form.Check
             custom
             checked={settings.showGenderColor}
             onChange={(e) => setSetting("showGenderColor", e.target.checked)}
             type="checkbox"
-            label={"Use background color based on gender"}
+            label={"Use colors based on gender"}
           />
+          <Form.Text className="text-muted pl-4">
+            If browsing family trees, the nodes will have a background color
+          </Form.Text>
         </Form.Group>
         <Form.Group controlId={"eyeHairColors"}>
           <Form.Check
@@ -54,8 +120,11 @@ export default function Settings({ show, hideModal }) {
             checked={settings.showEyeHairColors}
             onChange={(e) => setSetting("showEyeHairColors", e.target.checked)}
             type="checkbox"
-            label={"Show eye colors (lacks data)"}
+            label={"Show eye colors where possible"}
           />
+          <Form.Text className="text-muted pl-4">
+            An icon with the eye color of the person will appear
+          </Form.Text>
         </Form.Group>
         <Form.Group controlId={"birthName"}>
           <Form.Check
@@ -65,6 +134,9 @@ export default function Settings({ show, hideModal }) {
             type="checkbox"
             label={"Show birth name instead of label"}
           />
+          <Form.Text className="text-muted pl-4">
+            Often people change their names during their life
+          </Form.Text>
         </Form.Group>
         <Form.Group controlId={"iconsDisplay"}>
           <Form.Check
@@ -74,6 +146,9 @@ export default function Settings({ show, hideModal }) {
             type="checkbox"
             label={"Show navigation icons"}
           />
+          <Form.Text className="text-muted pl-4">
+            Toggle the icons next to the arrows
+          </Form.Text>
         </Form.Group>
         <Form.Group controlId={"showExternalImages"}>
           <Form.Check
@@ -83,117 +158,45 @@ export default function Settings({ show, hideModal }) {
             type="checkbox"
             label={"Show external images"}
           />
+          <Form.Text className="text-muted pl-4">
+            Allow entitree to fetch images from other websites
+          </Form.Text>
         </Form.Group>
-        <Form.Row>
-          <Col xs="auto">
-            <Form.Group controlId={"faceDisplay"}>
-              <Form.Check
-                custom
-                checked={settings.showFace}
-                onChange={(e) => setSetting("showFace", e.target.checked)}
-                type="checkbox"
-                label={"Zoom in picture"}
-              />
-            </Form.Group>
-          </Col>
+        <Form.Group controlId={"faceDisplay"}>
+          <Form.Check
+            custom
+            checked={settings.showFace}
+            className={"d-inline-block"}
+            onChange={(e) => setSetting("showFace", e.target.checked)}
+            type="checkbox"
+            label={"Zoom in picture"}
+          />
           {settings.showFace && (
-            <Col xs="auto">
-              <Dropdown className="imageDropdown">
-                <Dropdown.Toggle as={CustomToggle}>
-                  <span className="imageDropdownLabel">show</span>{" "}
-                  {settings.imageType}
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item
-                    active={settings.imageType === "head"}
-                    onClick={() => setSetting("imageType", "head")}
-                  >
-                    Head
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    active={settings.imageType === "face"}
-                    onClick={() => setSetting("imageType", "face")}
-                  >
-                    Face
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </Col>
-          )}
-        </Form.Row>
-        <div>
-          {currentLang && (
-            <Dropdown className="langDropdown">
+            <Dropdown className="imageDropdown d-inline-block ml-1">
               <Dropdown.Toggle as={CustomToggle}>
-                <span className="label">
-                  Translate labels where possible in
-                </span>{" "}
-                {currentLang.name}
+                <span className="imageDropdownLabel">show</span>{" "}
+                {settings.imageType}
               </Dropdown.Toggle>
-              <Dropdown.Menu alignRight as={CustomMenu}>
-                {LANGS.map((lang, index) => (
-                  <Dropdown.Item
-                    key={lang.code}
-                    eventKey={index + 1}
-                    active={lang.code === currentLang.code}
-                    onClick={() => setCurrentLang(lang)}
-                  >
-                    {lang.name}
-                  </Dropdown.Item>
-                ))}
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  active={settings.imageType === "head"}
+                  onClick={() => setSetting("imageType", "head")}
+                >
+                  Head
+                </Dropdown.Item>
+                <Dropdown.Item
+                  active={settings.imageType === "face"}
+                  onClick={() => setSetting("imageType", "face")}
+                >
+                  Face
+                </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           )}
-        </div>
-
-        <Form.Group controlId="language">
-          <Dropdown className="langDropdown">
-            <Dropdown.Toggle as={CustomToggle}>
-              <span className="label">Add second language for labels</span>{" "}
-              {secondLang ? secondLang.name : <i>no</i>}
-            </Dropdown.Toggle>
-            <Dropdown.Menu alignRight as={CustomMenu}>
-              <Dropdown.Item
-                active={!secondLang}
-                onClick={() => setSecondLang(null)}
-              >
-                - no second language -
-              </Dropdown.Item>
-              {LANGS.map((lang, index) => (
-                <Dropdown.Item
-                  key={lang.code}
-                  eventKey={index + 1}
-                  active={secondLang && lang.code === secondLang.code}
-                  onClick={() => setSecondLang(lang)}
-                  disabled={currentLang && currentLang.code === lang.code}
-                >
-                  {lang.name}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
+          <Form.Text className="text-muted pl-4">
+            Try to zoom into the person's most relevant features
+          </Form.Text>
         </Form.Group>
-        <hr />
-        <div>
-          <Dropdown className="themeDropdown">
-            <Dropdown.Toggle as={CustomToggle}>
-              <span className="label">Choose theme</span> {currentTheme.name}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {Object.values(THEMES).map((theme, index) => (
-                <Dropdown.Item
-                  key={theme.name}
-                  eventKey={index + 1}
-                  active={theme.name === currentTheme.name}
-                  disabled={theme.disabled}
-                  onClick={() => setCurrentTheme(theme)}
-                >
-                  {theme.name}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="link" className="mr-auto ml-0" onClick={hideModal}>

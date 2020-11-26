@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Container } from "react-bootstrap";
 import Header from "../../layout/Header/Header";
 import "./NotFoundPage.scss";

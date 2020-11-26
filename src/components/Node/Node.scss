@@ -7,7 +7,6 @@
   position: absolute;
   transform: translate(-50%, -50%);
   transition: all ease-in-out 0.2s;
-  display: flex;
   &.focused {
     box-shadow: 0px 0px 12px steelblue;
   }
@@ -35,7 +34,7 @@
       width: 100%;
       font-size: 12px; //for alt text
     }
-    .imgMore {
+    .thumbnailCounter {
       position: absolute;
       right: 2px;
       bottom: 2px;
@@ -51,7 +50,6 @@
   }
   .content {
     position: relative;
-    padding-left: 4px;
     flex-grow: 1;
     .four-line-clamp {
       display: -webkit-box;

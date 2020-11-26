@@ -1,4 +1,4 @@
-import formatDateClaim from "./formatDateClaim";
+//import formatDateClaim from "./formatDateClaim";
 import addEntityImages from "../wikidata/addEntityImages";
 import {
   BIRTH_DATE_ID,
@@ -61,7 +61,7 @@ export default async function formatEntity(
 
   addBirthDate(formattedEntity, languageCode);
   addDeathDate(formattedEntity, languageCode);
-  addIsInfantDeath(formattedEntity);
+  // addIsInfantDeath(formattedEntity);
   addLifeSpan(formattedEntity);
 
   addBirthPlaceId(formattedEntity, languageCode);

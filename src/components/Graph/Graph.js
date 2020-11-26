@@ -12,12 +12,7 @@ import React, {
 import { TransformComponent } from "react-zoom-pan-pinch";
 import getItems from "../../wikidata/getItems";
 import { hierarchy } from "d3-hierarchy";
-import {
-  SIBLING_SPOUSE_SEPARATION,
-  MAX_SCALE,
-  MIN_SCALE,
-  DEFAULT_SCALE,
-} from "../../constants/tree";
+import { MAX_SCALE, MIN_SCALE, DEFAULT_SCALE } from "../../constants/tree";
 import Node from "../Node/Node";
 import Rel from "../Rel/Rel";
 import { CHILD_ID } from "../../constants/properties";
@@ -33,7 +28,7 @@ import { sortByBirthDate, sortByGender } from "../../lib/sortEntities";
 import last from "../../lib/last";
 import clsx from "clsx";
 import debounce from "lodash.debounce";
-import { useTheme } from "styled-components";
+import styled, { useTheme } from "styled-components";
 
 export default function GraphWrapper() {
   const { settings } = useContext(AppContext);
@@ -87,7 +82,7 @@ const Graph = memo(
       }, 500);
       handleResize();
 
-      window.addEventListener("resize", handleResize); //debounce this
+      window.addEventListener("resize", handleResize);
 
       return () => {
         window.removeEventListener("resize", handleResize);
@@ -362,7 +357,7 @@ const Graph = memo(
             theme,
             { secondLang }
           );
-          const baseX = theme.cardWidth * SIBLING_SPOUSE_SEPARATION;
+          const baseX = theme.nodeWidth * theme.siblingSpouseSeparation;
           entities.forEach((entity, index) => {
             const spouseNode = getSpouseNode(entity, index);
             spouseNode.x = baseX + baseX * index;
@@ -403,7 +398,7 @@ const Graph = memo(
             theme,
             { secondLang }
           );
-          const baseX = -(theme.cardWidth * SIBLING_SPOUSE_SEPARATION);
+          const baseX = -(theme.nodeWidth * theme.siblingSpouseSeparation);
           sortByBirthDate(entities);
           entities.forEach((entity, index, { length }) => {
             const siblingNode = getSiblingNode(entity, index);
@@ -438,10 +433,10 @@ const Graph = memo(
     };
 
     const fitTree = () => {
-      const leftEdge = graph.maxLeft - theme.cardWidth; //should be theme.cardWidth / 2 but give some padding
-      const topEdge = graph.maxTop - theme.cardWidth / 2;
-      const rightEdge = graph.maxRight + theme.cardWidth;
-      const bottomEdge = graph.maxBottom + theme.cardWidth / 2;
+      const leftEdge = graph.maxLeft - theme.nodeWidth; //should be theme.nodeWidth / 2 but give some padding
+      const topEdge = graph.maxTop - theme.nodeWidth / 2;
+      const rightEdge = graph.maxRight + theme.nodeWidth;
+      const bottomEdge = graph.maxBottom + theme.nodeWidth / 2;
       const treeWidth = rightEdge - leftEdge;
       const treeHeight = bottomEdge - topEdge;
 
@@ -486,7 +481,7 @@ const Graph = memo(
     } = graph;
 
     return (
-      <div className="Graph" ref={graphRef}>
+      <ThemedGraph className="Graph" ref={graphRef}>
         <TransformComponent>
           <div className="center">
             <svg className="svgContainer" style={containerStyle}>
@@ -628,7 +623,7 @@ const Graph = memo(
           recenter={recenter}
           fitTree={fitTree}
         />
-      </div>
+      </ThemedGraph>
     );
   },
   (prevProps, nextProps) => {
@@ -636,3 +631,7 @@ const Graph = memo(
     return true; //better performance but inconsistent scale
   }
 );
+
+const ThemedGraph = styled.div`
+  background-color: ${({ theme }) => theme.graphBackgroundColor};
+`;

@@ -8,6 +8,8 @@ Live website here https://www.entitree.com/
 
 Test website here https://entitree-test.heorkuapp.com/
 
+![Interface example](https://github.com/ogroppo/entitree/blob/master/public/examples/interface.png)
+
 ## User instructions
 
 Search for items (people, organizations, anything!) from the top search bar and then select a property from the dropdown.

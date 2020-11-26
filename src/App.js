@@ -14,6 +14,7 @@ import clsx from "clsx";
 import ls from "local-storage";
 import ReactGA from "react-ga";
 import treeLayout from "./lib/getTreeLayout";
+import { defaultCustomTheme } from "./constants/themes";
 
 const browserHistory = createBrowserHistory();
 
@@ -30,6 +31,7 @@ export default class App extends Component {
     currentProp: null,
     currentPropId: null,
     currentTheme: null,
+    customTheme: defaultCustomTheme,
     settings: {
       showGenderColor: false,
       showEyeHairColors: false,
@@ -55,14 +57,28 @@ export default class App extends Component {
         ReactGA.event({
           category: "Settings",
           action: `Updated`,
-          label: `theme: ${currentTheme}`,
+          label: `theme: ${currentTheme.name}`,
         });
         ls("storedThemeKey", currentTheme.name);
       }
       treeLayout.nodeSize([
-        currentTheme.cardWidth,
-        currentTheme.cardHeight + currentTheme.cardVerticalSpacing,
+        currentTheme.nodeWidth,
+        currentTheme.nodeHeight + currentTheme.nodeVerticalSpacing,
       ]);
+      treeLayout.separation((next, prev) => {
+        if (next.isSpouse) return currentTheme.siblingSpouseSeparation;
+        if (prev.isSpouse && !next.isSpouse)
+          return currentTheme.cousinsSeparation;
+
+        if (prev.isSibling) return currentTheme.siblingSpouseSeparation;
+        if (next.isSibling && !prev.isSibling)
+          return currentTheme.cousinsSeparation;
+
+        if (next.parent === prev.parent)
+          return currentTheme.sameGroupSeparation;
+
+        if (next.parent !== prev.parent) return currentTheme.cousinsSeparation;
+      });
       this.setState({ currentTheme });
     },
     setCurrentEntity: (currentEntity) => {
@@ -90,6 +106,21 @@ export default class App extends Component {
       ls("settings", settings);
       this.setState({
         settings,
+      });
+    },
+    setCustomTheme: (customTheme) => {
+      this.setState({
+        customTheme,
+      });
+    },
+    setCustomThemeProp: (themeKey, themeValue) => {
+      const customTheme = {
+        ...this.state.customTheme,
+        [themeKey]: themeValue,
+      };
+      ls("storedCustomTheme", customTheme);
+      this.setState({
+        customTheme,
       });
     },
     setCurrentLang: (currentLang) => {
