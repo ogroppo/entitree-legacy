@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Form, Button, Dropdown, Modal, FormControl } from "react-bootstrap";
-import { LANGS } from "../../constants/langs";
+import { LANGS, SECOND_LABELS } from "../../constants/langs";
 import { THEMES } from "../../constants/themes";
 import { AppContext } from "../../App";
 import CustomThemeForm from "./CustomThemeForm";
@@ -78,7 +78,7 @@ export default function Settings({ show, hideModal }) {
         </Dropdown>
         <Dropdown className="langDropdown">
           <Dropdown.Toggle as={CustomToggle}>
-            <span className="label">Add second language for labels</span>{" "}
+            <span className="label">Add second label</span>{" "}
             {secondLang ? secondLang.name : <i>no</i>}
           </Dropdown.Toggle>
           <Dropdown.Menu alignRight as={CustomMenu}>
@@ -86,8 +86,24 @@ export default function Settings({ show, hideModal }) {
               active={!secondLang}
               onClick={() => setSecondLang(null)}
             >
-              - no second language -
+              - no second label -
             </Dropdown.Item>
+            <Dropdown.Header>Other properties</Dropdown.Header>
+
+            {SECOND_LABELS.map((lang, index) => (
+              <Dropdown.Item
+                key={lang.code}
+                eventKey={index + 1}
+                active={secondLang && lang.code === secondLang.code}
+                onClick={() => setSecondLang(lang)}
+                disabled={currentLang && currentLang.code === lang.code}
+              >
+                {lang.name}
+              </Dropdown.Item>
+            ))}
+            <Dropdown.Divider />
+            <Dropdown.Header>Other languages</Dropdown.Header>
+
             {LANGS.map((lang, index) => (
               <Dropdown.Item
                 key={lang.code}

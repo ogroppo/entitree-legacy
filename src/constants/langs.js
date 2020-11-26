@@ -1,3 +1,6 @@
+import { Dropdown } from "react-bootstrap";
+import React from "react";
+
 const DISAMBIGUATION_PAGE_DESC = {
   da: "Wikipedia-flertydigside",
   de: "Wikimedia-Begriffsklärungsseite",
@@ -445,3 +448,13 @@ export const LANGS = Object.keys(LANG_MAP).map((code) => {
 
 export const DEFAULT_LANG = LANGS.find(({ code }) => code === "en");
 export const DEFAULT_LANGS_CODES = ["en", "fr", "de", "it", "es", "nl", "pt"];
+export const SECOND_LABELS = [
+  {
+    code: "nickname",
+    name: "Nickname",
+  },
+  {
+    code: "birthName",
+    name: "Birth name",
+  },
+];
