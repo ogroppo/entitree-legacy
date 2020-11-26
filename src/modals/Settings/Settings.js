@@ -88,7 +88,7 @@ export default function Settings({ show, hideModal }) {
             >
               - no second label -
             </Dropdown.Item>
-            <Dropdown.Header>Other properties</Dropdown.Header>
+            <Dropdown.Header>Properties</Dropdown.Header>
 
             {SECOND_LABELS.map((lang, index) => (
               <Dropdown.Item
@@ -102,7 +102,7 @@ export default function Settings({ show, hideModal }) {
               </Dropdown.Item>
             ))}
             <Dropdown.Divider />
-            <Dropdown.Header>Other languages</Dropdown.Header>
+            <Dropdown.Header>Languages</Dropdown.Header>
 
             {LANGS.map((lang, index) => (
               <Dropdown.Item
