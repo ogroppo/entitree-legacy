@@ -8,7 +8,7 @@ interface Theme {
   isCustom?: boolean;
   labelFontSize: number;
   name: string;
-  nodebackgroundColor?: string;
+  nodeBackgroundColor?: string;
   nodeBorderWidth: number;
   nodeFlexDirection: "row" | "column";
   nodeHeight: number;
@@ -56,7 +56,7 @@ const lightTheme: Theme = {
   thumbWidth: 60,
   thumbHeight: 84,
   labelFontSize: 16,
-  nodebackgroundColor: "rgb(250, 238, 222)",
+  nodeBackgroundColor: "rgb(250, 238, 222)",
 };
 
 const darkTheme: Theme = {
@@ -84,21 +84,21 @@ const verticalTheme: Theme = {
   datesDisplay: "none",
   datesFontSize: 14,
   descriptionDisplay: "none",
-  graphBackgroundColor: "#eae1c7",
   labelFontSize: 14,
   name: "Vertical",
   nodeFlexDirection: "column",
-  nodeHeight: 135,
+  nodeHeight: 195,
+  nodeWidth: 88,
   nodeVerticalSpacing: 60,
-  sameGroupSeparation: 1.25,
+  sameGroupSeparation: 1.45,
   siblingSpouseSeparation: 1.25,
   thumbCounterDisplay: "none",
-  thumbHeight: 80,
-  thumbWidth: 80,
+  thumbHeight: 84,
+  thumbWidth: 84,
   datesYearOnly: true,
 };
 
-export const customTheme: Theme = {
+export const defaultCustomTheme: Theme = {
   ...defaultTheme,
   name: "Custom",
   isCustom: true,
@@ -111,5 +111,5 @@ export const THEMES: Theme[] = [
   darkTheme,
   onlyLabelTheme,
   verticalTheme,
-  customTheme,
+  defaultCustomTheme,
 ];

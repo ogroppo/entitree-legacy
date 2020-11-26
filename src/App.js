@@ -14,7 +14,7 @@ import clsx from "clsx";
 import ls from "local-storage";
 import ReactGA from "react-ga";
 import treeLayout from "./lib/getTreeLayout";
-import { customTheme } from "./constants/themes";
+import { defaultCustomTheme } from "./constants/themes";
 
 const browserHistory = createBrowserHistory();
 
@@ -31,7 +31,7 @@ export default class App extends Component {
     currentProp: null,
     currentPropId: null,
     currentTheme: null,
-    customTheme,
+    customTheme: defaultCustomTheme,
     settings: {
       showGenderColor: false,
       showEyeHairColors: false,
@@ -57,7 +57,7 @@ export default class App extends Component {
         ReactGA.event({
           category: "Settings",
           action: `Updated`,
-          label: `theme: ${currentTheme}`,
+          label: `theme: ${currentTheme.name}`,
         });
         ls("storedThemeKey", currentTheme.name);
       }
@@ -118,7 +118,7 @@ export default class App extends Component {
         ...this.state.customTheme,
         [themeKey]: themeValue,
       };
-      ls("customTheme", customTheme);
+      ls("storedCustomTheme", customTheme);
       this.setState({
         customTheme,
       });

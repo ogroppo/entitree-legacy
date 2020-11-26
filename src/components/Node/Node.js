@@ -380,7 +380,7 @@ export default memo(function Node({
 const ThemedNodeOuter = styled.div`
   height: ${({ theme }) => theme.nodeHeight}px;
   width: ${({ theme }) => theme.nodeWidth}px;
-  background-color: ${({ theme }) => theme.nodebackgroundColor};
+  background-color: ${({ theme }) => theme.nodeBackgroundColor};
   display: flex;
   ${({ theme }) => theme.nodeFlexDirection === "row" && `align-items: center`};
   ${({ theme }) =>
