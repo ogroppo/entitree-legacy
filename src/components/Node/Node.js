@@ -290,7 +290,7 @@ export default memo(function Node({
           variant={"link"}
           disabled={node.loadingSiblings}
           onClick={() => toggleSiblings(node)}
-          title={(node._spousesExpanded ? "Collapse" : "Expand") + " siblings"}
+          title={(node._siblingsExpanded ? "Collapse" : "Expand") + " siblings"}
         >
           <div className="value">{node.data.leftIds.length}</div>
           <div className="chevron mt-1 mb-1">
