@@ -5,7 +5,7 @@ import { DEFAULT_LANG, LANGS } from "../constants/langs";
 import ls from "local-storage";
 
 const useCurrentLang = () => {
-  const { setCurrentLang, setSecondLang } = useContext(AppContext);
+  const { setCurrentLang, setSecondLabel } = useContext(AppContext);
 
   const match = useRouteMatch();
 
@@ -27,13 +27,13 @@ const useCurrentLang = () => {
       setCurrentLang(DEFAULT_LANG);
     }
 
-    //Set second language
-    const secondLangCode = ls("storedSecondLangCode");
-    if (secondLangCode) {
-      const currentSecondLang = LANGS.find(
-        ({ code }) => code === secondLangCode
+    //Set second label/language
+    const secondLabelCode = ls("storedSecondLabelCode");
+    if (secondLabelCode) {
+      const currentSecondLabel = LANGS.find(
+        ({ code }) => code === secondLabelCode
       );
-      if (currentSecondLang) setSecondLang(currentSecondLang);
+      if (currentSecondLabel) setSecondLabel(currentSecondLabel);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

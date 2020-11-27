@@ -3,11 +3,33 @@
   @media print {
     display: none;
   }
+  .container {
+    height: 100%;
+  }
   .searchBox {
     position: relative;
     color: #212529;
-    padding: 12px 0;
     margin: 0;
+    display: flex;
+    align-items: center;
+    height: 100%;
+
+    .input-group {
+      position: relative;
+      .input-group-prepend {
+        position: absolute;
+        z-index: 5;
+        top: 11px;
+        left: 9px;
+        color: var(--gray);
+      }
+    }
+
+    #searchBox {
+      border-top-left-radius: 0.25rem;
+      border-bottom-left-radius: 0.25rem;
+      padding-left: 32px;
+    }
 
     .shouldSelectProp {
       //border-color: green;

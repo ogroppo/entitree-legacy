@@ -18,7 +18,7 @@ const useLoadEntity = () => {
     currentPropId,
     setState,
     setCurrentUpMap,
-    secondLang,
+    secondLabel,
   } = useContext(AppContext);
 
   const match = useRouteMatch();
@@ -27,10 +27,10 @@ const useLoadEntity = () => {
   const getItemMemo = useMemo(() => {
     if (currentEntityId)
       return Promise.all([
-        getItem(currentEntityId, currentLang.code, theme, { secondLang }),
+        getItem(currentEntityId, currentLang.code, theme, { secondLabel }),
         getItemProps(currentEntityId, currentLang.code),
       ]);
-  }, [currentEntityId, currentLang.code, secondLang, theme]);
+  }, [currentEntityId, currentLang.code, secondLabel, theme]);
 
   useEffect(() => {
     const loadEntity = async () => {
@@ -123,7 +123,7 @@ const useLoadEntity = () => {
       loadEntity();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentLang, secondLang, currentEntityId, currentPropId]);
+  }, [currentLang, secondLabel, currentEntityId, currentPropId]);
 };
 
 export default useLoadEntity;

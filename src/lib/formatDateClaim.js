@@ -90,7 +90,6 @@ function parseDate(wikidatatime, languageCode = "en", yearOnly = false) {
       let millenniumNumber = year > 0 ? millenniumIndex + 1 : millenniumIndex;
       return ordinalize(millenniumNumber) + " mill." + eraSuffix;
     case 7:
-      let centuryIndex = Math.abs(Math.floor(year / 100));
       let centuryNumber =
         year > 0 ? Math.ceil(year / 100) : Math.abs(Math.floor(year / 100));
       return ordinalize(centuryNumber) + " cent." + eraSuffix;
