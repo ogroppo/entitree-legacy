@@ -30,7 +30,7 @@ import addAbolishedDate from "./addAbolishedDate";
 import addInceptionAbolishedSpan from "./addInceptionAbolishedSpan";
 import addDeathPlaceId from "./addDeathPlaceId";
 import addBirthName from "./addBirthName";
-import addSecondLangLabel from "./addSecondLangLabel";
+import addSecondLabel from "./addSecondLabel";
 
 export default async function formatEntity(
   entity,
@@ -53,9 +53,9 @@ export default async function formatEntity(
   };
 
   addLabel(formattedEntity, languageCode);
-  addSecondLangLabel(
+  addSecondLabel(
     formattedEntity,
-    options.secondLang ? options.secondLang.code : null
+    options.secondLabel ? options.secondLabel.code : null
   );
   addDescription(formattedEntity, languageCode);
 

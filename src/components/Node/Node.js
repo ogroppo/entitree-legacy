@@ -47,7 +47,7 @@ export default memo(function Node({
   const [thumbnailIndex, setThumbnailIndex] = useState(0);
   const theme = useTheme();
 
-  const { settings, secondLang } = useContext(AppContext);
+  const { settings, secondLabel } = useContext(AppContext);
 
   const hideModal = () => {
     setShowModal(false);
@@ -105,10 +105,10 @@ export default memo(function Node({
       ? () => setThumbnailIndex((thumbnailIndex + 1) % thumbnails.length)
       : null;
 
-  const hasSecondLang =
-    secondLang &&
-    node.data.secondLangLabel &&
-    node.data.label !== node.data.secondLangLabel;
+  const hasSecondLabel =
+    secondLabel &&
+    node.data.secondLabel &&
+    node.data.label !== node.data.secondLabel;
   return (
     <ThemedNodeOuter
       style={{
@@ -169,7 +169,7 @@ export default memo(function Node({
             </>
           )}
         </ThemedThumbnail>
-        <ThemedContent className="content" hasSecondLang={hasSecondLang}>
+        <ThemedContent className="content" hasSecondLabel={hasSecondLabel}>
           {settings.showEyeHairColors && (
             <div
               className="colorIcons"
@@ -241,11 +241,11 @@ export default memo(function Node({
                 )}
               </span>
             )}
-            {hasSecondLang && (
+            {hasSecondLabel && (
               <>
                 <br />
-                <span className="label labelSecondLang">
-                  {node.data.secondLangLabel}
+                <span className="label labelsecondLabel">
+                  {node.data.secondLabel}
                 </span>
               </>
             )}
@@ -290,6 +290,7 @@ export default memo(function Node({
           variant={"link"}
           disabled={node.loadingSiblings}
           onClick={() => toggleSiblings(node)}
+          title={(node._siblingsExpanded ? "Collapse" : "Expand") + " siblings"}
         >
           <div className="value">{node.data.leftIds.length}</div>
           <div className="chevron mt-1 mb-1">
@@ -378,6 +379,7 @@ export default memo(function Node({
 });
 
 const ThemedNodeOuter = styled.div`
+  ${({ theme }) => theme.boxCss}
   height: ${({ theme }) => theme.nodeHeight}px;
   width: ${({ theme }) => theme.nodeWidth}px;
   background-color: ${({ theme }) => theme.nodeBackgroundColor};
@@ -411,14 +413,16 @@ const ThemedThumbnail = styled.div`
 `;
 
 const ThemedContent = styled.div`
-  ${({ theme }) => theme.nodeFlexDirection === "row" && `padding-left: 4px`};
-  ${({ theme }) => theme.nodeFlexDirection === "column" && `padding-top: 4px`};
+  ${({ theme }) => theme.nodeFlexDirection === "row" && `padding-left: 2px`};
+  ${({ theme }) => theme.nodeFlexDirection === "column" && `padding-top: 2px;padding-left: 2px;`}
   .label {
+    word-break: break-word;
+    text-align: ${({ theme }) => theme.labelTextAlign};
     font-size: ${({ theme }) => theme.labelFontSize}px;
     //if there is no description we can have this block and have the dots of the same color of the text
     //but only ONE can be display block
-    display: ${({ theme, hasSecondLang }) =>
-      theme.descriptionDisplay === "none" && !hasSecondLang
+    display: ${({ theme, hasSecondLabel }) =>
+      theme.descriptionDisplay === "none" && !hasSecondLabel
         ? "block"
         : "inline"};
   }
