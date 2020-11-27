@@ -1,18 +1,18 @@
 import { BIRTH_NAME_ID, NICKNAME_ID } from "../constants/properties";
 
-export default function addSecondLangLabel(entity, languageCode) {
+export default function addSecondLabel(entity, languageCode) {
   if (!languageCode) return;
   const { labels, simpleClaims } = entity;
   if (!labels) return;
-  if (languageCode === "nickname") {
+  if (languageCode === NICKNAME_ID) {
     if (simpleClaims[NICKNAME_ID]) {
-      entity.secondLangLabel = simpleClaims[NICKNAME_ID][0].value;
+      entity.secondLabel = simpleClaims[NICKNAME_ID][0].value;
     }
     return;
   }
-  if (languageCode === "birthName") {
+  if (languageCode === BIRTH_NAME_ID) {
     if (simpleClaims[BIRTH_NAME_ID]) {
-      entity.secondLangLabel = simpleClaims[BIRTH_NAME_ID][0].value;
+      entity.secondLabel = simpleClaims[BIRTH_NAME_ID][0].value;
     }
     return;
   }
@@ -20,5 +20,5 @@ export default function addSecondLangLabel(entity, languageCode) {
   let labelObject = labels[languageCode];
   if (!labelObject) return;
 
-  entity.secondLangLabel = labelObject.value;
+  entity.secondLabel = labelObject.value;
 }

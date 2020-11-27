@@ -1,3 +1,5 @@
+import { BIRTH_NAME_ID, NICKNAME_ID } from "./properties";
+
 const DISAMBIGUATION_PAGE_DESC = {
   da: "Wikipedia-flertydigside",
   de: "Wikimedia-Begriffsklärungsseite",
@@ -447,11 +449,11 @@ export const DEFAULT_LANG = LANGS.find(({ code }) => code === "en");
 export const DEFAULT_LANGS_CODES = ["en", "fr", "de", "it", "es", "nl", "pt"];
 export const SECOND_LABELS = [
   {
-    code: "nickname",
+    code: NICKNAME_ID,
     name: "Nickname",
   },
   {
-    code: "birthName",
+    code: BIRTH_NAME_ID,
     name: "Birth name",
   },
 ];

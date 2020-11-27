@@ -25,7 +25,7 @@ export default class App extends Component {
     errors: [],
     infos: [],
     currentLang: null,
-    secondLang: null,
+    secondLabel: null,
     currentEntity: null,
     currentEntityId: null,
     currentProp: null,
@@ -134,18 +134,18 @@ export default class App extends Component {
         currentLang,
       });
     },
-    setSecondLang: (secondLang) => {
-      if (secondLang) {
+    setSecondLabel: (secondLabel) => {
+      if (secondLabel) {
         ReactGA.event({
-          category: "Second Language",
+          category: "Second Label",
           action: `Changed`,
-          label: secondLang.code,
+          label: secondLabel.code,
         });
-        ls("storedSecondLangCode", secondLang.code);
+        ls("storedSecondLabelCode", secondLabel.code);
       } else {
-        ls.remove("storedSecondLangCode");
+        ls.remove("storedSecondLabelCode");
       }
-      this.setState({ secondLang });
+      this.setState({ secondLabel });
     },
     showError: (error) => {
       console.error(error);

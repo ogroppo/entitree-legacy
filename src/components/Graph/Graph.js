@@ -59,7 +59,7 @@ const Graph = memo(
       currentLang,
       currentEntity,
       currentProp,
-      secondLang,
+      secondLabel,
       setLoadingEntity,
       currentUpMap,
     } = useContext(AppContext);
@@ -170,7 +170,7 @@ const Graph = memo(
             {
               addDownIds: true,
               addRightIds: currentProp.id === CHILD_ID,
-              secondLang,
+              secondLabel,
             }
           );
           if (currentProp.id === CHILD_ID) {
@@ -220,7 +220,7 @@ const Graph = memo(
               upMap: currentUpMap,
               addLeftIds: currentProp.id === CHILD_ID,
               addRightIds: currentProp.id === CHILD_ID,
-              secondLang,
+              secondLabel,
             }
           );
           if (currentProp.id === CHILD_ID) {
@@ -268,7 +268,7 @@ const Graph = memo(
             currentLang.code,
             null,
             theme,
-            { secondLang }
+            { secondLabel }
           );
           entities.forEach((entity, index) => {
             const spouseNode = getSpouseNode(entity, index);
@@ -314,7 +314,7 @@ const Graph = memo(
             currentLang.code,
             null,
             theme,
-            { secondLang }
+            { secondLabel }
           );
           sortByBirthDate(entities);
           entities.forEach((entity, index) => {
@@ -355,7 +355,7 @@ const Graph = memo(
             currentLang.code,
             null,
             theme,
-            { secondLang }
+            { secondLabel }
           );
           const baseX = theme.nodeWidth * theme.siblingSpouseSeparation;
           entities.forEach((entity, index) => {
@@ -396,7 +396,7 @@ const Graph = memo(
             currentLang.code,
             null,
             theme,
-            { secondLang }
+            { secondLabel }
           );
           const baseX = -(theme.nodeWidth * theme.siblingSpouseSeparation);
           sortByBirthDate(entities);

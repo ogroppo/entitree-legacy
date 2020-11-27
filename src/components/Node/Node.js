@@ -47,7 +47,7 @@ export default memo(function Node({
   const [thumbnailIndex, setThumbnailIndex] = useState(0);
   const theme = useTheme();
 
-  const { settings, secondLang } = useContext(AppContext);
+  const { settings, secondLabel } = useContext(AppContext);
 
   const hideModal = () => {
     setShowModal(false);
@@ -105,10 +105,10 @@ export default memo(function Node({
       ? () => setThumbnailIndex((thumbnailIndex + 1) % thumbnails.length)
       : null;
 
-  const hasSecondLang =
-    secondLang &&
-    node.data.secondLangLabel &&
-    node.data.label !== node.data.secondLangLabel;
+  const hassecondLabel =
+    secondLabel &&
+    node.data.secondLabel &&
+    node.data.label !== node.data.secondLabel;
   return (
     <ThemedNodeOuter
       style={{
@@ -169,7 +169,7 @@ export default memo(function Node({
             </>
           )}
         </ThemedThumbnail>
-        <ThemedContent className="content" hasSecondLang={hasSecondLang}>
+        <ThemedContent className="content" hassecondLabel={hassecondLabel}>
           {settings.showEyeHairColors && (
             <div
               className="colorIcons"
@@ -241,11 +241,11 @@ export default memo(function Node({
                 )}
               </span>
             )}
-            {hasSecondLang && (
+            {hassecondLabel && (
               <>
                 <br />
-                <span className="label labelSecondLang">
-                  {node.data.secondLangLabel}
+                <span className="label labelsecondLabel">
+                  {node.data.secondLabel}
                 </span>
               </>
             )}
@@ -419,8 +419,8 @@ const ThemedContent = styled.div`
     font-size: ${({ theme }) => theme.labelFontSize}px;
     //if there is no description we can have this block and have the dots of the same color of the text
     //but only ONE can be display block
-    display: ${({ theme, hasSecondLang }) =>
-      theme.descriptionDisplay === "none" && !hasSecondLang
+    display: ${({ theme, hassecondLabel }) =>
+      theme.descriptionDisplay === "none" && !hassecondLabel
         ? "block"
         : "inline"};
   }

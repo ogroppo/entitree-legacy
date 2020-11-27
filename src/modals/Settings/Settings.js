@@ -10,8 +10,8 @@ import ReactGA from "react-ga";
 export default function Settings({ show, hideModal }) {
   const {
     currentLang,
-    secondLang,
-    setSecondLang,
+    secondLabel,
+    setSecondLabel,
     setCurrentLang,
     settings,
     setSetting,
@@ -79,12 +79,12 @@ export default function Settings({ show, hideModal }) {
         <Dropdown className="langDropdown">
           <Dropdown.Toggle as={CustomToggle}>
             <span className="label">Add second label</span>{" "}
-            {secondLang ? secondLang.name : <i>no</i>}
+            {secondLabel ? secondLabel.name : <i>no</i>}
           </Dropdown.Toggle>
           <Dropdown.Menu alignRight as={CustomMenu}>
             <Dropdown.Item
-              active={!secondLang}
-              onClick={() => setSecondLang(null)}
+              active={!secondLabel}
+              onClick={() => setSecondLabel(null)}
             >
               - no second label -
             </Dropdown.Item>
@@ -94,8 +94,8 @@ export default function Settings({ show, hideModal }) {
               <Dropdown.Item
                 key={lang.code}
                 eventKey={index + 1}
-                active={secondLang && lang.code === secondLang.code}
-                onClick={() => setSecondLang(lang)}
+                active={secondLabel && lang.code === secondLabel.code}
+                onClick={() => setSecondLabel(lang)}
                 disabled={currentLang && currentLang.code === lang.code}
               >
                 {lang.name}
@@ -108,8 +108,8 @@ export default function Settings({ show, hideModal }) {
               <Dropdown.Item
                 key={lang.code}
                 eventKey={index + 1}
-                active={secondLang && lang.code === secondLang.code}
-                onClick={() => setSecondLang(lang)}
+                active={secondLabel && lang.code === secondLabel.code}
+                onClick={() => setSecondLabel(lang)}
                 disabled={currentLang && currentLang.code === lang.code}
               >
                 {lang.name}
@@ -271,7 +271,9 @@ const CustomMenu = React.forwardRef(
         <ul className="list-unstyled list">
           {React.Children.toArray(children).filter(
             (child) =>
-              !value || child.props.children.toLowerCase().startsWith(value)
+              !value ||
+              (child.props.children &&
+                child.props.children.toLowerCase().startsWith(value))
           )}
         </ul>
       </div>
