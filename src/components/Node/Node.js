@@ -105,7 +105,7 @@ export default memo(function Node({
       ? () => setThumbnailIndex((thumbnailIndex + 1) % thumbnails.length)
       : null;
 
-  const hassecondLabel =
+  const hasSecondLabel =
     secondLabel &&
     node.data.secondLabel &&
     node.data.label !== node.data.secondLabel;
@@ -169,7 +169,7 @@ export default memo(function Node({
             </>
           )}
         </ThemedThumbnail>
-        <ThemedContent className="content" hassecondLabel={hassecondLabel}>
+        <ThemedContent className="content" hasSecondLabel={hasSecondLabel}>
           {settings.showEyeHairColors && (
             <div
               className="colorIcons"
@@ -241,7 +241,7 @@ export default memo(function Node({
                 )}
               </span>
             )}
-            {hassecondLabel && (
+            {hasSecondLabel && (
               <>
                 <br />
                 <span className="label labelsecondLabel">
@@ -419,8 +419,8 @@ const ThemedContent = styled.div`
     font-size: ${({ theme }) => theme.labelFontSize}px;
     //if there is no description we can have this block and have the dots of the same color of the text
     //but only ONE can be display block
-    display: ${({ theme, hassecondLabel }) =>
-      theme.descriptionDisplay === "none" && !hassecondLabel
+    display: ${({ theme, hasSecondLabel }) =>
+      theme.descriptionDisplay === "none" && !hasSecondLabel
         ? "block"
         : "inline"};
   }
