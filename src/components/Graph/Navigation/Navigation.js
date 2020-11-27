@@ -1,6 +1,6 @@
-import { Button, OverlayTrigger, Tooltip, Modal } from "react-bootstrap";
+import React, { memo, useState } from "react";
 import ReactGA from "react-ga";
-import React, { memo, useCallback, useState } from "react";
+import { Button, OverlayTrigger, Tooltip, Modal } from "react-bootstrap";
 import { FiMinus, FiPlus, FiPrinter } from "react-icons/fi";
 import { FaRegShareSquare } from "react-icons/fa";
 import { IoMdExpand } from "react-icons/io";

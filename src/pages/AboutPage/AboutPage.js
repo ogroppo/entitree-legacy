@@ -6,6 +6,7 @@ import { DEFAULT_DESC, SITE_NAME } from "../../constants/meta";
 import { FaGithub } from "react-icons/fa";
 import usePageView from "../../lib/usePageView";
 import "./AboutPage.scss";
+import Footer from "../../layout/Footer/Footer";
 
 export default function AboutPage() {
   usePageView();
@@ -181,6 +182,7 @@ export default function AboutPage() {
           , the rest reinvested in Entitree.com
         </p>
       </Container>
+      <Footer />
     </div>
   );
 }

@@ -14,6 +14,7 @@ import "./Header.scss";
 import Logo from "../../components/Logo/Logo";
 import Settings from "../../modals/Settings/Settings";
 import { SITE_NAME } from "../../constants/meta";
+import styled from "styled-components";
 
 export default function Header({ simple }) {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -32,7 +33,7 @@ export default function Header({ simple }) {
   };
 
   return (
-    <Navbar className="Header" bg="dark" variant="dark" expand="lg">
+    <ThemedHeader className="Header" bg="dark" variant="dark" expand="lg">
       <Container>
         <Navbar.Brand href="/">
           <Logo /> {SITE_NAME}
@@ -68,6 +69,10 @@ export default function Header({ simple }) {
           </Nav>
         )}
       </Container>
-    </Navbar>
+    </ThemedHeader>
   );
 }
+
+const ThemedHeader = styled(Navbar)`
+  height: ${({ theme }) => theme.headerHeight}px;
+`;

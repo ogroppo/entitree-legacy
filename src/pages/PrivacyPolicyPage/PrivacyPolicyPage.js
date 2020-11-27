@@ -4,6 +4,7 @@ import Header from "../../layout/Header/Header";
 import { Helmet } from "react-helmet";
 import { DEFAULT_DESC, SITE_NAME } from "../../constants/meta";
 import usePageView from "../../lib/usePageView";
+import Footer from "../../layout/Footer/Footer";
 
 export default function PrivacyPolicyPage() {
   usePageView();
@@ -1149,6 +1150,7 @@ export default function PrivacyPolicyPage() {
           from WILDE BEUGER SOLMECKE, Cologne.
         </p>
       </Container>
+      <Footer />
     </div>
   );
 }
