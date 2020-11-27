@@ -13,6 +13,8 @@ import {
 } from "react-bootstrap";
 import { AppContext } from "../../App";
 import search from "../../wikidata/search";
+import styled from "styled-components";
+import { FaSearch } from "react-icons/fa";
 
 export default function SearchBar() {
   const {
@@ -71,7 +73,7 @@ export default function SearchBar() {
 
   const propToggleRef = useRef();
   return (
-    <Form
+    <ThemedSearchBar
       className="SearchBar"
       onSubmit={(e) => {
         e.preventDefault();
@@ -81,6 +83,9 @@ export default function SearchBar() {
       <Container>
         <Form.Group className="searchBox" controlId="searchBox">
           <InputGroup>
+            <InputGroup.Prepend>
+              <FaSearch />
+            </InputGroup.Prepend>
             <Form.Control
               onKeyDown={() => setFromKeyboard(true)}
               onChange={(e) => {
@@ -141,9 +146,13 @@ export default function SearchBar() {
           )}
         </Form.Group>
       </Container>
-    </Form>
+    </ThemedSearchBar>
   );
 }
+
+const ThemedSearchBar = styled(Form)`
+  height: ${({ theme }) => theme.searchBarHeight}px;
+`;
 
 function Suggestions({
   loadingSuggestions,

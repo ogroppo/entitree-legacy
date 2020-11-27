@@ -1,12 +1,17 @@
+import isInIframe from "../lib/isInIframe";
+
 interface Theme {
   boxCss: string,
   cousinsSeparation: number;
   datesDisplay: "block" | "none";
   datesFontSize: number;
+  datesYearOnly: boolean;
   descriptionDisplay: "inline" | "none";
   disabled?: boolean;
   graphBackgroundColor?: string;
+  headerHeight: number;
   isCustom?: boolean;
+  isInIframe: boolean;
   labelFontSize: number;
   labelTextAlign: string;
   name: string;
@@ -17,11 +22,11 @@ interface Theme {
   nodeVerticalSpacing: number;
   nodeWidth: number;
   sameGroupSeparation: number;
+  searchBarHeight: number;
   siblingSpouseSeparation: number;
   thumbCounterDisplay: "block" | "none";
   thumbHeight: number;
   thumbWidth: number;
-  datesYearOnly: boolean;
 }
 
 export const defaultTheme: Theme = {
@@ -31,12 +36,15 @@ export const defaultTheme: Theme = {
     &.focused {
     box-shadow: 0px 0px 12px steelblue;
   }`,
+  isInIframe: isInIframe(),
   cousinsSeparation: 1.3,
   datesDisplay: "block",
   datesFontSize: 11,
   descriptionDisplay: "inline",
   labelFontSize: 13,
   labelTextAlign: "left",
+  headerHeight: 50,
+  searchBarHeight: 60,
   name: "Default",
   nodeBackgroundColor: "#eee",
   nodeBorderWidth: 1,
