@@ -14,7 +14,7 @@ export default async function getItems(
 
   const languages = DEFAULT_LANGS_CODES.concat(languageCode);
 
-  if (options.secondLang) languages.push(options.secondLang.code);
+  if (options.secondLabel) languages.push(options.secondLabel.code);
 
   const allentities = await getEntitiesFromWikidata({
     ids,
