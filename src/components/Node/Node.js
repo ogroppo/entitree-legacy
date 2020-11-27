@@ -416,7 +416,7 @@ const ThemedContent = styled.div`
   ${({ theme }) => theme.nodeFlexDirection === "row" && `padding-left: 2px`};
   ${({ theme }) => theme.nodeFlexDirection === "column" && `padding-top: 2px;padding-left: 2px;`}
   .label {
-    // word-break: break-all;
+    word-break: break-word;
     text-align: ${({ theme }) => theme.labelTextAlign};
     font-size: ${({ theme }) => theme.labelFontSize}px;
     //if there is no description we can have this block and have the dots of the same color of the text
