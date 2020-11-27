@@ -6,6 +6,15 @@
       padding-right: 0.5rem;
       padding-left: 0.5rem;
     }
+    .nav-item {
+      margin-top: 12px;
+      margin-left: 5px;
+    }
+    @media (max-width: 600px) {
+      #twitterFollowButton {
+        display: none;
+      }
+    }
   }
   .rightLinks {
     @media (max-width: 768px) {
