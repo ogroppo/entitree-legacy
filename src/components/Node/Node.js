@@ -379,6 +379,7 @@ export default memo(function Node({
 });
 
 const ThemedNodeOuter = styled.div`
+  ${({ theme }) => theme.boxCss}
   height: ${({ theme }) => theme.nodeHeight}px;
   width: ${({ theme }) => theme.nodeWidth}px;
   background-color: ${({ theme }) => theme.nodeBackgroundColor};
@@ -412,10 +413,11 @@ const ThemedThumbnail = styled.div`
 `;
 
 const ThemedContent = styled.div`
-  ${({ theme }) => theme.nodeFlexDirection === "row" && `padding-left: 4px`};
-  ${({ theme }) => theme.nodeFlexDirection === "column" && `padding-top: 4px`};
+  ${({ theme }) => theme.nodeFlexDirection === "row" && `padding-left: 2px`};
+  ${({ theme }) => theme.nodeFlexDirection === "column" && `padding-top: 2px;padding-left: 2px;`}
   .label {
     // word-break: break-all;
+    text-align: ${({ theme }) => theme.labelTextAlign};
     font-size: ${({ theme }) => theme.labelFontSize}px;
     //if there is no description we can have this block and have the dots of the same color of the text
     //but only ONE can be display block

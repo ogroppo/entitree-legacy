@@ -1,4 +1,5 @@
 interface Theme {
+  boxCss: string,
   cousinsSeparation: number;
   datesDisplay: "block" | "none";
   datesFontSize: number;
@@ -7,6 +8,7 @@ interface Theme {
   graphBackgroundColor?: string;
   isCustom?: boolean;
   labelFontSize: number;
+  labelTextAlign: string;
   name: string;
   nodeBackgroundColor?: string;
   nodeBorderWidth: number;
@@ -23,12 +25,20 @@ interface Theme {
 }
 
 export const defaultTheme: Theme = {
+  boxCss: `border: 1px solid lightgrey;
+  box-shadow: 4px 4px 10px lightgrey;
+  box-sizing: border-box;
+    &.focused {
+    box-shadow: 0px 0px 12px steelblue;
+  }`,
   cousinsSeparation: 1.3,
   datesDisplay: "block",
   datesFontSize: 11,
   descriptionDisplay: "inline",
   labelFontSize: 13,
+  labelTextAlign: "left",
   name: "Default",
+  nodeBackgroundColor: "#eee",
   nodeBorderWidth: 1,
   nodeFlexDirection: "row",
   nodeVerticalSpacing: 80,
@@ -67,7 +77,7 @@ const darkTheme: Theme = {
 
 const onlyLabelTheme: Theme = {
   ...defaultTheme,
-  datesDisplay: "none",
+  // datesDisplay: "none",
   datesFontSize: 14,
   descriptionDisplay: "none",
   labelFontSize: 16,
@@ -87,8 +97,33 @@ const verticalTheme: Theme = {
   labelFontSize: 14,
   name: "Vertical",
   nodeFlexDirection: "column",
-  nodeHeight: 195,
-  nodeWidth: 88,
+  nodeHeight: 160,
+  nodeWidth: 84,
+  nodeVerticalSpacing: 60,
+  sameGroupSeparation: 1.45,
+  siblingSpouseSeparation: 1.25,
+  thumbCounterDisplay: "none",
+  thumbHeight: 84,
+  thumbWidth: 84,
+  datesYearOnly: true,
+};
+
+const rawTheme: Theme = {
+  ...defaultTheme,
+  boxCss: `.imgWrapper {
+    border-radius: 30px;
+    }`,
+  cousinsSeparation: 1.35,
+  datesDisplay: "none",
+  datesFontSize: 14,
+  descriptionDisplay: "none",
+  labelFontSize: 14,
+  labelTextAlign: "center",
+  name: "Raw & borderless",
+  nodeFlexDirection: "column",
+  nodeBackgroundColor: "white",
+  nodeHeight: 130,
+  nodeWidth: 84,
   nodeVerticalSpacing: 60,
   sameGroupSeparation: 1.45,
   siblingSpouseSeparation: 1.25,
@@ -111,5 +146,6 @@ export const THEMES: Theme[] = [
   darkTheme,
   onlyLabelTheme,
   verticalTheme,
+  rawTheme,
   defaultCustomTheme,
 ];
