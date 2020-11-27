@@ -1,6 +1,3 @@
-import { Dropdown } from "react-bootstrap";
-import React from "react";
-
 const DISAMBIGUATION_PAGE_DESC = {
   da: "Wikipedia-flertydigside",
   de: "Wikimedia-Begriffsklärungsseite",
