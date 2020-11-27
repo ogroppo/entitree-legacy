@@ -16,6 +16,10 @@ import useLoadSettings from "../../hooks/useLoadSettings";
 import useLoadTheme from "../../hooks/useLoadTheme";
 import usePageView from "../../lib/usePageView";
 import useUpdateUrl from "../../hooks/useUpdateUrl";
+import { useTheme } from "styled-components";
+import Footer from "../../layout/Footer/Footer";
+import ThemedGraphWrapper from "../../components/ThemedGraphWrapper";
+import { useRouteMatch } from "react-router-dom";
 
 function HomePage() {
   useLoadEntity();
@@ -23,6 +27,10 @@ function HomePage() {
   usePageView();
   useUpdateUrl();
   const { currentEntity, loadingEntity, currentProp } = useContext(AppContext);
+  const theme = useTheme();
+
+  const match = useRouteMatch();
+  const { itemSlug } = match.params;
 
   return (
     <div className="HomePage">
@@ -44,25 +52,26 @@ function HomePage() {
           <meta name="description" content={DEFAULT_DESC} />
         </Helmet>
       )}
-      <Header />
-      <SearchBar />
+      {!theme.isInIframe && <Header />}
+      {!theme.isInIframe && <SearchBar />}
       {loadingEntity && (
-        <div className="graphPlaceholder">
+        <ThemedGraphWrapper className="graphPlaceholder">
           <div className="center">
             <Spinner animation="grow" />
             <div>Loading tree</div>
           </div>
-        </div>
+        </ThemedGraphWrapper>
       )}
-      {!loadingEntity && !currentEntity && (
-        <div className="graphPlaceholder">
+      {!itemSlug && (
+        <ThemedGraphWrapper className="graphPlaceholder">
           <div className="center">
             <GiFamilyTree />
             <div>Start a new search or choose from the examples</div>
           </div>
-        </div>
+        </ThemedGraphWrapper>
       )}
       {currentEntity && <Graph />}
+      {!theme.isInIframe && <Footer />}
     </div>
   );
 }

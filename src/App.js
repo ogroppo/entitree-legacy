@@ -6,11 +6,9 @@ import HomePage from "./pages/HomePage/HomePage";
 import "./App.scss";
 import AboutPage from "./pages/AboutPage/AboutPage";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage/PrivacyPolicyPage";
-import Footer from "./layout/Footer/Footer";
 import Logo from "./components/Logo/Logo";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
 import TutorialPage from "./pages/TutorialPage/TutorialPage";
-import clsx from "clsx";
 import ls from "local-storage";
 import ReactGA from "react-ga";
 import treeLayout from "./lib/getTreeLayout";
@@ -179,45 +177,42 @@ export default class App extends Component {
     return (
       <AppContext.Provider value={this.state}>
         <Router history={browserHistory}>
-          <div className={clsx("App")}>
-            <div className="appBody">
-              <div className="messages">
-                {errors.map((error, index) => (
-                  <Alert key={JSON.stringify(error) + index} variant="danger">
-                    {error.message}
-                  </Alert>
-                ))}
-                {infos.map(({ id, message }) => (
-                  <Alert key={id || message} variant="info">
-                    {message}
-                  </Alert>
-                ))}
-              </div>
-              <Switch>
-                <Route exact path="/">
-                  <HomePage />
-                </Route>
-                <Route exact path="/:langCode/:propSlug/:itemSlug">
-                  <HomePage />
-                </Route>
-                <Route exact path="/about">
-                  <AboutPage />
-                </Route>
-                <Route exact path="/tutorial">
-                  <TutorialPage />
-                </Route>
-                <Route exact path="/privacy">
-                  <PrivacyPolicyPage />
-                </Route>
-                <Route exact path="/logopreview">
-                  <Container className="pt-5">
-                    <Logo width={"5em"} height={"5em"} />
-                  </Container>
-                </Route>
-                <Route component={NotFoundPage} />
-              </Switch>
+          <div className={"App"}>
+            <div className="messages">
+              {errors.map((error, index) => (
+                <Alert key={JSON.stringify(error) + index} variant="danger">
+                  {error.message}
+                </Alert>
+              ))}
+              {infos.map(({ id, message }) => (
+                <Alert key={id || message} variant="info">
+                  {message}
+                </Alert>
+              ))}
             </div>
-            <Footer />
+            <Switch>
+              <Route exact path="/">
+                <HomePage />
+              </Route>
+              <Route exact path="/:langCode/:propSlug/:itemSlug">
+                <HomePage />
+              </Route>
+              <Route exact path="/about">
+                <AboutPage />
+              </Route>
+              <Route exact path="/tutorial">
+                <TutorialPage />
+              </Route>
+              <Route exact path="/privacy">
+                <PrivacyPolicyPage />
+              </Route>
+              <Route exact path="/logopreview">
+                <Container className="pt-5">
+                  <Logo width={"5em"} height={"5em"} />
+                </Container>
+              </Route>
+              <Route component={NotFoundPage} />
+            </Switch>
           </div>
         </Router>
       </AppContext.Provider>

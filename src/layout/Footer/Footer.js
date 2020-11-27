@@ -2,6 +2,7 @@ import React from "react";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { FaCreativeCommons, FaGithub } from "react-icons/fa";
 import "./Footer.scss";
+
 export default function Footer() {
   return (
     <Navbar className="Footer" bg="light" expand="lg">

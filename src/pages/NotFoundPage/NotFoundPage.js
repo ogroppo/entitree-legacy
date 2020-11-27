@@ -4,6 +4,7 @@ import Header from "../../layout/Header/Header";
 import "./NotFoundPage.scss";
 import usePageView from "../../lib/usePageView";
 import { Link } from "react-router-dom";
+import Footer from "../../layout/Footer/Footer";
 
 export default function NotFoundPage() {
   usePageView();
@@ -15,6 +16,7 @@ export default function NotFoundPage() {
         <h1>Page Not Found</h1>
         <Link to={"/"}>Go back to the home page</Link>
       </Container>
+      <Footer />
     </div>
   );
 }
