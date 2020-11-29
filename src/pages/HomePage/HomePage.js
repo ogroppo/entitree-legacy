@@ -18,8 +18,24 @@ import usePageView from "../../lib/usePageView";
 import useUpdateUrl from "../../hooks/useUpdateUrl";
 import { useTheme } from "styled-components";
 import Footer from "../../layout/Footer/Footer";
-import ThemedGraphWrapper from "../../components/ThemedGraphWrapper";
+import styled from "styled-components";
 import { useRouteMatch } from "react-router-dom";
+
+export default function HomePageWrapper() {
+  useCurrentLang();
+  useLoadSettings();
+  useLoadTheme();
+  const { currentLang, currentTheme } = useContext(AppContext);
+
+  if (!currentLang) return null;
+  if (!currentTheme) return null;
+
+  return (
+    <ThemeProvider theme={currentTheme}>
+      <HomePage />
+    </ThemeProvider>
+  );
+}
 
 function HomePage() {
   useLoadEntity();
@@ -54,40 +70,33 @@ function HomePage() {
       )}
       {!theme.isInIframe && <Header />}
       {!theme.isInIframe && <SearchBar />}
-      {loadingEntity && (
-        <ThemedGraphWrapper className="graphPlaceholder">
-          <div className="center">
-            <Spinner animation="grow" />
-            <div>Loading tree</div>
+      <ThemedMain>
+        {loadingEntity && (
+          <div className="graphPlaceholder">
+            <div className="center">
+              <Spinner animation="grow" />
+              <div>Loading tree</div>
+            </div>
           </div>
-        </ThemedGraphWrapper>
-      )}
-      {!itemSlug && (
-        <ThemedGraphWrapper className="graphPlaceholder">
-          <div className="center">
-            <GiFamilyTree />
-            <div>Start a new search or choose from the examples</div>
+        )}
+        {!itemSlug && (
+          <div className="graphPlaceholder">
+            <div className="center">
+              <GiFamilyTree />
+              <div>Start a new search or choose from the examples</div>
+            </div>
           </div>
-        </ThemedGraphWrapper>
-      )}
-      {currentEntity && <Graph />}
+        )}
+        {currentEntity && <Graph />}
+      </ThemedMain>
       {!theme.isInIframe && <Footer />}
     </div>
   );
 }
 
-export default function HomePageWrapper() {
-  useCurrentLang();
-  useLoadSettings();
-  useLoadTheme();
-  const { currentLang, currentTheme } = useContext(AppContext);
-
-  if (!currentLang) return null;
-  if (!currentTheme) return null;
-
-  return (
-    <ThemeProvider theme={currentTheme}>
-      <HomePage />
-    </ThemeProvider>
-  );
-}
+const ThemedMain = styled.main`
+  height: ${({ theme }) =>
+    theme.isInIframe
+      ? `100vh`
+      : `calc(100vh - ${theme.headerHeight}px - ${theme.searchBarHeight}px)`};
+`;

@@ -13,6 +13,7 @@ import ls from "local-storage";
 import ReactGA from "react-ga";
 import treeLayout from "./lib/getTreeLayout";
 import { defaultCustomTheme } from "./constants/themes";
+import IframePage from "./pages/IframePage/IframePage";
 
 const browserHistory = createBrowserHistory();
 
@@ -205,6 +206,9 @@ export default class App extends Component {
               </Route>
               <Route exact path="/privacy">
                 <PrivacyPolicyPage />
+              </Route>
+              <Route path="/iframe/:langCode/:propSlug/:itemSlug">
+                <IframePage />
               </Route>
               <Route exact path="/logopreview">
                 <Container className="pt-5">
