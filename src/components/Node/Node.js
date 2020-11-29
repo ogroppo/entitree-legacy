@@ -16,6 +16,7 @@ import {
   EYE_COLOR_ID,
   GENI_ID,
   HAIR_COLOR_ID,
+  INSTAGRAM_ID,
   WIKITREE_ID,
 } from "../../constants/properties";
 import DetailsModal from "../../modals/DetailsModal/DetailsModal";
@@ -27,6 +28,7 @@ import clsx from "clsx";
 import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
 import getGeniImage from "../../geni/getGeniImage";
 import styled, { useTheme } from "styled-components";
+import getData from "../../axios/getData";
 
 export default memo(function Node({
   node,
@@ -90,6 +92,24 @@ export default memo(function Node({
           }
         });
       }
+    }
+    const instagramClaim = node.data.simpleClaims[INSTAGRAM_ID];
+    if (instagramClaim) {
+      const instagramUsername = instagramClaim[0].value;
+      try {
+        getData(`https://www.instagram.com/${instagramUsername}/?__a=1`).then(
+          (data) => {
+            if (data.graphql && data.graphql.user.profile_pic_url) {
+              const instagramImage = {
+                url: data.graphql.user.profile_pic_url,
+                alt: `Instagram profile pic of ${instagramUsername}`,
+              };
+              setThumbnails(thumbnails.concat(instagramImage));
+              setImages(images.concat(instagramImage));
+            }
+          }
+        );
+      } catch {}
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
