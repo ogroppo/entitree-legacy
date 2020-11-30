@@ -9,14 +9,18 @@ const useLoadTheme = () => {
   useEffect(() => {
     const storedThemeKey = ls("storedThemeKey");
     const storedCustomTheme = ls("storedCustomTheme");
+    const consolidatedCustomTheme = {
+      ...defaultCustomTheme, //localStorage might be corrupted, keep defaults
+      ...(storedCustomTheme || {}), //todo, remove extra props stored
+    };
     if (storedCustomTheme) {
-      setCustomTheme(storedCustomTheme);
+      setCustomTheme(consolidatedCustomTheme);
     }
     if (!storedThemeKey) {
       setCurrentTheme(defaultTheme, false);
     } else {
       if (storedThemeKey === "Custom") {
-        setCurrentTheme(storedCustomTheme || defaultCustomTheme, false);
+        setCurrentTheme(consolidatedCustomTheme, false);
       } else {
         const theme = THEMES.find(({ name }) => storedThemeKey === name);
         if (!theme) {

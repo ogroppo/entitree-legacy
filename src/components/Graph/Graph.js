@@ -29,13 +29,10 @@ import last from "../../lib/last";
 import clsx from "clsx";
 import debounce from "lodash.debounce";
 import styled, { useTheme } from "styled-components";
-import ThemedGraphWrapper from "../ThemedGraphWrapper";
 
 export default function GraphWrapper() {
-  const { settings } = useContext(AppContext);
-
   return (
-    <ThemedGraphWrapper className={clsx("GraphWrapper", settings)}>
+    <div className="GraphWrapper">
       <TransformWrapper
         zoomIn={{ step: 20 }}
         zoomOut={{ step: 20 }}
@@ -49,7 +46,7 @@ export default function GraphWrapper() {
       >
         {(props) => <Graph {...props} />}
       </TransformWrapper>
-    </ThemedGraphWrapper>
+    </div>
   );
 }
 
@@ -63,6 +60,7 @@ const Graph = memo(
       secondLabel,
       setLoadingEntity,
       currentUpMap,
+      settings,
     } = useContext(AppContext);
     const theme = useTheme();
 
@@ -482,7 +480,7 @@ const Graph = memo(
     } = graph;
 
     return (
-      <ThemedGraph className="Graph" ref={graphRef}>
+      <ThemedGraph className={clsx("Graph", settings)} ref={graphRef}>
         <TransformComponent>
           <div className="center">
             <svg className="svgContainer" style={containerStyle}>

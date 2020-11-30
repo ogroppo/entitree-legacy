@@ -1,4 +1,7 @@
 .Header {
+  padding-top: 0;
+  padding-bottom: 0;
+  height: 50px; //just a default fallback for other pages
   .navbar-brand {
     svg {
       top: -2px;

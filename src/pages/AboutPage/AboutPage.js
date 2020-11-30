@@ -83,7 +83,11 @@ export default function AboutPage() {
           >
             Martin
           </a>{" "}
-          will be more than happy to help you. You can follow us on{" "}
+          will be more than happy to help you. Send an email to the whole team{" "}
+          <a href="mailto:entitree.app@gmail.com" rel="noopener noreferrer">
+            entitree.app@gmail.com
+          </a>
+          . You can follow us on{" "}
           <a
             href="https://twitter.com/EntitreeApp"
             target="_blank"
@@ -170,17 +174,9 @@ export default function AboutPage() {
                 height="1"
               />
             </form>
-
             <i>in € (Euro)</i>
           </div>
         </div>
-        <p className="mt-3">
-          50% of the amount will be forwarded to the{" "}
-          <a href="https://wikimediafoundation.org/">
-            Wikimedia foundation (the creator of Wikipedia)
-          </a>
-          , the rest reinvested in Entitree.com
-        </p>
       </Container>
       <Footer />
     </div>

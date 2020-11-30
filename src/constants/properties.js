@@ -28,6 +28,7 @@ export const NICKNAME_ID = "P1449";
 export const IMAGE_ID = "P18";
 export const LOGO_ID = "P154";
 export const TWITTER_ID = "P2002";
+export const INSTAGRAM_ID = "P2003";
 export const START_DATE_ID = "P580";
 export const END_DATE_ID = "P582";
 export const INCEPTION_ID = "P571";
