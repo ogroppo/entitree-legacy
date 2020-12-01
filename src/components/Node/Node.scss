@@ -143,6 +143,7 @@
   .parentCount,
   .childrenCount {
     left: 50%;
+    white-space: nowrap;
     transform: translateX(-50%);
     .value {
       display: inline-block;
@@ -172,10 +173,14 @@
   }
   .downPropLabel,
   .counter .value,
-  .counter .icon {
+  .counter .icon,
+  .counter .chevron {
     display: none;
     .showNavIcons & {
       display: inline-block;
     }
   }
 }
+//.Node:hover + .counter {
+//  display: block !important;
+//}

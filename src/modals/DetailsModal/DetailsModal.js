@@ -68,16 +68,16 @@ export default function DetailsModal({ node, hideModal, nodeImages }) {
               ))}
           </div>
         )}
-        {!images.length && (
-          <a
-            className="addImages"
-            target="_blank"
-            rel="noopener noreferrer"
-            href={missingImagesLink(node.data.id, node.data.label)}
-          >
-            Add missing image
-          </a>
-        )}
+        {/*{!images.length && (*/}
+        <a
+          className="addImages"
+          target="_blank"
+          rel="noopener noreferrer"
+          href={missingImagesLink(node.data.id, node.data.label)}
+        >
+          Add missing image
+        </a>
+        {/*)}*/}
         {(node.data.birthDate ||
           birthPlace ||
           node.data.deathDate ||
