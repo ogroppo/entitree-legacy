@@ -399,7 +399,13 @@ export default memo(function Node({
 });
 
 const ThemedNodeOuter = styled.div`
-  ${({ theme }) => theme.boxCss}
+  box-sizing: content-box;
+  border-radius: ${({ theme }) => theme.nodeBorderRadius}px;
+  border: ${({ theme }) => theme.nodeBorder};
+  box-shadow: ${({ theme }) => theme.nodeBoxShadow};
+  &.focused {
+    box-shadow: ${({ theme }) => theme.nodeFocusedBoxShadow};
+  }
   height: ${({ theme }) => theme.nodeHeight}px;
   width: ${({ theme }) => theme.nodeWidth}px;
   background-color: ${({ theme }) => theme.nodeBackgroundColor};
@@ -421,6 +427,7 @@ const ThemedNodeInner = styled.div`
 const ThemedThumbnail = styled.div`
   width: ${({ theme }) => theme.thumbWidth}px;
   height: ${({ theme }) => theme.thumbHeight}px;
+  border-radius: ${({ theme }) => theme.thumbBorderRadius}px;
   ${({ theme }) =>
     theme.nodeFlexDirection === "row" &&
     `margin-left: ${(theme.nodeHeight - theme.thumbHeight) / 2}px`};
@@ -433,8 +440,8 @@ const ThemedThumbnail = styled.div`
 `;
 
 const ThemedContent = styled.div`
-  ${({ theme }) => theme.nodeFlexDirection === "row" && `padding-left: 2px`};
-  ${({ theme }) => theme.nodeFlexDirection === "column" && `padding-top: 2px;padding-left: 2px;`}
+  padding-left: ${({ theme }) => theme.contentPaddingLeft}px;
+  padding-top: ${({ theme }) => theme.contentPaddingTop}px;
   .label {
     word-break: break-word;
     text-align: ${({ theme }) => theme.labelTextAlign};
