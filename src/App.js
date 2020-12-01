@@ -35,7 +35,7 @@ export default class App extends Component {
       showGenderColor: false,
       showEyeHairColors: false,
       showBirthName: false,
-      showNavIcons: true,
+      hideToggleButton: false,
       showExternalImages: false,
       showFace: false,
       imageType: "face",
