@@ -306,7 +306,7 @@ export default memo(function Node({
       )} */}
       {node.data.leftIds && !!node.data.leftIds.length && (
         <Button
-          className={`siblingCount counter`}
+          className={`siblingToggle relativeToggle`}
           variant={"link"}
           disabled={node.loadingSiblings}
           onClick={() => toggleSiblings(node)}
@@ -323,7 +323,7 @@ export default memo(function Node({
       )}
       {node.data.rightIds && !!node.data.rightIds.length && (
         <Button
-          className={`spouseCount counter`}
+          className={`spouseToggle relativeToggle`}
           variant={"link"}
           disabled={node.loadingSpouses}
           onClick={() => toggleSpouses(node)}
@@ -340,7 +340,7 @@ export default memo(function Node({
       )}
       {node.data.upIds && !!node.data.upIds.length && (
         <Button
-          className={`parentCount counter`}
+          className={`parentToggle relativeToggle`}
           variant={"link"}
           disabled={node.loadingParents}
           onClick={() => toggleParents(node)}
@@ -358,7 +358,7 @@ export default memo(function Node({
       )}
       {node.data.downIds && !!node.data.downIds.length && (
         <Button
-          className={`childrenCount counter`}
+          className={`childrenToggle relativeToggle`}
           variant={"link"}
           disabled={node.loadingChildren}
           onClick={() => toggleChildren(node)}
@@ -381,7 +381,7 @@ export default memo(function Node({
         currentProp &&
         currentProp.id === CHILD_ID && (
           <Button
-            className={`childrenCount counter`}
+            className={`childrenToggle relativeToggle`}
             variant={"link"}
             title={"Children not available, please add them on wikidata.org"}
           >

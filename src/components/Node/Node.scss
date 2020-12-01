@@ -101,7 +101,7 @@
       transform: translate(-50%, -50%);
     }
   }
-  .counter {
+  .relativeToggle {
     position: absolute;
     padding: 3px;
     font-size: 12px;
@@ -127,19 +127,19 @@
       }
     }
   }
-  .siblingCount {
+  .siblingToggle {
     right: 100%;
   }
-  .spouseCount {
+  .spouseToggle {
     left: 100%;
   }
-  .siblingCount,
-  .spouseCount {
+  .siblingToggle,
+  .spouseToggle {
     top: 50%;
     transform: translateY(-50%);
   }
-  .parentCount,
-  .childrenCount {
+  .parentToggle,
+  .childrenToggle {
     left: 50%;
     white-space: nowrap;
     transform: translateX(-50%);
@@ -148,12 +148,14 @@
       min-width: 1em; //default to optional icon width for central alignment
     }
   }
-  .parentCount {
+  .parentToggle {
     bottom: 100%;
   }
-  .childrenCount {
+  .childrenToggle {
     top: 100%;
   }
+
+  //SETTINGS
   &.female {
     .showGenderColor & {
       background-color: #ffcccc;
@@ -169,16 +171,9 @@
       //background-color: rgba(238, 130, 238, 0.11);
     }
   }
-  .downPropLabel,
-  .counter .value,
-  .counter .icon,
-  .counter .chevron {
-    display: none;
-    .showNavIcons & {
-      display: inline-block;
+  .relativeToggle {
+    .hideToggleButton & {
+      display: none;
     }
   }
 }
-//.Node:hover + .counter {
-//  display: block !important;
-//}
