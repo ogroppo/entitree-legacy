@@ -306,7 +306,7 @@ export default memo(function Node({
       )} */}
       {node.data.leftIds && !!node.data.leftIds.length && (
         <Button
-          className={`siblingCount counter`}
+          className={`siblingToggle relativeToggle`}
           variant={"link"}
           disabled={node.loadingSiblings}
           onClick={() => toggleSiblings(node)}
@@ -323,7 +323,7 @@ export default memo(function Node({
       )}
       {node.data.rightIds && !!node.data.rightIds.length && (
         <Button
-          className={`spouseCount counter`}
+          className={`spouseToggle relativeToggle`}
           variant={"link"}
           disabled={node.loadingSpouses}
           onClick={() => toggleSpouses(node)}
@@ -340,7 +340,7 @@ export default memo(function Node({
       )}
       {node.data.upIds && !!node.data.upIds.length && (
         <Button
-          className={`parentCount counter`}
+          className={`parentToggle relativeToggle`}
           variant={"link"}
           disabled={node.loadingParents}
           onClick={() => toggleParents(node)}
@@ -358,7 +358,7 @@ export default memo(function Node({
       )}
       {node.data.downIds && !!node.data.downIds.length && (
         <Button
-          className={`childrenCount counter`}
+          className={`childrenToggle relativeToggle`}
           variant={"link"}
           disabled={node.loadingChildren}
           onClick={() => toggleChildren(node)}
@@ -381,7 +381,7 @@ export default memo(function Node({
         currentProp &&
         currentProp.id === CHILD_ID && (
           <Button
-            className={`childrenCount counter`}
+            className={`childrenToggle relativeToggle`}
             variant={"link"}
             title={"Children not available, please add them on wikidata.org"}
           >
@@ -399,7 +399,13 @@ export default memo(function Node({
 });
 
 const ThemedNodeOuter = styled.div`
-  ${({ theme }) => theme.boxCss}
+  box-sizing: content-box;
+  border-radius: ${({ theme }) => theme.nodeBorderRadius}px;
+  border: ${({ theme }) => theme.nodeBorder};
+  box-shadow: ${({ theme }) => theme.nodeBoxShadow};
+  &.focused {
+    box-shadow: ${({ theme }) => theme.nodeFocusedBoxShadow};
+  }
   height: ${({ theme }) => theme.nodeHeight}px;
   width: ${({ theme }) => theme.nodeWidth}px;
   background-color: ${({ theme }) => theme.nodeBackgroundColor};
@@ -421,6 +427,7 @@ const ThemedNodeInner = styled.div`
 const ThemedThumbnail = styled.div`
   width: ${({ theme }) => theme.thumbWidth}px;
   height: ${({ theme }) => theme.thumbHeight}px;
+  border-radius: ${({ theme }) => theme.thumbBorderRadius}px;
   ${({ theme }) =>
     theme.nodeFlexDirection === "row" &&
     `margin-left: ${(theme.nodeHeight - theme.thumbHeight) / 2}px`};
@@ -433,8 +440,8 @@ const ThemedThumbnail = styled.div`
 `;
 
 const ThemedContent = styled.div`
-  ${({ theme }) => theme.nodeFlexDirection === "row" && `padding-left: 2px`};
-  ${({ theme }) => theme.nodeFlexDirection === "column" && `padding-top: 2px;padding-left: 2px;`}
+  padding-left: ${({ theme }) => theme.contentPaddingLeft}px;
+  padding-top: ${({ theme }) => theme.contentPaddingTop}px;
   .label {
     word-break: break-word;
     text-align: ${({ theme }) => theme.labelTextAlign};

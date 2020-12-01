@@ -80,6 +80,131 @@ export default function CustomThemeForm() {
           </Form.Text>
         </Col>
       </Form.Group>
+      <Form.Group as={Row} controlId={"nodeBorder"}>
+        <Col sm={{ span: 9, offset: 3 }}>
+          <Form.Label>Node Border</Form.Label>
+          <InputGroup>
+            <Form.Control
+              onChange={(e) => setCustomThemeProp("nodeBorder", e.target.value)}
+              type="text"
+              value={customTheme.nodeBorder}
+            />
+            <InputGroup.Append>
+              <InputGroup.Text>CSS</InputGroup.Text>
+            </InputGroup.Append>
+          </InputGroup>
+          <Form.Text className="text-muted">
+            The fixed width for all cards
+          </Form.Text>
+        </Col>
+      </Form.Group>
+      <Form.Group as={Row} controlId={"nodeBorderRadius"}>
+        <Col sm={{ span: 9, offset: 3 }}>
+          <Form.Label>Node Border Radius</Form.Label>
+          <InputGroup>
+            <Form.Control
+              onChange={(e) =>
+                setCustomThemeProp("nodeBorderRadius", +e.target.value)
+              }
+              type="number"
+              value={customTheme.nodeBorderRadius}
+            />
+            <InputGroup.Append>
+              <InputGroup.Text>px</InputGroup.Text>
+            </InputGroup.Append>
+          </InputGroup>
+          <Form.Text className="text-muted">
+            The fixed width for all cards
+          </Form.Text>
+        </Col>
+      </Form.Group>
+      <Form.Group as={Row} controlId={"nodeBoxShadow"}>
+        <Col sm={{ span: 9, offset: 3 }}>
+          <Form.Label>Node Box Shadow</Form.Label>
+          <InputGroup>
+            <Form.Control
+              onChange={(e) =>
+                setCustomThemeProp("nodeBoxShadow", e.target.value)
+              }
+              type="text"
+              value={customTheme.nodeBoxShadow}
+            />
+            <InputGroup.Append>
+              <InputGroup.Text>CSS</InputGroup.Text>
+            </InputGroup.Append>
+          </InputGroup>
+          <Form.Text className="text-muted">
+            Style for box-shadow property
+          </Form.Text>
+        </Col>
+      </Form.Group>
+      <Form.Group as={Row} controlId={"nodeFocusedBoxShadow"}>
+        <Col sm={{ span: 9, offset: 3 }}>
+          <Form.Label>Focused Node Box Shadow</Form.Label>
+          <InputGroup>
+            <Form.Control
+              onChange={(e) =>
+                setCustomThemeProp("nodeFocusedBoxShadow", e.target.value)
+              }
+              type="text"
+              value={customTheme.nodeFocusedBoxShadow}
+            />
+            <InputGroup.Append>
+              <InputGroup.Text>CSS</InputGroup.Text>
+            </InputGroup.Append>
+          </InputGroup>
+          <Form.Text className="text-muted">
+            Focused style for box-shadow property
+          </Form.Text>
+        </Col>
+      </Form.Group>
+      <fieldset>
+        <Form.Group as={Row}>
+          <Form.Label as="legend" column sm={3} className="pt-0">
+            Text
+          </Form.Label>
+          <Col sm={9}>
+            <Form.Label>Text Padding Top</Form.Label>
+            <InputGroup>
+              <Form.Control
+                onChange={(e) =>
+                  setCustomThemeProp("contentPaddingTop", +e.target.value)
+                }
+                type="number"
+                value={customTheme.contentPaddingTop}
+              />
+              <InputGroup.Append>
+                <InputGroup.Text>px</InputGroup.Text>
+              </InputGroup.Append>
+            </InputGroup>
+            <Form.Text className="text-muted">
+              The padding from the top line of the image (e.g. horizontal
+              layout)
+            </Form.Text>
+          </Col>
+        </Form.Group>
+        <Form.Group as={Row} controlId={"contentPaddingLeft"}>
+          <Col sm={{ span: 9, offset: 3 }}>
+            <Form.Label>Text Padding Left</Form.Label>
+            <InputGroup>
+              <Form.Control
+                onChange={(e) =>
+                  setCustomThemeProp("contentPaddingLeft", e.target.value)
+                }
+                type="number"
+                value={customTheme.contentPaddingLeft}
+              />
+              <InputGroup.Append>
+                <InputGroup.Text>px</InputGroup.Text>
+              </InputGroup.Append>
+            </InputGroup>
+            <Form.Text className="text-muted">
+              The padding from the right end of the image (e.g. horizontal
+              layout)
+            </Form.Text>
+          </Col>
+        </Form.Group>
+      </fieldset>
       <fieldset>
         <Form.Group as={Row}>
           <Form.Label as="legend" column sm={3} className="pt-0">
@@ -264,6 +389,26 @@ export default function CustomThemeForm() {
           </Form.Text>
         </Col>
       </Form.Group>
+      <Form.Group as={Row} controlId={"thumbBorderRadius"}>
+        <Col sm={{ span: 9, offset: 3 }}>
+          <Form.Label>Thumbnail Border Radius</Form.Label>
+          <InputGroup>
+            <Form.Control
+              onChange={(e) =>
+                setCustomThemeProp("thumbBorderRadius", +e.target.value)
+              }
+              type="number"
+              value={customTheme.thumbBorderRadius}
+            />
+            <InputGroup.Append>
+              <InputGroup.Text>px</InputGroup.Text>
+            </InputGroup.Append>
+          </InputGroup>
+          <Form.Text className="text-muted">
+            e.g. The rouded corners of the person's image
+          </Form.Text>
+        </Col>
+      </Form.Group>
 
       <fieldset>
         <Form.Group as={Row}>
@@ -271,40 +416,40 @@ export default function CustomThemeForm() {
             Separation
           </Form.Label>
           <Col sm={9}>
-            <Form.Group controlId={"cousinsSeparation"}>
+            <Form.Group controlId={"separationCousins"}>
               <Form.Label>Cousins Separation Factor</Form.Label>
               <Form.Control
                 onChange={(e) =>
-                  setCustomThemeProp("cousinsSeparation", +e.target.value)
+                  setCustomThemeProp("separationCousins", +e.target.value)
                 }
                 type="number"
-                value={customTheme.cousinsSeparation}
+                value={customTheme.separationCousins}
               />
               <Form.Text className="text-muted">
                 The gap between the cousins
               </Form.Text>
             </Form.Group>
-            <Form.Group controlId={"sameGroupSeparation"}>
+            <Form.Group controlId={"separationSameGroup"}>
               <Form.Label>Same Group Separation</Form.Label>
               <Form.Control
                 onChange={(e) =>
-                  setCustomThemeProp("sameGroupSeparation", +e.target.value)
+                  setCustomThemeProp("separationSameGroup", +e.target.value)
                 }
                 type="number"
-                value={customTheme.sameGroupSeparation}
+                value={customTheme.separationSameGroup}
               />
               <Form.Text className="text-muted">
                 The gap between the siblings
               </Form.Text>
             </Form.Group>
-            <Form.Group controlId={"siblingSpouseSeparation"}>
+            <Form.Group controlId={"separationSiblingSpouse"}>
               <Form.Label>Sibling/Spouse Separation</Form.Label>
               <Form.Control
                 onChange={(e) =>
-                  setCustomThemeProp("siblingSpouseSeparation", +e.target.value)
+                  setCustomThemeProp("separationSiblingSpouse", +e.target.value)
                 }
                 type="number"
-                value={customTheme.siblingSpouseSeparation}
+                value={customTheme.separationSiblingSpouse}
               />
               <Form.Text className="text-muted">
                 The gap between the sibling and the spouse of a person

@@ -1,8 +1,8 @@
 import isInIframe from "../lib/isInIframe";
 
 interface Theme {
-  boxCss: string,
-  cousinsSeparation: number;
+  contentPaddingLeft: number;
+  contentPaddingTop: number;
   datesDisplay: "block" | "none";
   datesFontSize: number;
   datesYearOnly: boolean;
@@ -16,65 +16,70 @@ interface Theme {
   labelTextAlign: string;
   name: string;
   nodeBackgroundColor?: string;
-  nodeBorderWidth: number;
+  nodeBorder: string;
+  nodeBorderRadius: number;
+  nodeBoxShadow: string;
   nodeFlexDirection: "row" | "column";
+  nodeFocusedBoxShadow: string;
   nodeHeight: number;
   nodeVerticalSpacing: number;
   nodeWidth: number;
-  sameGroupSeparation: number;
   searchBarHeight: number;
-  siblingSpouseSeparation: number;
+  separationCousins: number;
+  separationSameGroup: number;
+  separationSiblingSpouse: number;
+  thumbBorderRadius: number;
   thumbCounterDisplay: "block" | "none";
   thumbHeight: number;
   thumbWidth: number;
 }
 
 export const defaultTheme: Theme = {
-  boxCss: `border: 1px solid lightgrey;
-  box-shadow: 4px 4px 10px lightgrey;
-  box-sizing: border-box;
-    &.focused {
-    box-shadow: 0px 0px 12px steelblue;
-  }`,
-  isInIframe: isInIframe(),
-  cousinsSeparation: 1.3,
+  contentPaddingLeft: 3,
+  contentPaddingTop: 0,
   datesDisplay: "block",
   datesFontSize: 11,
+  datesYearOnly: false,
   descriptionDisplay: "inline",
+  headerHeight: 50,
+  isInIframe: isInIframe(),
   labelFontSize: 13,
   labelTextAlign: "left",
-  headerHeight: 50,
-  searchBarHeight: 60,
   name: "Default",
   nodeBackgroundColor: "#eee",
-  nodeBorderWidth: 1,
+  nodeBorder: "1px solid lightgrey",
+  nodeBorderRadius: 5,
+  nodeBoxShadow: "4px 4px 10px lightgrey",
   nodeFlexDirection: "row",
+  nodeFocusedBoxShadow: "0px 0px 12px steelblue",
+  nodeHeight: 90,
   nodeVerticalSpacing: 80,
   nodeWidth: 250,
-  nodeHeight: 90,
-  sameGroupSeparation: 1.16,
-  siblingSpouseSeparation: 1.1,
+  searchBarHeight: 60,
+  separationCousins: 1.3,
+  separationSameGroup: 1.16,
+  separationSiblingSpouse: 1.1,
+  thumbBorderRadius: 3,
   thumbCounterDisplay: "block",
   thumbHeight: 84,
   thumbWidth: 84,
-  datesYearOnly: false,
 };
 
 const bigTheme: Theme = {
   ...defaultTheme,
   name: "Big",
-  labelFontSize: 16,
   datesFontSize: 9,
+  labelFontSize: 16,
 };
 
 const lightTheme: Theme = {
   ...defaultTheme,
   name: "Light",
-  nodeWidth: 260,
-  thumbWidth: 60,
-  thumbHeight: 84,
   labelFontSize: 16,
   nodeBackgroundColor: "rgb(250, 238, 222)",
+  nodeWidth: 260,
+  thumbHeight: 84,
+  thumbWidth: 60,
 };
 
 const darkTheme: Theme = {
@@ -85,60 +90,67 @@ const darkTheme: Theme = {
 
 const onlyLabelTheme: Theme = {
   ...defaultTheme,
-  // datesDisplay: "none",
+  datesDisplay: "none",
   datesFontSize: 14,
+  datesYearOnly: true,
   descriptionDisplay: "none",
   labelFontSize: 16,
   name: "Only Label",
+  nodeHeight: 86,
   nodeVerticalSpacing: 60,
-  nodeWidth: 170,
+  nodeWidth: 230,
   thumbCounterDisplay: "none",
-  datesYearOnly: true,
+  thumbHeight: 86,
+  thumbWidth: 86,
 };
 
 const verticalTheme: Theme = {
   ...defaultTheme,
-  cousinsSeparation: 1.35,
   datesDisplay: "none",
   datesFontSize: 14,
+  datesYearOnly: true,
   descriptionDisplay: "none",
   labelFontSize: 14,
   name: "Vertical",
   nodeFlexDirection: "column",
   nodeHeight: 160,
-  nodeWidth: 84,
   nodeVerticalSpacing: 60,
-  sameGroupSeparation: 1.45,
-  siblingSpouseSeparation: 1.25,
+  nodeWidth: 84,
+  separationCousins: 1.35,
+  separationSameGroup: 1.45,
+  separationSiblingSpouse: 1.25,
   thumbCounterDisplay: "none",
   thumbHeight: 84,
   thumbWidth: 84,
-  datesYearOnly: true,
 };
 
 const rawTheme: Theme = {
   ...defaultTheme,
-  boxCss: `.imgWrapper {
-    border-radius: 30px;
-    }`,
-  cousinsSeparation: 1.35,
+  contentPaddingLeft: 0,
+  contentPaddingTop: 3,
   datesDisplay: "none",
   datesFontSize: 14,
+  datesYearOnly: true,
   descriptionDisplay: "none",
   labelFontSize: 14,
   labelTextAlign: "center",
-  name: "Raw & borderless",
-  nodeFlexDirection: "column",
+  name: "Borderless",
   nodeBackgroundColor: "white",
+  nodeBorder: "none",
+  nodeBorderRadius: 30,
+  nodeBoxShadow: "none",
+  nodeFlexDirection: "column",
+  nodeFocusedBoxShadow: "none",
   nodeHeight: 130,
-  nodeWidth: 84,
   nodeVerticalSpacing: 60,
-  sameGroupSeparation: 1.45,
-  siblingSpouseSeparation: 1.25,
+  nodeWidth: 84,
+  separationCousins: 1.35,
+  separationSameGroup: 1.45,
+  separationSiblingSpouse: 1.25,
+  thumbBorderRadius: 30,
   thumbCounterDisplay: "none",
   thumbHeight: 84,
   thumbWidth: 84,
-  datesYearOnly: true,
 };
 
 export const defaultCustomTheme: Theme = {

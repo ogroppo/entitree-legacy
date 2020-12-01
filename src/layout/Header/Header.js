@@ -12,7 +12,7 @@ import ReactGA from "react-ga";
 import { EXAMPLES } from "../../constants/examples";
 import "./Header.scss";
 import Logo from "../../components/Logo/Logo";
-import Settings from "../../modals/Settings/Settings";
+import SettingsModal from "../../modals/SettingsModal/SettingsModal";
 import { SITE_NAME } from "../../constants/meta";
 import styled from "styled-components";
 
@@ -62,7 +62,7 @@ export default function Header({ simple }) {
               settings
               <FiSliders className="ml-2" />
             </Button>
-            <Settings
+            <SettingsModal
               show={showSettingsModal}
               hideModal={() => setShowSettingsModal(false)}
             />

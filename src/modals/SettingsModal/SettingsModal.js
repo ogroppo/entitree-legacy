@@ -4,10 +4,10 @@ import { LANGS, SECOND_LABELS } from "../../constants/langs";
 import { THEMES } from "../../constants/themes";
 import { AppContext } from "../../App";
 import CustomThemeForm from "./CustomThemeForm";
-import "./Settings.scss";
+import "./SettingsModal.scss";
 import ReactGA from "react-ga";
 
-export default function Settings({ show, hideModal }) {
+export default function SettingsModal({ show, hideModal }) {
   const {
     currentLang,
     secondLabel,
@@ -29,7 +29,7 @@ export default function Settings({ show, hideModal }) {
   }, []);
 
   return (
-    <Modal show={show} onHide={hideModal} className="Settings">
+    <Modal show={show} onHide={hideModal} className="SettingsModal">
       <Modal.Header closeButton>
         <Modal.Title>Settings</Modal.Title>
       </Modal.Header>
@@ -157,13 +157,13 @@ export default function Settings({ show, hideModal }) {
         <Form.Group controlId={"iconsDisplay"}>
           <Form.Check
             custom
-            checked={settings.showNavIcons}
-            onChange={(e) => setSetting("showNavIcons", e.target.checked)}
+            checked={settings.hideToggleButton}
+            onChange={(e) => setSetting("hideToggleButton", e.target.checked)}
             type="checkbox"
-            label={"Show navigation icons"}
+            label={"Hide expand/collapse buttons"}
           />
           <Form.Text className="text-muted pl-4">
-            Toggle the icons next to the arrows
+            If this option is selected, it's not possible to navigate the tree
           </Form.Text>
         </Form.Group>
         <Form.Group controlId={"showExternalImages"}>
