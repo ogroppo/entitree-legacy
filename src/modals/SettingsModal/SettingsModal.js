@@ -4,10 +4,10 @@ import { LANGS, SECOND_LABELS } from "../../constants/langs";
 import { THEMES } from "../../constants/themes";
 import { AppContext } from "../../App";
 import CustomThemeForm from "./CustomThemeForm";
-import "./Settings.scss";
+import "./SettingsModal.scss";
 import ReactGA from "react-ga";
 
-export default function Settings({ show, hideModal }) {
+export default function SettingsModal({ show, hideModal }) {
   const {
     currentLang,
     secondLabel,
@@ -29,7 +29,7 @@ export default function Settings({ show, hideModal }) {
   }, []);
 
   return (
-    <Modal show={show} onHide={hideModal} className="Settings">
+    <Modal show={show} onHide={hideModal} className="SettingsModal">
       <Modal.Header closeButton>
         <Modal.Title>Settings</Modal.Title>
       </Modal.Header>

@@ -356,7 +356,7 @@ const Graph = memo(
             theme,
             { secondLabel }
           );
-          const baseX = theme.nodeWidth * theme.siblingSpouseSeparation;
+          const baseX = theme.nodeWidth * theme.separationSiblingSpouse;
           entities.forEach((entity, index) => {
             const spouseNode = getSpouseNode(entity, index);
             spouseNode.x = baseX + baseX * index;
@@ -397,7 +397,7 @@ const Graph = memo(
             theme,
             { secondLabel }
           );
-          const baseX = -(theme.nodeWidth * theme.siblingSpouseSeparation);
+          const baseX = -(theme.nodeWidth * theme.separationSiblingSpouse);
           sortByBirthDate(entities);
           entities.forEach((entity, index, { length }) => {
             const siblingNode = getSiblingNode(entity, index);

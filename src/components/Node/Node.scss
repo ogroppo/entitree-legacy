@@ -2,13 +2,11 @@
   MANY STYLES ARE SET AT THE BOTTOM OF Node.js
 */
 .Node {
-  border-radius: 5px;
   position: absolute;
   transform: translate(-50%, -50%);
   transition: all ease-in-out 0.2s;
 
   .imgWrapper {
-    border-radius: 3px;
     overflow: hidden;
     position: relative;
     flex-shrink: 0;

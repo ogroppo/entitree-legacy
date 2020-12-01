@@ -65,18 +65,18 @@ export default class App extends Component {
         currentTheme.nodeHeight + currentTheme.nodeVerticalSpacing,
       ]);
       treeLayout.separation((next, prev) => {
-        if (next.isSpouse) return currentTheme.siblingSpouseSeparation;
+        if (next.isSpouse) return currentTheme.separationSiblingSpouse;
         if (prev.isSpouse && !next.isSpouse)
-          return currentTheme.cousinsSeparation;
+          return currentTheme.separationCousins;
 
-        if (prev.isSibling) return currentTheme.siblingSpouseSeparation;
+        if (prev.isSibling) return currentTheme.separationSiblingSpouse;
         if (next.isSibling && !prev.isSibling)
-          return currentTheme.cousinsSeparation;
+          return currentTheme.separationCousins;
 
         if (next.parent === prev.parent)
-          return currentTheme.sameGroupSeparation;
+          return currentTheme.separationSameGroup;
 
-        if (next.parent !== prev.parent) return currentTheme.cousinsSeparation;
+        if (next.parent !== prev.parent) return currentTheme.separationCousins;
       });
       this.setState({ currentTheme });
     },
