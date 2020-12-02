@@ -60,13 +60,15 @@ export default function SettingsModal({ show, hideModal }) {
               </Dropdown.Item>
             ))}
           </Dropdown.Menu>
+          <Form.Text className="text-muted mt-0">
+            Give the tree the style you prefer, supports custom styling
+          </Form.Text>
         </Dropdown>
         {currentTheme.isCustom && <CustomThemeForm />}
         <hr />
         <Dropdown className="langDropdown">
           <Dropdown.Toggle as={CustomToggle}>
-            <span className="label">Translate labels where possible in</span>{" "}
-            {currentLang.name}
+            <span className="label">Translate label to</span> {currentLang.name}
           </Dropdown.Toggle>
           <Dropdown.Menu alignRight as={CustomMenu}>
             {LANGS.map((lang, index) => (
@@ -80,6 +82,10 @@ export default function SettingsModal({ show, hideModal }) {
               </Dropdown.Item>
             ))}
           </Dropdown.Menu>
+          <Form.Text className="text-muted mt-0">
+            If the language is available, the label (e.g. the person's name)
+            will be translated
+          </Form.Text>
         </Dropdown>
         <Dropdown className="langDropdown">
           <Dropdown.Toggle as={CustomToggle}>
@@ -121,6 +127,10 @@ export default function SettingsModal({ show, hideModal }) {
               </Dropdown.Item>
             ))}
           </Dropdown.Menu>
+          <Form.Text className="text-muted mt-0">
+            If the property or language is available, a second label will be
+            shown, useful when people is known with different names
+          </Form.Text>
         </Dropdown>
         <hr />
         <Form.Group controlId={"genderColors"}>
