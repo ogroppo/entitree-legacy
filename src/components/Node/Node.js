@@ -65,51 +65,54 @@ export default memo(function Node({
   );
   useEffect(() => {
     if (settings.showExternalImages) {
-      const wikitreeId = node.data.simpleClaims[WIKITREE_ID];
-      if (wikitreeId) {
-        getWikitreeImageUrl(wikitreeId[0].value).then((wikitreeImage) => {
-          if (wikitreeImage) {
-            const img = {
-              url: wikitreeImage,
-              alt: `Wikitree.com image`,
-            };
-            setThumbnails(thumbnails.concat(img));
-            setImages(images.concat(img));
-          }
-        });
-      }
-
-      const geniId = node.data.simpleClaims[GENI_ID];
-      if (geniId) {
-        getGeniImage(geniId[0].value).then((geniImage) => {
-          if (geniImage) {
-            const geniImg = {
-              url: geniImage,
-              alt: `Geni.com image`,
-            };
-            setThumbnails(thumbnails.concat(geniImg));
-            setImages(images.concat(geniImg));
-          }
-        });
-      }
-    }
-    const instagramClaim = node.data.simpleClaims[INSTAGRAM_ID];
-    if (instagramClaim) {
-      const instagramUsername = instagramClaim[0].value;
       try {
-        getData(`https://www.instagram.com/${instagramUsername}/?__a=1`).then(
-          (data) => {
-            if (data.graphql && data.graphql.user.profile_pic_url) {
-              const instagramImage = {
-                url: data.graphql.user.profile_pic_url,
-                alt: `Instagram profile pic of ${instagramUsername}`,
+        const wikitreeId = node.data.simpleClaims[WIKITREE_ID];
+        if (wikitreeId) {
+          getWikitreeImageUrl(wikitreeId[0].value).then((wikitreeImage) => {
+            if (wikitreeImage) {
+              const img = {
+                url: wikitreeImage,
+                alt: `Wikitree.com image`,
               };
-              setThumbnails(thumbnails.concat(instagramImage));
-              setImages(images.concat(instagramImage));
+              setThumbnails(thumbnails.concat(img));
+              setImages(images.concat(img));
             }
-          }
-        );
+          });
+        }
+
+        const geniId = node.data.simpleClaims[GENI_ID];
+        if (geniId) {
+          getGeniImage(geniId[0].value).then((geniImage) => {
+            if (geniImage) {
+              const geniImg = {
+                url: geniImage,
+                alt: `Geni.com image`,
+              };
+              setThumbnails(thumbnails.concat(geniImg));
+              setImages(images.concat(geniImg));
+            }
+          });
+        }
       } catch {}
+
+      const instagramClaim = node.data.simpleClaims[INSTAGRAM_ID];
+      if (instagramClaim) {
+        const instagramUsername = instagramClaim[0].value;
+        try {
+          getData(`https://www.instagram.com/${instagramUsername}/?__a=1`).then(
+            (data) => {
+              if (data.graphql && data.graphql.user.profile_pic_url) {
+                const instagramImage = {
+                  url: data.graphql.user.profile_pic_url,
+                  alt: `Instagram profile pic of ${instagramUsername}`,
+                };
+                setThumbnails(thumbnails.concat(instagramImage));
+                setImages(images.concat(instagramImage));
+              }
+            }
+          );
+        } catch {}
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -459,6 +462,7 @@ const ThemedContent = styled.div`
   }
   .dates {
     display: ${({ theme }) => theme.datesDisplay};
+    text-align: ${({ theme }) => theme.labelTextAlign};
     font-size: ${({ theme }) => theme.datesFontSize}px;
   }
 `;
