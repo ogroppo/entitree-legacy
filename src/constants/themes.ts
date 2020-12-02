@@ -148,7 +148,7 @@ const rawTheme: Theme = {
   nodeBoxShadow: "none",
   nodeFlexDirection: "column",
   nodeFocusedBoxShadow: "none",
-  nodeHeight: 157,
+  nodeHeight: 130,
   nodeVerticalSpacing: 60,
   nodeWidth: 84,
   separationCousins: 1.35,
