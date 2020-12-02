@@ -1,11 +1,5 @@
-import {
-  IMAGE_ID,
-  LOGO_ID,
-  TWITTER_ID,
-} from "../constants/properties";
+import { IMAGE_ID, LOGO_ID, TWITTER_ID } from "../constants/properties";
 import getData from "../axios/getData";
-import getWikitreeImageUrl from "../wikitree/getWikitreeImageUrl";
-import getGeniImage from "../geni/getGeniImage";
 
 export default async function addEntityImages(entity, currentLangCode, theme) {
   entity.thumbnails = [];
@@ -55,40 +49,22 @@ export default async function addEntityImages(entity, currentLangCode, theme) {
     imageClaim.forEach((image, index) => {
       entity.thumbnails.push({
         url: getCommonsUrlByFile(image.value, theme?.thumbWidth),
-        alt: `${entity.label}'s Image ${index + 1} from Wikimedia Commons\nPlease refer to https://commons.wikimedia.org/wiki/File:${image.value} for credits`,
+        alt: `${entity.label}'s Image ${
+          index + 1
+        } from Wikimedia Commons\nPlease refer to https://commons.wikimedia.org/wiki/File:${
+          image.value
+        } for credits`,
       });
       entity.images.push({
         url: getCommonsUrlByFile(image.value, theme?.thumbWidth * 2),
-        alt: `${entity.label}'s Image ${index + 1} from Wikimedia Commons\nPlease refer to https://commons.wikimedia.org/wiki/File:${image.value} for credits`,
+        alt: `${entity.label}'s Image ${
+          index + 1
+        } from Wikimedia Commons\nPlease refer to https://commons.wikimedia.org/wiki/File:${
+          image.value
+        } for credits`,
       });
     });
   }
-
-  // const wikitreeId = entity.simpleClaims[WIKITREE_ID];
-  // if (wikitreeId) {
-  //   const wikitreeImage = await getWikitreeImageUrl(wikitreeId[0].value);
-  //   if (wikitreeImage) {
-  //     const img = {
-  //       url: wikitreeImage,
-  //       alt: `Wikitree.com image`,
-  //     };
-  //     entity.thumbnails.push(img);
-  //     entity.images.push(img);
-  //   }
-  // }
-  //
-  // const geniId = entity.simpleClaims[GENI_ID];
-  // if (geniId) {
-  //   const geniImage = await getGeniImage(geniId[0].value);
-  //   if (geniImage) {
-  //     const geniImg = {
-  //       url: geniImage,
-  //       alt: `Geni.com image`,
-  //     };
-  //     entity.thumbnails.push(geniImg);
-  //     entity.images.push(geniImg);
-  //   }
-  // }
 
   const twitterClaim = entity.simpleClaims[TWITTER_ID];
   if (twitterClaim) {

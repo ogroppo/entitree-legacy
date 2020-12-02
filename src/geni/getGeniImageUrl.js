@@ -1,6 +1,6 @@
 import getData from "../axios/getData";
 
-export default async function getGeniImage(geniId) {
+export default async function getGeniImageUrl(geniId) {
   try {
     const data = await getData(
       `https://cors-anywhere.herokuapp.com/https://www.geni.com/api/profile-g${geniId}`,
@@ -10,5 +10,4 @@ export default async function getGeniImage(geniId) {
       return data.mugshot_urls.thumb;
     }
   } catch (e) {}
-  return null;
 }

@@ -1,18 +1,21 @@
 import { BIRTH_NAME_ID, NICKNAME_ID } from "../constants/properties";
+import getSimpleClaimValue from "./getSimpleClaimValue";
 
 export default function addSecondLabel(entity, propCode) {
   if (!propCode) return;
   const { labels, simpleClaims } = entity;
   if (!propCode) return;
   if (propCode === NICKNAME_ID) {
-    if (simpleClaims[NICKNAME_ID]) {
-      entity.secondLabel = simpleClaims[NICKNAME_ID][0].value;
+    const nickname = getSimpleClaimValue(simpleClaims, NICKNAME_ID);
+    if (nickname) {
+      entity.secondLabel = nickname;
     }
     return;
   }
   if (propCode === BIRTH_NAME_ID) {
-    if (simpleClaims[BIRTH_NAME_ID]) {
-      entity.secondLabel = simpleClaims[BIRTH_NAME_ID][0].value;
+    const birthName = getSimpleClaimValue(simpleClaims, BIRTH_NAME_ID);
+    if (birthName) {
+      entity.secondLabel = birthName;
     }
     return;
   }
