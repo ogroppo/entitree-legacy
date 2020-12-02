@@ -111,21 +111,39 @@ export default function DetailsModal({ node, hideModal, nodeImages }) {
             </a>
           </p>
         )}
-        {node.data.externalLinks && !!node.data.externalLinks.length && (
-          <div className="externalLinks">
-            {node.data.externalLinks.map((link, index) => (
-              <a
-                key={node.treeId + index}
-                target="_blank"
-                rel="noopener noreferrer"
-                title={link.title}
-                href={link.url}
-              >
-                <img src={link.iconSrc} alt={link.alt} title={link.title} />
-              </a>
-            ))}
-          </div>
-        )}
+        <div className="externalLinks">
+          {node.data.wikidataUrl && (
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Open Wikidata item in a new tab"
+              href={node.data.wikidataUrl}
+            >
+              <img src="/icons/wikidata.png" alt="Wikidata" />
+            </a>
+          )}
+          {node.data.wikipediaUrl && (
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Open Wikipedia article in a new tab"
+              href={node.data.wikipediaUrl}
+            >
+              <img src="/icons/wikipedia.png" alt="Wikipedia" />
+            </a>
+          )}
+          {node.data.externalLinks?.map((link, index) => (
+            <a
+              key={node.treeId + index}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={link.title}
+              href={link.url}
+            >
+              <img src={link.iconSrc} alt={link.alt} />
+            </a>
+          ))}
+        </div>
       </Modal.Body>
       <Modal.Footer>
         {node.data.id !== currentEntity.id && (
