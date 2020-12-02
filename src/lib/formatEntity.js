@@ -75,14 +75,17 @@ export default async function formatEntity(
   addAbolishedDate(formattedEntity, languageCode);
   addInceptionAbolishedSpan(formattedEntity);
 
+  //todo: move to addWikidataUrl()
   formattedEntity.wikidataUrl = wbk.getSitelinkUrl({
     site: "wikidata",
     title: formattedEntity.id,
   });
 
+  //todo: move to addWikipediaUrl()
   if (entity.sitelinks && entity.sitelinks[languageCode + "wiki"]) {
     formattedEntity.sitelink = entity.sitelinks[languageCode + "wiki"];
-    formattedEntity.wikipediaSlug = formattedEntity.sitelink.url.split(
+    formattedEntity.wikipediaUrl = formattedEntity.sitelink.url;
+    formattedEntity.wikipediaSlug = formattedEntity.wikipediaUrl.split(
       "/wiki/"
     )[1];
   }
