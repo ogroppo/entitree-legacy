@@ -15,7 +15,7 @@ import {
   HUMAN_ID,
 } from "../constants/entities";
 import wbk from "wikidata-sdk";
-import getSocialMediaProps from "./getSocialMediaProps";
+import addExternalLinks from "./addExternalLinks";
 import addDescription from "./addDescription";
 import addLabel from "./addLabel";
 import addDeathDate from "./addDeathDate";
@@ -79,18 +79,15 @@ export default async function formatEntity(
     site: "wikidata",
     title: formattedEntity.id,
   });
-  simpleClaims["wikidata"] = [{ value: formattedEntity.wikidataUrl }];
 
   if (entity.sitelinks && entity.sitelinks[languageCode + "wiki"]) {
     formattedEntity.sitelink = entity.sitelinks[languageCode + "wiki"];
-    simpleClaims["wikipedia"] = [{ value: formattedEntity.sitelink.url }];
-
     formattedEntity.wikipediaSlug = formattedEntity.sitelink.url.split(
       "/wiki/"
     )[1];
   }
 
-  formattedEntity.externalLinks = getSocialMediaProps(simpleClaims);
+  addExternalLinks(formattedEntity);
 
   addBirthName(formattedEntity, languageCode);
 

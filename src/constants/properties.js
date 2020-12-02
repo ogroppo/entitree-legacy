@@ -195,7 +195,7 @@ export const SOCIAL_PROPS_IDS = {
     baseUrl: "https://www.geni.com/profile/index/",
   },
   P7085: {
-    title: "Open geni profile in a new tab",
+    title: "Open tiktok user in a new tab",
     iconName: "tiktok",
     alt: "tiktok icon",
     baseUrl: "https://www.tiktok.com/@",

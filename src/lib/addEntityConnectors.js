@@ -5,6 +5,7 @@ import {
   START_DATE_ID,
   NUMBER_OF_CHILDREN_ID,
 } from "../constants/properties";
+import getSimpleClaimValue from "./getSimpleClaimValue";
 
 export default function addEntityConnectors(entity, propId, options = {}) {
   if (options.upMap) {
@@ -18,9 +19,9 @@ export default function addEntityConnectors(entity, propId, options = {}) {
     if (!propId) throw new Error("propId needed");
     entity.downIds = getClaimIds(entity, propId);
     //use number of children property, use count of children if not available
-    entity.childrenCount = entity.simpleClaims[NUMBER_OF_CHILDREN_ID]
-      ? entity.simpleClaims[NUMBER_OF_CHILDREN_ID][0].value
-      : entity.downIds.length;
+    entity.childrenCount =
+      getSimpleClaimValue(entity.simpleClaims, NUMBER_OF_CHILDREN_ID) ||
+      entity.downIds.length;
   } else {
     delete entity.downIds;
   }

@@ -15,7 +15,7 @@ import {
   CHILD_ID,
   EYE_COLOR_ID,
   GENI_ID,
-  HAIR_COLOR_ID,
+  //HAIR_COLOR_ID,
   INSTAGRAM_ID,
   WIKITREE_ID,
 } from "../../constants/properties";
@@ -26,9 +26,10 @@ import { GiPerson } from "react-icons/gi";
 import { AppContext } from "../../App";
 import clsx from "clsx";
 import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
-import getGeniImage from "../../geni/getGeniImage";
+import getGeniImageUrl from "../../geni/getGeniImageUrl";
 import styled, { useTheme } from "styled-components";
 import getData from "../../axios/getData";
+import getSimpleClaimValue from "../../lib/getSimpleClaimValue";
 
 export default memo(function Node({
   node,
@@ -59,59 +60,66 @@ export default memo(function Node({
     () => colorByProperty(node.data.simpleClaims[EYE_COLOR_ID]),
     [node.data.simpleClaims]
   );
-  const hairColor = useMemo(
-    () => colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]),
-    [node.data.simpleClaims]
-  );
+
+  // const hairColor = useMemo(
+  //   () => colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]),
+  //   [node.data.simpleClaims]
+  // );
+
   useEffect(() => {
     if (settings.showExternalImages) {
-      try {
-        const wikitreeId = node.data.simpleClaims[WIKITREE_ID];
-        if (wikitreeId) {
-          getWikitreeImageUrl(wikitreeId[0].value).then((wikitreeImage) => {
-            if (wikitreeImage) {
+      const wikitreeId = getSimpleClaimValue(
+        node.data.simpleClaims,
+        WIKITREE_ID
+      );
+      if (wikitreeId) {
+        getWikitreeImageUrl(wikitreeId)
+          .then((wikitreeImageUrl) => {
+            if (wikitreeImageUrl) {
               const img = {
-                url: wikitreeImage,
+                url: wikitreeImageUrl,
                 alt: `Wikitree.com image`,
               };
               setThumbnails(thumbnails.concat(img));
               setImages(images.concat(img));
             }
-          });
-        }
+          })
+          .catch();
+      }
 
-        const geniId = node.data.simpleClaims[GENI_ID];
-        if (geniId) {
-          getGeniImage(geniId[0].value).then((geniImage) => {
-            if (geniImage) {
+      const geniId = getSimpleClaimValue(node.data.simpleClaims, GENI_ID);
+      if (geniId) {
+        getGeniImageUrl(geniId)
+          .then((geniImageUrl) => {
+            if (geniImageUrl) {
               const geniImg = {
-                url: geniImage,
+                url: geniImageUrl,
                 alt: `Geni.com image`,
               };
               setThumbnails(thumbnails.concat(geniImg));
               setImages(images.concat(geniImg));
             }
-          });
-        }
-      } catch {}
+          })
+          .catch();
+      }
 
-      const instagramClaim = node.data.simpleClaims[INSTAGRAM_ID];
-      if (instagramClaim) {
-        const instagramUsername = instagramClaim[0].value;
-        try {
-          getData(`https://www.instagram.com/${instagramUsername}/?__a=1`).then(
-            (data) => {
-              if (data.graphql && data.graphql.user.profile_pic_url) {
-                const instagramImage = {
-                  url: data.graphql.user.profile_pic_url,
-                  alt: `Instagram profile pic of ${instagramUsername}`,
-                };
-                setThumbnails(thumbnails.concat(instagramImage));
-                setImages(images.concat(instagramImage));
-              }
+      const instagramUsername = getSimpleClaimValue(
+        node.data.simpleClaims,
+        INSTAGRAM_ID
+      );
+      if (instagramUsername) {
+        getData(`https://www.instagram.com/${instagramUsername}/?__a=1`)
+          .then((data) => {
+            if (data.graphql && data.graphql.user.profile_pic_url) {
+              const instagramImage = {
+                url: data.graphql.user.profile_pic_url,
+                alt: `Instagram profile pic of ${instagramUsername}`,
+              };
+              setThumbnails(thumbnails.concat(instagramImage));
+              setImages(images.concat(instagramImage));
             }
-          );
-        } catch {}
+          })
+          .catch();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
