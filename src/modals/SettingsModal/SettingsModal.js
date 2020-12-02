@@ -29,7 +29,12 @@ export default function SettingsModal({ show, hideModal }) {
   }, []);
 
   return (
-    <Modal show={show} onHide={hideModal} className="SettingsModal">
+    <Modal
+      show={show}
+      onHide={hideModal}
+      dialogClassName="SettingsModalDialog"
+      className="SettingsModal"
+    >
       <Modal.Header closeButton>
         <Modal.Title>Settings</Modal.Title>
       </Modal.Header>

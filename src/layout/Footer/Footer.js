@@ -8,7 +8,11 @@ export default function Footer() {
     <Navbar className="Footer" bg="light" expand="lg">
       <Container>
         <Nav className="mr-auto">
-          <Navbar.Brand target="_blank" href="https://www.wikidata.org">
+          <Navbar.Brand
+            id="wikidata-logo"
+            target="_blank"
+            href="https://www.wikidata.org"
+          >
             <img
               height="30"
               src={"/powered-by-wikidata-light.png"}

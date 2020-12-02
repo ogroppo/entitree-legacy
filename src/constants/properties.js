@@ -146,18 +146,6 @@ export const BUSINESS_PROPS = [
 ];
 
 export const SOCIAL_PROPS_IDS = {
-  wikidata: {
-    title: "Open Wikidata item in a new tab",
-    iconName: "wikidata",
-    alt: "wikidata icon",
-    baseUrl: "",
-  },
-  wikipedia: {
-    title: "Open wikipedia article in a new tab",
-    iconName: "wikipedia",
-    alt: "wikipedia icon",
-    baseUrl: "",
-  },
   P6634: {
     title: "Open LinkedIn profile in a new tab",
     iconName: "linkedin",

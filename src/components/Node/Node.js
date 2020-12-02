@@ -428,6 +428,7 @@ const ThemedNodeOuter = styled.div`
 
 const ThemedNodeInner = styled.div`
   display: flex;
+  flex-grow: 1;
   flex-direction: ${({ theme }) => theme.nodeFlexDirection};
   ${({ theme }) =>
     theme.nodeFlexDirection === "row" && `height: ${theme.thumbHeight}px`};
