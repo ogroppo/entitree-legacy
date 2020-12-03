@@ -403,7 +403,6 @@ export default memo(function Node({
 });
 
 const ThemedNodeOuter = styled.div`
-  ${({ theme }) => theme.nodeCss}
   box-sizing: content-box;
   border-radius: ${({ theme }) => theme.nodeBorderRadius}px;
   border: ${({ theme }) => theme.nodeBorder};
@@ -418,7 +417,7 @@ const ThemedNodeOuter = styled.div`
   ${({ theme }) => theme.nodeFlexDirection === "row" && `align-items: center`};
   ${({ theme }) =>
     theme.nodeFlexDirection === "column" && `justify-content: center`};
-  ${({ theme }) => theme.customCss};
+  ${({ theme }) => theme.nodeCss};
 `;
 
 const ThemedNodeInner = styled.div`

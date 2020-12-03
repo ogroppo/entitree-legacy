@@ -3,7 +3,6 @@ import isInIframe from "../lib/isInIframe";
 interface Theme {
   contentPaddingLeft: number;
   contentPaddingTop: number;
-  customCss: string;
   datesDisplay: "block" | "none";
   datesFontSize: number;
   datesYearOnly: boolean;
@@ -41,7 +40,6 @@ interface Theme {
 export const defaultTheme: Theme = {
   contentPaddingLeft: 3,
   contentPaddingTop: 0,
-  customCss: ``,
   datesDisplay: "block",
   datesFontSize: 11,
   datesYearOnly: false,
@@ -137,7 +135,7 @@ const rawTheme: Theme = {
   name: "Borderless",
   contentPaddingLeft: 0,
   contentPaddingTop: 3,
-  customCss: `.colorIcons{
+  nodeCss: `.colorIcons{
   position: absolute;
   bottom: 0;
   right: 30px;
