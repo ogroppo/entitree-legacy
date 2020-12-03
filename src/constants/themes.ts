@@ -20,11 +20,14 @@ interface Theme {
   nodeBorder: string;
   nodeBorderRadius: number;
   nodeBoxShadow: string;
+  nodeCss: string;
   nodeFlexDirection: "row" | "column";
   nodeFocusedBoxShadow: string;
   nodeHeight: number;
   nodeVerticalSpacing: number;
   nodeWidth: number;
+  relStroke: string;
+  relStrokeWidth: number;
   searchBarHeight: number;
   separationCousins: number;
   separationSameGroup: number;
@@ -52,11 +55,14 @@ export const defaultTheme: Theme = {
   nodeBorder: "1px solid lightgrey",
   nodeBorderRadius: 5,
   nodeBoxShadow: "4px 4px 10px lightgrey",
+  nodeCss: "",
   nodeFlexDirection: "row",
   nodeFocusedBoxShadow: "0px 0px 12px steelblue",
   nodeHeight: 90,
   nodeVerticalSpacing: 80,
   nodeWidth: 250,
+  relStroke: "#eee",
+  relStrokeWidth: 14,
   searchBarHeight: 60,
   separationCousins: 1.3,
   separationSameGroup: 1.16,
@@ -128,6 +134,7 @@ const verticalTheme: Theme = {
 
 const rawTheme: Theme = {
   ...defaultTheme,
+  name: "Borderless",
   contentPaddingLeft: 0,
   contentPaddingTop: 3,
   customCss: `.colorIcons{
@@ -141,7 +148,6 @@ const rawTheme: Theme = {
   descriptionDisplay: "none",
   labelFontSize: 14,
   labelTextAlign: "center",
-  name: "Borderless",
   nodeBackgroundColor: "white",
   nodeBorder: "none",
   nodeBorderRadius: 30,

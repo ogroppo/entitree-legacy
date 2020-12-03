@@ -403,6 +403,7 @@ export default memo(function Node({
 });
 
 const ThemedNodeOuter = styled.div`
+  ${({ theme }) => theme.nodeCss}
   box-sizing: content-box;
   border-radius: ${({ theme }) => theme.nodeBorderRadius}px;
   border: ${({ theme }) => theme.nodeBorder};

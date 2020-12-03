@@ -20,8 +20,6 @@
     }
   }
   .dropdown-menu {
-    position: relative;
-    width: 100%;
     .filterWrapper {
       padding: 0 1.3rem;
       margin-bottom: 8px;
@@ -32,20 +30,18 @@
       margin-bottom: 0;
     }
   }
-  .imageDropdown {
+  .langDropdown {
     .dropdown-menu {
-      position: absolute;
+      left: 0;
+      width: 100%;
+      max-width: 320px;
     }
+  }
+  .imageDropdown {
     .dropdown-toggle {
       vertical-align: top;
       display: inline-block;
       padding: 0;
-    }
-  }
-  .themeDropdown {
-    .dropdown-menu {
-      position: absolute;
-      width: initial;
     }
   }
 }
