@@ -8,7 +8,7 @@ const useLoadTheme = () => {
 
   useEffect(() => {
     const storedThemeKey = ls("storedThemeKey");
-    const storedCustomTheme = ls("storedCustomTheme");
+    const storedCustomTheme = ls("storedCustomTheme_" + storedThemeKey);
     const consolidatedCustomTheme = {
       ...defaultCustomTheme, //localStorage might be corrupted, keep defaults
       ...(storedCustomTheme || {}), //todo, remove extra props stored

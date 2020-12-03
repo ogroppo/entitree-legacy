@@ -1,5 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Form, Button, Dropdown, Modal, FormControl } from "react-bootstrap";
+import {
+  Form,
+  Button,
+  Dropdown,
+  Modal,
+  FormControl,
+  Collapse,
+} from "react-bootstrap";
 import { LANGS, SECOND_LABELS } from "../../constants/langs";
 import { THEMES } from "../../constants/themes";
 import { AppContext } from "../../App";
@@ -27,6 +34,8 @@ export default function SettingsModal({ show, hideModal }) {
       label: "modal opened",
     });
   }, []);
+
+  const [open, setOpen] = useState(false);
 
   return (
     <Modal
@@ -59,12 +68,28 @@ export default function SettingsModal({ show, hideModal }) {
                 {theme.name}
               </Dropdown.Item>
             ))}
-          </Dropdown.Menu>
+          </Dropdown.Menu>{" "}
+          customize it{" "}
+          <a
+            href=""
+            onClick={(e) => {
+              setOpen(!open);
+              e.preventDefault();
+            }}
+            aria-controls="example-collapse-text"
+            aria-expanded={open}
+          >
+            here
+          </a>
           <Form.Text className="text-muted mt-0">
-            Give the tree the style you prefer, supports custom styling
+            Give the tree the style you prefer, for custom styling
           </Form.Text>
         </Dropdown>
-        {currentTheme.isCustom && <CustomThemeForm />}
+        <Collapse in={open}>
+          <div id="example-collapse-text">
+            <CustomThemeForm />
+          </div>
+        </Collapse>
         <hr />
         <Dropdown className="langDropdown">
           <Dropdown.Toggle as={CustomToggle}>

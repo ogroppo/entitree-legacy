@@ -12,7 +12,7 @@ import TutorialPage from "./pages/TutorialPage/TutorialPage";
 import ls from "local-storage";
 import ReactGA from "react-ga";
 import treeLayout from "./lib/getTreeLayout";
-import { defaultCustomTheme } from "./constants/themes";
+import { defaultCustomTheme, THEMES } from "./constants/themes";
 import IframePage from "./pages/IframePage/IframePage";
 
 const browserHistory = createBrowserHistory();
@@ -112,14 +112,24 @@ export default class App extends Component {
         customTheme,
       });
     },
+    resetCurrentTheme: () => {
+      const currentTheme = THEMES.find(
+        ({ name }) => this.state.currentTheme.name === name
+      );
+      console.log(currentTheme);
+      ls("storedCustomTheme_" + this.state.currentTheme.name, currentTheme);
+      this.setState({
+        currentTheme,
+      });
+    },
     setCustomThemeProp: (themeKey, themeValue) => {
-      const customTheme = {
-        ...this.state.customTheme,
+      const currentTheme = {
+        ...this.state.currentTheme,
         [themeKey]: themeValue,
       };
-      ls("storedCustomTheme", customTheme);
+      ls("storedCustomTheme_" + this.state.currentTheme.name, currentTheme);
       this.setState({
-        customTheme,
+        currentTheme,
       });
     },
     setCurrentLang: (currentLang) => {
