@@ -31,20 +31,18 @@ const isSecure = (req) => {
 };
 
 app.use((req, res, next) => {
-  console.log(req.headers.host, req.hostname);
   if (req.hostname === "localhost") {
     return next();
   }
   if (isSecure(req)) {
+    console.log(req.hostname, "Secure");
     return next();
   }
-  if (process.env.NODE_ENV === "production")
-    if (req.hostname === "entitree.com")
-      return res.redirect(301, "https://www.entitree.com");
 
   // Note that we do not keep the port as we are using req.hostname
   // and not req.headers.host. The port number does not really have
   // a meaning in most cloud deployments since they port forward.
+  console.log(req.hostname, "NOT Secure");
   res.redirect("https://" + req.hostname + req.originalUrl);
 });
 
