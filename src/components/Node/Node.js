@@ -202,14 +202,7 @@ export default memo(function Node({
         </ThemedThumbnail>
         <ThemedContent className="content" hasSecondLabel={hasSecondLabel}>
           {settings.showEyeHairColors && (
-            <div
-              className="colorIcons"
-              style={{
-                position: "absolute",
-                bottom: 0,
-                right: "2px",
-              }}
-            >
+            <div className="colorIcons">
               {eyeColor && (
                 <span
                   className="eyeColor"
@@ -424,6 +417,7 @@ const ThemedNodeOuter = styled.div`
   ${({ theme }) => theme.nodeFlexDirection === "row" && `align-items: center`};
   ${({ theme }) =>
     theme.nodeFlexDirection === "column" && `justify-content: center`};
+  ${({ theme }) => theme.nodeCss};
 `;
 
 const ThemedNodeInner = styled.div`

@@ -511,6 +511,41 @@ export default function CustomThemeForm() {
           </Col>
         </Form.Group>
       </fieldset>
+      <fieldset>
+        <Form.Group as={Row}>
+          <Form.Label as="legend" column sm={3} className="pt-0">
+            Relationship
+          </Form.Label>
+          <Col sm={9}>
+            <Form.Group controlId={"relStroke"}>
+              <Form.Label>Stroke Color</Form.Label>
+              <Form.Control
+                onChange={(e) =>
+                  setCustomThemeProp("relStroke", e.target.value)
+                }
+                type="text"
+                value={customTheme.relStroke}
+              />
+              <Form.Text className="text-muted">
+                The color of the line that forms the relationship
+              </Form.Text>
+            </Form.Group>
+            <Form.Group controlId={"relStrokeWidth"}>
+              <Form.Label>Stroke Width</Form.Label>
+              <Form.Control
+                onChange={(e) =>
+                  setCustomThemeProp("relStrokeWidth", e.target.value)
+                }
+                type="text"
+                value={customTheme.relStrokeWidth}
+              />
+              <Form.Text className="text-muted">
+                The thickness of the line that forms the relationship
+              </Form.Text>
+            </Form.Group>
+          </Col>
+        </Form.Group>
+      </fieldset>
     </div>
   );
 }

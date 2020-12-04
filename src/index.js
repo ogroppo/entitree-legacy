@@ -3,15 +3,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import HttpsRedirect from "react-https-redirect";
 import ReactGA from "react-ga";
 ReactGA.initialize("UA-171207101-1");
 
 ReactDOM.render(
   <React.StrictMode>
-    <HttpsRedirect>
-      <App />
-    </HttpsRedirect>
+    <App />
   </React.StrictMode>,
   document.getElementById("root")
 );

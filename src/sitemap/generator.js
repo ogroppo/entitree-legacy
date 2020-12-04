@@ -12,7 +12,7 @@ const dest = path.resolve("./public", "sitemap.xml");
 
 const pages = ["/", "/about", "/privacy"];
 
-for (slug in enSlugs) {
+for (let slug in enSlugs) {
   if (enSlugs[slug].hasFamily) {
     pages.push(`/en/family_tree/${slug}`);
   }
