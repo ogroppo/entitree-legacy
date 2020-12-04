@@ -60,6 +60,11 @@ export default class App extends Component {
         });
         ls("storedThemeKey", currentTheme.name);
       }
+      //set currentTheme using previously locally stored theme
+      const storedTheme = ls("storedCustomTheme_" + currentTheme.name);
+      if (storedTheme) {
+        currentTheme = storedTheme;
+      }
       treeLayout.nodeSize([
         currentTheme.nodeWidth,
         currentTheme.nodeHeight + currentTheme.nodeVerticalSpacing,

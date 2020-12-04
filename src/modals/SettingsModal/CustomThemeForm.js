@@ -12,10 +12,10 @@ export default function CustomThemeForm() {
     setCustomThemeProp,
   } = useContext(AppContext);
 
-  const deboucedCustomTheme = useDebounce(currentTheme, 400);
-  useEffect(() => {
-    setCurrentTheme(deboucedCustomTheme);
-  }, [deboucedCustomTheme, setCurrentTheme]);
+  // const deboucedCustomTheme = useDebounce(currentTheme, 400);
+  // useEffect(() => {
+  //   // setCurrentTheme(deboucedCustomTheme);
+  // }, [deboucedCustomTheme, setCurrentTheme]);
 
   return (
     <div className="currentTheme mt-2">

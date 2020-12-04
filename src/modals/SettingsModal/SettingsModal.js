@@ -61,9 +61,7 @@ export default function SettingsModal({ show, hideModal }) {
                 eventKey={index + 1}
                 active={theme.name === currentTheme.name}
                 disabled={theme.disabled}
-                onClick={() =>
-                  setCurrentTheme(theme.isCustom ? customTheme : theme)
-                }
+                onClick={() => setCurrentTheme(theme)}
               >
                 {theme.name}
               </Dropdown.Item>
