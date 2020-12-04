@@ -6,19 +6,20 @@ import Button from "react-bootstrap/Button";
 
 export default function CustomThemeForm() {
   const {
+    currentCustomTheme,
     currentTheme,
     setCurrentTheme,
     resetCurrentTheme,
     setCustomThemeProp,
   } = useContext(AppContext);
 
-  // const deboucedCustomTheme = useDebounce(currentTheme, 400);
-  // useEffect(() => {
-  //   // setCurrentTheme(deboucedCustomTheme);
-  // }, [deboucedCustomTheme, setCurrentTheme]);
+  const deboucedCustomTheme = useDebounce(currentCustomTheme, 1000);
+  useEffect(() => {
+    setCurrentTheme(deboucedCustomTheme);
+  }, [deboucedCustomTheme, setCurrentTheme]);
 
   return (
-    <div className="currentTheme mt-2">
+    <div className="currentCustomTheme mt-2">
       <fieldset>
         <Form.Group as={Row}>
           <Form.Label as="legend" column sm={3} className="pt-0">
@@ -36,7 +37,7 @@ export default function CustomThemeForm() {
               label="horizontal"
               name="nodeFlexDirection"
               id="nodeFlexDirection-horizontal"
-              checked={currentTheme.nodeFlexDirection === "row"}
+              checked={currentCustomTheme.nodeFlexDirection === "row"}
               onChange={(e) => setCustomThemeProp("nodeFlexDirection", "row")}
             />
             <Form.Check
@@ -44,7 +45,7 @@ export default function CustomThemeForm() {
               label="vertical"
               name="nodeFlexDirection"
               id="nodeFlexDirection-vertical"
-              checked={currentTheme.nodeFlexDirection === "column"}
+              checked={currentCustomTheme.nodeFlexDirection === "column"}
               onChange={(e) =>
                 setCustomThemeProp("nodeFlexDirection", "column")
               }
@@ -61,7 +62,7 @@ export default function CustomThemeForm() {
                 setCustomThemeProp("nodeHeight", +e.target.value)
               }
               type="number"
-              value={currentTheme.nodeHeight}
+              value={currentCustomTheme.nodeHeight}
             />
             <InputGroup.Append>
               <InputGroup.Text>px</InputGroup.Text>
@@ -79,7 +80,7 @@ export default function CustomThemeForm() {
             <Form.Control
               onChange={(e) => setCustomThemeProp("nodeWidth", +e.target.value)}
               type="number"
-              value={currentTheme.nodeWidth}
+              value={currentCustomTheme.nodeWidth}
             />
             <InputGroup.Append>
               <InputGroup.Text>px</InputGroup.Text>
@@ -97,7 +98,7 @@ export default function CustomThemeForm() {
             <Form.Control
               onChange={(e) => setCustomThemeProp("nodeBorder", e.target.value)}
               type="text"
-              value={currentTheme.nodeBorder}
+              value={currentCustomTheme.nodeBorder}
             />
             <InputGroup.Append>
               <InputGroup.Text>CSS</InputGroup.Text>
@@ -117,7 +118,7 @@ export default function CustomThemeForm() {
                 setCustomThemeProp("nodeBorderRadius", +e.target.value)
               }
               type="number"
-              value={currentTheme.nodeBorderRadius}
+              value={currentCustomTheme.nodeBorderRadius}
             />
             <InputGroup.Append>
               <InputGroup.Text>px</InputGroup.Text>
@@ -137,7 +138,7 @@ export default function CustomThemeForm() {
                 setCustomThemeProp("nodeBoxShadow", e.target.value)
               }
               type="text"
-              value={currentTheme.nodeBoxShadow}
+              value={currentCustomTheme.nodeBoxShadow}
             />
             <InputGroup.Append>
               <InputGroup.Text>CSS</InputGroup.Text>
@@ -157,7 +158,7 @@ export default function CustomThemeForm() {
                 setCustomThemeProp("nodeFocusedBoxShadow", e.target.value)
               }
               type="text"
-              value={currentTheme.nodeFocusedBoxShadow}
+              value={currentCustomTheme.nodeFocusedBoxShadow}
             />
             <InputGroup.Append>
               <InputGroup.Text>CSS</InputGroup.Text>
@@ -181,7 +182,7 @@ export default function CustomThemeForm() {
                   setCustomThemeProp("contentPaddingTop", +e.target.value)
                 }
                 type="number"
-                value={currentTheme.contentPaddingTop}
+                value={currentCustomTheme.contentPaddingTop}
               />
               <InputGroup.Append>
                 <InputGroup.Text>px</InputGroup.Text>
@@ -202,7 +203,7 @@ export default function CustomThemeForm() {
                   setCustomThemeProp("contentPaddingLeft", e.target.value)
                 }
                 type="number"
-                value={currentTheme.contentPaddingLeft}
+                value={currentCustomTheme.contentPaddingLeft}
               />
               <InputGroup.Append>
                 <InputGroup.Text>px</InputGroup.Text>
@@ -228,7 +229,7 @@ export default function CustomThemeForm() {
                   setCustomThemeProp("labelFontSize", +e.target.value)
                 }
                 type="number"
-                value={currentTheme.labelFontSize}
+                value={currentCustomTheme.labelFontSize}
               />
               <InputGroup.Append>
                 <InputGroup.Text>px</InputGroup.Text>
@@ -251,7 +252,7 @@ export default function CustomThemeForm() {
               label="show"
               name="descriptionDisplay"
               id="descriptionDisplay-inline"
-              checked={currentTheme.descriptionDisplay === "inline"}
+              checked={currentCustomTheme.descriptionDisplay === "inline"}
               onChange={(e) =>
                 setCustomThemeProp("descriptionDisplay", "inline")
               }
@@ -261,7 +262,7 @@ export default function CustomThemeForm() {
               label="hide"
               name="descriptionDisplay"
               id="descriptionDisplay-none"
-              checked={currentTheme.descriptionDisplay === "none"}
+              checked={currentCustomTheme.descriptionDisplay === "none"}
               onChange={(e) => setCustomThemeProp("descriptionDisplay", "none")}
             />
           </Col>
@@ -278,7 +279,7 @@ export default function CustomThemeForm() {
               label="show"
               name="datesDisplay"
               id="datesDisplay-block"
-              checked={currentTheme.datesDisplay === "block"}
+              checked={currentCustomTheme.datesDisplay === "block"}
               onChange={(e) => setCustomThemeProp("datesDisplay", "block")}
             />
             <Form.Check
@@ -286,7 +287,7 @@ export default function CustomThemeForm() {
               label="hide"
               name="datesDisplay"
               id="datesDisplay-none"
-              checked={currentTheme.datesDisplay === "none"}
+              checked={currentCustomTheme.datesDisplay === "none"}
               onChange={(e) => setCustomThemeProp("datesDisplay", "none")}
             />
           </Col>
@@ -297,7 +298,7 @@ export default function CustomThemeForm() {
         <Col sm={{ span: 9, offset: 3 }} className="pl-0">
           <Form.Check
             custom
-            checked={currentTheme.datesYearOnly}
+            checked={currentCustomTheme.datesYearOnly}
             onChange={(e) =>
               setCustomThemeProp("datesYearOnly", e.target.checked)
             }
@@ -318,7 +319,7 @@ export default function CustomThemeForm() {
                 setCustomThemeProp("datesFontSize", +e.target.value)
               }
               type="number"
-              value={currentTheme.datesFontSize}
+              value={currentCustomTheme.datesFontSize}
             />
             <InputGroup.Append>
               <InputGroup.Text>px</InputGroup.Text>
@@ -341,7 +342,7 @@ export default function CustomThemeForm() {
               label="show"
               name="thumbCounterDisplay"
               id="thumbCounterDisplay-show"
-              checked={currentTheme.thumbCounterDisplay === "block"}
+              checked={currentCustomTheme.thumbCounterDisplay === "block"}
               onChange={(e) =>
                 setCustomThemeProp("thumbCounterDisplay", "block")
               }
@@ -351,13 +352,40 @@ export default function CustomThemeForm() {
               label="hide"
               name="thumbCounterDisplay"
               id="thumbCounterDisplay-hide"
-              checked={currentTheme.thumbCounterDisplay === "none"}
+              checked={currentCustomTheme.thumbCounterDisplay === "none"}
               onChange={(e) =>
                 setCustomThemeProp("thumbCounterDisplay", "none")
               }
             />
           </Col>
         </Form.Group>
+        {/*<Form.Group as={Row}>*/}
+        {/*  <Form.Label as="legend" column sm={3} className="pt-0">*/}
+        {/*    EntiTree Search bar*/}
+        {/*  </Form.Label>*/}
+        {/*  <Col sm={9}>*/}
+        {/*    <Form.Check*/}
+        {/*      type="radio"*/}
+        {/*      label="show"*/}
+        {/*      name="isInIframe"*/}
+        {/*      id="isInIframe-show"*/}
+        {/*      checked={currentCustomTheme.isInIframe === false}*/}
+        {/*      onChange={(e) =>*/}
+        {/*        setCustomThemeProp("isInIframe", false)*/}
+        {/*      }*/}
+        {/*    />*/}
+        {/*    <Form.Check*/}
+        {/*      type="radio"*/}
+        {/*      label="hide"*/}
+        {/*      name="isInIframe"*/}
+        {/*      id="isInIframe-hide"*/}
+        {/*      checked={currentCustomTheme.isInIframe === true}*/}
+        {/*      onChange={(e) =>*/}
+        {/*        setCustomThemeProp("isInIframe", true)*/}
+        {/*      }*/}
+        {/*    />*/}
+        {/*  </Col>*/}
+        {/*</Form.Group>*/}
       </fieldset>
       <Form.Group as={Row} controlId={"thumbHeight"}>
         <Col sm={{ span: 9, offset: 3 }}>
@@ -368,7 +396,7 @@ export default function CustomThemeForm() {
                 setCustomThemeProp("thumbHeight", +e.target.value)
               }
               type="number"
-              value={currentTheme.thumbHeight}
+              value={currentCustomTheme.thumbHeight}
             />
             <InputGroup.Append>
               <InputGroup.Text>px</InputGroup.Text>
@@ -388,7 +416,7 @@ export default function CustomThemeForm() {
                 setCustomThemeProp("thumbWidth", +e.target.value)
               }
               type="number"
-              value={currentTheme.thumbWidth}
+              value={currentCustomTheme.thumbWidth}
             />
             <InputGroup.Append>
               <InputGroup.Text>px</InputGroup.Text>
@@ -408,7 +436,7 @@ export default function CustomThemeForm() {
                 setCustomThemeProp("thumbBorderRadius", +e.target.value)
               }
               type="number"
-              value={currentTheme.thumbBorderRadius}
+              value={currentCustomTheme.thumbBorderRadius}
             />
             <InputGroup.Append>
               <InputGroup.Text>px</InputGroup.Text>
@@ -433,7 +461,7 @@ export default function CustomThemeForm() {
                   setCustomThemeProp("separationCousins", +e.target.value)
                 }
                 type="number"
-                value={currentTheme.separationCousins}
+                value={currentCustomTheme.separationCousins}
               />
               <Form.Text className="text-muted">
                 The gap between the cousins
@@ -446,7 +474,7 @@ export default function CustomThemeForm() {
                   setCustomThemeProp("separationSameGroup", +e.target.value)
                 }
                 type="number"
-                value={currentTheme.separationSameGroup}
+                value={currentCustomTheme.separationSameGroup}
               />
               <Form.Text className="text-muted">
                 The gap between the siblings
@@ -459,7 +487,7 @@ export default function CustomThemeForm() {
                   setCustomThemeProp("separationSiblingSpouse", +e.target.value)
                 }
                 type="number"
-                value={currentTheme.separationSiblingSpouse}
+                value={currentCustomTheme.separationSiblingSpouse}
               />
               <Form.Text className="text-muted">
                 The gap between the sibling and the spouse of a person
@@ -473,7 +501,7 @@ export default function CustomThemeForm() {
                     setCustomThemeProp("nodeVerticalSpacing", +e.target.value)
                   }
                   type="number"
-                  value={currentTheme.nodeVerticalSpacing}
+                  value={currentCustomTheme.nodeVerticalSpacing}
                 />
                 <InputGroup.Append>
                   <InputGroup.Text>px</InputGroup.Text>
@@ -499,7 +527,7 @@ export default function CustomThemeForm() {
                   setCustomThemeProp("graphBackgroundColor", e.target.value)
                 }
                 type="text"
-                value={currentTheme.graphBackgroundColor}
+                value={currentCustomTheme.graphBackgroundColor}
               />
               <Form.Text className="text-muted">
                 The background color for the whole graph
@@ -512,7 +540,7 @@ export default function CustomThemeForm() {
                   setCustomThemeProp("nodeBackgroundColor", e.target.value)
                 }
                 type="text"
-                value={currentTheme.nodeBackgroundColor}
+                value={currentCustomTheme.nodeBackgroundColor}
               />
               <Form.Text className="text-muted">
                 The background color for the card
@@ -534,7 +562,7 @@ export default function CustomThemeForm() {
                   setCustomThemeProp("relStroke", e.target.value)
                 }
                 type="text"
-                value={currentTheme.relStroke}
+                value={currentCustomTheme.relStroke}
               />
               <Form.Text className="text-muted">
                 The color of the line that forms the relationship
@@ -547,7 +575,7 @@ export default function CustomThemeForm() {
                   setCustomThemeProp("relStrokeWidth", e.target.value)
                 }
                 type="text"
-                value={currentTheme.relStrokeWidth}
+                value={currentCustomTheme.relStrokeWidth}
               />
               <Form.Text className="text-muted">
                 The thickness of the line that forms the relationship

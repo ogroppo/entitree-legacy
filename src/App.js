@@ -29,6 +29,7 @@ export default class App extends Component {
     currentEntityId: null,
     currentProp: null,
     currentPropId: null,
+    currentCustomTheme: null,
     currentTheme: null,
     customTheme: defaultCustomTheme,
     settings: {
@@ -84,6 +85,9 @@ export default class App extends Component {
         if (next.parent !== prev.parent) return currentTheme.separationCousins;
       });
       this.setState({ currentTheme });
+      this.setState({
+        currentCustomTheme: currentTheme,
+      });
     },
     setCurrentEntity: (currentEntity) => {
       this.setState({ currentEntity });
@@ -128,13 +132,13 @@ export default class App extends Component {
       });
     },
     setCustomThemeProp: (themeKey, themeValue) => {
-      const currentTheme = {
-        ...this.state.currentTheme,
+      const currentCustomTheme = {
+        ...this.state.currentCustomTheme,
         [themeKey]: themeValue,
       };
-      ls("storedCustomTheme_" + this.state.currentTheme.name, currentTheme);
+      ls("storedCustomTheme_" + this.state.currentTheme.name, currentCustomTheme);
       this.setState({
-        currentTheme,
+        currentCustomTheme,
       });
     },
     setCurrentLang: (currentLang) => {
