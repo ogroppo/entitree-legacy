@@ -6,14 +6,13 @@ import { THEMES, defaultTheme, defaultCustomTheme } from "../constants/themes";
 const useLoadTheme = () => {
   const { setCurrentTheme, setCustomTheme } = useContext(AppContext);
 
-  //Clear all local storage for updates...
-  const currentVersion = 0.1;
-  if (!ls("lsVersion") || ls("lsVersion") !== currentVersion) {
-    ls.clear();
-    ls("lsVersion", currentVersion);
-  }
-
   useEffect(() => {
+    //Clear all local storage for updates...
+    const currentVersion = 1;
+    if (!ls("lsVersion") || ls("lsVersion") !== currentVersion) {
+      ls.clear();
+      ls("lsVersion", currentVersion);
+    }
     const storedThemeKey = ls("storedThemeKey");
     const storedCustomTheme = ls("storedCustomTheme_" + storedThemeKey);
     const consolidatedCustomTheme = {
