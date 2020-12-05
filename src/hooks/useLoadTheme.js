@@ -14,7 +14,7 @@ const useLoadTheme = () => {
       ls("lsVersion", currentVersion);
     }
     const storedThemeKey = ls("storedThemeKey");
-    const storedCustomTheme = ls("storedCustomTheme_" + storedThemeKey);
+    const storedCustomTheme = storedThemeKey ? ls("storedCustomTheme_" + storedThemeKey) : undefined;
     const consolidatedCustomTheme = {
       ...defaultCustomTheme, //localStorage might be corrupted, keep defaults
       ...(storedCustomTheme || {}), //todo, remove extra props stored
