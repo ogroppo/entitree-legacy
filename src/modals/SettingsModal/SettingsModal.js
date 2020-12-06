@@ -13,6 +13,7 @@ import { AppContext } from "../../App";
 import CustomThemeForm from "./CustomThemeForm";
 import "./SettingsModal.scss";
 import ReactGA from "react-ga";
+import ls from "local-storage";
 
 export default function SettingsModal({ show, hideModal }) {
   const {
@@ -24,7 +25,7 @@ export default function SettingsModal({ show, hideModal }) {
     setSetting,
     currentTheme,
     setCurrentTheme,
-    customTheme,
+    setCustomTheme,
   } = useContext(AppContext);
 
   useEffect(() => {
@@ -36,6 +37,12 @@ export default function SettingsModal({ show, hideModal }) {
   }, []);
 
   const [open, setOpen] = useState(false);
+
+  const changeTheme = (theme) => {
+    const storedCustomTheme = ls("storedCustomTheme_" + theme.name);
+    setCustomTheme(storedCustomTheme || theme);
+    setCurrentTheme(theme);
+  };
 
   return (
     <Modal
@@ -49,42 +56,41 @@ export default function SettingsModal({ show, hideModal }) {
       </Modal.Header>
       <Modal.Body>
         <Dropdown className="themeDropdown">
-          <Dropdown.Toggle as={CustomToggle}>
-            <span className="label">Use Theme</span>
-            &nbsp;&nbsp;
-            {currentTheme.name}
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            {Object.values(THEMES).map((theme, index) => (
-              <Dropdown.Item
-                key={theme.name}
-                eventKey={index + 1}
-                active={theme.name === currentTheme.name}
-                disabled={theme.disabled}
-                onClick={() => setCurrentTheme(theme)}
-              >
-                {theme.name}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>{" "}
-          customize it{" "}
-          <a
-            href=""
-            onClick={(e) => {
-              setOpen(!open);
-              e.preventDefault();
-            }}
-            aria-controls="example-collapse-text"
-            aria-expanded={open}
-          >
-            here
-          </a>
+          <div>
+            <Dropdown.Toggle as={CustomToggle} className="float-left">
+              <span className="label">Use Theme</span>
+              &nbsp;&nbsp;
+              {currentTheme.name}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              {Object.values(THEMES).map((theme, index) => (
+                <Dropdown.Item
+                  key={theme.name}
+                  eventKey={index + 1}
+                  active={theme.name === currentTheme.name}
+                  disabled={theme.disabled}
+                  onClick={() => changeTheme(theme)}
+                >
+                  {theme.name}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+            <Button
+              variant="link"
+              className="float-right"
+              onClick={(e) => setOpen(!open)}
+              aria-controls="collapse-custom-theme-form"
+              aria-expanded={open}
+            >
+              <i>customize</i>
+            </Button>
+          </div>
           <Form.Text className="text-muted mt-0">
-            Give the tree the style you prefer, for custom styling
+            Give the tree the style you prefer, useful for custom styling
           </Form.Text>
         </Dropdown>
-        <Collapse in={open}>
-          <div id="example-collapse-text">
+        <Collapse in={open} mountOnEnter={true}>
+          <div id="collapse-custom-theme-form">
             <CustomThemeForm />
           </div>
         </Collapse>

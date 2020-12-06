@@ -164,12 +164,6 @@ const rawTheme: Theme = {
   thumbWidth: 84,
 };
 
-export const defaultCustomTheme: Theme = {
-  ...defaultTheme,
-  name: "Custom",
-  isCustom: true,
-};
-
 export const THEMES: Theme[] = [
   defaultTheme,
   bigTheme,
@@ -178,5 +172,4 @@ export const THEMES: Theme[] = [
   onlyLabelTheme,
   verticalTheme,
   rawTheme,
-  defaultCustomTheme,
 ];

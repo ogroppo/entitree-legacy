@@ -7,7 +7,6 @@ import Button from "react-bootstrap/Button";
 export default function CustomThemeForm() {
   const {
     currentCustomTheme,
-    currentTheme,
     setCurrentTheme,
     resetCurrentTheme,
     setCustomThemeProp,
@@ -16,17 +15,12 @@ export default function CustomThemeForm() {
   const deboucedCustomTheme = useDebounce(currentCustomTheme, 1000);
   useEffect(() => {
     setCurrentTheme(deboucedCustomTheme);
-  }, [deboucedCustomTheme, setCurrentTheme]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deboucedCustomTheme]);
 
   return (
     <div className="currentCustomTheme mt-2">
       <fieldset>
-        <Form.Group as={Row}>
-          <Form.Label as="legend" column sm={3} className="pt-0">
-            Reset
-          </Form.Label>
-          <Button onClick={resetCurrentTheme}>Reset this theme</Button>
-        </Form.Group>
         <Form.Group as={Row}>
           <Form.Label as="legend" column sm={3} className="pt-0">
             Node Layout
@@ -359,33 +353,6 @@ export default function CustomThemeForm() {
             />
           </Col>
         </Form.Group>
-        {/*<Form.Group as={Row}>*/}
-        {/*  <Form.Label as="legend" column sm={3} className="pt-0">*/}
-        {/*    EntiTree Search bar*/}
-        {/*  </Form.Label>*/}
-        {/*  <Col sm={9}>*/}
-        {/*    <Form.Check*/}
-        {/*      type="radio"*/}
-        {/*      label="show"*/}
-        {/*      name="isInIframe"*/}
-        {/*      id="isInIframe-show"*/}
-        {/*      checked={currentCustomTheme.isInIframe === false}*/}
-        {/*      onChange={(e) =>*/}
-        {/*        setCustomThemeProp("isInIframe", false)*/}
-        {/*      }*/}
-        {/*    />*/}
-        {/*    <Form.Check*/}
-        {/*      type="radio"*/}
-        {/*      label="hide"*/}
-        {/*      name="isInIframe"*/}
-        {/*      id="isInIframe-hide"*/}
-        {/*      checked={currentCustomTheme.isInIframe === true}*/}
-        {/*      onChange={(e) =>*/}
-        {/*        setCustomThemeProp("isInIframe", true)*/}
-        {/*      }*/}
-        {/*    />*/}
-        {/*  </Col>*/}
-        {/*</Form.Group>*/}
       </fieldset>
       <Form.Group as={Row} controlId={"thumbHeight"}>
         <Col sm={{ span: 9, offset: 3 }}>
@@ -584,6 +551,13 @@ export default function CustomThemeForm() {
           </Col>
         </Form.Group>
       </fieldset>
+      <Form.Group as={Row}>
+        <Col sm={{ span: 9, offset: 3 }}>
+          <Button size="sm" onClick={resetCurrentTheme}>
+            Reset values
+          </Button>
+        </Col>
+      </Form.Group>
     </div>
   );
 }
