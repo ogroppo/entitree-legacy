@@ -41,7 +41,7 @@ export default function SettingsModal({ show, hideModal }) {
   const changeTheme = (theme) => {
     const storedCustomTheme = ls("storedCustomTheme_" + theme.name);
     setCustomTheme(storedCustomTheme || theme);
-    setCurrentTheme(theme);
+    setCurrentTheme(storedCustomTheme || theme);
   };
 
   return (
