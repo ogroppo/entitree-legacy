@@ -12,6 +12,7 @@ interface Theme {
   headerHeight: number;
   isCustom?: boolean;
   isInIframe: boolean;
+  labelFontColor: string;
   labelFontSize: number;
   labelTextAlign: string;
   name: string;
@@ -46,6 +47,7 @@ export const defaultTheme: Theme = {
   descriptionDisplay: "inline",
   headerHeight: 50,
   isInIframe: isInIframe(),
+  labelFontColor: "",
   labelFontSize: 13,
   labelTextAlign: "left",
   name: "Default",

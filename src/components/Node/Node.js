@@ -452,6 +452,7 @@ const ThemedContent = styled.div`
     word-break: break-word;
     text-align: ${({ theme }) => theme.labelTextAlign};
     font-size: ${({ theme }) => theme.labelFontSize}px;
+    color: ${({ theme }) => theme.labelFontColor};
     //if there is no description we can have this block and have the dots of the same color of the text
     //but only ONE can be display block
     display: ${({ theme, hasSecondLabel }) =>

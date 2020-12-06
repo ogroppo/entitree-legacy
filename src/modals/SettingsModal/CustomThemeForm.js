@@ -513,6 +513,21 @@ export default function CustomThemeForm() {
                 The background color for the card
               </Form.Text>
             </Form.Group>
+            <Form.Group controlId={"labelFontColor"}>
+              <Form.Label>Font color</Form.Label>
+              <InputGroup>
+                <Form.Control
+                  onChange={(e) =>
+                    setCustomThemeProp("labelFontColor", e.target.value)
+                  }
+                  type="text"
+                  value={currentCustomTheme.labelFontColor}
+                />
+              </InputGroup>
+              <Form.Text className="text-muted">
+                The color of the text of the item
+              </Form.Text>
+            </Form.Group>
           </Col>
         </Form.Group>
       </fieldset>
