@@ -117,7 +117,7 @@ export default class App extends Component {
         ({ name }) => this.state.currentTheme.name === name
       );
       ls.remove("storedCustomTheme_" + this.state.currentTheme.name);
-      this.setCurrentTheme(resettedTheme, false);
+      this.state.setCurrentTheme(resettedTheme, false);
       this.setState({
         currentCustomTheme: resettedTheme,
       });
