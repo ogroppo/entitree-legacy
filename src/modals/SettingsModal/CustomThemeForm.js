@@ -566,6 +566,29 @@ export default function CustomThemeForm() {
           </Col>
         </Form.Group>
       </fieldset>
+      <fieldset>
+        <Form.Group as={Row}>
+          <Form.Label as="legend" column sm={3} className="pt-0">
+            More
+          </Form.Label>
+          <Col sm={9}>
+            <Form.Group controlId={"relStroke"}>
+              <Form.Label>Additional CSS code</Form.Label>
+              <Form.Control
+                onChange={(e) => setCustomThemeProp("nodeCss", e.target.value)}
+                as="textarea"
+                rows={3}
+                value={currentCustomTheme.nodeCss}
+              />
+              <Form.Text className="text-muted">
+                Additional CSS, (expert mode); look at our GitHub code or use
+                your Browser's inspector to see the class names of the elemts
+                you want to change.
+              </Form.Text>
+            </Form.Group>
+          </Col>
+        </Form.Group>
+      </fieldset>
       <Form.Group as={Row}>
         <Col sm={{ span: 9, offset: 3 }}>
           <Button size="sm" onClick={resetCurrentTheme}>
