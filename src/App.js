@@ -113,13 +113,13 @@ export default class App extends Component {
       });
     },
     resetCurrentTheme: () => {
-      const resettedTheme = THEMES.find(
+      const resetTheme = THEMES.find(
         ({ name }) => this.state.currentTheme.name === name
       );
       ls.remove("storedCustomTheme_" + this.state.currentTheme.name);
-      this.state.setCurrentTheme(resettedTheme, false);
+      this.state.setCurrentTheme(resetTheme, false);
       this.setState({
-        currentCustomTheme: resettedTheme,
+        currentCustomTheme: resetTheme,
       });
     },
     setCustomThemeProp: (themeKey, themeValue) => {
