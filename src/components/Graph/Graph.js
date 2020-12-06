@@ -145,9 +145,15 @@ const Graph = memo(
         })();
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentEntity, currentProp, theme.separationCousins, theme.separationSameGroup, theme.separationSiblingSpouse, theme.nodeVerticalSpacing]);
+    }, [
+      currentEntity,
+      currentProp,
+      theme.separationCousins,
+      theme.separationSameGroup,
+      theme.separationSiblingSpouse,
+      theme.nodeVerticalSpacing,
+    ]);
     //all graph based changes, CSS changes not needed
-
 
     const toggleChildren = async (node, options = {}) => {
       if (!node.data.downIds || !node.data.downIds.length) return;
@@ -182,7 +188,7 @@ const Graph = memo(
             const childNode = hierarchy(entity);
             childNode.depth = node.depth + 1;
             childNode.parent = node;
-            childNode.childNumber = index+1;
+            childNode.childNumber = index + 1;
             childNode.treeId = getNodeUniqueId(childNode, index);
             childNode.isChild = true;
             if (!node.children) {
