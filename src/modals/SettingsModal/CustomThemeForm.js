@@ -572,7 +572,7 @@ export default function CustomThemeForm() {
             More
           </Form.Label>
           <Col sm={9}>
-            <Form.Group controlId={"relStroke"}>
+            <Form.Group controlId={"nodeCss"}>
               <Form.Label>Additional CSS code</Form.Label>
               <Form.Control
                 onChange={(e) => setCustomThemeProp("nodeCss", e.target.value)}
