@@ -36,6 +36,7 @@ interface Theme {
   thumbCounterDisplay: "block" | "none";
   thumbHeight: number;
   thumbWidth: number;
+  thumbDisplay: boolean;
 }
 
 export const defaultTheme: Theme = {
@@ -71,6 +72,7 @@ export const defaultTheme: Theme = {
   thumbCounterDisplay: "block",
   thumbHeight: 84,
   thumbWidth: 84,
+  thumbDisplay: true,
 };
 
 const bigTheme: Theme = {
@@ -132,6 +134,12 @@ const verticalTheme: Theme = {
   thumbWidth: 84,
 };
 
+const onlyText: Theme = {
+  ...defaultTheme,
+  name: "Only Text",
+  thumbDisplay: false,
+};
+
 const rawTheme: Theme = {
   ...defaultTheme,
   name: "Borderless",
@@ -174,4 +182,5 @@ export const THEMES: Theme[] = [
   onlyLabelTheme,
   verticalTheme,
   rawTheme,
+  onlyText,
 ];

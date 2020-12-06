@@ -155,51 +155,53 @@ export default memo(function Node({
       //data-tree-id={node.treeId}
     >
       <ThemedNodeInner>
-        <ThemedThumbnail
-          className={clsx("imgWrapper", {
-            hasThumbnails: thumbnails.length > 1,
-          })}
-          onClick={onThumbClick}
-        >
-          {(!thumbnails || !thumbnails.length) && (
-            <span className="defaultImgMessage">
-              {isHuman && gender ? (
-                <>
-                  {gender === "male" && <FaMale />}
-                  {gender === "female" && <FaFemale />}
-                  {gender === "thirdgender" && <GiPerson />}
-                </>
-              ) : (
-                <BsImage />
-              )}
-            </span>
-          )}
-          {currentThumbnail && (
-            <>
-              {settings.showFace && faceImage ? (
-                <img
-                  alt={faceImage.alt}
-                  src={
-                    faceImage.url +
-                    (settings.imageType === "head" ? "?factor=1.5" : "")
-                  }
-                  title={faceImage.alt}
-                />
-              ) : (
-                <img
-                  alt={currentThumbnail.alt}
-                  src={currentThumbnail.url}
-                  title={currentThumbnail.alt}
-                />
-              )}
-              {thumbnails.length > 1 && (
-                <span className="thumbnailCounter">
-                  {thumbnailIndex + 1}/{thumbnails.length}
-                </span>
-              )}
-            </>
-          )}
-        </ThemedThumbnail>
+        {theme.thumbDisplay && (
+          <ThemedThumbnail
+            className={clsx("imgWrapper", {
+              hasThumbnails: thumbnails.length > 1,
+            })}
+            onClick={onThumbClick}
+          >
+            {(!thumbnails || !thumbnails.length) && (
+              <span className="defaultImgMessage">
+                {isHuman && gender ? (
+                  <>
+                    {gender === "male" && <FaMale />}
+                    {gender === "female" && <FaFemale />}
+                    {gender === "thirdgender" && <GiPerson />}
+                  </>
+                ) : (
+                  <BsImage />
+                )}
+              </span>
+            )}
+            {currentThumbnail && (
+              <>
+                {settings.showFace && faceImage ? (
+                  <img
+                    alt={faceImage.alt}
+                    src={
+                      faceImage.url +
+                      (settings.imageType === "head" ? "?factor=1.5" : "")
+                    }
+                    title={faceImage.alt}
+                  />
+                ) : (
+                  <img
+                    alt={currentThumbnail.alt}
+                    src={currentThumbnail.url}
+                    title={currentThumbnail.alt}
+                  />
+                )}
+                {thumbnails.length > 1 && (
+                  <span className="thumbnailCounter">
+                    {thumbnailIndex + 1}/{thumbnails.length}
+                  </span>
+                )}
+              </>
+            )}
+          </ThemedThumbnail>
+        )}
         <ThemedContent className="content" hasSecondLabel={hasSecondLabel}>
           {settings.showEyeHairColors && (
             <div className="colorIcons">
