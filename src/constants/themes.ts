@@ -12,6 +12,7 @@ interface Theme {
   headerHeight: number;
   isCustom?: boolean;
   isInIframe: boolean;
+  labelFontColor: string;
   labelFontSize: number;
   labelTextAlign: string;
   name: string;
@@ -35,6 +36,7 @@ interface Theme {
   thumbCounterDisplay: "block" | "none";
   thumbHeight: number;
   thumbWidth: number;
+  thumbDisplay: boolean;
 }
 
 export const defaultTheme: Theme = {
@@ -46,6 +48,7 @@ export const defaultTheme: Theme = {
   descriptionDisplay: "inline",
   headerHeight: 50,
   isInIframe: isInIframe(),
+  labelFontColor: "",
   labelFontSize: 13,
   labelTextAlign: "left",
   name: "Default",
@@ -69,6 +72,7 @@ export const defaultTheme: Theme = {
   thumbCounterDisplay: "block",
   thumbHeight: 84,
   thumbWidth: 84,
+  thumbDisplay: true,
 };
 
 const bigTheme: Theme = {
@@ -130,6 +134,12 @@ const verticalTheme: Theme = {
   thumbWidth: 84,
 };
 
+const onlyText: Theme = {
+  ...defaultTheme,
+  name: "Only Text",
+  thumbDisplay: false,
+};
+
 const rawTheme: Theme = {
   ...defaultTheme,
   name: "Borderless",
@@ -164,12 +174,6 @@ const rawTheme: Theme = {
   thumbWidth: 84,
 };
 
-export const defaultCustomTheme: Theme = {
-  ...defaultTheme,
-  name: "Custom",
-  isCustom: true,
-};
-
 export const THEMES: Theme[] = [
   defaultTheme,
   bigTheme,
@@ -178,5 +182,5 @@ export const THEMES: Theme[] = [
   onlyLabelTheme,
   verticalTheme,
   rawTheme,
-  defaultCustomTheme,
+  onlyText,
 ];

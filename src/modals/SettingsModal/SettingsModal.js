@@ -1,11 +1,19 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Form, Button, Dropdown, Modal, FormControl } from "react-bootstrap";
+import {
+  Form,
+  Button,
+  Dropdown,
+  Modal,
+  FormControl,
+  Collapse,
+} from "react-bootstrap";
 import { LANGS, SECOND_LABELS } from "../../constants/langs";
 import { THEMES } from "../../constants/themes";
 import { AppContext } from "../../App";
 import CustomThemeForm from "./CustomThemeForm";
 import "./SettingsModal.scss";
 import ReactGA from "react-ga";
+import ls from "local-storage";
 
 export default function SettingsModal({ show, hideModal }) {
   const {
@@ -17,7 +25,7 @@ export default function SettingsModal({ show, hideModal }) {
     setSetting,
     currentTheme,
     setCurrentTheme,
-    customTheme,
+    setCustomTheme,
   } = useContext(AppContext);
 
   useEffect(() => {
@@ -27,6 +35,14 @@ export default function SettingsModal({ show, hideModal }) {
       label: "modal opened",
     });
   }, []);
+
+  const [open, setOpen] = useState(false);
+
+  const changeTheme = (theme) => {
+    const storedCustomTheme = ls("storedCustomTheme_" + theme.name);
+    setCustomTheme(storedCustomTheme || theme);
+    setCurrentTheme(storedCustomTheme || theme);
+  };
 
   return (
     <Modal
@@ -40,31 +56,44 @@ export default function SettingsModal({ show, hideModal }) {
       </Modal.Header>
       <Modal.Body>
         <Dropdown className="themeDropdown">
-          <Dropdown.Toggle as={CustomToggle}>
-            <span className="label">Use Theme</span>
-            &nbsp;&nbsp;
-            {currentTheme.name}
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            {Object.values(THEMES).map((theme, index) => (
-              <Dropdown.Item
-                key={theme.name}
-                eventKey={index + 1}
-                active={theme.name === currentTheme.name}
-                disabled={theme.disabled}
-                onClick={() =>
-                  setCurrentTheme(theme.isCustom ? customTheme : theme)
-                }
-              >
-                {theme.name}
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
+          <div>
+            <Dropdown.Toggle as={CustomToggle} className="float-left">
+              <span className="label">Use Theme</span>
+              &nbsp;&nbsp;
+              {currentTheme.name}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              {Object.values(THEMES).map((theme, index) => (
+                <Dropdown.Item
+                  key={theme.name}
+                  eventKey={index + 1}
+                  active={theme.name === currentTheme.name}
+                  disabled={theme.disabled}
+                  onClick={() => changeTheme(theme)}
+                >
+                  {theme.name}
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+            <Button
+              variant="link"
+              className="float-right"
+              onClick={(e) => setOpen(!open)}
+              aria-controls="collapse-custom-theme-form"
+              aria-expanded={open}
+            >
+              <i>customize</i>
+            </Button>
+          </div>
           <Form.Text className="text-muted mt-0">
-            Give the tree the style you prefer, supports custom styling
+            Give the tree the style you prefer, useful for custom styling
           </Form.Text>
         </Dropdown>
-        {currentTheme.isCustom && <CustomThemeForm />}
+        <Collapse in={open} mountOnEnter={true}>
+          <div id="collapse-custom-theme-form">
+            <CustomThemeForm />
+          </div>
+        </Collapse>
         <hr />
         <Dropdown className="langDropdown">
           <Dropdown.Toggle as={CustomToggle}>
@@ -151,10 +180,10 @@ export default function SettingsModal({ show, hideModal }) {
             checked={settings.showEyeHairColors}
             onChange={(e) => setSetting("showEyeHairColors", e.target.checked)}
             type="checkbox"
-            label={"Show eye colors where possible"}
+            label={"Show eye colors"}
           />
           <Form.Text className="text-muted pl-4">
-            An icon with the eye color of the person will appear
+            An icon with the eye color of the person will be shown, if available
           </Form.Text>
         </Form.Group>
         <Form.Group controlId={"birthName"}>

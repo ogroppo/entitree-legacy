@@ -12,7 +12,7 @@ import TutorialPage from "./pages/TutorialPage/TutorialPage";
 import ls from "local-storage";
 import ReactGA from "react-ga";
 import treeLayout from "./lib/getTreeLayout";
-import { defaultCustomTheme } from "./constants/themes";
+import { THEMES } from "./constants/themes";
 import IframePage from "./pages/IframePage/IframePage";
 
 const browserHistory = createBrowserHistory();
@@ -29,8 +29,8 @@ export default class App extends Component {
     currentEntityId: null,
     currentProp: null,
     currentPropId: null,
+    currentCustomTheme: null,
     currentTheme: null,
-    customTheme: defaultCustomTheme,
     settings: {
       showGenderColor: false,
       showEyeHairColors: false,
@@ -51,34 +51,34 @@ export default class App extends Component {
     setCurrentPropId: (currentPropId) => {
       this.setState({ currentPropId });
     },
-    setCurrentTheme: (currentTheme, isUser = true) => {
+    setCurrentTheme: (theme, isUser = true) => {
       if (isUser) {
         ReactGA.event({
           category: "Settings",
           action: `Updated`,
-          label: `theme: ${currentTheme.name}`,
+          label: `theme: ${theme.name}`,
         });
-        ls("storedThemeKey", currentTheme.name);
+        ls("storedThemeKey", theme.name);
       }
       treeLayout.nodeSize([
-        currentTheme.nodeWidth,
-        currentTheme.nodeHeight + currentTheme.nodeVerticalSpacing,
+        theme.nodeWidth,
+        theme.nodeHeight + theme.nodeVerticalSpacing,
       ]);
       treeLayout.separation((next, prev) => {
-        if (next.isSpouse) return currentTheme.separationSiblingSpouse;
-        if (prev.isSpouse && !next.isSpouse)
-          return currentTheme.separationCousins;
+        if (next.isSpouse) return theme.separationSiblingSpouse;
+        if (prev.isSpouse && !next.isSpouse) return theme.separationCousins;
 
-        if (prev.isSibling) return currentTheme.separationSiblingSpouse;
-        if (next.isSibling && !prev.isSibling)
-          return currentTheme.separationCousins;
+        if (prev.isSibling) return theme.separationSiblingSpouse;
+        if (next.isSibling && !prev.isSibling) return theme.separationCousins;
 
-        if (next.parent === prev.parent)
-          return currentTheme.separationSameGroup;
+        if (next.parent === prev.parent) return theme.separationSameGroup;
 
-        if (next.parent !== prev.parent) return currentTheme.separationCousins;
+        if (next.parent !== prev.parent) return theme.separationCousins;
       });
-      this.setState({ currentTheme });
+
+      this.setState({
+        currentTheme: theme,
+      });
     },
     setCurrentEntity: (currentEntity) => {
       this.setState({ currentEntity });
@@ -107,19 +107,33 @@ export default class App extends Component {
         settings,
       });
     },
-    setCustomTheme: (customTheme) => {
+    setCustomTheme: (currentCustomTheme) => {
       this.setState({
-        customTheme,
+        currentCustomTheme,
+      });
+    },
+    resetCurrentTheme: () => {
+      const resetTheme = THEMES.find(
+        ({ name }) => this.state.currentTheme.name === name
+      );
+      ls.remove("storedCustomTheme_" + this.state.currentTheme.name);
+      this.state.setCurrentTheme(resetTheme, false);
+      this.setState({
+        currentCustomTheme: resetTheme,
       });
     },
     setCustomThemeProp: (themeKey, themeValue) => {
-      const customTheme = {
-        ...this.state.customTheme,
+      const currentCustomTheme = {
+        ...(this.state.currentCustomTheme ||
+          THEMES.find(({ name }) => this.state.currentTheme.name === name)),
         [themeKey]: themeValue,
       };
-      ls("storedCustomTheme", customTheme);
+      ls(
+        "storedCustomTheme_" + this.state.currentTheme.name,
+        currentCustomTheme
+      );
       this.setState({
-        customTheme,
+        currentCustomTheme,
       });
     },
     setCurrentLang: (currentLang) => {

@@ -3,12 +3,12 @@ import { AppContext } from "../App";
 import ls from "local-storage";
 
 const useLoadSettings = () => {
-  const { setSettings, setCurrentTheme } = useContext(AppContext);
+  const { setSettings } = useContext(AppContext);
 
   useEffect(() => {
     const storedSettings = ls("settings");
     if (storedSettings) setSettings(storedSettings);
-  }, [setCurrentTheme, setSettings]);
+  }, [setSettings]);
 };
 
 export default useLoadSettings;
