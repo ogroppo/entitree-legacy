@@ -7,7 +7,7 @@ const useLoadTheme = () => {
   const { setCurrentTheme, setCustomTheme } = useContext(AppContext);
 
   useEffect(() => {
-    const currentLsVersion = 1;
+    const currentLsVersion = 2;
     const lsVersion = ls("lsVersion");
     if (!lsVersion || lsVersion !== currentLsVersion) {
       ls.clear(); // Make sure the client does not hold outdated structures
