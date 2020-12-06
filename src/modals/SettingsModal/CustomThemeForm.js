@@ -581,9 +581,9 @@ export default function CustomThemeForm() {
                 value={currentCustomTheme.nodeCss}
               />
               <Form.Text className="text-muted">
-                Additional CSS, (expert mode); look at our GitHub code or use
-                your Browser's inspector to see the class names of the elemts
-                you want to change.
+                Additional CSS for which will be used for the Node element,
+                (expert mode); use your Browser's inspector to see the class
+                names of the elements you want to change.
               </Form.Text>
             </Form.Group>
           </Col>

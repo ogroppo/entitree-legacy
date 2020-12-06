@@ -154,6 +154,18 @@ export default memo(function Node({
       //data-id={node.data.id}
       //data-tree-id={node.treeId}
     >
+      {/*  { node.childNumber && (
+    <span
+      className="childNumber"
+      style={{
+        position: "absolute",
+        top: "-20px",
+      }}
+    >
+      { node.childNumber }
+    </span>
+      ) }
+      */}
       <ThemedNodeInner>
         {theme.thumbDisplay && (
           <ThemedThumbnail
