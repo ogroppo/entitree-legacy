@@ -581,9 +581,9 @@ export default function CustomThemeForm() {
                 value={currentCustomTheme.nodeCss}
               />
               <Form.Text className="text-muted">
-                CSS style (supports SCSS syntax) applied to Node element (.Node{ ...your style } class), use
-                your Browser's inspector to see the class names of the child
-                elements you want to change.
+                CSS style (supports SCSS syntax) applied to Node element (.Node
+                class), use your Browser's inspector to see the class names of
+                the child elements you want to change.
               </Form.Text>
             </Form.Group>
           </Col>
