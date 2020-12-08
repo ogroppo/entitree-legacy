@@ -1,18 +1,3 @@
-export default function parseValue(keyObject) {
-  if (!keyObject) return undefined;
-
-  //console.log(keyObject);
-
-  switch (keyObject.type) {
-    case "literal":
-      return keyObject.value;
-    case "uri":
-      return parseUri(keyObject.value);
-    default:
-      break;
-  }
-}
-
 const parseUri = (uri) => {
   // ex: http://www.wikidata.org/entity/statement/
   if (uri.match(/http.*\/entity\/statement\//)) {

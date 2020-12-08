@@ -40,7 +40,7 @@ export default function TutorialPage() {
             <Card.Img variant="top" src="/examples/screenshot_bretzel.png" />
             <Card.Body>
               <Card.Title>Types of bread rolls</Card.Title>
-              <Card.Text></Card.Text>
+              <Card.Text />
               <a className="btn btn-primary" href={"/en/subclass_of/Lye_roll"}>
                 Open this tree
               </a>

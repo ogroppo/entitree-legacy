@@ -43,6 +43,7 @@ export default function Header({ simple }) {
             title="Examples"
             variant="info"
             size="sm"
+            id="mainExamplesButtom"
             className="examplesButton"
           >
             {EXAMPLES.map(({ name, href }) => (

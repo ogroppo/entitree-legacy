@@ -14,7 +14,7 @@ export default function IframePage() {
         src={`/${langCode}/${propSlug}/${itemSlug}`}
         //style={{ border: "none" }}
         title="Test iframe"
-      ></iframe>
+      />
     </Container>
   );
 }
