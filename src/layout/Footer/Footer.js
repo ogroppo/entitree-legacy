@@ -1,6 +1,6 @@
 import React from "react";
 import { Navbar, Nav, Container } from "react-bootstrap";
-import { FaCreativeCommons, FaGithub, FaTwitter } from "react-icons/fa";
+import { FaCreativeCommons, FaGithub } from "react-icons/fa";
 import "./Footer.scss";
 
 export default function Footer() {
@@ -28,15 +28,6 @@ export default function Footer() {
           <Nav.Link target="_blank" href="https://github.com/ogroppo/entitree">
             <FaGithub />
           </Nav.Link>
-          {/*<Nav.Link*/}
-          {/*  target="_blank"*/}
-          {/*  href="https://twitter.com/EntiTreeApp?ref_src=twsrc%5Etfw"*/}
-          {/*  style={{*/}
-          {/*    color: "blue",*/}
-          {/*  }}*/}
-          {/*>*/}
-          {/*  <FaTwitter />*/}
-          {/*</Nav.Link>*/}
           <Nav.Item id="twitterFollowButton">
             <a
               href={`https://twitter.com/EntitreeApp?ref_src=twsrc%5Etfw`}
