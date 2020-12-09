@@ -38,6 +38,7 @@ export default class App extends Component {
       hideToggleButton: false,
       showExternalImages: false,
       showFace: false,
+      shownRightIds: "spouse",
       imageType: "face",
     },
     loadingEntity: false,

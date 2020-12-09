@@ -276,7 +276,7 @@ const Graph = memo(
             currentLang.code,
             null,
             theme,
-            { secondLabel }
+            { secondLabel, shownRightIds: settings.shownRightIds }
           );
           entities.forEach((entity, index) => {
             const spouseNode = getSpouseNode(entity, index);
@@ -363,7 +363,7 @@ const Graph = memo(
             currentLang.code,
             null,
             theme,
-            { secondLabel }
+            { secondLabel, shownRightIds: settings.shownRightIds }
           );
           const baseX = theme.nodeWidth * theme.separationSiblingSpouse;
           entities.forEach((entity, index) => {

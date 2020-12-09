@@ -161,6 +161,39 @@ export default function SettingsModal({ show, hideModal }) {
             shown, useful when people is known with different names
           </Form.Text>
         </Dropdown>
+        Right to nodes will be
+        <Dropdown className="imageDropdown d-inline-block ml-1">
+          <Dropdown.Toggle as={CustomToggle}>
+            {/*<span className="imageDropdownLabel"></span>{" "}*/}
+            {settings.shownRightIds}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <Dropdown.Item
+              active={settings.shownRightIds === "none"}
+              onClick={() => setSetting("shownRightIds", "none")}
+            >
+              None
+            </Dropdown.Item>
+            <Dropdown.Item
+              active={settings.shownRightIds === "spouse"}
+              onClick={() => setSetting("shownRightIds", "spouse")}
+            >
+              spouse
+            </Dropdown.Item>
+            <Dropdown.Item
+              active={settings.shownRightIds === "spouseAndPartner"}
+              onClick={() => setSetting("shownRightIds", "spouseAndPartner")}
+            >
+              Spouses and partners
+            </Dropdown.Item>
+            {/*<Dropdown.Item*/}
+            {/*  active={settings.shownRightIds === "parentsOfChild"}*/}
+            {/*  onClick={() => setSetting("shownRightIds", "parentsOfChild")}*/}
+            {/*>*/}
+            {/*  parentsOfChild*/}
+            {/*</Dropdown.Item>*/}
+          </Dropdown.Menu>
+        </Dropdown>
         <hr />
         <Form.Group controlId={"genderColors"}>
           <Form.Check
@@ -222,6 +255,8 @@ export default function SettingsModal({ show, hideModal }) {
             Allow entitree to fetch images from other websites
           </Form.Text>
         </Form.Group>
+        {/*<Form.Group controlId={"shownRightIds"}>*/}
+        {/*</Form.Group>*/}
         <Form.Group controlId={"faceDisplay"}>
           <Form.Check
             custom
