@@ -158,7 +158,7 @@ export default function SettingsModal({ show, hideModal }) {
           </Dropdown.Menu>
           <Form.Text className="text-muted mt-0">
             If the property or language is available, a second label will be
-            shown, useful when people is known with different names
+            shown, useful when people are known by different names
           </Form.Text>
         </Dropdown>
         Right to nodes will be
@@ -205,6 +205,7 @@ export default function SettingsModal({ show, hideModal }) {
           />
           <Form.Text className="text-muted pl-4">
             If browsing family trees, the nodes will have a background color
+            (blue for men, red for women)
           </Form.Text>
         </Form.Group>
         <Form.Group controlId={"eyeHairColors"}>
