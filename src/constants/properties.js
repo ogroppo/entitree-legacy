@@ -184,3 +184,21 @@ export const SOCIAL_PROPS_IDS = {
   },
   // 'P345' : ['imdb',' https://www.imdb.com/name/$1/']
 };
+
+export const RIGHT_ENTITY_TYPES = [
+  {
+    code: "none",
+    title: "none",
+  },
+  {
+    code: "spouse",
+    title: "Only spouses",
+  },
+  {
+    code: "spouseAndPartner",
+    title: "Spouses and partners",
+  },
+  // {
+  //   code: "parentsOfChild",
+  // }
+];

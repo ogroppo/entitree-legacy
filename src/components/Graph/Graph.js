@@ -178,6 +178,7 @@ const Graph = memo(
               addDownIds: true,
               addRightIds: currentProp.id === CHILD_ID,
               secondLabel,
+              rightEntityType: settings.rightEntityType,
             }
           );
           if (currentProp.id === CHILD_ID) {
@@ -276,7 +277,7 @@ const Graph = memo(
             currentLang.code,
             null,
             theme,
-            { secondLabel, shownRightIds: settings.shownRightIds }
+            { secondLabel, rightEntityType: settings.rightEntityType }
           );
           entities.forEach((entity, index) => {
             const spouseNode = getSpouseNode(entity, index);
@@ -322,7 +323,7 @@ const Graph = memo(
             currentLang.code,
             null,
             theme,
-            { secondLabel }
+            { secondLabel, rightEntityType: settings.rightEntityType }
           );
           sortByBirthDate(entities);
           entities.forEach((entity, index) => {
@@ -363,7 +364,7 @@ const Graph = memo(
             currentLang.code,
             null,
             theme,
-            { secondLabel, shownRightIds: settings.shownRightIds }
+            { secondLabel, rightEntityType: settings.rightEntityType }
           );
           const baseX = theme.nodeWidth * theme.separationSiblingSpouse;
           entities.forEach((entity, index) => {

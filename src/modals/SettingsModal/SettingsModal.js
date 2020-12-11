@@ -14,6 +14,7 @@ import CustomThemeForm from "./CustomThemeForm";
 import "./SettingsModal.scss";
 import ReactGA from "react-ga";
 import ls from "local-storage";
+import { RIGHT_ENTITY_TYPES } from "../../constants/properties";
 
 export default function SettingsModal({ show, hideModal }) {
   const {
@@ -161,37 +162,21 @@ export default function SettingsModal({ show, hideModal }) {
             shown, useful when people are known by different names
           </Form.Text>
         </Dropdown>
-        Right to nodes will be
+        Right node entity type:
         <Dropdown className="imageDropdown d-inline-block ml-1">
           <Dropdown.Toggle as={CustomToggle}>
             {/*<span className="imageDropdownLabel"></span>{" "}*/}
-            {settings.shownRightIds}
+            {settings.rightEntityType}
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            <Dropdown.Item
-              active={settings.shownRightIds === "none"}
-              onClick={() => setSetting("shownRightIds", "none")}
-            >
-              None
-            </Dropdown.Item>
-            <Dropdown.Item
-              active={settings.shownRightIds === "spouse"}
-              onClick={() => setSetting("shownRightIds", "spouse")}
-            >
-              spouse
-            </Dropdown.Item>
-            <Dropdown.Item
-              active={settings.shownRightIds === "spouseAndPartner"}
-              onClick={() => setSetting("shownRightIds", "spouseAndPartner")}
-            >
-              Spouses and partners
-            </Dropdown.Item>
-            {/*<Dropdown.Item*/}
-            {/*  active={settings.shownRightIds === "parentsOfChild"}*/}
-            {/*  onClick={() => setSetting("shownRightIds", "parentsOfChild")}*/}
-            {/*>*/}
-            {/*  parentsOfChild*/}
-            {/*</Dropdown.Item>*/}
+            {RIGHT_ENTITY_TYPES.map((key, index) => (
+              <Dropdown.Item
+                active={settings.rightEntityType === key.title}
+                onClick={() => setSetting("rightEntityType", key.title)}
+              >
+                {key.title}
+              </Dropdown.Item>
+            ))}
           </Dropdown.Menu>
         </Dropdown>
         <hr />
@@ -256,7 +241,7 @@ export default function SettingsModal({ show, hideModal }) {
             Allow entitree to fetch images from other websites
           </Form.Text>
         </Form.Group>
-        {/*<Form.Group controlId={"shownRightIds"}>*/}
+        {/*<Form.Group controlId={"rightEntityType"}>*/}
         {/*</Form.Group>*/}
         <Form.Group controlId={"faceDisplay"}>
           <Form.Check

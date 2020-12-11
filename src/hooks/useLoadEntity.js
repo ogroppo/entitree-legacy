@@ -105,7 +105,7 @@ const useLoadEntity = () => {
             addDownIds: true,
             addRightIds: _currentProp.id === CHILD_ID,
             addLeftIds: _currentProp.id === CHILD_ID,
-            shownRightIds: settings.shownRightIds,
+            rightEntityType: settings.rightEntityType,
           });
 
           setCurrentUpMap(upMap);

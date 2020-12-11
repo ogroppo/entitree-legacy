@@ -36,17 +36,15 @@ export default function addEntityConnectors(entity, propId, options = {}) {
 }
 
 function addRightIds(entity, options) {
-  let claim;
-  console.log(options.shownRightIds);
-  if (options.shownRightIds === "spouseAndPartner") {
+  let claim = [];
+  console.log(options.rightEntityType);
+  if (options.rightEntityType === "Spouses and partners") {
     claim = (entity.claims[SPOUSE_ID] || []).concat(
       entity.claims[PARTNER_ID] || []
     ); //cannot use simpleclaims here as only preferred will show up
     console.log(claim);
-  } else if (options.shownRightIds === "spouse") {
+  } else if (options.rightEntityType === "Only spouses") {
     claim = entity.claims[SPOUSE_ID] || [];
-  } else {
-    claim = [];
   }
   entity.rightIds = claim
     .sort((a, b) => {
