@@ -214,10 +214,10 @@ export default function SettingsModal({ show, hideModal }) {
             checked={settings.showEyeHairColors}
             onChange={(e) => setSetting("showEyeHairColors", e.target.checked)}
             type="checkbox"
-            label={"Show eye colors where possible"}
+            label={"Show eye colors"}
           />
           <Form.Text className="text-muted pl-4">
-            An icon with the eye color of the person will appear
+            An icon with the eye color of the person will be shown, if available
           </Form.Text>
         </Form.Group>
         <Form.Group controlId={"birthName"}>
