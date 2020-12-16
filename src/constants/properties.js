@@ -1,14 +1,8 @@
-import {
-  HUMAN_ID,
-  ORGANIZATION_ID,
-  BUSINESS_ID,
-  HUMAN_SETTLEMENT_ID,
-} from "./entities";
-
 export const INSTANCE_OF_ID = "P31";
 
 export const SIBLINGS_ID = "P3373";
 export const SPOUSE_ID = "P26";
+export const PARTNER_ID = "P451"; //unmarried partner
 export const BIRTH_DATE_ID = "P569";
 export const BIRTH_PLACE_ID = "P19";
 export const DEATH_DATE_ID = "P570";
@@ -190,3 +184,21 @@ export const SOCIAL_PROPS_IDS = {
   },
   // 'P345' : ['imdb',' https://www.imdb.com/name/$1/']
 };
+
+export const RIGHT_ENTITY_TYPES = [
+  {
+    code: "none",
+    title: "none",
+  },
+  {
+    code: "spouse",
+    title: "Only spouses",
+  },
+  {
+    code: "spouseAndPartner",
+    title: "Spouses and partners",
+  },
+  // {
+  //   code: "parentsOfChild",
+  // }
+];

@@ -13,6 +13,7 @@ import {
   ANIMAL_MALE_ID,
   HUMAN_FEMALE_ID,
   HUMAN_ID,
+  FICTIONAL_HUMAN_ID,
 } from "../constants/entities";
 import wbk from "wikidata-sdk";
 import addExternalLinks from "./addExternalLinks";
@@ -108,7 +109,7 @@ export default async function formatEntity(
 function addIsHuman(entity) {
   try {
     entity.isHuman = entity.simpleClaims[INSTANCE_OF_ID].some(
-      ({ value }) => value === HUMAN_ID //add all other IDS of person subclass?
+      ({ value }) => value === HUMAN_ID || value === FICTIONAL_HUMAN_ID
     );
   } catch (error) {}
 }

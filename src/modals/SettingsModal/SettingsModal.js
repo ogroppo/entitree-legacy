@@ -14,6 +14,7 @@ import CustomThemeForm from "./CustomThemeForm";
 import "./SettingsModal.scss";
 import ReactGA from "react-ga";
 import ls from "local-storage";
+import { RIGHT_ENTITY_TYPES } from "../../constants/properties";
 
 export default function SettingsModal({ show, hideModal }) {
   const {
@@ -158,8 +159,25 @@ export default function SettingsModal({ show, hideModal }) {
           </Dropdown.Menu>
           <Form.Text className="text-muted mt-0">
             If the property or language is available, a second label will be
-            shown, useful when people is known with different names
+            shown, useful when people are known by different names
           </Form.Text>
+        </Dropdown>
+        Right node entity type:
+        <Dropdown className="imageDropdown d-inline-block ml-1">
+          <Dropdown.Toggle as={CustomToggle}>
+            {/*<span className="imageDropdownLabel"></span>{" "}*/}
+            {settings.rightEntityType}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {RIGHT_ENTITY_TYPES.map((key, index) => (
+              <Dropdown.Item
+                active={settings.rightEntityType === key.title}
+                onClick={() => setSetting("rightEntityType", key.title)}
+              >
+                {key.title}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
         </Dropdown>
         <hr />
         <Form.Group controlId={"genderColors"}>
@@ -172,6 +190,7 @@ export default function SettingsModal({ show, hideModal }) {
           />
           <Form.Text className="text-muted pl-4">
             If browsing family trees, the nodes will have a background color
+            (blue for men, red for women)
           </Form.Text>
         </Form.Group>
         <Form.Group controlId={"eyeHairColors"}>
@@ -222,6 +241,8 @@ export default function SettingsModal({ show, hideModal }) {
             Allow entitree to fetch images from other websites
           </Form.Text>
         </Form.Group>
+        {/*<Form.Group controlId={"rightEntityType"}>*/}
+        {/*</Form.Group>*/}
         <Form.Group controlId={"faceDisplay"}>
           <Form.Check
             custom

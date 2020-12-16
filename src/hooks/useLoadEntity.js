@@ -17,6 +17,7 @@ const useLoadEntity = () => {
     setLoadingEntity,
     currentPropId,
     setState,
+    settings,
     setCurrentUpMap,
     secondLabel,
   } = useContext(AppContext);
@@ -104,6 +105,7 @@ const useLoadEntity = () => {
             addDownIds: true,
             addRightIds: _currentProp.id === CHILD_ID,
             addLeftIds: _currentProp.id === CHILD_ID,
+            rightEntityType: settings.rightEntityType,
           });
 
           setCurrentUpMap(upMap);

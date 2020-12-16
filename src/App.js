@@ -14,6 +14,7 @@ import ReactGA from "react-ga";
 import treeLayout from "./lib/getTreeLayout";
 import { THEMES } from "./constants/themes";
 import IframePage from "./pages/IframePage/IframePage";
+import { RIGHT_ENTITY_TYPES } from "./constants/properties";
 
 const browserHistory = createBrowserHistory();
 
@@ -38,6 +39,7 @@ export default class App extends Component {
       hideToggleButton: false,
       showExternalImages: false,
       showFace: false,
+      rightEntityType: RIGHT_ENTITY_TYPES[1].title,
       imageType: "face",
     },
     loadingEntity: false,
@@ -80,14 +82,8 @@ export default class App extends Component {
         currentTheme: theme,
       });
     },
-    setCurrentEntity: (currentEntity) => {
-      this.setState({ currentEntity });
-    },
     setCurrentEntityId: (currentEntityId) => {
       this.setState({ currentEntityId });
-    },
-    setCurrentProp: (currentProp) => {
-      this.setState({ currentProp });
     },
     setLoadingEntity: (loadingEntity) => {
       this.setState({ loadingEntity });
