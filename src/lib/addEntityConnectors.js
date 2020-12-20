@@ -1,10 +1,8 @@
 import getClaimIds from "./getClaimIds";
 import {
   SIBLINGS_ID,
-  SPOUSE_ID,
   START_DATE_ID,
   NUMBER_OF_CHILDREN_ID,
-  PARTNER_ID,
 } from "../constants/properties";
 import getSimpleClaimValue from "./getSimpleClaimValue";
 

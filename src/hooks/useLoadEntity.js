@@ -1,4 +1,4 @@
-import { memo, useContext, useEffect, useMemo } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { useRouteMatch } from "react-router-dom";
 import { AppContext } from "../App";
 import getItem from "../wikidata/getItem";
