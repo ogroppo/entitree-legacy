@@ -7,6 +7,7 @@ import { FAMILY_PROP, FAMILY_IDS_MAP, CHILD_ID } from "../constants/properties";
 import getUpMap from "../wikidata/getUpMap";
 import addEntityConnectors from "../lib/addEntityConnectors";
 import { useTheme } from "styled-components";
+import usePrevious from "./usePrevious";
 
 const useLoadEntity = () => {
   const {
@@ -33,11 +34,20 @@ const useLoadEntity = () => {
       ]);
   }, [currentEntityId, currentLang.code, secondLabel, theme]);
 
+  const previousRightEntityOption = usePrevious(settings.rightEntityOption);
+
   useEffect(() => {
     const loadEntity = async () => {
       try {
         // show loading when whe changed entity from searchbar
         if (currentEntity && currentEntityId !== currentEntity.id)
+          setState({
+            currentEntity: null,
+            loadingEntity: true,
+          });
+
+        //The root node needs to go through the whole process of toggling spouses (Graph)
+        if (settings.rightEntityOption !== previousRightEntityOption)
           setState({
             currentEntity: null,
             loadingEntity: true,
@@ -98,14 +108,17 @@ const useLoadEntity = () => {
 
         if (_currentProp) {
           // TODO: cache this
-          const upMap = await getUpMap(_currentEntity.id, _currentProp.id);
+          const upMap = useMemo(
+            await getUpMap(_currentEntity.id, _currentProp.id),
+            [_currentEntity.id, _currentProp.id]
+          );
 
           addEntityConnectors(_currentEntity, _currentProp.id, {
             upMap,
             addDownIds: true,
             addRightIds: _currentProp.id === CHILD_ID,
             addLeftIds: _currentProp.id === CHILD_ID,
-            rightEntityType: settings.rightEntityType,
+            rightEntityOption: settings.rightEntityOption,
           });
 
           setCurrentUpMap(upMap);
@@ -125,7 +138,13 @@ const useLoadEntity = () => {
       loadEntity();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentLang, secondLabel, currentEntityId, currentPropId]);
+  }, [
+    currentLang,
+    secondLabel,
+    currentEntityId,
+    currentPropId,
+    settings.rightEntityOption,
+  ]);
 };
 
 export default useLoadEntity;

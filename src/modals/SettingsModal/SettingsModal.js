@@ -14,7 +14,7 @@ import CustomThemeForm from "./CustomThemeForm";
 import "./SettingsModal.scss";
 import ReactGA from "react-ga";
 import ls from "local-storage";
-import { RIGHT_ENTITY_TYPES } from "../../constants/properties";
+import { RIGHT_ENTITY_OPTIONS } from "../../constants/properties";
 
 export default function SettingsModal({ show, hideModal }) {
   const {
@@ -162,22 +162,35 @@ export default function SettingsModal({ show, hideModal }) {
             shown, useful when people are known by different names
           </Form.Text>
         </Dropdown>
-        Right node entity type:
-        <Dropdown className="imageDropdown d-inline-block ml-1">
+        <Dropdown className="spousesDropdown">
           <Dropdown.Toggle as={CustomToggle}>
-            {/*<span className="imageDropdownLabel"></span>{" "}*/}
-            {settings.rightEntityType}
+            <span className="label">Show on the right</span>{" "}
+            {settings.rightEntityOption.propIds ? (
+              settings.rightEntityOption.title
+            ) : (
+              <i>{settings.rightEntityOption.title}</i>
+            )}
           </Dropdown.Toggle>
           <Dropdown.Menu>
-            {RIGHT_ENTITY_TYPES.map((key, index) => (
+            {RIGHT_ENTITY_OPTIONS.map((rightEntityOption, index) => (
               <Dropdown.Item
-                active={settings.rightEntityType === key.title}
-                onClick={() => setSetting("rightEntityType", key.title)}
+                key={index}
+                active={
+                  JSON.stringify(settings.rightEntityOption.propIds) ===
+                  JSON.stringify(rightEntityOption.propIds)
+                }
+                onClick={() =>
+                  setSetting("rightEntityOption", rightEntityOption)
+                }
               >
-                {key.title}
+                {rightEntityOption.title}
               </Dropdown.Item>
             ))}
           </Dropdown.Menu>
+          <Form.Text className="text-muted mt-0">
+            Decide what to show on the right of each person, this applies only
+            to humans and fictional characters.
+          </Form.Text>
         </Dropdown>
         <hr />
         <Form.Group controlId={"genderColors"}>
@@ -241,8 +254,6 @@ export default function SettingsModal({ show, hideModal }) {
             Allow entitree to fetch images from other websites
           </Form.Text>
         </Form.Group>
-        {/*<Form.Group controlId={"rightEntityType"}>*/}
-        {/*</Form.Group>*/}
         <Form.Group controlId={"faceDisplay"}>
           <Form.Check
             custom

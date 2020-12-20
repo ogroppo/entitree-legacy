@@ -185,20 +185,21 @@ export const SOCIAL_PROPS_IDS = {
   // 'P345' : ['imdb',' https://www.imdb.com/name/$1/']
 };
 
-export const RIGHT_ENTITY_TYPES = [
+export const RIGHT_ENTITY_OPTIONS = [
   {
-    code: "none",
-    title: "none",
+    propIds: null,
+    title: "Nothing",
   },
   {
-    code: "spouse",
+    propIds: [SPOUSE_ID],
     title: "Only spouses",
   },
   {
-    code: "spouseAndPartner",
+    propIds: [SPOUSE_ID, PARTNER_ID],
     title: "Spouses and partners",
   },
-  // {
-  //   code: "parentsOfChild",
-  // }
+  {
+    propIds: [PARTNER_ID],
+    title: "Only partners",
+  },
 ];
