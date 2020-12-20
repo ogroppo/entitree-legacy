@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo } from "react";
+import { memo, useContext, useEffect, useMemo } from "react";
 import { useRouteMatch } from "react-router-dom";
 import { AppContext } from "../App";
 import getItem from "../wikidata/getItem";
@@ -107,11 +107,7 @@ const useLoadEntity = () => {
         _currentEntity.availableProps = itemProps;
 
         if (_currentProp) {
-          // TODO: cache this
-          const upMap = useMemo(
-            await getUpMap(_currentEntity.id, _currentProp.id),
-            [_currentEntity.id, _currentProp.id]
-          );
+          const upMap = await getUpMap(_currentEntity.id, _currentProp.id);
 
           addEntityConnectors(_currentEntity, _currentProp.id, {
             upMap,
