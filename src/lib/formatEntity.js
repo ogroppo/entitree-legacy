@@ -1,12 +1,6 @@
 //import formatDateClaim from "./formatDateClaim";
 import addEntityImages from "../wikidata/addEntityImages";
-import {
-  BIRTH_DATE_ID,
-  DEATH_DATE_ID,
-  GENDER_ID,
-  WEBSITE_ID,
-  INSTANCE_OF_ID,
-} from "../constants/properties";
+import { GENDER_ID, WEBSITE_ID, INSTANCE_OF_ID } from "../constants/properties";
 import {
   HUMAN_MALE_ID,
   ANIMAL_FEMALE_ID,
@@ -112,20 +106,6 @@ function addIsHuman(entity) {
       ({ value }) => value === HUMAN_ID || value === FICTIONAL_HUMAN_ID
     );
   } catch (error) {}
-}
-
-function addIsInfantDeath(entity) {
-  if (
-    entity.simpleClaims[DEATH_DATE_ID] &&
-    entity.simpleClaims[BIRTH_DATE_ID]
-  ) {
-    try {
-      entity.isInfantDeath =
-        parseInt(entity.simpleClaims[DEATH_DATE_ID][0].value.slice(0, 4)) -
-          parseInt(entity.simpleClaims[BIRTH_DATE_ID][0].value.slice(0, 4)) <
-        5;
-    } catch (error) {}
-  }
 }
 
 function addWebsite(entity) {

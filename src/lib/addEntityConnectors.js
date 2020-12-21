@@ -1,10 +1,8 @@
 import getClaimIds from "./getClaimIds";
 import {
   SIBLINGS_ID,
-  SPOUSE_ID,
   START_DATE_ID,
   NUMBER_OF_CHILDREN_ID,
-  PARTNER_ID,
 } from "../constants/properties";
 import getSimpleClaimValue from "./getSimpleClaimValue";
 
@@ -37,15 +35,14 @@ export default function addEntityConnectors(entity, propId, options = {}) {
 
 function addRightIds(entity, options) {
   let claim = [];
-  console.log(options.rightEntityType);
-  if (options.rightEntityType === "Spouses and partners") {
-    claim = (entity.claims[SPOUSE_ID] || []).concat(
-      entity.claims[PARTNER_ID] || []
-    ); //cannot use simpleclaims here as only preferred will show up
-    console.log(claim);
-  } else if (options.rightEntityType === "Only spouses") {
-    claim = entity.claims[SPOUSE_ID] || [];
+  if (options.rightEntityOption?.propIds) {
+    //cannot use simpleclaims here as only preferred will show up
+    claim = options.rightEntityOption.propIds.reduce(
+      (acc, propId) => acc.concat(entity.claims[propId] || []),
+      []
+    );
   }
+
   entity.rightIds = claim
     .sort((a, b) => {
       try {

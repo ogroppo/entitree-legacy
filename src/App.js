@@ -14,7 +14,7 @@ import ReactGA from "react-ga";
 import treeLayout from "./lib/getTreeLayout";
 import { THEMES } from "./constants/themes";
 import IframePage from "./pages/IframePage/IframePage";
-import { RIGHT_ENTITY_TYPES } from "./constants/properties";
+import { RIGHT_ENTITY_OPTIONS } from "./constants/properties";
 
 const browserHistory = createBrowserHistory();
 
@@ -39,7 +39,7 @@ export default class App extends Component {
       hideToggleButton: false,
       showExternalImages: false,
       showFace: false,
-      rightEntityType: RIGHT_ENTITY_TYPES[1].title,
+      rightEntityOption: RIGHT_ENTITY_OPTIONS[1],
       imageType: "face",
     },
     loadingEntity: false,
