@@ -71,7 +71,7 @@ export default async function addEntityImages(entity, currentLangCode, theme) {
     //https://github.com/siddharthkp/twitter-avatar
     twitterClaim.forEach((image) => {
       const img = {
-        url: `https://twitter-avatar.now.sh/${image.value}`,
+        url: `/twitter/getImage/${image.value}`,
         alt: `${entity.label}'s Twitter image`,
       };
       entity.thumbnails.push(img);

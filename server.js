@@ -5,6 +5,16 @@ const path = require("path");
 const fs = require("fs");
 const urljoin = require("url-join");
 
+const fetchTwitterImage = require("./server/api/fetchTwitterImage");
+app.get("/twitter/getImage/:user", async (req, res, next) => {
+  const result = await fetchTwitterImage.fetchTwitterImage(
+    req.params.user,
+    "_200x200"
+  );
+  if (!result) return res.status(404).send("Not Found");
+  request(result).pipe(res);
+});
+
 const indexFilePath = path.resolve(__dirname, "./build", "index.html");
 
 const getFullUrl = (request, url) => {
@@ -63,7 +73,6 @@ app.get("/", function (request, response) {
 
 //don't move it from here
 app.use(express.static(path.resolve(__dirname, "./build")));
-
 app.get("/:langCode/:propSlug/:titleSlug", function (request, response) {
   // /:langCode([a-z]{2})/:propSlug/:titleSlug to only match 2letter languages
   // const reqRoute = request.originalUrl.replace(/\?.*$/, '');
