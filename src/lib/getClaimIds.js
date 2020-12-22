@@ -7,6 +7,14 @@ function getSeriesOrdinal(claim) {
   ) {
     return parseInt(claim.qualifiers.P1545[0].datavalue.value);
   }
+  // const {
+  //   qualifiers: {
+  //     P1545: [{
+  //       datavalue: { value: seriesOrdinal },
+  //     }],
+  //   },
+  // } = claim;
+  // return parseInt(seriesOrdinal);
   return 0;
 }
 
@@ -20,4 +28,15 @@ export default function getClaimIds(entity, propId) {
       datavalue ? datavalue.value.id : null
     )
     .filter((c) => c); //filter out 'No value' and 'Unknown'
+}
+
+//checks whether the claim has a qualifier of series ordinal, return true if the first one has it
+export function checkIfClaimsHasSeriesOrdinal(entity, propId) {
+  const claims = entity.claims[propId] || [];
+  if (claims.length) {
+    if (getSeriesOrdinal(claims[0])) {
+      return true;
+    }
+  }
+  return false;
 }
