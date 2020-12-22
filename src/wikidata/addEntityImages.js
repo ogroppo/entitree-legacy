@@ -66,18 +66,18 @@ export default async function addEntityImages(entity, currentLangCode, theme) {
     });
   }
 
-  const twitterClaim = entity.simpleClaims[TWITTER_ID];
-  if (twitterClaim) {
-    //https://github.com/siddharthkp/twitter-avatar
-    twitterClaim.forEach((image) => {
-      const img = {
-        url: `/twitter/getImage/${image.value}`,
-        alt: `${entity.label}'s Twitter image`,
-      };
-      entity.thumbnails.push(img);
-      entity.images.push(img);
-    });
-  }
+  // const twitterClaim = entity.simpleClaims[TWITTER_ID];
+  // if (twitterClaim) {
+  //   //https://github.com/siddharthkp/twitter-avatar
+  //   twitterClaim.forEach((image) => {
+  //     const img = {
+  //       url: `/twitter/getImage/${image.value}`,
+  //       alt: `${entity.label}'s Twitter image`,
+  //     };
+  //     entity.thumbnails.push(img);
+  //     entity.images.push(img);
+  //   });
+  // }
 
   //Logo last, people might have logos like Trump
   const logoClaim = entity.simpleClaims[LOGO_ID];
