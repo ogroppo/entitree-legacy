@@ -19,6 +19,7 @@ export const STUDENT_OF_ID = "P1066";
 export const STUDENT_ID = "P802";
 export const LOCATED_IN_ID = "P131";
 export const NICKNAME_ID = "P1449";
+export const NAME_IN_KANA_ID = "P1814";
 export const IMAGE_ID = "P18";
 export const LOGO_ID = "P154";
 export const TWITTER_ID = "P2002";
