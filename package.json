@@ -45,7 +45,7 @@
     "eject": "react-scripts eject",
     "sitemap": "babel-node src/sitemap/generator.js",
     "import": "babel-node src/sitemap/processViews.js",
-    "start": "node server.js"
+    "start": "node server"
   },
   "eslintConfig": {
     "extends": "react-app"
