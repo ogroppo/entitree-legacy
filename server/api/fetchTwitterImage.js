@@ -10,6 +10,7 @@ exports.fetchTwitterImage = (username, size) => {
     else
       request(url, (_, __, body) => {
         const $ = cheerio.load(body);
+        //This tag has changed, revisit
         const url = ($(".avatar img").attr("src") || "").replace(
           "_normal",
           size

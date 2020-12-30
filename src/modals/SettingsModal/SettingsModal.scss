@@ -1,8 +1,11 @@
 .SettingsModalDialog {
-  position: absolute;
-  margin: 0;
-  height: 100vh;
-  right: 0;
+  //or it will break on mobile
+  @media screen and (min-width: 850px) {
+    position: absolute;
+    margin: 0;
+    height: 100vh;
+    right: 0;
+  }
   .modal-content {
     height: 100%;
     overflow-y: auto;

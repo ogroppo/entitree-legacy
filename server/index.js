@@ -5,17 +5,17 @@ const path = require("path");
 const fs = require("fs");
 const urljoin = require("url-join");
 
-const fetchTwitterImage = require("./server/api/fetchTwitterImage");
+const { fetchTwitterImage } = require("./api/fetchTwitterImage");
 app.get("/twitter/getImage/:user", async (req, res, next) => {
-  const result = await fetchTwitterImage.fetchTwitterImage(
-    req.params.user,
-    "_200x200"
-  );
+  const result = await fetchTwitterImage(req.params.user, "_200x200");
   if (!result) return res.status(404).send("Not Found");
-  request(result).pipe(res);
+  res.send(result);
 });
 
-const indexFilePath = path.resolve(__dirname, "./build", "index.html");
+const buildFolder = path.resolve(__dirname, "../build");
+const publicFolder = path.resolve(__dirname, "../public");
+
+const indexFilePath = path.resolve(buildFolder, "index.html");
 
 const getFullUrl = (request, url) => {
   return urljoin(request.protocol + "://" + request.get("host"), url);
@@ -72,7 +72,8 @@ app.get("/", function (request, response) {
 });
 
 //don't move it from here
-app.use(express.static(path.resolve(__dirname, "./build")));
+app.use(express.static(buildFolder));
+
 app.get("/:langCode/:propSlug/:titleSlug", function (request, response) {
   // /:langCode([a-z]{2})/:propSlug/:titleSlug to only match 2letter languages
   // const reqRoute = request.originalUrl.replace(/\?.*$/, '');
@@ -99,7 +100,7 @@ app.get("/:langCode/:propSlug/:titleSlug", function (request, response) {
         `Visualize the ${propName} on a dynamic, navigable tree diagram.`
       );
     //only replace image if it's present
-    if (fs.existsSync(path.join(__dirname, "public", featuredImageFile))) {
+    if (fs.existsSync(path.resolve(publicFolder, featuredImageFile))) {
       page = page.replace(
         /\$OG_IMAGE/g,
         getFullUrl(request, featuredImageFile)

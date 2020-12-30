@@ -18,7 +18,7 @@ export default function addEntityConnectors(entity, propId, options = {}) {
     if (!propId) throw new Error("propId needed");
     entity.downIds = getClaimIds(entity, propId);
     entity.downIdsAlreadySorted = checkIfClaimsHasSeriesOrdinal(entity, propId);
-    console.log(entity.downIdsAlreadySorted);
+
     //use number of children property, use count of children if not available
     entity.childrenCount =
       getSimpleClaimValue(entity.simpleClaims, NUMBER_OF_CHILDREN_ID) ||
