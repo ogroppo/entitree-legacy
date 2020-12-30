@@ -181,7 +181,7 @@ const Graph = memo(
               rightEntityOption: settings.rightEntityOption,
             }
           );
-          if (currentProp.id === CHILD_ID) {
+          if (currentProp.id === CHILD_ID && !node.data.downIdsAlreadySorted) {
             sortByBirthDate(entities);
           }
           entities.forEach((entity, index) => {

@@ -1,4 +1,4 @@
-import { BIRTH_NAME_ID, NICKNAME_ID } from "./properties";
+import { BIRTH_NAME_ID, NAME_IN_KANA_ID, NICKNAME_ID } from "./properties";
 
 const DISAMBIGUATION_PAGE_DESC = {
   da: "Wikipedia-flertydigside",
@@ -455,5 +455,9 @@ export const SECOND_LABELS = [
   {
     code: BIRTH_NAME_ID,
     name: "Birth name",
+  },
+  {
+    code: NAME_IN_KANA_ID,
+    name: "Name in Kana",
   },
 ];

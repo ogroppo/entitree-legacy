@@ -1,7 +1,7 @@
 import getWikipediaArticle from "./getWikipediaArticle";
 
 let wikiImagesMemo = {};
-
+//TODO NOT USED ???
 export default async function getWikipediaThumbUrl(
   wikipediaSlug,
   currentLangCode
