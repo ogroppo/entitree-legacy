@@ -178,9 +178,10 @@ const Graph = memo(
               addDownIds: true,
               addRightIds: currentProp.id === CHILD_ID,
               secondLabel,
+              rightEntityOption: settings.rightEntityOption,
             }
           );
-          if (currentProp.id === CHILD_ID) {
+          if (currentProp.id === CHILD_ID && !node.data.downIdsAlreadySorted) {
             sortByBirthDate(entities);
           }
           entities.forEach((entity, index) => {
@@ -276,7 +277,7 @@ const Graph = memo(
             currentLang.code,
             null,
             theme,
-            { secondLabel }
+            { secondLabel, rightEntityOption: settings.rightEntityOption }
           );
           entities.forEach((entity, index) => {
             const spouseNode = getSpouseNode(entity, index);
@@ -322,7 +323,7 @@ const Graph = memo(
             currentLang.code,
             null,
             theme,
-            { secondLabel }
+            { secondLabel, rightEntityOption: settings.rightEntityOption }
           );
           sortByBirthDate(entities);
           entities.forEach((entity, index) => {
@@ -363,7 +364,7 @@ const Graph = memo(
             currentLang.code,
             null,
             theme,
-            { secondLabel }
+            { secondLabel, rightEntityOption: settings.rightEntityOption }
           );
           const baseX = theme.nodeWidth * theme.separationSiblingSpouse;
           entities.forEach((entity, index) => {

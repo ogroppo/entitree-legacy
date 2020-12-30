@@ -1,14 +1,8 @@
-import {
-  HUMAN_ID,
-  ORGANIZATION_ID,
-  BUSINESS_ID,
-  HUMAN_SETTLEMENT_ID,
-} from "./entities";
-
 export const INSTANCE_OF_ID = "P31";
 
 export const SIBLINGS_ID = "P3373";
 export const SPOUSE_ID = "P26";
+export const PARTNER_ID = "P451"; //unmarried partner
 export const BIRTH_DATE_ID = "P569";
 export const BIRTH_PLACE_ID = "P19";
 export const DEATH_DATE_ID = "P570";
@@ -25,6 +19,7 @@ export const STUDENT_OF_ID = "P1066";
 export const STUDENT_ID = "P802";
 export const LOCATED_IN_ID = "P131";
 export const NICKNAME_ID = "P1449";
+export const NAME_IN_KANA_ID = "P1814";
 export const IMAGE_ID = "P18";
 export const LOGO_ID = "P154";
 export const TWITTER_ID = "P2002";
@@ -190,3 +185,22 @@ export const SOCIAL_PROPS_IDS = {
   },
   // 'P345' : ['imdb',' https://www.imdb.com/name/$1/']
 };
+
+export const RIGHT_ENTITY_OPTIONS = [
+  {
+    propIds: null,
+    title: "Nothing",
+  },
+  {
+    propIds: [SPOUSE_ID],
+    title: "Only spouses",
+  },
+  {
+    propIds: [SPOUSE_ID, PARTNER_ID],
+    title: "Spouses and partners",
+  },
+  {
+    propIds: [PARTNER_ID],
+    title: "Only partners",
+  },
+];

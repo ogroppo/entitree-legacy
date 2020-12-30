@@ -1,18 +1,13 @@
 //import formatDateClaim from "./formatDateClaim";
 import addEntityImages from "../wikidata/addEntityImages";
-import {
-  BIRTH_DATE_ID,
-  DEATH_DATE_ID,
-  GENDER_ID,
-  WEBSITE_ID,
-  INSTANCE_OF_ID,
-} from "../constants/properties";
+import { GENDER_ID, WEBSITE_ID, INSTANCE_OF_ID } from "../constants/properties";
 import {
   HUMAN_MALE_ID,
   ANIMAL_FEMALE_ID,
   ANIMAL_MALE_ID,
   HUMAN_FEMALE_ID,
   HUMAN_ID,
+  FICTIONAL_HUMAN_ID,
 } from "../constants/entities";
 import wbk from "wikidata-sdk";
 import addExternalLinks from "./addExternalLinks";
@@ -108,23 +103,9 @@ export default async function formatEntity(
 function addIsHuman(entity) {
   try {
     entity.isHuman = entity.simpleClaims[INSTANCE_OF_ID].some(
-      ({ value }) => value === HUMAN_ID //add all other IDS of person subclass?
+      ({ value }) => value === HUMAN_ID || value === FICTIONAL_HUMAN_ID
     );
   } catch (error) {}
-}
-
-function addIsInfantDeath(entity) {
-  if (
-    entity.simpleClaims[DEATH_DATE_ID] &&
-    entity.simpleClaims[BIRTH_DATE_ID]
-  ) {
-    try {
-      entity.isInfantDeath =
-        parseInt(entity.simpleClaims[DEATH_DATE_ID][0].value.slice(0, 4)) -
-          parseInt(entity.simpleClaims[BIRTH_DATE_ID][0].value.slice(0, 4)) <
-        5;
-    } catch (error) {}
-  }
 }
 
 function addWebsite(entity) {

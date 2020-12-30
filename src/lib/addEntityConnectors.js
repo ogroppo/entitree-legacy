@@ -1,7 +1,6 @@
-import getClaimIds from "./getClaimIds";
+import getClaimIds, { checkIfClaimsHasSeriesOrdinal } from "./getClaimIds";
 import {
   SIBLINGS_ID,
-  SPOUSE_ID,
   START_DATE_ID,
   NUMBER_OF_CHILDREN_ID,
 } from "../constants/properties";
@@ -18,6 +17,8 @@ export default function addEntityConnectors(entity, propId, options = {}) {
   if (options.addDownIds) {
     if (!propId) throw new Error("propId needed");
     entity.downIds = getClaimIds(entity, propId);
+    entity.downIdsAlreadySorted = checkIfClaimsHasSeriesOrdinal(entity, propId);
+
     //use number of children property, use count of children if not available
     entity.childrenCount =
       getSimpleClaimValue(entity.simpleClaims, NUMBER_OF_CHILDREN_ID) ||
@@ -26,7 +27,7 @@ export default function addEntityConnectors(entity, propId, options = {}) {
     delete entity.downIds;
   }
 
-  if (options.addRightIds) addRightIds(entity);
+  if (options.addRightIds) addRightIds(entity, options);
   else {
     delete entity.rightIds;
   }
@@ -34,8 +35,16 @@ export default function addEntityConnectors(entity, propId, options = {}) {
   else delete entity.leftIds;
 }
 
-function addRightIds(entity) {
-  const claim = entity.claims[SPOUSE_ID] || []; //cannot use simpleclaims here as only preferred will show up
+function addRightIds(entity, options) {
+  let claim = [];
+  if (options.rightEntityOption?.propIds) {
+    //cannot use simpleclaims here as only preferred will show up
+    claim = options.rightEntityOption.propIds.reduce(
+      (acc, propId) => acc.concat(entity.claims[propId] || []),
+      []
+    );
+  }
+
   entity.rightIds = claim
     .sort((a, b) => {
       try {

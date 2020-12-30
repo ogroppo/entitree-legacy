@@ -14,6 +14,7 @@ import CustomThemeForm from "./CustomThemeForm";
 import "./SettingsModal.scss";
 import ReactGA from "react-ga";
 import ls from "local-storage";
+import { RIGHT_ENTITY_OPTIONS } from "../../constants/properties";
 
 export default function SettingsModal({ show, hideModal }) {
   const {
@@ -158,7 +159,37 @@ export default function SettingsModal({ show, hideModal }) {
           </Dropdown.Menu>
           <Form.Text className="text-muted mt-0">
             If the property or language is available, a second label will be
-            shown, useful when people is known with different names
+            shown, useful when people are known by different names
+          </Form.Text>
+        </Dropdown>
+        <Dropdown className="spousesDropdown">
+          <Dropdown.Toggle as={CustomToggle}>
+            <span className="label">Show on the right</span>{" "}
+            {settings.rightEntityOption.propIds ? (
+              settings.rightEntityOption.title
+            ) : (
+              <i>{settings.rightEntityOption.title}</i>
+            )}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            {RIGHT_ENTITY_OPTIONS.map((rightEntityOption, index) => (
+              <Dropdown.Item
+                key={index}
+                active={
+                  JSON.stringify(settings.rightEntityOption.propIds) ===
+                  JSON.stringify(rightEntityOption.propIds)
+                }
+                onClick={() =>
+                  setSetting("rightEntityOption", rightEntityOption)
+                }
+              >
+                {rightEntityOption.title}
+              </Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+          <Form.Text className="text-muted mt-0">
+            Decide what to show on the right of each person, this applies only
+            to humans and fictional characters.
           </Form.Text>
         </Dropdown>
         <hr />
@@ -172,6 +203,7 @@ export default function SettingsModal({ show, hideModal }) {
           />
           <Form.Text className="text-muted pl-4">
             If browsing family trees, the nodes will have a background color
+            (blue for men, red for women)
           </Form.Text>
         </Form.Group>
         <Form.Group controlId={"eyeHairColors"}>
