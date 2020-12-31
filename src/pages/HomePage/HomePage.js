@@ -22,9 +22,9 @@ import styled from "styled-components";
 import { useRouteMatch } from "react-router-dom";
 
 export default function HomePageWrapper() {
+  useLoadTheme();
   useCurrentLang();
   useLoadSettings();
-  useLoadTheme();
   const { currentLang, currentTheme } = useContext(AppContext);
 
   if (!currentLang) return null;
