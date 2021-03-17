@@ -1,34 +1,50 @@
 import "./Graph.scss";
-import { TransformWrapper } from "react-zoom-pan-pinch";
-import { AppContext } from "../../App";
+
+import {
+  DEFAULT_SCALE,
+  DOWN_SYMBOL,
+  LEFT_SYMBOL,
+  MAX_SCALE,
+  MIN_SCALE,
+  RIGHT_SYMBOL,
+  UP_SYMBOL,
+} from "../../constants/tree";
 import React, {
-  useReducer,
-  useContext,
-  useRef,
-  useEffect,
-  useState,
   memo,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
 } from "react";
-import { TransformComponent } from "react-zoom-pan-pinch";
-import getItems from "../../wikidata/getItems";
-import { hierarchy } from "d3-hierarchy";
-import { MAX_SCALE, MIN_SCALE, DEFAULT_SCALE } from "../../constants/tree";
-import Node from "../Node/Node";
-import Rel from "../Rel/Rel";
-import { CHILD_ID } from "../../constants/properties";
 import graphReducer, {
-  getInitialState,
   collapseRootSiblings,
   collapseSiblings,
+  getInitialState,
 } from "./graphReducer";
-import getNodeUniqueId from "../../lib/getNodeUniqueId";
-import filterSpouses from "../../lib/filterSpouses";
+import styled, { useTheme } from "styled-components";
+import { useHistory, useLocation } from "react-router-dom";
+
+import { AppContext } from "../../App";
 import Navigation from "./Navigation/Navigation";
-import { sortByBirthDate, sortByGender } from "../../lib/sortEntities";
-import last from "../../lib/last";
+import Node from "../Node/Node";
+import Rel from "../Rel/Rel";
+import { TransformComponent } from "react-zoom-pan-pinch";
+import { TransformWrapper } from "react-zoom-pan-pinch";
+import addNodeChildren from "../../lib/addNodeChildren";
+import addNodeParents from "../../lib/addNodeParents";
+import addNodeSiblings from "../../lib/addNodeSiblings";
+import addNodeSpouses from "../../lib/addNodeSpouses";
 import clsx from "clsx";
 import debounce from "lodash.debounce";
-import styled, { useTheme } from "styled-components";
+import getItems from "../../wikidata/getItems";
+import getNodeUniqueId from "../../lib/getNodeUniqueId";
+import getSiblingNode from "../../lib/getSiblingNode";
+import getSpouseNode from "../../lib/getSpouseNode";
+import { hierarchy } from "d3-hierarchy";
+import last from "../../lib/last";
+import { sortByBirthDate } from "../../lib/sortEntities";
+import { updateUrlToggles } from "../../lib/updateUrlToggles";
 
 export default function GraphWrapper() {
   return (
@@ -63,6 +79,8 @@ const Graph = memo(
       settings,
     } = useContext(AppContext);
     const theme = useTheme();
+    const history = useHistory();
+    const location = useLocation();
 
     const [graph, dispatchGraph] = useReducer(
       graphReducer,
@@ -82,7 +100,6 @@ const Graph = memo(
       handleResize();
 
       window.addEventListener("resize", handleResize);
-
       return () => {
         window.removeEventListener("resize", handleResize);
       };
@@ -123,10 +140,16 @@ const Graph = memo(
                 parentTree,
               });
 
-              toggleParents(parentTree, { noRecenter: true });
-              toggleChildren(childTree, { noRecenter: true });
-              toggleRootSiblings(root, { noRecenter: true });
-              toggleRootSpouses(root, { noRecenter: true });
+              toggleParents(parentTree, {
+                noRecenter: true,
+                noUrlUpdate: true,
+              });
+              toggleChildren(childTree, {
+                noRecenter: true,
+                noUrlUpdate: true,
+              });
+              toggleRootSiblings(root, { noRecenter: true, noUrlUpdate: true });
+              toggleRootSpouses(root, { noRecenter: true, noUrlUpdate: true });
 
               setLoadingEntity(false);
             } else {
@@ -169,39 +192,23 @@ const Graph = memo(
         dispatchGraph({ type: "expandChildren", node, theme });
       } else {
         try {
-          const entities = await getItems(
-            node.data.downIds,
-            currentLang.code,
-            currentProp.id,
+          await addNodeChildren({
+            currentLang,
+            currentProp,
+            node,
+            secondLabel,
+            settings,
             theme,
-            {
-              addDownIds: true,
-              addRightIds: currentProp.id === CHILD_ID,
-              secondLabel,
-              rightEntityOption: settings.rightEntityOption,
-            }
-          );
-          if (currentProp.id === CHILD_ID && !node.data.downIdsAlreadySorted) {
-            sortByBirthDate(entities);
-          }
-          entities.forEach((entity, index) => {
-            if (entity.isHuman && entity.isInfantDeath) return;
-            const childNode = hierarchy(entity);
-            childNode.depth = node.depth + 1;
-            childNode.parent = node;
-            childNode.childNumber = index + 1;
-            childNode.treeId = getNodeUniqueId(childNode, index);
-            childNode.isChild = true;
-            if (!node.children) {
-              node.children = [];
-            }
-            node.children.push(childNode);
           });
 
           dispatchGraph({ type: "expandChildren", node, theme });
         } catch (error) {
           showError(error);
         }
+      }
+
+      if (!options.noUrlUpdate) {
+        updateUrlToggles(location, history, node, DOWN_SYMBOL);
       }
       if (!options.noRecenter) centerPoint(node.x, node.y);
     };
@@ -220,41 +227,23 @@ const Graph = memo(
         dispatchGraph({ type: "expandParents", node, theme });
       } else {
         try {
-          const entities = await getItems(
-            node.data.upIds,
-            currentLang.code,
-            currentProp.id,
+          await addNodeParents({
+            node,
+            currentLang,
+            currentProp,
             theme,
-            {
-              upMap: currentUpMap,
-              addLeftIds: currentProp.id === CHILD_ID,
-              addRightIds: currentProp.id === CHILD_ID,
-              secondLabel,
-            }
-          );
-          if (currentProp.id === CHILD_ID) {
-            sortByGender(entities);
-          }
-          entities.forEach((entity, index) => {
-            const parentNode = hierarchy(entity);
-            parentNode.isParent = true;
-            parentNode.depth = node.depth - 1;
-            parentNode.parent = node;
-            parentNode.treeId = getNodeUniqueId(parentNode, index);
-            if (!node.children) {
-              node.children = [];
-            }
-            node.children.push(parentNode);
+            currentUpMap,
+            secondLabel,
           });
-          if (currentProp.id === CHILD_ID) {
-            filterSpouses(node);
-          }
           dispatchGraph({ type: "expandParents", node, theme });
         } catch (error) {
           showError(error);
         }
       }
 
+      if (!options.noUrlUpdate) {
+        updateUrlToggles(location, history, node, UP_SYMBOL);
+      }
       if (!options.noRecenter) centerPoint(node.x, node.y);
     };
 
@@ -272,21 +261,12 @@ const Graph = memo(
         dispatchGraph({ type: "expandSpouses", node, theme });
       } else {
         try {
-          const entities = await getItems(
-            node.data.rightIds,
-            currentLang.code,
-            null,
+          lastSpouse = await addNodeSpouses({
+            node,
+            currentLang,
             theme,
-            { secondLabel, rightEntityOption: settings.rightEntityOption }
-          );
-          entities.forEach((entity, index) => {
-            const spouseNode = getSpouseNode(entity, index);
-            spouseNode.depth = node.depth;
-            spouseNode.virtualParent = node;
-            spouseNode.parent = node.parent;
-            const spouseIndex = node.parent.children.indexOf(node) + 1 + index; //need to be appended to the list
-            node.parent.children.splice(spouseIndex, 0, spouseNode);
-            lastSpouse = spouseNode;
+            settings,
+            secondLabel,
           });
           dispatchGraph({ type: "expandSpouses", node, theme });
         } catch (error) {
@@ -294,6 +274,9 @@ const Graph = memo(
         }
       }
 
+      if (!options.noUrlUpdate) {
+        updateUrlToggles(location, history, node, RIGHT_SYMBOL);
+      }
       let newx = node.x;
       // I don't think the current node should move from the center
       // if (node._spousesExpanded && lastSpouse) {
@@ -317,23 +300,12 @@ const Graph = memo(
         dispatchGraph({ type: "expandSiblings", node, theme });
       } else {
         try {
-          //TODO: mode this in a function
-          const entities = await getItems(
-            node.data.leftIds,
-            currentLang.code,
-            null,
+          firstSibling = await addNodeSiblings({
+            node,
+            currentLang,
             theme,
-            { secondLabel, rightEntityOption: settings.rightEntityOption }
-          );
-          sortByBirthDate(entities);
-          entities.forEach((entity, index) => {
-            const siblingNode = getSiblingNode(entity, index);
-            siblingNode.depth = node.depth;
-            siblingNode.virtualParent = node;
-            siblingNode.parent = node.parent;
-            const siblingIndex = node.parent.children.indexOf(node); //it will keep prepending to the node index
-            node.parent.children.splice(siblingIndex, 0, siblingNode);
-            if (!firstSibling) firstSibling = siblingNode;
+            settings,
+            secondLabel,
           });
           dispatchGraph({ type: "expandSiblings", node, theme });
         } catch (error) {
@@ -341,6 +313,9 @@ const Graph = memo(
         }
       }
 
+      if (!options.noUrlUpdate) {
+        updateUrlToggles(location, history, node, LEFT_SYMBOL);
+      }
       let newx = node.x;
       // I don't think the current node should move from the center
       // if (node._siblingsExpanded && firstSibling)
@@ -425,20 +400,6 @@ const Graph = memo(
       let newx = root.x;
       // if (root._siblingsExpanded) newx = (newx + root.siblings[0].x) / 2;
       if (!options.noRecenter) centerPoint(newx);
-    };
-
-    const getSiblingNode = (entity, index) => {
-      const siblingNode = hierarchy(entity);
-      siblingNode.isSibling = true;
-      siblingNode.treeId = getNodeUniqueId(siblingNode, index, "sibling");
-      return siblingNode;
-    };
-
-    const getSpouseNode = (entity, index) => {
-      const spouseNode = hierarchy(entity);
-      spouseNode.isSpouse = true;
-      spouseNode.treeId = getNodeUniqueId(spouseNode, index, "spouse");
-      return spouseNode;
     };
 
     const fitTree = () => {
@@ -587,15 +548,9 @@ const Graph = memo(
                       index={index}
                       key={node.treeId}
                       currentProp={currentProp}
-                      toggleChildren={(node) => {
-                        toggleChildren(node);
-                      }}
-                      toggleSpouses={(node) => {
-                        toggleSpouses(node);
-                      }}
-                      toggleSiblings={(node) => {
-                        toggleSiblings(node);
-                      }}
+                      toggleChildren={toggleChildren}
+                      toggleSpouses={toggleSpouses}
+                      toggleSiblings={toggleSiblings}
                       node={node}
                       setFocusedNode={setFocusedNode}
                       focusedNode={focusedNode}
@@ -606,15 +561,9 @@ const Graph = memo(
                       key={node.treeId}
                       index={index}
                       currentProp={currentProp}
-                      toggleSpouses={(node) => {
-                        toggleSpouses(node);
-                      }}
-                      toggleSiblings={(node) => {
-                        toggleSiblings(node);
-                      }}
-                      toggleParents={(node) => {
-                        toggleParents(node);
-                      }}
+                      toggleSpouses={toggleSpouses}
+                      toggleSiblings={toggleSiblings}
+                      toggleParents={toggleParents}
                       node={node}
                       setFocusedNode={setFocusedNode}
                       focusedNode={focusedNode}

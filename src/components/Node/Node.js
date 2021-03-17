@@ -1,35 +1,44 @@
-import React, { memo, useContext, useEffect, useMemo, useState } from "react";
-import { Button } from "react-bootstrap";
-import {
-  FiChevronLeft,
-  FiChevronUp,
-  FiChevronDown,
-  FiChevronRight,
-} from "react-icons/fi";
-import { RiGroupLine, RiParentLine } from "react-icons/ri";
-import { GiBigDiamondRing } from "react-icons/gi";
-import { BsImage } from "react-icons/bs";
-import { MdChildCare } from "react-icons/md";
 import "./Node.scss";
+
 import {
   CHILD_ID,
   EYE_COLOR_ID,
   GENI_ID,
-  //HAIR_COLOR_ID,
   INSTAGRAM_ID,
   WIKITREE_ID,
 } from "../../constants/properties";
-import DetailsModal from "../../modals/DetailsModal/DetailsModal";
-import { FaMale, FaFemale, FaEye } from "react-icons/fa";
-import colorByProperty from "../../wikidata/colorByProperty";
-import { GiPerson } from "react-icons/gi";
-import { AppContext } from "../../App";
-import clsx from "clsx";
-import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
-import getGeniImageUrl from "../../geni/getGeniImageUrl";
+import {
+  DOWN_SYMBOL,
+  LEFT_SYMBOL,
+  RIGHT_SYMBOL,
+  UP_SYMBOL,
+} from "../../constants/tree";
+import { FaEye, FaFemale, FaMale } from "react-icons/fa";
+import {
+  FiChevronDown,
+  FiChevronLeft,
+  FiChevronRight,
+  FiChevronUp,
+} from "react-icons/fi";
+import React, { memo, useContext, useEffect, useMemo, useState } from "react";
+import { RiGroupLine, RiParentLine } from "react-icons/ri";
 import styled, { useTheme } from "styled-components";
+
+import { AppContext } from "../../App";
+import { BsImage } from "react-icons/bs";
+import { Button } from "react-bootstrap";
+import DetailsModal from "../../modals/DetailsModal/DetailsModal";
+import { GiBigDiamondRing } from "react-icons/gi";
+import { GiPerson } from "react-icons/gi";
+import { MdChildCare } from "react-icons/md";
+import clsx from "clsx";
+import colorByProperty from "../../wikidata/colorByProperty";
 import getData from "../../axios/getData";
+import getGeniImageUrl from "../../geni/getGeniImageUrl";
 import getSimpleClaimValue from "../../lib/getSimpleClaimValue";
+import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
+import queryString from "query-string";
+import { useLocation } from "react-router-dom";
 
 export default memo(function Node({
   node,
@@ -49,7 +58,7 @@ export default memo(function Node({
   const [images, setImages] = useState(node.data.images);
   const [thumbnailIndex, setThumbnailIndex] = useState(0);
   const theme = useTheme();
-
+  const location = useLocation();
   const { settings, secondLabel } = useContext(AppContext);
 
   const hideModal = () => {
@@ -65,6 +74,20 @@ export default memo(function Node({
   //   () => colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]),
   //   [node.data.simpleClaims]
   // );
+
+  useEffect(() => {
+    const urlIds = queryString.parse(location.search);
+    if (urlIds[node.data.id]) {
+      if (urlIds[node.data.id].indexOf(UP_SYMBOL) > -1)
+        toggleParents(node, { noRecenter: true, noUrlUpdate: true });
+      if (urlIds[node.data.id].indexOf(DOWN_SYMBOL) > -1)
+        toggleChildren(node, { noRecenter: true, noUrlUpdate: true });
+      if (urlIds[node.data.id].indexOf(LEFT_SYMBOL) > -1)
+        toggleSiblings(node, { noRecenter: true, noUrlUpdate: true });
+      if (urlIds[node.data.id].indexOf(RIGHT_SYMBOL) > -1)
+        toggleSpouses(node, { noRecenter: true, noUrlUpdate: true });
+    }
+  }, []);
 
   useEffect(() => {
     if (settings.showExternalImages) {
