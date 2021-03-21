@@ -12,7 +12,6 @@ const useUpdateUrl = () => {
 
   useEffect(() => {
     if (currentEntity) {
-      console.log(location.search);
       history.push({
         pathname: `/${currentLang.code}/${
           currentProp

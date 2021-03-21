@@ -1,22 +1,31 @@
-import React, { Component } from "react";
-import { Alert, Container } from "react-bootstrap";
-import { Router, Switch, Route } from "react-router-dom";
-import { createBrowserHistory } from "history";
-import HomePage from "./pages/HomePage/HomePage";
 import "./App.scss";
+
+import { Alert, Container } from "react-bootstrap";
+import React, { Component } from "react";
+import { Route, Router, Switch } from "react-router-dom";
+import {
+  STORED_CUSTOM_THEME_PREFIX_KEY,
+  STORED_LANG_CODE_KEY,
+  STORED_SECOND_LANG_CODE_KEY,
+  STORED_SETTINGS_KEY,
+  STORED_THEME_KEY,
+} from "./constants/storage";
+
 import AboutPage from "./pages/AboutPage/AboutPage";
-import PrivacyPolicyPage from "./pages/PrivacyPolicyPage/PrivacyPolicyPage";
+import HomePage from "./pages/HomePage/HomePage";
+import IframePage from "./pages/IframePage/IframePage";
 import Logo from "./components/Logo/Logo";
 import NotFoundPage from "./pages/NotFoundPage/NotFoundPage";
-import TutorialPage from "./pages/TutorialPage/TutorialPage";
-import ls from "local-storage";
-import ReactGA from "react-ga";
-import treeLayout from "./lib/getTreeLayout";
-import { THEMES } from "./constants/themes";
-import IframePage from "./pages/IframePage/IframePage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage/PrivacyPolicyPage";
 import { RIGHT_ENTITY_OPTIONS } from "./constants/properties";
+import ReactGA from "react-ga";
+import { THEMES } from "./constants/themes";
+import TutorialPage from "./pages/TutorialPage/TutorialPage";
+import { createBrowserHistory } from "history";
+import ls from "local-storage";
+import treeLayout from "./lib/getTreeLayout";
 
-const browserHistory = createBrowserHistory();
+export const browserHistory = createBrowserHistory();
 
 export const AppContext = React.createContext();
 
@@ -60,7 +69,7 @@ export default class App extends Component {
           action: `Updated`,
           label: `theme: ${theme.name}`,
         });
-        ls("storedThemeKey", theme.name);
+        ls(STORED_THEME_KEY, theme.name);
       }
       treeLayout.nodeSize([
         theme.nodeWidth,
@@ -98,7 +107,7 @@ export default class App extends Component {
         action: `Updated`,
         label: `${settingKey}: ${settingValue}`,
       });
-      ls("settings", settings);
+      ls(STORED_SETTINGS_KEY, settings);
       this.setState({
         settings,
       });
@@ -112,7 +121,7 @@ export default class App extends Component {
       const resetTheme = THEMES.find(
         ({ name }) => this.state.currentTheme.name === name
       );
-      ls.remove("storedCustomTheme_" + this.state.currentTheme.name);
+      ls.remove(STORED_CUSTOM_THEME_PREFIX_KEY + this.state.currentTheme.name);
       this.state.setCurrentTheme(resetTheme, false);
       this.setState({
         currentCustomTheme: resetTheme,
@@ -125,7 +134,7 @@ export default class App extends Component {
         [themeKey]: themeValue,
       };
       ls(
-        "storedCustomTheme_" + this.state.currentTheme.name,
+        STORED_CUSTOM_THEME_PREFIX_KEY + this.state.currentTheme.name,
         currentCustomTheme
       );
       this.setState({
@@ -138,7 +147,7 @@ export default class App extends Component {
         action: `Changed`,
         label: currentLang.code,
       });
-      ls("storedLangCode", currentLang.code);
+      ls(STORED_LANG_CODE_KEY, currentLang.code);
       this.setState({
         currentLang,
       });
@@ -150,9 +159,9 @@ export default class App extends Component {
           action: `Changed`,
           label: secondLabel.code,
         });
-        ls("storedSecondLabelCode", secondLabel.code);
+        ls(STORED_SECOND_LANG_CODE_KEY, secondLabel.code);
       } else {
-        ls.remove("storedSecondLabelCode");
+        ls.remove(STORED_SECOND_LANG_CODE_KEY);
       }
       this.setState({ secondLabel });
     },

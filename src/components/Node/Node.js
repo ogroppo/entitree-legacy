@@ -76,16 +76,17 @@ export default memo(function Node({
   // );
 
   useEffect(() => {
+    // check if node QID is in url params and toggle accrodingly
     const urlIds = queryString.parse(location.search);
     if (urlIds[node.data.id]) {
       if (urlIds[node.data.id].indexOf(UP_SYMBOL) > -1)
-        toggleParents(node, { noRecenter: true, noUrlUpdate: true });
+        toggleParents(node, { noRecenter: true });
       if (urlIds[node.data.id].indexOf(DOWN_SYMBOL) > -1)
-        toggleChildren(node, { noRecenter: true, noUrlUpdate: true });
+        toggleChildren(node, { noRecenter: true });
       if (urlIds[node.data.id].indexOf(LEFT_SYMBOL) > -1)
-        toggleSiblings(node, { noRecenter: true, noUrlUpdate: true });
+        toggleSiblings(node, { noRecenter: true });
       if (urlIds[node.data.id].indexOf(RIGHT_SYMBOL) > -1)
-        toggleSpouses(node, { noRecenter: true, noUrlUpdate: true });
+        toggleSpouses(node, { noRecenter: true });
     }
   }, []);
 
