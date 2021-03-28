@@ -62,7 +62,7 @@ export default function graphReducer(graph, { type, theme, ...arg }) {
         newGraph.root._childrenExpanded = false;
         newGraph.root.loadingChildren = false;
       }
-      collapseChildren(node, theme);
+      collapseChildren(node);
       recalcChildren(newGraph, theme);
       return newGraph;
     }
@@ -99,7 +99,7 @@ export default function graphReducer(graph, { type, theme, ...arg }) {
         graph.root._parentsExpanded = false;
         graph.root.loadingParents = false;
       }
-      collapseParents(node, theme);
+      collapseParents(node);
       recalcParents(graph, theme);
       return { ...graph };
     }

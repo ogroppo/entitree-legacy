@@ -1,14 +1,6 @@
 import "./Graph.scss";
 
-import {
-  DEFAULT_SCALE,
-  DOWN_SYMBOL,
-  LEFT_SYMBOL,
-  MAX_SCALE,
-  MIN_SCALE,
-  RIGHT_SYMBOL,
-  UP_SYMBOL,
-} from "../../constants/tree";
+import { DEFAULT_SCALE, MAX_SCALE, MIN_SCALE } from "../../constants/tree";
 import React, {
   memo,
   useContext,
@@ -17,6 +9,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { addUrlBookmark, removeUrlBookmark } from "../../lib/updateUrlToggles";
 import graphReducer, {
   collapseRootSiblings,
   collapseSiblings,
@@ -44,7 +37,6 @@ import getSpouseNode from "../../lib/getSpouseNode";
 import { hierarchy } from "d3-hierarchy";
 import last from "../../lib/last";
 import { sortByBirthDate } from "../../lib/sortEntities";
-import { updateUrlToggles } from "../../lib/updateUrlToggles";
 
 export default function GraphWrapper() {
   return (
@@ -142,14 +134,12 @@ const Graph = memo(
 
               toggleParents(parentTree, {
                 noRecenter: true,
-                noUrlUpdate: true,
               });
               toggleChildren(childTree, {
                 noRecenter: true,
-                noUrlUpdate: true,
               });
-              toggleRootSiblings(root, { noRecenter: true, noUrlUpdate: true });
-              toggleRootSpouses(root, { noRecenter: true, noUrlUpdate: true });
+              toggleRootSiblings(root, { noRecenter: true });
+              toggleRootSpouses(root, { noRecenter: true });
 
               setLoadingEntity(false);
             } else {
@@ -184,11 +174,13 @@ const Graph = memo(
       dispatchGraph({ type: "setLoadingChildren", node, theme });
 
       if (node._childrenExpanded) {
+        removeUrlBookmark(node);
         dispatchGraph({ type: "collapseChildren", node, theme });
       } else if (node._children) {
         //has cached data
         node.children = node._children;
         node._children = null;
+        addUrlBookmark(node);
         dispatchGraph({ type: "expandChildren", node, theme });
       } else {
         try {
@@ -200,16 +192,13 @@ const Graph = memo(
             settings,
             theme,
           });
-
+          addUrlBookmark(node);
           dispatchGraph({ type: "expandChildren", node, theme });
         } catch (error) {
           showError(error);
         }
       }
 
-      if (!options.noUrlUpdate) {
-        updateUrlToggles(location, history, node, DOWN_SYMBOL);
-      }
       if (!options.noRecenter) centerPoint(node.x, node.y);
     };
 
@@ -219,11 +208,13 @@ const Graph = memo(
       dispatchGraph({ type: "setLoadingParents", node, theme });
 
       if (node._parentsExpanded) {
+        removeUrlBookmark(node);
         dispatchGraph({ type: "collapseParents", node, theme });
       } else if (node._parents) {
         //has cached data
         node.children = node._parents;
         node._parents = null;
+        addUrlBookmark(node);
         dispatchGraph({ type: "expandParents", node, theme });
       } else {
         try {
@@ -235,15 +226,13 @@ const Graph = memo(
             currentUpMap,
             secondLabel,
           });
+          addUrlBookmark(node);
           dispatchGraph({ type: "expandParents", node, theme });
         } catch (error) {
           showError(error);
         }
       }
 
-      if (!options.noUrlUpdate) {
-        updateUrlToggles(location, history, node, UP_SYMBOL);
-      }
       if (!options.noRecenter) centerPoint(node.x, node.y);
     };
 
@@ -274,9 +263,6 @@ const Graph = memo(
         }
       }
 
-      if (!options.noUrlUpdate) {
-        updateUrlToggles(location, history, node, RIGHT_SYMBOL);
-      }
       let newx = node.x;
       // I don't think the current node should move from the center
       // if (node._spousesExpanded && lastSpouse) {
@@ -313,9 +299,6 @@ const Graph = memo(
         }
       }
 
-      if (!options.noUrlUpdate) {
-        updateUrlToggles(location, history, node, LEFT_SYMBOL);
-      }
       let newx = node.x;
       // I don't think the current node should move from the center
       // if (node._siblingsExpanded && firstSibling)

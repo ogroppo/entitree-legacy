@@ -1,8 +1,13 @@
-import { useContext, useEffect } from "react";
-import { useRouteMatch } from "react-router-dom";
-import { AppContext } from "../App";
 import { DEFAULT_LANG, LANGS } from "../constants/langs";
+import {
+  STORED_LANG_CODE_KEY,
+  STORED_SECOND_LANG_CODE_KEY,
+} from "../constants/storage";
+import { useContext, useEffect } from "react";
+
+import { AppContext } from "../App";
 import ls from "local-storage";
+import { useRouteMatch } from "react-router-dom";
 
 const useCurrentLang = () => {
   const { setCurrentLang, setSecondLabel } = useContext(AppContext);
@@ -16,7 +21,7 @@ const useCurrentLang = () => {
     if (langCode) {
       currentLangCode = langCode;
     } else {
-      currentLangCode = ls("storedLangCode");
+      currentLangCode = ls(STORED_LANG_CODE_KEY);
     }
 
     if (currentLangCode) {
@@ -28,7 +33,7 @@ const useCurrentLang = () => {
     }
 
     //Set second label/language
-    const secondLabelCode = ls("storedSecondLabelCode");
+    const secondLabelCode = ls(STORED_SECOND_LANG_CODE_KEY);
     if (secondLabelCode) {
       const currentSecondLabel = LANGS.find(
         ({ code }) => code === secondLabelCode

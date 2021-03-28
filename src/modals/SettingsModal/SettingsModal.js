@@ -1,20 +1,23 @@
-import React, { useContext, useEffect, useState } from "react";
+import "./SettingsModal.scss";
+
 import {
-  Form,
   Button,
-  Dropdown,
-  Modal,
-  FormControl,
   Collapse,
+  Dropdown,
+  Form,
+  FormControl,
+  Modal,
 } from "react-bootstrap";
 import { LANGS, SECOND_LABELS } from "../../constants/langs";
-import { THEMES } from "../../constants/themes";
+import React, { useContext, useEffect, useState } from "react";
+
 import { AppContext } from "../../App";
 import CustomThemeForm from "./CustomThemeForm";
-import "./SettingsModal.scss";
-import ReactGA from "react-ga";
-import ls from "local-storage";
 import { RIGHT_ENTITY_OPTIONS } from "../../constants/properties";
+import ReactGA from "react-ga";
+import { STORED_CUSTOM_THEME_PREFIX_KEY } from "../../constants/storage";
+import { THEMES } from "../../constants/themes";
+import ls from "local-storage";
 
 export default function SettingsModal({ show, hideModal }) {
   const {
@@ -40,7 +43,7 @@ export default function SettingsModal({ show, hideModal }) {
   const [open, setOpen] = useState(false);
 
   const changeTheme = (theme) => {
-    const storedCustomTheme = ls("storedCustomTheme_" + theme.name);
+    const storedCustomTheme = ls(STORED_CUSTOM_THEME_PREFIX_KEY + theme.name);
     setCustomTheme(storedCustomTheme || theme);
     setCurrentTheme(storedCustomTheme || theme);
   };

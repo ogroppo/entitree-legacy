@@ -1,7 +1,13 @@
+import {
+  STORED_CUSTOM_THEME_PREFIX_KEY,
+  STORED_THEME_KEY,
+  STORED_VERSION_KEY,
+} from "../constants/storage";
+import { THEMES, defaultTheme } from "../constants/themes";
 import { useContext, useEffect } from "react";
+
 import { AppContext } from "../App";
 import ls from "local-storage";
-import { THEMES, defaultTheme } from "../constants/themes";
 
 const useLoadTheme = () => {
   const { setCurrentTheme, setCustomTheme } = useContext(AppContext);
@@ -9,13 +15,15 @@ const useLoadTheme = () => {
   useEffect(() => {
     //This should be moved in its own hook and executed first
     const currentLsVersion = 3;
-    const lsVersion = ls("lsVersion");
+    const lsVersion = ls(STORED_VERSION_KEY);
     if (!lsVersion || lsVersion !== currentLsVersion) {
       ls.clear(); // Make sure the client does not hold outdated structures
-      ls("lsVersion", currentLsVersion);
+      ls(STORED_VERSION_KEY, currentLsVersion);
     }
-    const storedThemeKey = ls("storedThemeKey");
-    const storedCustomTheme = ls("storedCustomTheme_" + storedThemeKey);
+    const storedThemeKey = ls(STORED_THEME_KEY);
+    const storedCustomTheme = ls(
+      STORED_CUSTOM_THEME_PREFIX_KEY + storedThemeKey
+    );
 
     if (!storedThemeKey) {
       setCurrentTheme(defaultTheme, false);
@@ -34,7 +42,7 @@ const useLoadTheme = () => {
         }
       } else {
         // The stored theme name is corrupted
-        ls.remove("storedThemeKey");
+        ls.remove(STORED_THEME_KEY);
         // Fallback to Default theme
         setCurrentTheme(defaultTheme, false);
       }
