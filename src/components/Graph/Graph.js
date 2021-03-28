@@ -1,6 +1,14 @@
 import "./Graph.scss";
 
-import { DEFAULT_SCALE, MAX_SCALE, MIN_SCALE } from "../../constants/tree";
+import {
+  DEFAULT_SCALE,
+  DOWN_SYMBOL,
+  LEFT_SYMBOL,
+  MAX_SCALE,
+  MIN_SCALE,
+  RIGHT_SYMBOL,
+  UP_SYMBOL,
+} from "../../constants/tree";
 import React, {
   memo,
   useContext,
@@ -174,13 +182,13 @@ const Graph = memo(
       dispatchGraph({ type: "setLoadingChildren", node, theme });
 
       if (node._childrenExpanded) {
-        removeUrlBookmark(node);
+        removeUrlBookmark(node, DOWN_SYMBOL);
         dispatchGraph({ type: "collapseChildren", node, theme });
       } else if (node._children) {
         //has cached data
         node.children = node._children;
         node._children = null;
-        addUrlBookmark(node);
+        addUrlBookmark(node, DOWN_SYMBOL);
         dispatchGraph({ type: "expandChildren", node, theme });
       } else {
         try {
@@ -192,7 +200,7 @@ const Graph = memo(
             settings,
             theme,
           });
-          addUrlBookmark(node);
+          addUrlBookmark(node, DOWN_SYMBOL);
           dispatchGraph({ type: "expandChildren", node, theme });
         } catch (error) {
           showError(error);
@@ -208,13 +216,13 @@ const Graph = memo(
       dispatchGraph({ type: "setLoadingParents", node, theme });
 
       if (node._parentsExpanded) {
-        removeUrlBookmark(node);
+        removeUrlBookmark(node, UP_SYMBOL);
         dispatchGraph({ type: "collapseParents", node, theme });
       } else if (node._parents) {
         //has cached data
         node.children = node._parents;
         node._parents = null;
-        addUrlBookmark(node);
+        addUrlBookmark(node, UP_SYMBOL);
         dispatchGraph({ type: "expandParents", node, theme });
       } else {
         try {
@@ -226,7 +234,7 @@ const Graph = memo(
             currentUpMap,
             secondLabel,
           });
-          addUrlBookmark(node);
+          addUrlBookmark(node, UP_SYMBOL);
           dispatchGraph({ type: "expandParents", node, theme });
         } catch (error) {
           showError(error);
@@ -243,10 +251,12 @@ const Graph = memo(
 
       let lastSpouse;
       if (node._spousesExpanded) {
+        removeUrlBookmark(node, RIGHT_SYMBOL);
         dispatchGraph({ type: "collapseSpouses", node, theme });
       } else if (node._spouses) {
         //cached
         lastSpouse = last(node._spouses);
+        addUrlBookmark(node, RIGHT_SYMBOL);
         dispatchGraph({ type: "expandSpouses", node, theme });
       } else {
         try {
@@ -257,6 +267,7 @@ const Graph = memo(
             settings,
             secondLabel,
           });
+          addUrlBookmark(node, RIGHT_SYMBOL);
           dispatchGraph({ type: "expandSpouses", node, theme });
         } catch (error) {
           showError(error);
@@ -278,11 +289,13 @@ const Graph = memo(
 
       let firstSibling;
       if (node._siblingsExpanded) {
+        removeUrlBookmark(node, LEFT_SYMBOL);
         // edit the node (ref to a node in the graph) and then update the state
         collapseSiblings(graph, node, theme);
         dispatchGraph({ type: "setGraph", graph, theme });
       } else if (node._siblings) {
         firstSibling = node._siblings[0];
+        addUrlBookmark(node, LEFT_SYMBOL);
         dispatchGraph({ type: "expandSiblings", node, theme });
       } else {
         try {
@@ -293,6 +306,7 @@ const Graph = memo(
             settings,
             secondLabel,
           });
+          addUrlBookmark(node, LEFT_SYMBOL);
           dispatchGraph({ type: "expandSiblings", node, theme });
         } catch (error) {
           showError(error);

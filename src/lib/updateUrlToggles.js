@@ -8,13 +8,14 @@ import {
 import { browserHistory } from "../App";
 import queryString from "query-string";
 
-// TODO: add direction argument so can save also sibligns/spouses
-export const removeUrlBookmark = (node) => {
+export const removeUrlBookmark = (node, directionSymbol) => {
   const urlIds = queryString.parse(window.location.search);
 
   const removeRecursive = (node) => {
+    // the balow COULD be simplified removing the bookmak completely,
+    // but then if the node appears somewhere else, this will not work
     if (urlIds[node.data.id]) {
-      if (node.isParent) {
+      if (directionSymbol === UP_SYMBOL) {
         // remove open parents bookmarks
         if (urlIds[node.data.id].indexOf(UP_SYMBOL) > -1) {
           urlIds[node.data.id] = urlIds[node.data.id].replace(UP_SYMBOL, "");
@@ -24,7 +25,7 @@ export const removeUrlBookmark = (node) => {
           urlIds[node.data.id] = urlIds[node.data.id].replace(LEFT_SYMBOL, "");
         }
       }
-      if (node.isChild) {
+      if (directionSymbol === DOWN_SYMBOL) {
         // remove open children bookmarks
         if (urlIds[node.data.id].indexOf(DOWN_SYMBOL) > -1) {
           urlIds[node.data.id] = urlIds[node.data.id].replace(DOWN_SYMBOL, "");
@@ -36,6 +37,7 @@ export const removeUrlBookmark = (node) => {
       }
     }
 
+    //if empty because of the removals, remove completely from url
     if (urlIds[node.data.id] === "") delete urlIds[node.data.id];
 
     // continue removing bookmarks recursively
@@ -57,26 +59,20 @@ export const removeUrlBookmark = (node) => {
   });
 };
 
-export const addUrlBookmark = (node) => {
+export const addUrlBookmark = (node, directionSymbol) => {
+  //exclude root (is always open by default)
+  if (node.isRoot) return;
+
   const urlIds = queryString.parse(window.location.search);
 
-  // in url already
+  // node bookmarked already
   if (urlIds[node.data.id]) {
-    if (
-      node.isParent && //root will not be affected
-      urlIds[node.data.id].indexOf(UP_SYMBOL) === -1 // if open already, ignore
-    ) {
-      urlIds[node.data.id] += UP_SYMBOL; //add
-    }
-    if (
-      node.isChild && //root will not be affected
-      urlIds[node.data.id].indexOf(DOWN_SYMBOL) === -1 // if open already, ignore
-    ) {
-      urlIds[node.data.id] += DOWN_SYMBOL; //add
+    // if symbol not found, add
+    if (urlIds[node.data.id].indexOf(directionSymbol) === -1) {
+      urlIds[node.data.id] += directionSymbol;
     }
   } else {
-    if (node.isParent) urlIds[node.data.id] = UP_SYMBOL; //set
-    if (node.isChild) urlIds[node.data.id] = DOWN_SYMBOL; //set
+    urlIds[node.data.id] = directionSymbol; //set
   }
 
   browserHistory.push({
