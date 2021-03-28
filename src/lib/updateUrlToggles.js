@@ -12,25 +12,26 @@ export const removeUrlBookmark = (node, directionSymbol) => {
   const urlIds = queryString.parse(window.location.search);
 
   const removeRecursive = (node) => {
-    // the balow COULD be simplified removing the bookmak completely,
+    // the below COULD be simplified removing the bookmak completely,
     // but then if the node appears somewhere else, this will not work
     if (urlIds[node.data.id]) {
+      //remove current direction
+      if (urlIds[node.data.id].indexOf(directionSymbol) > -1) {
+        urlIds[node.data.id] = urlIds[node.data.id].replace(
+          directionSymbol,
+          ""
+        );
+      }
+
+      // remove open siblings bookmarks for parents
       if (directionSymbol === UP_SYMBOL) {
-        // remove open parents bookmarks
-        if (urlIds[node.data.id].indexOf(UP_SYMBOL) > -1) {
-          urlIds[node.data.id] = urlIds[node.data.id].replace(UP_SYMBOL, "");
-        }
-        // remove open siblings bookmarks
         if (urlIds[node.data.id].indexOf(LEFT_SYMBOL) > -1) {
           urlIds[node.data.id] = urlIds[node.data.id].replace(LEFT_SYMBOL, "");
         }
       }
+
+      // remove open spouses bookmarks for children
       if (directionSymbol === DOWN_SYMBOL) {
-        // remove open children bookmarks
-        if (urlIds[node.data.id].indexOf(DOWN_SYMBOL) > -1) {
-          urlIds[node.data.id] = urlIds[node.data.id].replace(DOWN_SYMBOL, "");
-        }
-        // remove open spouses bookmarks
         if (urlIds[node.data.id].indexOf(RIGHT_SYMBOL) > -1) {
           urlIds[node.data.id] = urlIds[node.data.id].replace(RIGHT_SYMBOL, "");
         }
@@ -45,8 +46,8 @@ export const removeUrlBookmark = (node, directionSymbol) => {
     // will work also for Root node that is never bookmarked
     if (node.children)
       node.children.forEach((child) => {
+        // do not act on siblings/spouses nor root node
         if (child.isParent || child.isChild) {
-          // do not act on siblings/spouses
           removeRecursive(child);
         }
       });
