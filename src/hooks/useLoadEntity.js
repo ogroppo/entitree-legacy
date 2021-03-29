@@ -1,13 +1,19 @@
+import {
+  CHILD_ID,
+  DEFAULT_PROPERTY_ALL,
+  FAMILY_IDS_MAP,
+  FAMILY_PROP,
+} from "../constants/properties";
 import { useContext, useEffect, useMemo } from "react";
-import { useRouteMatch } from "react-router-dom";
+
 import { AppContext } from "../App";
+import addEntityConnectors from "../lib/addEntityConnectors";
 import getItem from "../wikidata/getItem";
 import getItemProps from "../wikidata/getItemProps";
-import { FAMILY_PROP, FAMILY_IDS_MAP, CHILD_ID } from "../constants/properties";
 import getUpMap from "../wikidata/getUpMap";
-import addEntityConnectors from "../lib/addEntityConnectors";
-import { useTheme } from "styled-components";
 import usePrevious from "./usePrevious";
+import { useRouteMatch } from "react-router-dom";
+import { useTheme } from "styled-components";
 
 const useLoadEntity = () => {
   const {
@@ -74,7 +80,7 @@ const useLoadEntity = () => {
           //is coming from url
           const { propSlug } = match.params;
           const decodedPropSlug = decodeURIComponent(propSlug);
-          if (decodedPropSlug && decodedPropSlug !== "all")
+          if (decodedPropSlug && decodedPropSlug !== DEFAULT_PROPERTY_ALL)
             _currentProp = itemProps.find(
               ({ slug }) => slug === decodedPropSlug
             );

@@ -204,3 +204,5 @@ export const RIGHT_ENTITY_OPTIONS = [
     title: "Only partners",
   },
 ];
+
+export const DEFAULT_PROPERTY_ALL = "all";
