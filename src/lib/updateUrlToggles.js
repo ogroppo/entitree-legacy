@@ -8,34 +8,37 @@ import {
 import { browserHistory } from "../App";
 import queryString from "query-string";
 
-// TODO: add direction argument so can save also sibligns/spouses
-export const removeUrlBookmark = (node) => {
+export const removeUrlBookmark = (node, directionSymbol) => {
   const urlIds = queryString.parse(window.location.search);
 
   const removeRecursive = (node) => {
+    // the below COULD be simplified removing the bookmak completely,
+    // but then if the node appears somewhere else, this will not work
     if (urlIds[node.data.id]) {
-      if (node.isParent) {
-        // remove open parents bookmarks
-        if (urlIds[node.data.id].indexOf(UP_SYMBOL) > -1) {
-          urlIds[node.data.id] = urlIds[node.data.id].replace(UP_SYMBOL, "");
-        }
-        // remove open siblings bookmarks
+      //remove current direction
+      if (urlIds[node.data.id].indexOf(directionSymbol) > -1) {
+        urlIds[node.data.id] = urlIds[node.data.id].replace(
+          directionSymbol,
+          ""
+        );
+      }
+
+      // remove open siblings bookmarks for parents
+      if (directionSymbol === UP_SYMBOL) {
         if (urlIds[node.data.id].indexOf(LEFT_SYMBOL) > -1) {
           urlIds[node.data.id] = urlIds[node.data.id].replace(LEFT_SYMBOL, "");
         }
       }
-      if (node.isChild) {
-        // remove open children bookmarks
-        if (urlIds[node.data.id].indexOf(DOWN_SYMBOL) > -1) {
-          urlIds[node.data.id] = urlIds[node.data.id].replace(DOWN_SYMBOL, "");
-        }
-        // remove open spouses bookmarks
+
+      // remove open spouses bookmarks for children
+      if (directionSymbol === DOWN_SYMBOL) {
         if (urlIds[node.data.id].indexOf(RIGHT_SYMBOL) > -1) {
           urlIds[node.data.id] = urlIds[node.data.id].replace(RIGHT_SYMBOL, "");
         }
       }
     }
 
+    //if empty because of the removals, remove completely from url
     if (urlIds[node.data.id] === "") delete urlIds[node.data.id];
 
     // continue removing bookmarks recursively
@@ -43,8 +46,8 @@ export const removeUrlBookmark = (node) => {
     // will work also for Root node that is never bookmarked
     if (node.children)
       node.children.forEach((child) => {
+        // do not act on siblings/spouses nor root node
         if (child.isParent || child.isChild) {
-          // do not act on siblings/spouses
           removeRecursive(child);
         }
       });
@@ -57,26 +60,20 @@ export const removeUrlBookmark = (node) => {
   });
 };
 
-export const addUrlBookmark = (node) => {
+export const addUrlBookmark = (node, directionSymbol) => {
+  //exclude root (is always open by default)
+  if (node.isRoot) return;
+
   const urlIds = queryString.parse(window.location.search);
 
-  // in url already
+  // node bookmarked already
   if (urlIds[node.data.id]) {
-    if (
-      node.isParent && //root will not be affected
-      urlIds[node.data.id].indexOf(UP_SYMBOL) === -1 // if open already, ignore
-    ) {
-      urlIds[node.data.id] += UP_SYMBOL; //add
-    }
-    if (
-      node.isChild && //root will not be affected
-      urlIds[node.data.id].indexOf(DOWN_SYMBOL) === -1 // if open already, ignore
-    ) {
-      urlIds[node.data.id] += DOWN_SYMBOL; //add
+    // if symbol not found, add
+    if (urlIds[node.data.id].indexOf(directionSymbol) === -1) {
+      urlIds[node.data.id] += directionSymbol;
     }
   } else {
-    if (node.isParent) urlIds[node.data.id] = UP_SYMBOL; //set
-    if (node.isChild) urlIds[node.data.id] = DOWN_SYMBOL; //set
+    urlIds[node.data.id] = directionSymbol; //set
   }
 
   browserHistory.push({
