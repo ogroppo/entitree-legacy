@@ -24,7 +24,6 @@ import graphReducer, {
   getInitialState,
 } from "./graphReducer";
 import styled, { useTheme } from "styled-components";
-import { useHistory, useLocation } from "react-router-dom";
 
 import { AppContext } from "../../App";
 import Navigation from "./Navigation/Navigation";
@@ -79,8 +78,6 @@ const Graph = memo(
       settings,
     } = useContext(AppContext);
     const theme = useTheme();
-    const history = useHistory();
-    const location = useLocation();
 
     const [graph, dispatchGraph] = useReducer(
       graphReducer,
@@ -547,7 +544,6 @@ const Graph = memo(
                       currentProp={currentProp}
                       toggleChildren={toggleChildren}
                       toggleSpouses={toggleSpouses}
-                      toggleSiblings={toggleSiblings}
                       node={node}
                       setFocusedNode={setFocusedNode}
                       focusedNode={focusedNode}
@@ -558,7 +554,6 @@ const Graph = memo(
                       key={node.treeId}
                       index={index}
                       currentProp={currentProp}
-                      toggleSpouses={toggleSpouses}
                       toggleSiblings={toggleSiblings}
                       toggleParents={toggleParents}
                       node={node}

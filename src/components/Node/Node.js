@@ -79,15 +79,16 @@ export default memo(function Node({
     // check if node QID is in url params and toggle accrodingly
     const urlIds = queryString.parse(location.search);
     if (urlIds[node.data.id]) {
-      if (urlIds[node.data.id].indexOf(UP_SYMBOL) > -1)
+      if (urlIds[node.data.id].indexOf(UP_SYMBOL) > -1 && node.isParent)
         toggleParents(node, { noRecenter: true });
-      if (urlIds[node.data.id].indexOf(DOWN_SYMBOL) > -1)
+      if (urlIds[node.data.id].indexOf(DOWN_SYMBOL) > -1 && node.isChild)
         toggleChildren(node, { noRecenter: true });
-      if (urlIds[node.data.id].indexOf(LEFT_SYMBOL) > -1)
+      if (urlIds[node.data.id].indexOf(LEFT_SYMBOL) > -1 && node.isParent)
         toggleSiblings(node, { noRecenter: true });
-      if (urlIds[node.data.id].indexOf(RIGHT_SYMBOL) > -1)
+      if (urlIds[node.data.id].indexOf(RIGHT_SYMBOL) > -1 && node.isChild)
         toggleSpouses(node, { noRecenter: true });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
