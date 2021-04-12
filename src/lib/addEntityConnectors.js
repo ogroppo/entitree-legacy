@@ -3,6 +3,7 @@ import {
   SIBLINGS_ID,
   START_DATE_ID,
   NUMBER_OF_CHILDREN_ID,
+  CHILD_ID,
 } from "../constants/properties";
 import getSimpleClaimValue from "./getSimpleClaimValue";
 
@@ -20,9 +21,14 @@ export default function addEntityConnectors(entity, propId, options = {}) {
     entity.downIdsAlreadySorted = checkIfClaimsHasSeriesOrdinal(entity, propId);
 
     //use number of children property, use count of children if not available
-    entity.childrenCount =
-      getSimpleClaimValue(entity.simpleClaims, NUMBER_OF_CHILDREN_ID) ||
-      entity.downIds.length;
+    if (propId === CHILD_ID) {
+      //only for family trees
+      entity.childrenCount =
+        getSimpleClaimValue(entity.simpleClaims, NUMBER_OF_CHILDREN_ID) ||
+        entity.downIds.length;
+    } else {
+      entity.childrenCount = entity.downIds.length;
+    }
   } else {
     delete entity.downIds;
   }
