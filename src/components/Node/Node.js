@@ -97,6 +97,7 @@ export default memo(function Node({
         node.data.simpleClaims,
         WIKITREE_ID
       );
+      /* DISABLE WIKITREE, SINCE CORS DOESN'T WORK
       if (wikitreeId) {
         getWikitreeImageUrl(wikitreeId)
           .then((wikitreeImageUrl) => {
@@ -111,6 +112,7 @@ export default memo(function Node({
           })
           .catch();
       }
+      */
 
       const geniId = getSimpleClaimValue(node.data.simpleClaims, GENI_ID);
       if (geniId) {
@@ -132,6 +134,7 @@ export default memo(function Node({
         node.data.simpleClaims,
         INSTAGRAM_ID
       );
+      /* ERROR REDIRECT
       if (instagramUsername) {
         getData(`https://www.instagram.com/${instagramUsername}/?__a=1`)
           .then((data) => {
@@ -146,6 +149,7 @@ export default memo(function Node({
           })
           .catch();
       }
+      */
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -504,6 +508,8 @@ const ThemedContent = styled.div`
     display: ${({ theme }) => theme.descriptionDisplay};
   }
   .dates {
+    width: ${({ theme }) => theme.nodeWidth - theme.thumbWidth}px;
+
     display: ${({ theme }) => theme.datesDisplay};
     text-align: ${({ theme }) => theme.labelTextAlign};
     font-size: ${({ theme }) => theme.datesFontSize}px;
