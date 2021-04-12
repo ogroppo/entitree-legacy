@@ -15,6 +15,7 @@
     "clsx": "^1.1.1",
     "d3-hierarchy": "^1.1.9",
     "express": "^4.17.1",
+    "jsonp-promise": "^0.1.2",
     "local-storage": "^2.0.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.debounce": "^4.0.8",
