@@ -489,8 +489,9 @@ const ThemedThumbnail = styled.div`
 `;
 
 const ThemedContent = styled.div`
-  padding-left: ${({ theme }) => theme.contentPaddingLeft}px;
-  padding-top: ${({ theme }) => theme.contentPaddingTop}px;
+  //use margin to get width 100% calculations eg dates
+  margin-left: ${({ theme }) => theme.contentPaddingLeft}px;
+  margin-top: ${({ theme }) => theme.contentPaddingTop}px;
   .label {
     word-break: break-word;
     text-align: ${({ theme }) => theme.labelTextAlign};
@@ -508,8 +509,6 @@ const ThemedContent = styled.div`
     display: ${({ theme }) => theme.descriptionDisplay};
   }
   .dates {
-    width: ${({ theme }) => theme.nodeWidth - theme.thumbWidth}px;
-
     display: ${({ theme }) => theme.datesDisplay};
     text-align: ${({ theme }) => theme.labelTextAlign};
     font-size: ${({ theme }) => theme.datesFontSize}px;

@@ -77,14 +77,14 @@
       color: #666;
     }
     .dates {
-      //do not set display, will come from theme
-      //font-size: 11px;
+      //do not set display nor font size, will come from theme
       color: #666;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       position: absolute;
       bottom: 0;
+      width: 100%; //this applies to all themes
     }
   }
 
