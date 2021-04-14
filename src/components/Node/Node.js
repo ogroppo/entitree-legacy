@@ -508,8 +508,7 @@ const ThemedContent = styled.div`
     display: ${({ theme }) => theme.descriptionDisplay};
   }
   .dates {
-    width: ${({ theme }) => theme.nodeWidth - theme.thumbWidth}px;
-
+    width: 100%;
     display: ${({ theme }) => theme.datesDisplay};
     text-align: ${({ theme }) => theme.labelTextAlign};
     font-size: ${({ theme }) => theme.datesFontSize}px;
