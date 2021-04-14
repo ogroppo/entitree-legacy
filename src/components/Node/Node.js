@@ -65,6 +65,16 @@ export default memo(function Node({
     setShowModal(false);
   };
 
+  //helper function needed to improve the line-clamp by moving the class to the smaller div to prevent "..." at the last line
+  const onlyLabelShown = () => {
+    console.log([theme.descriptionDisplay, secondLabel]);
+    if (theme.descriptionDisplay !== "none" || secondLabel) {
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   const eyeColor = useMemo(
     () => colorByProperty(node.data.simpleClaims[EYE_COLOR_ID]),
     [node.data.simpleClaims]
@@ -270,10 +280,12 @@ export default memo(function Node({
             )}*/}
             </div>
           )}
-          <div className="four-line-clamp">
+          <div className={onlyLabelShown() ? "" : "four-line-clamp"}>
             {node.isRoot ? (
               <h1
-                className="label btn btn-link mb-0"
+                className={`label btn btn-link mb-0 ${
+                  onlyLabelShown() ? "four-line-clamp" : ""
+                }`}
                 role="button"
                 tabIndex="0"
                 onClick={() => setShowModal(true)}
@@ -291,7 +303,9 @@ export default memo(function Node({
               </h1>
             ) : (
               <span
-                className="label btn btn-link"
+                className={`label btn btn-link ${
+                  onlyLabelShown() ? "four-line-clamp" : ""
+                }`}
                 role="button"
                 tabIndex="0"
                 onClick={() => setShowModal(true)}
