@@ -66,14 +66,7 @@ export default memo(function Node({
   };
 
   //helper function needed to improve the line-clamp by moving the class to the smaller div to prevent "..." at the last line
-  const onlyLabelShown = () => {
-    console.log([theme.descriptionDisplay, secondLabel]);
-    if (theme.descriptionDisplay !== "none" || secondLabel) {
-      return false;
-    } else {
-      return true;
-    }
-  };
+  const hasLabelOnly = theme.descriptionDisplay === "none" && !secondLabel;
 
   const eyeColor = useMemo(
     () => colorByProperty(node.data.simpleClaims[EYE_COLOR_ID]),
@@ -103,11 +96,11 @@ export default memo(function Node({
 
   useEffect(() => {
     if (settings.showExternalImages) {
+      /* DISABLE WIKITREE, SINCE CORS DOESN'T WORK
       const wikitreeId = getSimpleClaimValue(
         node.data.simpleClaims,
         WIKITREE_ID
       );
-      /* DISABLE WIKITREE, SINCE CORS DOESN'T WORK
       if (wikitreeId) {
         getWikitreeImageUrl(wikitreeId)
           .then((wikitreeImageUrl) => {
@@ -140,11 +133,11 @@ export default memo(function Node({
           .catch();
       }
 
+      /* ERROR REDIRECT
       const instagramUsername = getSimpleClaimValue(
         node.data.simpleClaims,
         INSTAGRAM_ID
       );
-      /* ERROR REDIRECT
       if (instagramUsername) {
         getData(`https://www.instagram.com/${instagramUsername}/?__a=1`)
           .then((data) => {
@@ -280,12 +273,16 @@ export default memo(function Node({
             )}*/}
             </div>
           )}
-          <div className={onlyLabelShown() ? "" : "four-line-clamp"}>
+          <div
+            className={clsx({
+              "four-line-clamp": !hasLabelOnly,
+            })}
+          >
             {node.isRoot ? (
               <h1
-                className={`label btn btn-link mb-0 ${
-                  onlyLabelShown() ? "four-line-clamp" : ""
-                }`}
+                className={clsx(`label btn btn-link mb-0`, {
+                  "four-line-clamp": hasLabelOnly,
+                })}
                 role="button"
                 tabIndex="0"
                 onClick={() => setShowModal(true)}
@@ -303,9 +300,9 @@ export default memo(function Node({
               </h1>
             ) : (
               <span
-                className={`label btn btn-link ${
-                  onlyLabelShown() ? "four-line-clamp" : ""
-                }`}
+                className={clsx(`label btn btn-link`, {
+                  "four-line-clamp": hasLabelOnly,
+                })}
                 role="button"
                 tabIndex="0"
                 onClick={() => setShowModal(true)}
