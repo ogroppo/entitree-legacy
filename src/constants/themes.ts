@@ -4,6 +4,7 @@ interface Theme {
   contentPaddingLeft: number;
   contentPaddingTop: number;
   datesDisplay: "block" | "none";
+  datesFontColor: string;
   datesFontSize: number;
   datesYearOnly: boolean;
   descriptionDisplay: "inline" | "none";
@@ -43,6 +44,7 @@ export const defaultTheme: Theme = {
   contentPaddingLeft: 3,
   contentPaddingTop: 0,
   datesDisplay: "block",
+  datesFontColor: "#666",
   datesFontSize: 11,
   datesYearOnly: false,
   descriptionDisplay: "inline",
@@ -134,6 +136,34 @@ const verticalTheme: Theme = {
   thumbWidth: 84,
 };
 
+const mattsTheme: Theme = {
+  ...defaultTheme,
+  datesDisplay: "block",
+  datesFontColor: "black",
+  datesFontSize: 14,
+  datesYearOnly: true,
+  descriptionDisplay: "none",
+  graphBackgroundColor: "#eee7db",
+  labelFontSize: 14,
+  labelFontColor: "black",
+  name: "Matt's theme",
+  nodeBorder: "none",
+  nodeFlexDirection: "column",
+  nodeHeight: 190,
+  nodeVerticalSpacing: 60,
+  nodeWidth: 100,
+  nodeBorderRadius: 10,
+  nodeBackgroundColor: "#f16f61",
+  relStroke: "#c2b9ac",
+  separationCousins: 1.35,
+  separationSameGroup: 1.65,
+  separationSiblingSpouse: 1.35,
+  thumbCounterDisplay: "none",
+  thumbHeight: 100,
+  thumbWidth: 100,
+  thumbBorderRadius: 10,
+};
+
 const onlyText: Theme = {
   ...defaultTheme,
   name: "Only Text",
@@ -181,6 +211,7 @@ export const THEMES: Theme[] = [
   darkTheme,
   onlyLabelTheme,
   verticalTheme,
+  mattsTheme,
   rawTheme,
   onlyText,
 ];
