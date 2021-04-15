@@ -17,9 +17,9 @@
       color: gray;
       font-size: 50px;
       font-style: italic;
-      left: 16px;
       opacity: 0.3;
-      position: absolute;
+      display: block;
+      text-align: center;
       top: -4px;
       white-space: nowrap;
     }
@@ -49,7 +49,7 @@
     .four-line-clamp {
       display: -webkit-box;
       -webkit-box-orient: vertical;
-      -webkit-line-clamp: 4;
+      //-webkit-line-clamp: => moved to Node.js
       line-height: 1; // leave 1, the children will be proportional to this
       overflow: hidden;
     }
@@ -78,7 +78,6 @@
     }
     .dates {
       //do not set display nor font size, will come from theme
-      color: #666;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
