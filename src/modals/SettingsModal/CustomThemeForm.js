@@ -209,6 +209,27 @@ export default function CustomThemeForm() {
             </Form.Text>
           </Col>
         </Form.Group>
+        <Form.Group as={Row} controlId={"contentLineClamp"}>
+          <Col sm={{ span: 9, offset: 3 }}>
+            <Form.Label>Line Clamp</Form.Label>
+            <InputGroup>
+              <Form.Control
+                onChange={(e) =>
+                  setCustomThemeProp("contentLineClamp", e.target.value)
+                }
+                type="number"
+                value={currentCustomTheme.contentLineClamp}
+              />
+              <InputGroup.Append>
+                <InputGroup.Text>lines</InputGroup.Text>
+              </InputGroup.Append>
+            </InputGroup>
+            <Form.Text className="text-muted">
+              The maximum number of lines shown on the node, incl. the
+              description. Please adjust the node height accordingly.
+            </Form.Text>
+          </Col>
+        </Form.Group>
       </fieldset>
       <fieldset>
         <Form.Group as={Row}>

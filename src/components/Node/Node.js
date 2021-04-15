@@ -506,6 +506,9 @@ const ThemedContent = styled.div`
   //use margin to get width 100% calculations eg dates
   margin-left: ${({ theme }) => theme.contentPaddingLeft}px;
   margin-top: ${({ theme }) => theme.contentPaddingTop}px;
+  .four-line-clamp {
+    -webkit-line-clamp: ${({ theme }) => theme.contentLineClamp};
+  }
   .label {
     word-break: break-word;
     text-align: ${({ theme }) => theme.labelTextAlign};

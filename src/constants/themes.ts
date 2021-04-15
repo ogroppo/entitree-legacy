@@ -1,6 +1,7 @@
 import isInIframe from "../lib/isInIframe";
 
 interface Theme {
+  contentLineClamp: number;
   contentPaddingLeft: number;
   contentPaddingTop: number;
   datesDisplay: "block" | "none";
@@ -53,6 +54,7 @@ export const defaultTheme: Theme = {
   labelFontColor: "",
   labelFontSize: 13,
   labelTextAlign: "left",
+  contentLineClamp: 4,
   name: "Default",
   nodeBackgroundColor: "#eee",
   nodeBorder: "1px solid lightgrey",
