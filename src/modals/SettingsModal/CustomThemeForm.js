@@ -1,8 +1,11 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Form, Col, Row, InputGroup } from "react-bootstrap";
 import { AppContext } from "../../App";
 import useDebounce from "../../lib/useDebounce";
 import Button from "react-bootstrap/Button";
+import ls from "local-storage";
+import { STORED_CUSTOM_THEME_PREFIX_KEY } from "../../constants/storage";
+// import { useHistory } from "react-router-dom";
 
 export default function CustomThemeForm() {
   const {
@@ -11,12 +14,32 @@ export default function CustomThemeForm() {
     resetCurrentTheme,
     setCustomThemeProp,
   } = useContext(AppContext);
+  // const history = useHistory();
+  // const [downloadUrl, setDownloadUrl] = useState("#");
 
   const deboucedCustomTheme = useDebounce(currentCustomTheme, 1000);
   useEffect(() => {
     setCurrentTheme(deboucedCustomTheme);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deboucedCustomTheme]);
+
+  // const handleClick = (e) => {
+  //   // e.preventDefault();
+  //   console.log(currentCustomTheme.name);
+  //   const downloadTheme = ls(
+  //     STORED_CUSTOM_THEME_PREFIX_KEY + currentCustomTheme.name
+  //   );
+  //   const path = `data:text/json;charset=utf-8,${encodeURIComponent(
+  //     JSON.stringify(downloadTheme)
+  //   )}`;
+  //   this.setState({ downloadUrl: path });
+  //
+  //   // history.push(path);
+  //
+  //   console.log(STORED_CUSTOM_THEME_PREFIX_KEY + currentCustomTheme.name);
+  //   console.log(downloadTheme);
+  //   console.log("The link was clicked.");
+  // };
 
   return (
     <div className="currentCustomTheme mt-2">
@@ -615,6 +638,21 @@ export default function CustomThemeForm() {
           <Button size="sm" onClick={resetCurrentTheme}>
             Reset values
           </Button>
+        </Col>
+        <Col sm={{ span: 3 }}>
+          {/*<Button size="sm" onClick={resetCurrentTheme}>*/}
+          {/*  Download theme*/}
+          {/*</Button>*/}
+          {/*<Button*/}
+          {/*  onClick={handleClick}*/}
+          {/*  href={this.state.downloadUrl}*/}
+          {/*  // href={`data:text/json;charset=utf-8,${encodeURIComponent(*/}
+          {/*  //   JSON.stringify({'sdfsdf':123})*/}
+          {/*  // )}`}*/}
+          {/*  download="filename.json"*/}
+          {/*>*/}
+          {/*  {`Download Json`}*/}
+          {/*</Button>*/}
         </Col>
       </Form.Group>
     </div>
