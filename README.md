@@ -6,7 +6,7 @@ The app can be served from a node.js (express) server, which is only useful for 
 
 Live website here https://www.entitree.com/
 
-Test website here https://entitree-test.heorkuapp.com/
+Test website here https://entitree-test.herokuapp.com/
 
 ![Interface example](https://github.com/ogroppo/entitree/blob/master/public/examples/interface.png)
 
