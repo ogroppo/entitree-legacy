@@ -23,23 +23,21 @@ export default function CustomThemeForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deboucedCustomTheme]);
 
-  // const handleClick = (e) => {
-  //   // e.preventDefault();
-  //   console.log(currentCustomTheme.name);
-  //   const downloadTheme = ls(
-  //     STORED_CUSTOM_THEME_PREFIX_KEY + currentCustomTheme.name
-  //   );
-  //   const path = `data:text/json;charset=utf-8,${encodeURIComponent(
-  //     JSON.stringify(downloadTheme)
-  //   )}`;
-  //   this.setState({ downloadUrl: path });
-  //
-  //   // history.push(path);
-  //
-  //   console.log(STORED_CUSTOM_THEME_PREFIX_KEY + currentCustomTheme.name);
-  //   console.log(downloadTheme);
-  //   console.log("The link was clicked.");
-  // };
+  const downloadJsonFile = (e) => {
+    e.preventDefault();
+    const element = document.createElement("a");
+    const downloadTheme = ls(
+      STORED_CUSTOM_THEME_PREFIX_KEY + currentCustomTheme.name
+    );
+    const file = new Blob([JSON.stringify(downloadTheme)], {
+      type: "text/json",
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = "custom_theme.json";
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+    element.parentNode.removeChild(element);
+  };
 
   return (
     <div className="currentCustomTheme mt-2">
@@ -638,21 +636,11 @@ export default function CustomThemeForm() {
           <Button size="sm" onClick={resetCurrentTheme}>
             Reset values
           </Button>
-        </Col>
-        <Col sm={{ span: 3 }}>
-          {/*<Button size="sm" onClick={resetCurrentTheme}>*/}
-          {/*  Download theme*/}
-          {/*</Button>*/}
-          {/*<Button*/}
-          {/*  onClick={handleClick}*/}
-          {/*  href={this.state.downloadUrl}*/}
-          {/*  // href={`data:text/json;charset=utf-8,${encodeURIComponent(*/}
-          {/*  //   JSON.stringify({'sdfsdf':123})*/}
-          {/*  // )}`}*/}
-          {/*  download="filename.json"*/}
-          {/*>*/}
-          {/*  {`Download Json`}*/}
-          {/*</Button>*/}
+          <Button
+            title="Save a copy of your customized theme, you may send it to us to include as a main theme. Importing a theme in the browser is not yet supported."
+            size="sm ml-2" onClick={downloadJsonFile} href={"#"} style={{ 'opacity': '40%'}}>
+            {`Download Theme`}
+          </Button>
         </Col>
       </Form.Group>
     </div>
