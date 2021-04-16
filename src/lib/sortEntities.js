@@ -1,20 +1,18 @@
 import { BIRTH_DATE_ID, GENDER_ID } from "../constants/properties";
 import getDateNumber from "./getDateNumber";
 import { ANIMAL_MALE_ID, HUMAN_MALE_ID } from "../constants/entities";
+import getSimpleClaimValue from "./getSimpleClaimValue";
 
 /*
 Sort entities by birth date, youngest child will be on the left, if birth date is unknown they will be on the left side
  */
 export function sortByBirthDate(entities) {
   entities.sort((a, b) => {
-    if (a.claims[BIRTH_DATE_ID] && b.claims[BIRTH_DATE_ID]) {
-      return getDateNumber(
-        a.claims[BIRTH_DATE_ID][0].mainsnak.datavalue.value.time
-      ) >
-        getDateNumber(b.claims[BIRTH_DATE_ID][0].mainsnak.datavalue.value.time)
-        ? 1
-        : -1;
-    } else if (a.claims[BIRTH_DATE_ID]) {
+    var valueA = getSimpleClaimValue(a.simpleClaims, BIRTH_DATE_ID);
+    var valueB = getSimpleClaimValue(b.simpleClaims, BIRTH_DATE_ID);
+    if (valueA && valueB) {
+      return getDateNumber(valueA) > getDateNumber(valueB) ? 1 : -1;
+    } else if (valueA) {
       return 1;
     } else {
       return -1;

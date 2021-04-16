@@ -29,6 +29,7 @@ export const END_DATE_ID = "P582";
 export const INCEPTION_ID = "P571";
 export const DISSOLVED_ABOLISHED_DEMOLISHED_ID = "P576";
 export const WEBSITE_ID = "P856";
+export const SOURCING_CIRCUMSTANCES_ID = "P1480";
 export const WIKITREE_ID = "P2949";
 export const GENI_ID = "P2600";
 

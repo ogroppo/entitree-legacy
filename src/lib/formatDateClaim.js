@@ -1,6 +1,7 @@
 import moment from "moment/min/moment-with-locales";
 import wbk from "wikidata-sdk";
 import ordinalize from "ordinalize";
+import { SOURCING_CIRCUMSTANCES_ID } from "../constants/properties";
 
 export default function formatDateClaim(claim, languageCode, yearOnly = false) {
   if (!claim) return;
@@ -21,16 +22,23 @@ export default function formatDateClaim(claim, languageCode, yearOnly = false) {
   });
   const firstDate = cleanClaims[0];
   if (!firstDate) return;
-
   const {
     mainsnak: {
       datavalue: { value },
     },
   } = firstDate;
+  let sourcingCircumstances = null;
+  if (
+    firstDate.qualifiers &&
+    firstDate.qualifiers[SOURCING_CIRCUMSTANCES_ID] &&
+    firstDate.qualifiers[SOURCING_CIRCUMSTANCES_ID][0] &&
+    firstDate.qualifiers[SOURCING_CIRCUMSTANCES_ID][0].datavalue.value
+  ) {
+    sourcingCircumstances =
+      firstDate.qualifiers[SOURCING_CIRCUMSTANCES_ID][0].datavalue.value.id;
+  }
 
-  //console.log(JSON.stringify(claim));
-
-  return parseDate(value, languageCode, yearOnly);
+  return parseDate(value, languageCode, yearOnly, sourcingCircumstances);
 }
 
 /**
@@ -38,7 +46,12 @@ export default function formatDateClaim(claim, languageCode, yearOnly = false) {
  * @param wikidatatime
  * @returns {{output: null, dateObject: null}|{output: string, dateObject: number}|{output: *, dateObject: null}}
  */
-function parseDate(wikidatatime, languageCode = "en", yearOnly = false) {
+function parseDate(
+  wikidatatime,
+  languageCode = "en",
+  yearOnly = false,
+  sourcingCircumstances = null
+) {
   //example of  valid object {time: "+1500-07-07T00:00:00Z" ,precision:8}
   //https://www.wikidata.org/wiki/Help:Dates
   /*
@@ -68,6 +81,15 @@ function parseDate(wikidatatime, languageCode = "en", yearOnly = false) {
   if (yearOnly && precision > 9) {
     precision = 9;
   }
+  let sourcingPrefix = "";
+  let sourcingPostfix = "";
+  if (sourcingCircumstances === "Q5727902") {
+    //circa
+    sourcingPrefix = "~";
+  } else if (sourcingCircumstances === "Q18122778") {
+    //presumably/maybe
+    sourcingPostfix = "?";
+  }
   switch (precision) {
     case 0:
       let [, byear] = time.split("-");
@@ -96,7 +118,9 @@ function parseDate(wikidatatime, languageCode = "en", yearOnly = false) {
     case 8:
       return Math.floor(year / 10) + "0s" + eraSuffix;
     case 9:
-      return parsedDate.format("y") + eraSuffix;
+      return (
+        sourcingPrefix + parsedDate.format("y") + sourcingPostfix + eraSuffix
+      );
     case 10:
       return parsedDate.locale(languageCode).format("MMM y") + eraSuffix;
     case 11: {
