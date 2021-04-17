@@ -638,7 +638,7 @@ export default function CustomThemeForm() {
           </Button>
           <Button
             title="Save a copy of your customized theme, you may send it to us to include as a main theme. Importing a theme in the browser is not yet supported."
-            size="sm ml-2" onClick={downloadJsonFile} href={"#"} style={{ 'opacity': '40%'}}>
+            size="sm ml-2" onClick={downloadJsonFile} style={{ 'opacity': '40%'}}>
             {`Download Theme`}
           </Button>
         </Col>
