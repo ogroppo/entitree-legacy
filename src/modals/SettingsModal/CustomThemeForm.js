@@ -1,8 +1,10 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Form, Col, Row, InputGroup } from "react-bootstrap";
 import { AppContext } from "../../App";
 import useDebounce from "../../lib/useDebounce";
 import Button from "react-bootstrap/Button";
+import ls from "local-storage";
+import { STORED_CUSTOM_THEME_PREFIX_KEY } from "../../constants/storage";
 
 export default function CustomThemeForm() {
   const {
@@ -17,6 +19,22 @@ export default function CustomThemeForm() {
     setCurrentTheme(deboucedCustomTheme);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deboucedCustomTheme]);
+
+  const downloadJsonFile = (e) => {
+    e.preventDefault();
+    const element = document.createElement("a");
+    const downloadTheme = ls(
+      STORED_CUSTOM_THEME_PREFIX_KEY + currentCustomTheme.name
+    );
+    const file = new Blob([JSON.stringify(downloadTheme)], {
+      type: "text/json",
+    });
+    element.href = URL.createObjectURL(file);
+    element.download = "custom_theme.json";
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+    element.parentNode.removeChild(element);
+  };
 
   return (
     <div className="currentCustomTheme mt-2">
@@ -614,6 +632,14 @@ export default function CustomThemeForm() {
         <Col sm={{ span: 9, offset: 3 }}>
           <Button size="sm" onClick={resetCurrentTheme}>
             Reset values
+          </Button>
+          <Button
+            title="Save a copy of your customized theme, you may send it to us to include as a main theme. Importing a theme in the browser is not yet supported."
+            size="sm ml-2"
+            onClick={downloadJsonFile}
+            style={{ opacity: "40%" }}
+          >
+            {`Download Theme`}
           </Button>
         </Col>
       </Form.Group>
