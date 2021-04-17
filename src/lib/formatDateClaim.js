@@ -2,6 +2,7 @@ import moment from "moment/min/moment-with-locales";
 import wbk from "wikidata-sdk";
 import ordinalize from "ordinalize";
 import { SOURCING_CIRCUMSTANCES_ID } from "../constants/properties";
+import {CIRCA_ID, PRESUMABLY_ID} from "../constants/entities";
 
 export default function formatDateClaim(claim, languageCode, yearOnly = false) {
   if (!claim) return;
@@ -83,10 +84,10 @@ function parseDate(
   }
   let sourcingPrefix = "";
   let sourcingPostfix = "";
-  if (sourcingCircumstances === "Q5727902") {
+  if (sourcingCircumstances === CIRCA_ID) {
     //circa
     sourcingPrefix = "~";
-  } else if (sourcingCircumstances === "Q18122778") {
+  } else if (sourcingCircumstances === PRESUMABLY_ID) {
     //presumably/maybe
     sourcingPostfix = "?";
   }
