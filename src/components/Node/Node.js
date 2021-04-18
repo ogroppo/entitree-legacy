@@ -327,7 +327,7 @@ export default memo(function Node({
                 </span>
               </>
             )}
-            {node.data.description && (
+            {node.data.description && theme.descriptionDisplay !== "none" && (
               <>
                 <br />
                 <span className="description" title={node.data.description}>
