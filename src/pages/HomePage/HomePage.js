@@ -1,25 +1,28 @@
 import "./HomePage.scss";
-import { AppContext } from "../../App";
+
 import { DEFAULT_DESC, SITE_NAME } from "../../constants/meta";
+import React, { useContext } from "react";
+
+import { AppContext } from "../../App";
+import Div100vh from "react-div-100vh";
+import Footer from "../../layout/Footer/Footer";
 import { GiFamilyTree } from "react-icons/gi";
-import { Helmet } from "react-helmet";
-import { Spinner } from "react-bootstrap";
-import { ThemeProvider } from "styled-components";
 import Graph from "../../components/Graph/Graph";
 import Header from "../../layout/Header/Header";
-import React, { useContext } from "react";
+import { Helmet } from "react-helmet";
 import SearchBar from "../../components/SearchBar/SearchBar";
+import { Spinner } from "react-bootstrap";
+import { ThemeProvider } from "styled-components";
+import styled from "styled-components";
 import useCurrentLang from "../../hooks/useCurrentLang";
 import useLoadEntity from "../../hooks/useLoadEntity";
 import useLoadFromUrl from "../../hooks/useLoadFromUrl";
 import useLoadSettings from "../../hooks/useLoadSettings";
 import useLoadTheme from "../../hooks/useLoadTheme";
 import usePageView from "../../lib/usePageView";
-import useUpdateUrl from "../../hooks/useUpdateUrl";
-import { useTheme } from "styled-components";
-import Footer from "../../layout/Footer/Footer";
-import styled from "styled-components";
 import { useRouteMatch } from "react-router-dom";
+import { useTheme } from "styled-components";
+import useUpdateUrl from "../../hooks/useUpdateUrl";
 
 export default function HomePageWrapper() {
   useLoadTheme();
@@ -68,9 +71,9 @@ function HomePage() {
           <meta name="description" content={DEFAULT_DESC} />
         </Helmet>
       )}
-      {!theme.isInIframe && <Header />}
-      {!theme.isInIframe && <SearchBar />}
       <ThemedMain>
+        {!theme.isInIframe && <Header />}
+        {!theme.isInIframe && <SearchBar />}
         {loadingEntity && (
           <div className="graphPlaceholder">
             <div className="center">
@@ -94,9 +97,7 @@ function HomePage() {
   );
 }
 
-const ThemedMain = styled.main`
-  height: ${({ theme }) =>
-    theme.isInIframe
-      ? `100vh`
-      : `calc(100vh - ${theme.headerHeight}px - ${theme.searchBarHeight}px)`};
+const ThemedMain = styled(Div100vh)`
+  display: flex;
+  flex-direction: column;
 `;

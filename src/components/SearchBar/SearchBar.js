@@ -1,20 +1,22 @@
-import React, { useContext, useState, useRef, useEffect } from "react";
-import useDebounce from "../../lib/useDebounce";
 import "./SearchBar.scss";
+
 import {
-  Form,
-  Spinner,
   Button,
-  Dropdown,
   Container,
+  Dropdown,
+  Form,
   InputGroup,
-  Tooltip,
   Overlay,
+  Spinner,
+  Tooltip,
 } from "react-bootstrap";
+import React, { useContext, useEffect, useRef, useState } from "react";
+
 import { AppContext } from "../../App";
+import { FaSearch } from "react-icons/fa";
 import search from "../../wikidata/search";
 import styled from "styled-components";
-import { FaSearch } from "react-icons/fa";
+import useDebounce from "../../lib/useDebounce";
 
 export default function SearchBar() {
   const {
@@ -151,7 +153,7 @@ export default function SearchBar() {
 }
 
 const ThemedSearchBar = styled(Form)`
-  height: ${({ theme }) => theme.searchBarHeight}px;
+  flex: 0 0 ${({ theme }) => theme.searchBarHeight}px;
 `;
 
 function Suggestions({
@@ -160,9 +162,9 @@ function Suggestions({
   setShowSuggestions,
 }) {
   const { setCurrentEntityId } = useContext(AppContext);
-  const wrapperRef = React.useRef(null);
+  const wrapperRef = useRef(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     function handleClickOutside(event) {
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         setShowSuggestions(false);
