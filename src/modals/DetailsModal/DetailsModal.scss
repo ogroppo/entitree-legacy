@@ -1,14 +1,21 @@
 .DetailsModal {
   .allImages {
-    margin-bottom: 8px;
+    margin-bottom: 3px;
     overflow: hidden;
+    min-height: 172px; // to avoid jumps when the image loads
     img {
-      max-height: 164px;
+      max-height: 168px; //remember multi line here
       max-width: 100%;
       margin-right: 4px;
       margin-bottom: 4px;
     }
   }
+
+  .addImagesLink {
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+
   .externalLinks {
     a {
       padding: 1px;

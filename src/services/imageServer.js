@@ -1,0 +1,19 @@
+import axios from "axios";
+
+export const IMAGE_SERVER_BASE_URL = "https://images.dataprick.com";
+
+export const missingImagesLink = (id, label) => {
+  const params = new URLSearchParams({
+    qId: id,
+    qLabel: label,
+  });
+
+  return IMAGE_SERVER_BASE_URL + "/image/single_upload?" + params.toString();
+};
+
+export const imageServer = axios.create({
+  baseURL: IMAGE_SERVER_BASE_URL,
+  timeout: 1000,
+});
+
+imageServer.interceptors.response.use((res) => res.data);

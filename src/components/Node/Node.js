@@ -20,6 +20,7 @@ import {
   FiChevronRight,
   FiChevronUp,
 } from "react-icons/fi";
+import { IMAGE_SERVER_BASE_URL, imageServer } from "../../services/imageServer";
 import React, { memo, useContext, useEffect, useMemo, useState } from "react";
 import { RiGroupLine, RiParentLine } from "react-icons/ri";
 import styled, { useTheme } from "styled-components";
@@ -56,6 +57,7 @@ export default memo(function Node({
   const [showModal, setShowModal] = useState(false);
   const [thumbnails, setThumbnails] = useState(node.data.thumbnails);
   const [images, setImages] = useState(node.data.images);
+  const [faceImage, setFaceImage] = useState();
   const [thumbnailIndex, setThumbnailIndex] = useState(0);
   const theme = useTheme();
   const location = useLocation();
@@ -95,6 +97,46 @@ export default memo(function Node({
   }, []);
 
   useEffect(() => {
+    //should this also go under the showExternalImages settings?!
+    var numericId = node.data.id.substr(1);
+    imageServer
+      .get(`/api/v1/image/info/wikidata/${numericId}`)
+      .then(({ images }) => {
+        images.forEach((dpImg) => {
+          // const dpImg = data.images[0];
+          let descr = `${dpImg.uploadSite}\nImage Database`;
+          if (dpImg.comment) {
+            descr += `\n${dpImg.comment}`;
+          }
+          if (dpImg.recordedDate) {
+            descr += `\nPhoto taken in ${dpImg.recordedDate.substr(0, 4)}`;
+          }
+          if (dpImg.sourceUrl) {
+            descr += `\n\n${dpImg.sourceUrl}`;
+          }
+          //this will set always last image?!
+          setFaceImage({
+            url: `${IMAGE_SERVER_BASE_URL}/api/v1/image/facecrop/id/${dpImg.id}`,
+            alt: descr,
+          });
+          setThumbnails((thumbnails) => [
+            {
+              url: `${IMAGE_SERVER_BASE_URL}/api/v1/image/thumbnail/id/${dpImg.id}`,
+              alt: descr,
+            },
+            ...thumbnails, //as the imageServer assets might be more accurate, use them first
+          ]);
+          setImages((images) => [
+            {
+              url: `${IMAGE_SERVER_BASE_URL}/api/v1/image/thumbnail/id/${dpImg.id}`,
+              alt: descr,
+            },
+            ...images, //as the imageServer assets might be more accurate, use them first
+          ]);
+        });
+      })
+      .catch();
+
     if (settings.showExternalImages) {
       /* DISABLE WIKITREE, SINCE CORS DOESN'T WORK
       const wikitreeId = getSimpleClaimValue(
@@ -126,8 +168,8 @@ export default memo(function Node({
                 url: geniImageUrl,
                 alt: `Geni.com image`,
               };
-              setThumbnails(thumbnails.concat(geniImg));
-              setImages(images.concat(geniImg));
+              setThumbnails((thumbnails) => thumbnails.concat(geniImg));
+              setImages((images) => images.concat(geniImg));
             }
           })
           .catch();
@@ -158,7 +200,7 @@ export default memo(function Node({
   }, []);
 
   const {
-    data: { gender, isHuman, faceImage },
+    data: { gender, isHuman },
   } = node;
 
   const currentThumbnail = thumbnails[thumbnailIndex];
