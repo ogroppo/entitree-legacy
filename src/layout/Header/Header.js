@@ -1,19 +1,21 @@
-import React, { useState } from "react";
-import {
-  Navbar,
-  Container,
-  DropdownButton,
-  Dropdown,
-  Button,
-  Nav,
-} from "react-bootstrap";
-import { FiSliders } from "react-icons/fi";
-import ReactGA from "react-ga";
-import { EXAMPLES } from "../../constants/examples";
 import "./Header.scss";
+
+import {
+  Button,
+  Container,
+  Dropdown,
+  DropdownButton,
+  Nav,
+  Navbar,
+} from "react-bootstrap";
+import React, { useState } from "react";
+
+import { EXAMPLES } from "../../constants/examples";
+import { FiSliders } from "react-icons/fi";
 import Logo from "../../components/Logo/Logo";
-import SettingsModal from "../../modals/SettingsModal/SettingsModal";
+import ReactGA from "react-ga";
 import { SITE_NAME } from "../../constants/meta";
+import SettingsModal from "../../modals/SettingsModal/SettingsModal";
 import styled from "styled-components";
 
 export default function Header({ simple }) {
@@ -75,5 +77,5 @@ export default function Header({ simple }) {
 }
 
 const ThemedHeader = styled(Navbar)`
-  height: ${({ theme }) => theme.headerHeight}px;
+  flex: 0 0 ${({ theme }) => theme.headerHeight}px;
 `;

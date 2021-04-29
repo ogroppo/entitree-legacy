@@ -197,7 +197,7 @@ export default class App extends Component {
     return (
       <AppContext.Provider value={this.state}>
         <Router history={browserHistory}>
-          <div className={"App"}>
+          <div className="App">
             <div className="messages">
               {errors.map((error, index) => (
                 <Alert key={JSON.stringify(error) + index} variant="danger">

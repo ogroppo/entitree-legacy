@@ -29,6 +29,7 @@
     "pluralize": "^8.0.0",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
+    "react-div-100vh": "^0.6.0",
     "react-dom": "^16.13.1",
     "react-ga": "^3.0.0",
     "react-helmet": "^6.1.0",
