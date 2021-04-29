@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useContext } from "react";
+import "./DetailsModal.scss";
+
+import { Button, Modal } from "react-bootstrap";
+import React, { useContext, useEffect, useState } from "react";
+
 import { AppContext } from "../../App";
 import { FiExternalLink } from "react-icons/fi";
-import { Button, Modal } from "react-bootstrap";
 import getItemsLabel from "../../wikidata/getItemsLabel";
-import missingImagesLink from "../../lib/imageDatabase";
 import getWikipediaArticle from "../../wikipedia/getWikipediaArticle";
-import "./DetailsModal.scss";
+import { missingImagesLink } from "../../services/imageServer";
 
 export default function DetailsModal({ node, hideModal, nodeImages }) {
   const { currentLang, setCurrentEntityId, currentEntity } = useContext(
@@ -68,16 +70,7 @@ export default function DetailsModal({ node, hideModal, nodeImages }) {
               ))}
           </div>
         )}
-        {/*{!images.length && (*/}
-        <a
-          className="addImages"
-          target="_blank"
-          rel="noopener noreferrer"
-          href={missingImagesLink(node.data.id, node.data.label)}
-        >
-          Add missing image
-        </a>
-        {/*)}*/}
+
         {(node.data.birthDate ||
           birthPlace ||
           node.data.deathDate ||
@@ -99,6 +92,15 @@ export default function DetailsModal({ node, hideModal, nodeImages }) {
             <i>This entity has no description</i>
           )}
         </p>
+
+        <a
+          className="addImagesLink"
+          target="_blank"
+          rel="noopener noreferrer"
+          href={missingImagesLink(node.data.id, node.data.label)}
+        >
+          Add missing image <FiExternalLink />
+        </a>
 
         {node.data.website && (
           <p>

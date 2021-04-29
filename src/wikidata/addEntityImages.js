@@ -1,48 +1,8 @@
-import { IMAGE_ID, LOGO_ID, TWITTER_ID } from "../constants/properties";
-import getData from "../axios/getData";
+import { IMAGE_ID, LOGO_ID } from "../constants/properties";
 
 export default async function addEntityImages(entity, currentLangCode, theme) {
   entity.thumbnails = [];
   entity.images = [];
-
-  var numericId = entity.id.substr(1);
-  const imageDbServer = "https://images.dataprick.com";
-  entity.faceImage = null;
-  // if (entity.thumbnails.length === 0) {
-  try {
-    await getData(
-      `${imageDbServer}/api/v1/image/info/wikidata/${numericId}`
-    ).then((data) => {
-      if (data.images.length > 0) {
-        data.images.forEach((dpImg, index) => {
-          // const dpImg = data.images[0];
-          let descr = `${dpImg.uploadSite}\nImage Database`;
-          if (dpImg.comment) {
-            descr += `\n${dpImg.comment}`;
-          }
-          if (dpImg.recordedDate) {
-            descr += `\nPhoto taken in ${dpImg.recordedDate.substr(0, 4)}`;
-          }
-          if (dpImg.sourceUrl) {
-            descr += `\n\n${dpImg.sourceUrl}`;
-          }
-          entity.faceImage = {
-            url: `${imageDbServer}/api/v1/image/facecrop/id/${dpImg.id}`,
-            alt: descr,
-          };
-          entity.thumbnails.push({
-            url: `${imageDbServer}/api/v1/image/thumbnail/id/${dpImg.id}`,
-            alt: descr,
-          });
-          entity.images.push({
-            url: `${imageDbServer}/api/v1/image/thumbnail/id/${dpImg.id}`,
-            alt: descr,
-          });
-        });
-      }
-    });
-  } catch {}
-  // }
 
   const imageClaim = entity.simpleClaims[IMAGE_ID];
   if (imageClaim) {
