@@ -13,7 +13,7 @@ export const missingImagesLink = (id, label) => {
 
 export const imageServer = axios.create({
   baseURL: IMAGE_SERVER_BASE_URL,
-  timeout: 1000,
+  timeout: 3000,
 });
 
 imageServer.interceptors.response.use((res) => res.data);
