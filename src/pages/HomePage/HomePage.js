@@ -85,8 +85,16 @@ function HomePage() {
         {!itemSlug && (
           <div className="graphPlaceholder">
             <div className="center">
-              <GiFamilyTree />
-              <div>Start a new search or choose from the examples</div>
+              <iframe
+                style={{ maxWidth: "100vw" }}
+                width="560"
+                height="315"
+                frameBorder="0"
+                title="How does it work?"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                src="https://www.youtube.com/embed/uYXUJz3W6J4"
+              />
             </div>
           </div>
         )}
