@@ -8,7 +8,7 @@ Live website here https://www.entitree.com/
 
 Test website here https://entitree-test.herokuapp.com/
 
-![Interface example](https://github.com/ogroppo/entitree/blob/master/public/examples/interface.png)
+![Interface example](https://github.com/ogroppo/entitree/blob/main/public/examples/interface.png)
 
 ## User instructions
 

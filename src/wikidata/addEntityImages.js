@@ -7,22 +7,25 @@ export default async function addEntityImages(entity, currentLangCode, theme) {
   const imageClaim = entity.simpleClaims[IMAGE_ID];
   if (imageClaim) {
     imageClaim.forEach((image, index) => {
-      entity.thumbnails.push({
-        url: getCommonsUrlByFile(image.value, theme?.thumbWidth),
-        alt: `${entity.label}'s Image ${
-          index + 1
-        } from Wikimedia Commons\nPlease refer to https://commons.wikimedia.org/wiki/File:${
-          image.value
-        } for credits`,
-      });
-      entity.images.push({
-        url: getCommonsUrlByFile(image.value, theme?.thumbWidth * 2),
-        alt: `${entity.label}'s Image ${
-          index + 1
-        } from Wikimedia Commons\nPlease refer to https://commons.wikimedia.org/wiki/File:${
-          image.value
-        } for credits`,
-      });
+      //catch undefined value
+      if (image.value) {
+        entity.thumbnails.push({
+          url: getCommonsUrlByFile(image.value, theme?.thumbWidth),
+          alt: `${entity.label}'s Image ${
+            index + 1
+          } from Wikimedia Commons\nPlease refer to https://commons.wikimedia.org/wiki/File:${
+            image.value
+          } for credits`,
+        });
+        entity.images.push({
+          url: getCommonsUrlByFile(image.value, theme?.thumbWidth * 2),
+          alt: `${entity.label}'s Image ${
+            index + 1
+          } from Wikimedia Commons\nPlease refer to https://commons.wikimedia.org/wiki/File:${
+            image.value
+          } for credits`,
+        });
+      }
     });
   }
 
@@ -43,14 +46,17 @@ export default async function addEntityImages(entity, currentLangCode, theme) {
   const logoClaim = entity.simpleClaims[LOGO_ID];
   if (logoClaim) {
     logoClaim.forEach((image, index) => {
-      entity.thumbnails.push({
-        url: getCommonsUrlByFile(image.value, theme?.thumbWidth),
-        alt: `${entity.label}'s Logo ${index + 1} from Wikimedia Commons`,
-      });
-      entity.images.push({
-        url: getCommonsUrlByFile(image.value, theme?.thumbWidth * 2),
-        alt: `${entity.label}'s Logo ${index + 1} from Wikimedia Commons`,
-      });
+      //catch undefined value
+      if (image.value) {
+        entity.thumbnails.push({
+          url: getCommonsUrlByFile(image.value, theme?.thumbWidth),
+          alt: `${entity.label}'s Logo ${index + 1} from Wikimedia Commons`,
+        });
+        entity.images.push({
+          url: getCommonsUrlByFile(image.value, theme?.thumbWidth * 2),
+          alt: `${entity.label}'s Logo ${index + 1} from Wikimedia Commons`,
+        });
+      }
     });
   }
 }
