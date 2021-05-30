@@ -4,6 +4,26 @@ export default async function addEntityImages(entity, currentLangCode, theme) {
   entity.thumbnails = [];
   entity.images = [];
 
+  //todo deal with missing image
+  if (entity.peoplepillSlug) {
+    const inital = entity.peoplepillSlug.substr(0, 1).toUpperCase();
+    const url =
+      "https://web.archive.org/web/20220210233602if_/https://peoplepill.com/media/people/thumbs/" +
+      inital +
+      "/" +
+      entity.peoplepillSlug +
+      ".jpg";
+
+    entity.thumbnails.push({
+      url: url,
+      alt: `Taken from peoplepill`,
+    });
+    entity.images.push({
+      url: url,
+      alt: `Taken from peoplepill`,
+    });
+  }
+
   const imageClaim = entity.simpleClaims[IMAGE_ID];
   if (imageClaim) {
     imageClaim.forEach((image, index) => {
