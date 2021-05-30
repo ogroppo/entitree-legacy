@@ -54,13 +54,16 @@ export default function DetailsModal({ node, hideModal, nodeImages }) {
   return (
     <Modal show={true} onHide={hideModal} className="DetailsModal">
       <Modal.Header closeButton>
-        <Modal.Title>{node.data.label}{node.data.secondLabel && (
-          <>
-            <span className="labelsecondLabel">
-                  &nbsp;({node.data.secondLabel})
-                </span>
-          </>
-        )}</Modal.Title>
+        <Modal.Title>
+          {node.data.label}
+          {node.data.secondLabel && (
+            <>
+              <span className="labelsecondLabel">
+                &nbsp;({node.data.secondLabel})
+              </span>
+            </>
+          )}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {!!images.length && (
