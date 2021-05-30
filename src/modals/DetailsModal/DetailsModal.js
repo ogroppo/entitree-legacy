@@ -54,7 +54,13 @@ export default function DetailsModal({ node, hideModal, nodeImages }) {
   return (
     <Modal show={true} onHide={hideModal} className="DetailsModal">
       <Modal.Header closeButton>
-        <Modal.Title>{node.data.label}</Modal.Title>
+        <Modal.Title>{node.data.label}{node.data.secondLabel && (
+          <>
+            <span className="labelsecondLabel">
+                  &nbsp;({node.data.secondLabel})
+                </span>
+          </>
+        )}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         {!!images.length && (
@@ -132,6 +138,16 @@ export default function DetailsModal({ node, hideModal, nodeImages }) {
               href={node.data.wikipediaUrl}
             >
               <img src="/icons/wikipedia.png" alt="Wikipedia" />
+            </a>
+          )}
+          {node.data.wikipediaUrl && (
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Open Wikipedia article in a new tab"
+              href={`https://peoplepill.com/people/${node.data.peoplepillSlug}`}
+            >
+              <img src="/icons/pp.png" alt="PeoplePikk" />
             </a>
           )}
           {node.data.externalLinks?.map((link, index) => (
