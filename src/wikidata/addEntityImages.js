@@ -5,6 +5,7 @@ export default async function addEntityImages(entity, currentLangCode, theme) {
   entity.images = [];
 
   //todo deal with missing image
+  /*
   if (entity.peoplepillSlug) {
     const inital = entity.peoplepillSlug.substr(0, 1).toUpperCase();
     const url =
@@ -23,6 +24,7 @@ export default async function addEntityImages(entity, currentLangCode, theme) {
       alt: `Taken from peoplepill`,
     });
   }
+  */
 
   const imageClaim = entity.simpleClaims[IMAGE_ID];
   if (imageClaim) {

@@ -86,7 +86,11 @@ export default async function formatEntity(
   }
   formattedEntity.peoplepillSlug = null;
   console.log(simpleClaims[INSTANCE_OF_ID]);
-  if (entity.sitelinks["enwiki"] && simpleClaims[INSTANCE_OF_ID] && simpleClaims[INSTANCE_OF_ID][0].value === HUMAN_ID) {
+  if (
+    entity.sitelinks["enwiki"] &&
+    simpleClaims[INSTANCE_OF_ID] &&
+    simpleClaims[INSTANCE_OF_ID][0].value === HUMAN_ID
+  ) {
     formattedEntity.peoplepillSlug = entity.sitelinks["enwiki"].title
       .toLowerCase()
       .replaceAll(" ", "-")
