@@ -3,9 +3,11 @@ import "./Node.scss";
 import {
   CHILD_ID,
   EYE_COLOR_ID,
+  HAIR_COLOR_ID,
   GENI_ID,
   INSTAGRAM_ID,
   WIKITREE_ID,
+  COUNTRY_OF_CITIZENSHIP,
 } from "../../constants/properties";
 import {
   DOWN_SYMBOL,
@@ -13,7 +15,7 @@ import {
   RIGHT_SYMBOL,
   UP_SYMBOL,
 } from "../../constants/tree";
-import { FaEye, FaFemale, FaMale } from "react-icons/fa";
+import { FaEye, FaFemale, FaMale, FaUser } from "react-icons/fa";
 import {
   FiChevronDown,
   FiChevronLeft,
@@ -34,6 +36,7 @@ import { GiPerson } from "react-icons/gi";
 import { MdChildCare } from "react-icons/md";
 import clsx from "clsx";
 import colorByProperty from "../../wikidata/colorByProperty";
+import countryByQid from "../../wikidata/countryByQid";
 import getData from "../../axios/getData";
 import getGeniImageUrl from "../../geni/getGeniImageUrl";
 import getGeniData from "../../geni/getGeniData";
@@ -61,6 +64,9 @@ export default memo(function Node({
   const [lifeSpanInYears, setLifeSpanInYears] = useState(
     node.data.lifeSpanInYears
   );
+  const [birthCountry, setBirthCountry] = useState(
+    countryByQid(node.data.simpleClaims[COUNTRY_OF_CITIZENSHIP])
+  );
   const [images, setImages] = useState(node.data.images);
   const [faceImage, setFaceImage] = useState();
   const [thumbnailIndex, setThumbnailIndex] = useState(0);
@@ -80,10 +86,10 @@ export default memo(function Node({
     [node.data.simpleClaims]
   );
 
-  // const hairColor = useMemo(
-  //   () => colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]),
-  //   [node.data.simpleClaims]
-  // );
+  const hairColor = useMemo(
+    () => colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]),
+    [node.data.simpleClaims]
+  );
 
   useEffect(() => {
     // check if node QID is in url params and toggle accrodingly
@@ -206,6 +212,18 @@ export default memo(function Node({
               addLifeSpan(geniData);
               setLifeSpanInYears(geniData.lifeSpanInYears);
             }
+            if (
+              geniData &&
+              geniData.birth &&
+              geniData.birth.location &&
+              geniData.birth.location.country_code &&
+              !!birthCountry
+            ) {
+              setBirthCountry({
+                code: geniData.birth.location.country_code,
+                name: geniData.birth.location.country,
+              });
+            }
           })
           .catch();
       }
@@ -324,9 +342,23 @@ export default memo(function Node({
           </ThemedThumbnail>
         )}
         <ThemedContent className="content" hasSecondLabel={hasSecondLabel}>
-          {settings.showEyeHairColors && (
+          {settings.showExtraInfo &&
+            settings.extraInfo === "countryFlag" &&
+            birthCountry && (
+              <div className="flagIcons">
+                <span>
+                  <img
+                    alt=""
+                    src={`https://www.countryflags.io/${birthCountry.code}/flat/32.png`}
+                    title={birthCountry.name}
+                  />
+                </span>
+              </div>
+            )}
+
+          {settings.showExtraInfo && (
             <div className="colorIcons">
-              {eyeColor && (
+              {eyeColor && settings.extraInfo === "eyeColor" && (
                 <span
                   className="eyeColor"
                   title={eyeColor.itemLabel + " eyes"}
@@ -337,17 +369,17 @@ export default memo(function Node({
                   <FaEye size={25} />
                 </span>
               )}
-              {/*{hairColor && (
-              <span
-                className="hairColor"
-                title={hairColor.itemLabel}
-                style={{
-                  color: "#" + hairColor.hex,
-                }}
-              >
-                <GiBeard />
-              </span>
-            )}*/}
+              {hairColor && settings.extraInfo === "hairColor" && (
+                <span
+                  className="hairColor"
+                  title={hairColor.itemLabel}
+                  style={{
+                    color: "#" + hairColor.hex,
+                  }}
+                >
+                  <FaUser />
+                </span>
+              )}
             </div>
           )}
           <div

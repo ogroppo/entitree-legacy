@@ -43,7 +43,8 @@ export default class App extends Component {
     currentTheme: null,
     settings: {
       showGenderColor: false,
-      showEyeHairColors: false,
+      showExtraInfo: false,
+      extraInfo: "eyeColor",
       showBirthName: false,
       hideToggleButton: false,
       showExternalImages: false,

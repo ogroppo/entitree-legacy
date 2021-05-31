@@ -14,6 +14,7 @@ export const HAIR_COLOR_ID = "P1884";
 export const FATHER_ID = "P22";
 export const MOTHER_ID = "P25";
 export const CHILD_ID = "P40";
+export const COUNTRY_OF_CITIZENSHIP = "P27";
 export const NUMBER_OF_CHILDREN_ID = "P1971";
 export const STUDENT_OF_ID = "P1066";
 export const STUDENT_ID = "P802";
@@ -203,6 +204,21 @@ export const RIGHT_ENTITY_OPTIONS = [
   {
     propIds: [PARTNER_ID],
     title: "Only partners",
+  },
+];
+
+export const EXTRA_INFO_OPTIONS = [
+  {
+    code: "eyeColor",
+    title: "Eye Color",
+  },
+  {
+    code: "hairColor",
+    title: "Hair Color",
+  },
+  {
+    code: "countryFlag",
+    title: "Country Flag",
   },
 ];
 
