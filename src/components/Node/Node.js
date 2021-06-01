@@ -3,9 +3,11 @@ import "./Node.scss";
 import {
   CHILD_ID,
   EYE_COLOR_ID,
+  HAIR_COLOR_ID,
   GENI_ID,
   INSTAGRAM_ID,
   WIKITREE_ID,
+  COUNTRY_OF_CITIZENSHIP,
 } from "../../constants/properties";
 import {
   DOWN_SYMBOL,
@@ -13,7 +15,7 @@ import {
   RIGHT_SYMBOL,
   UP_SYMBOL,
 } from "../../constants/tree";
-import { FaEye, FaFemale, FaMale } from "react-icons/fa";
+import { FaEye, FaFemale, FaMale, FaUser } from "react-icons/fa";
 import {
   FiChevronDown,
   FiChevronLeft,
@@ -34,12 +36,15 @@ import { GiPerson } from "react-icons/gi";
 import { MdChildCare } from "react-icons/md";
 import clsx from "clsx";
 import colorByProperty from "../../wikidata/colorByProperty";
+import countryByQid from "../../wikidata/countryByQid";
 import getData from "../../axios/getData";
 import getGeniImageUrl from "../../geni/getGeniImageUrl";
+import getGeniData from "../../geni/getGeniData";
 import getSimpleClaimValue from "../../lib/getSimpleClaimValue";
 import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
 import queryString from "query-string";
 import { useLocation } from "react-router-dom";
+import addLifeSpan from "../../lib/addLifeSpan";
 
 export default memo(function Node({
   node,
@@ -56,6 +61,12 @@ export default memo(function Node({
 
   const [showModal, setShowModal] = useState(false);
   const [thumbnails, setThumbnails] = useState(node.data.thumbnails);
+  const [lifeSpanInYears, setLifeSpanInYears] = useState(
+    node.data.lifeSpanInYears
+  );
+  const [birthCountry, setBirthCountry] = useState(
+    countryByQid(node.data.simpleClaims[COUNTRY_OF_CITIZENSHIP])
+  );
   const [images, setImages] = useState(node.data.images);
   const [faceImage, setFaceImage] = useState();
   const [thumbnailIndex, setThumbnailIndex] = useState(0);
@@ -75,10 +86,10 @@ export default memo(function Node({
     [node.data.simpleClaims]
   );
 
-  // const hairColor = useMemo(
-  //   () => colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]),
-  //   [node.data.simpleClaims]
-  // );
+  const hairColor = useMemo(
+    () => colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]),
+    [node.data.simpleClaims]
+  );
 
   useEffect(() => {
     // check if node QID is in url params and toggle accrodingly
@@ -161,15 +172,57 @@ export default memo(function Node({
 
       const geniId = getSimpleClaimValue(node.data.simpleClaims, GENI_ID);
       if (geniId) {
-        getGeniImageUrl(geniId)
-          .then((geniImageUrl) => {
-            if (geniImageUrl) {
+        getGeniData(geniId)
+          .then((geniData) => {
+            if (
+              geniData &&
+              geniData.mugshot_urls &&
+              geniData.mugshot_urls.thumb
+            ) {
               const geniImg = {
-                url: geniImageUrl,
+                url: geniData.mugshot_urls.thumb,
                 alt: `Geni.com image`,
               };
               setThumbnails((thumbnails) => thumbnails.concat(geniImg));
               setImages((images) => images.concat(geniImg));
+            }
+            if (
+              geniData &&
+              (geniData.birth || geniData.death) &&
+              node.data.lifeSpanInYears === undefined
+            ) {
+              if (geniData.birth && geniData.birth.date) {
+                geniData.birthYear = geniData.birth.date.year;
+                if (
+                  geniData.birth.date.circa &&
+                  geniData.birth.date.circa === true
+                ) {
+                  geniData.birthYear = "~" + geniData.birthYear;
+                }
+              }
+              if (geniData.death && geniData.death.date) {
+                geniData.deathYear = geniData.death.date.year;
+                if (
+                  geniData.death.date.circa &&
+                  geniData.death.date.circa === true
+                ) {
+                  geniData.deathYear = "~" + geniData.deathYear;
+                }
+              }
+              addLifeSpan(geniData);
+              setLifeSpanInYears(geniData.lifeSpanInYears);
+            }
+            if (
+              geniData &&
+              geniData.birth &&
+              geniData.birth.location &&
+              geniData.birth.location.country_code &&
+              !!birthCountry
+            ) {
+              setBirthCountry({
+                code: geniData.birth.location.country_code,
+                name: geniData.birth.location.country,
+              });
             }
           })
           .catch();
@@ -289,9 +342,23 @@ export default memo(function Node({
           </ThemedThumbnail>
         )}
         <ThemedContent className="content" hasSecondLabel={hasSecondLabel}>
-          {settings.showEyeHairColors && (
+          {settings.showExtraInfo &&
+            settings.extraInfo === "countryFlag" &&
+            birthCountry && (
+              <div className="flagIcons">
+                <span>
+                  <img
+                    alt=""
+                    src={`https://www.countryflags.io/${birthCountry.code}/flat/32.png`}
+                    title={birthCountry.name}
+                  />
+                </span>
+              </div>
+            )}
+
+          {settings.showExtraInfo && (
             <div className="colorIcons">
-              {eyeColor && (
+              {eyeColor && settings.extraInfo === "eyeColor" && (
                 <span
                   className="eyeColor"
                   title={eyeColor.itemLabel + " eyes"}
@@ -302,17 +369,17 @@ export default memo(function Node({
                   <FaEye size={25} />
                 </span>
               )}
-              {/*{hairColor && (
-              <span
-                className="hairColor"
-                title={hairColor.itemLabel}
-                style={{
-                  color: "#" + hairColor.hex,
-                }}
-              >
-                <GiBeard />
-              </span>
-            )}*/}
+              {hairColor && settings.extraInfo === "hairColor" && (
+                <span
+                  className="hairColor"
+                  title={hairColor.itemLabel}
+                  style={{
+                    color: "#" + hairColor.hex,
+                  }}
+                >
+                  <FaUser />
+                </span>
+              )}
             </div>
           )}
           <div
@@ -379,9 +446,9 @@ export default memo(function Node({
             )}
           </div>
           <div className="dates">
-            {node.data.lifeSpan
+            {node.data.lifeSpan || lifeSpanInYears
               ? theme.datesYearOnly
-                ? node.data.lifeSpanInYears
+                ? lifeSpanInYears
                 : node.data.lifeSpan
               : node.data.startEndSpan
               ? node.data.startEndSpan

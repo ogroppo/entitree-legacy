@@ -13,7 +13,10 @@ import React, { useContext, useEffect, useState } from "react";
 
 import { AppContext } from "../../App";
 import CustomThemeForm from "./CustomThemeForm";
-import { RIGHT_ENTITY_OPTIONS } from "../../constants/properties";
+import {
+  EXTRA_INFO_OPTIONS,
+  RIGHT_ENTITY_OPTIONS,
+} from "../../constants/properties";
 import ReactGA from "react-ga";
 import { STORED_CUSTOM_THEME_PREFIX_KEY } from "../../constants/storage";
 import { THEMES } from "../../constants/themes";
@@ -209,16 +212,47 @@ export default function SettingsModal({ show, hideModal }) {
             (blue for men, red for women)
           </Form.Text>
         </Form.Group>
-        <Form.Group controlId={"eyeHairColors"}>
+        <Form.Group controlId={"extraInfo"}>
           <Form.Check
             custom
-            checked={settings.showEyeHairColors}
-            onChange={(e) => setSetting("showEyeHairColors", e.target.checked)}
+            className={"d-inline-block"}
+            checked={settings.showExtraInfo}
+            onChange={(e) => setSetting("showExtraInfo", e.target.checked)}
             type="checkbox"
-            label={"Show eye colors"}
+            label={"Show extra info"}
           />
+          <Dropdown className="imageDropdown d-inline-block ml-1">
+            <Dropdown.Toggle as={CustomToggle}>
+              <span className="imageDropdownLabel">show</span>{" "}
+              {
+                EXTRA_INFO_OPTIONS.find((c) => c.code === settings.extraInfo)
+                  .title
+              }
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item
+                active={settings.extraInfo === "eyeColor"}
+                onClick={() => setSetting("extraInfo", "eyeColor")}
+              >
+                Eye color
+              </Dropdown.Item>
+              <Dropdown.Item
+                active={settings.extraInfo === "hairColor"}
+                onClick={() => setSetting("extraInfo", "hairColor")}
+              >
+                Hair color
+              </Dropdown.Item>
+              <Dropdown.Item
+                active={settings.extraInfo === "countryFlag"}
+                onClick={() => setSetting("extraInfo", "countryFlag")}
+              >
+                Country flag
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
           <Form.Text className="text-muted pl-4">
-            An icon with the eye color of the person will be shown, if available
+            An icon with extra info icon, ie. Countryflag of a person's
+            birthplace or citizenship (beta)
           </Form.Text>
         </Form.Group>
         <Form.Group controlId={"birthName"}>
