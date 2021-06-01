@@ -9,7 +9,7 @@ export const EXAMPLES = [
   },
   {
     name: "Dhirendra of Nepal's ancestors",
-    href: `/en/family_tree/Dhirendra_of_Nepal`,
+    href: `/en/family_tree/Prince_Dhirendra_of_Nepal`,
   },
   {
     name: "Jesus Christ's pedigree",
@@ -23,10 +23,10 @@ export const EXAMPLES = [
     name: "Trump's family",
     href: `/en/family_tree/Donald_Trump`,
   },
-  {
-    name: "Mammal taxonomy",
-    href: "/en/parent_taxon/Mammal",
-  },
+  // {
+  //   name: "Mammal taxonomy",
+  //   href: "/en/parent_taxon/Mammal",
+  // },
   {
     name: "Pan Pan (giant panda) offspring",
     href: `/en/family_tree/Pan_Pan_(giant_panda)`,
