@@ -8,6 +8,7 @@ import {
   INSTAGRAM_ID,
   WIKITREE_ID,
   COUNTRY_OF_CITIZENSHIP,
+  RELIGION_ID,
 } from "../../constants/properties";
 import {
   DOWN_SYMBOL,
@@ -29,7 +30,7 @@ import styled, { useTheme } from "styled-components";
 
 import { AppContext } from "../../App";
 import { BsImage } from "react-icons/bs";
-import { Button } from "react-bootstrap";
+import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import DetailsModal from "../../modals/DetailsModal/DetailsModal";
 import { GiBigDiamondRing } from "react-icons/gi";
 import { GiPerson } from "react-icons/gi";
@@ -45,6 +46,7 @@ import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
 import queryString from "query-string";
 import { useLocation } from "react-router-dom";
 import addLifeSpan from "../../lib/addLifeSpan";
+import religionByQid from "../../wikidata/religionByQid";
 
 export default memo(function Node({
   node,
@@ -88,6 +90,11 @@ export default memo(function Node({
 
   const hairColor = useMemo(
     () => colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]),
+    [node.data.simpleClaims]
+  );
+
+  const religion = useMemo(
+    () => religionByQid(node.data.simpleClaims[RELIGION_ID]),
     [node.data.simpleClaims]
   );
 
@@ -222,6 +229,18 @@ export default memo(function Node({
               setBirthCountry({
                 code: geniData.birth.location.country_code,
                 name: geniData.birth.location.country,
+                text: "Born in " + geniData.birth.location.country + " (geni)",
+              });
+            } else if (
+              geniData &&
+              geniData.location &&
+              geniData.location.country_code &&
+              !birthCountry
+            ) {
+              setBirthCountry({
+                code: geniData.location.country_code,
+                name: geniData.location.country,
+                text: "Lived in " + geniData.location.country + " (geni)",
               });
             }
           })
@@ -346,13 +365,18 @@ export default memo(function Node({
             settings.extraInfo === "countryFlag" &&
             birthCountry && (
               <div className="flagIcons">
-                <span>
-                  <img
-                    alt=""
-                    src={`https://www.countryflags.io/${birthCountry.code}/flat/32.png`}
-                    title={birthCountry.name}
-                  />
-                </span>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip>{birthCountry.text}</Tooltip>}
+                >
+                  <span>
+                    <img
+                      alt=""
+                      src={`https://www.countryflags.io/${birthCountry.code}/flat/32.png`}
+                      title={birthCountry.name}
+                    />
+                  </span>
+                </OverlayTrigger>
               </div>
             )}
 
@@ -382,6 +406,17 @@ export default memo(function Node({
               )}
             </div>
           )}
+
+          {settings.showExtraInfo &&
+            settings.extraInfo === "religion" &&
+            religion && (
+              <div
+                className="colorIcons"
+                title={religion.itemLabel + " (wikidata)"}
+              >
+                {religion.emoji}
+              </div>
+            )}
           <div
             className={clsx({
               "four-line-clamp": !hasLabelOnly,

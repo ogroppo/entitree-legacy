@@ -1,5 +1,11 @@
 import React from "react";
-import { Navbar, Nav, Container } from "react-bootstrap";
+import {
+  Navbar,
+  Nav,
+  Container,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
 import { FaCreativeCommons, FaGithub } from "react-icons/fa";
 import "./Footer.scss";
 
@@ -8,26 +14,56 @@ export default function Footer() {
     <Navbar className="Footer" bg="light" expand="lg">
       <Container>
         <Nav className="mr-auto">
-          <Navbar.Brand
-            id="wikidata-logo"
-            target="_blank"
-            href="https://www.wikidata.org"
+          <OverlayTrigger
+            overlay={
+              <Tooltip>
+                Most of what you see comes from Wikidata, if you want to
+                change/add data you can collaborate directly on Wikidata
+              </Tooltip>
+            }
           >
-            <img
-              height="30"
-              src={"/powered-by-wikidata-light.png"}
-              alt="Powered By Wikidata"
-            />
-          </Navbar.Brand>
-          <Nav.Link
-            target="_blank"
-            href="https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+            <Navbar.Brand
+              id="wikidata-logo"
+              target="_blank"
+              href="https://www.wikidata.org"
+            >
+              <img
+                height="30"
+                src={"/powered-by-wikidata-light.png"}
+                alt="Powered By Wikidata"
+              />
+            </Navbar.Brand>
+          </OverlayTrigger>
+          <OverlayTrigger
+            overlay={
+              <Tooltip>
+                You can copy charts and publish them freely as long as you
+                mention entitree.com
+              </Tooltip>
+            }
           >
-            <FaCreativeCommons />
-          </Nav.Link>
-          <Nav.Link target="_blank" href="https://github.com/ogroppo/entitree">
-            <FaGithub />
-          </Nav.Link>
+            <Nav.Link
+              target="_blank"
+              href="https://creativecommons.org/licenses/by-sa/4.0/deed.en"
+            >
+              <FaCreativeCommons />
+            </Nav.Link>
+          </OverlayTrigger>
+          <OverlayTrigger
+            overlay={
+              <Tooltip>
+                Click here to see the source code of the project and submit
+                suggestions!
+              </Tooltip>
+            }
+          >
+            <Nav.Link
+              target="_blank"
+              href="https://github.com/ogroppo/entitree"
+            >
+              <FaGithub />
+            </Nav.Link>
+          </OverlayTrigger>
           <Nav.Item id="twitterFollowButton">
             <a
               href={`https://twitter.com/EntitreeApp?ref_src=twsrc%5Etfw`}
