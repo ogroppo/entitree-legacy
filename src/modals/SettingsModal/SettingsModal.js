@@ -248,6 +248,12 @@ export default function SettingsModal({ show, hideModal }) {
               >
                 Country flag
               </Dropdown.Item>
+              <Dropdown.Item
+                active={settings.extraInfo === "religion"}
+                onClick={() => setSetting("extraInfo", "religion")}
+              >
+                religion
+              </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
           <Form.Text className="text-muted pl-4">

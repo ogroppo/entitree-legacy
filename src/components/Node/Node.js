@@ -8,6 +8,7 @@ import {
   INSTAGRAM_ID,
   WIKITREE_ID,
   COUNTRY_OF_CITIZENSHIP,
+  RELIGION_ID,
 } from "../../constants/properties";
 import {
   DOWN_SYMBOL,
@@ -45,6 +46,7 @@ import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
 import queryString from "query-string";
 import { useLocation } from "react-router-dom";
 import addLifeSpan from "../../lib/addLifeSpan";
+import religionByQid from "../../wikidata/religionByQid";
 
 export default memo(function Node({
   node,
@@ -88,6 +90,11 @@ export default memo(function Node({
 
   const hairColor = useMemo(
     () => colorByProperty(node.data.simpleClaims[HAIR_COLOR_ID]),
+    [node.data.simpleClaims]
+  );
+
+  const religion = useMemo(
+    () => religionByQid(node.data.simpleClaims[RELIGION_ID]),
     [node.data.simpleClaims]
   );
 
@@ -382,6 +389,17 @@ export default memo(function Node({
               )}
             </div>
           )}
+
+          {settings.showExtraInfo &&
+            settings.extraInfo === "religion" &&
+            religion && (
+              <div
+                className="colorIcons"
+                title={religion.itemLabel + " (wikidata)"}
+              >
+                {religion.emoji}
+              </div>
+            )}
           <div
             className={clsx({
               "four-line-clamp": !hasLabelOnly,
