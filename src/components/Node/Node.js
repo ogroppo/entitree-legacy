@@ -217,7 +217,7 @@ export default memo(function Node({
               geniData.birth &&
               geniData.birth.location &&
               geniData.birth.location.country_code &&
-              !!birthCountry
+              !birthCountry
             ) {
               setBirthCountry({
                 code: geniData.birth.location.country_code,
