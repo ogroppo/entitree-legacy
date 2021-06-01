@@ -30,7 +30,7 @@ import styled, { useTheme } from "styled-components";
 
 import { AppContext } from "../../App";
 import { BsImage } from "react-icons/bs";
-import { Button } from "react-bootstrap";
+import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import DetailsModal from "../../modals/DetailsModal/DetailsModal";
 import { GiBigDiamondRing } from "react-icons/gi";
 import { GiPerson } from "react-icons/gi";
@@ -229,6 +229,18 @@ export default memo(function Node({
               setBirthCountry({
                 code: geniData.birth.location.country_code,
                 name: geniData.birth.location.country,
+                text: "Born in " + geniData.birth.location.country + " (geni)",
+              });
+            } else if (
+              geniData &&
+              geniData.location &&
+              geniData.location.country_code &&
+              !birthCountry
+            ) {
+              setBirthCountry({
+                code: geniData.location.country_code,
+                name: geniData.location.country,
+                text: "Lived in " + geniData.location.country + " (geni)",
               });
             }
           })
@@ -353,13 +365,18 @@ export default memo(function Node({
             settings.extraInfo === "countryFlag" &&
             birthCountry && (
               <div className="flagIcons">
-                <span>
-                  <img
-                    alt=""
-                    src={`https://www.countryflags.io/${birthCountry.code}/flat/32.png`}
-                    title={birthCountry.name}
-                  />
-                </span>
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip>{birthCountry.text}</Tooltip>}
+                >
+                  <span>
+                    <img
+                      alt=""
+                      src={`https://www.countryflags.io/${birthCountry.code}/flat/32.png`}
+                      title={birthCountry.name}
+                    />
+                  </span>
+                </OverlayTrigger>
               </div>
             )}
 

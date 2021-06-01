@@ -5,8 +5,12 @@ export default function countryByQid(id) {
     return null;
   }
   const entityId = id[0].value;
-  const color = COUNTRY_CODES.find(
+  const country = COUNTRY_CODES.find(
     (c) => c.item === "http://www.wikidata.org/entity/" + entityId
   );
-  return color;
+  if (!country) {
+    return null;
+  }
+  country.text = "Citizen of " + country.name + " (Wikidata)";
+  return country;
 }
