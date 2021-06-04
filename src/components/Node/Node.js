@@ -38,15 +38,14 @@ import { MdChildCare } from "react-icons/md";
 import clsx from "clsx";
 import colorByProperty from "../../wikidata/colorByProperty";
 import countryByQid from "../../wikidata/countryByQid";
-import getData from "../../axios/getData";
-import getGeniImageUrl from "../../geni/getGeniImageUrl";
 import getGeniData from "../../geni/getGeniData";
 import getSimpleClaimValue from "../../lib/getSimpleClaimValue";
-import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
+// import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
 import queryString from "query-string";
 import { useLocation } from "react-router-dom";
 import addLifeSpan from "../../lib/addLifeSpan";
 import religionByQid from "../../wikidata/religionByQid";
+import { isValidImage } from "../../lib/isValidImage";
 
 export default memo(function Node({
   node,
@@ -136,11 +135,13 @@ export default memo(function Node({
           setFaceImage({
             url: `${IMAGE_SERVER_BASE_URL}/api/v1/image/facecrop/id/${dpImg.id}`,
             alt: descr,
+            imageDb: true,
           });
           setThumbnails((thumbnails) => [
             {
               url: `${IMAGE_SERVER_BASE_URL}/api/v1/image/thumbnail/id/${dpImg.id}`,
               alt: descr,
+              imageDb: true,
             },
             ...thumbnails, //as the imageServer assets might be more accurate, use them first
           ]);
@@ -148,6 +149,7 @@ export default memo(function Node({
             {
               url: `${IMAGE_SERVER_BASE_URL}/api/v1/image/thumbnail/id/${dpImg.id}`,
               alt: descr,
+              imageDb: true,
             },
             ...images, //as the imageServer assets might be more accurate, use them first
           ]);
@@ -176,6 +178,19 @@ export default memo(function Node({
           .catch();
       }
       */
+
+      if (node.data.peoplepillImageUrl) {
+        isValidImage(node.data.peoplepillImageUrl).then((valid) => {
+          if (valid) {
+            const ppImage = {
+              url: node.data.peoplepillImageUrl,
+              alt: `Image from peoplepill`,
+            };
+            setThumbnails((images) => [ppImage, ...images]);
+            setImages((images) => [ppImage, ...images]);
+          }
+        });
+      }
 
       const geniId = getSimpleClaimValue(node.data.simpleClaims, GENI_ID);
       if (geniId) {
@@ -335,7 +350,7 @@ export default memo(function Node({
             )}
             {currentThumbnail && (
               <>
-                {settings.showFace && faceImage ? (
+                {currentThumbnail.imageDb && settings.showFace && faceImage ? (
                   <img
                     alt={faceImage.alt}
                     src={

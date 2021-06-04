@@ -257,8 +257,7 @@ export default function SettingsModal({ show, hideModal }) {
             </Dropdown.Menu>
           </Dropdown>
           <Form.Text className="text-muted pl-4">
-            An icon with extra info icon, ie. Countryflag of a person's
-            birthplace or citizenship (beta)
+            An icon with extra infos (beta)
           </Form.Text>
         </Form.Group>
         <Form.Group controlId={"birthName"}>
