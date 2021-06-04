@@ -97,6 +97,14 @@ export default async function formatEntity(
       .replaceAll(",", "")
       .replaceAll(".", "")
       .replaceAll("ñ", "n");
+
+    //web archive will redirect to last cached version
+    formattedEntity.peoplepillImageUrl =
+      "https://web.archive.org/web/20220210233602if_/https://peoplepill.com/media/people/thumbs/" +
+      formattedEntity.peoplepillSlug.substr(0, 1).toUpperCase() +
+      "/" +
+      formattedEntity.peoplepillSlug +
+      ".jpg";
   }
 
   addExternalLinks(formattedEntity);

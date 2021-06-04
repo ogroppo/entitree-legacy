@@ -179,19 +179,12 @@ export default memo(function Node({
       }
       */
 
-      if (node.data.peoplepillSlug) {
-        const inital = node.data.peoplepillSlug.substr(0, 1).toUpperCase();
-        const url =
-          "https://web.archive.org/web/20220210233602if_/https://peoplepill.com/media/people/thumbs/" +
-          inital +
-          "/" +
-          node.data.peoplepillSlug +
-          ".jpg";
-        isValidImage(url).then((valid) => {
+      if (node.data.peoplepillImageUrl) {
+        isValidImage(node.data.peoplepillImageUrl).then((valid) => {
           if (valid) {
             const ppImage = {
-              url: url,
-              alt: `Taken from peoplepill`,
+              url: node.data.peoplepillImageUrl,
+              alt: `Image from peoplepill`,
             };
             setThumbnails((images) => [ppImage, ...images]);
             setImages((images) => [ppImage, ...images]);
