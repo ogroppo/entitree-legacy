@@ -14,7 +14,7 @@ const useLoadTheme = () => {
 
   useEffect(() => {
     //This should be moved in its own hook and executed first
-    const currentLsVersion = 3;
+    const currentLsVersion = 4;
     const lsVersion = ls(STORED_VERSION_KEY);
     if (!lsVersion || lsVersion !== currentLsVersion) {
       ls.clear(); // Make sure the client does not hold outdated structures
