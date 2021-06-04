@@ -38,15 +38,14 @@ import { MdChildCare } from "react-icons/md";
 import clsx from "clsx";
 import colorByProperty from "../../wikidata/colorByProperty";
 import countryByQid from "../../wikidata/countryByQid";
-import getData from "../../axios/getData";
-import getGeniImageUrl from "../../geni/getGeniImageUrl";
 import getGeniData from "../../geni/getGeniData";
 import getSimpleClaimValue from "../../lib/getSimpleClaimValue";
-import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
+// import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
 import queryString from "query-string";
 import { useLocation } from "react-router-dom";
 import addLifeSpan from "../../lib/addLifeSpan";
 import religionByQid from "../../wikidata/religionByQid";
+import { isValidImage } from "../../lib/isValidImage";
 
 export default memo(function Node({
   node,
@@ -179,6 +178,26 @@ export default memo(function Node({
           .catch();
       }
       */
+
+      if (node.data.peoplepillSlug) {
+        const inital = node.data.peoplepillSlug.substr(0, 1).toUpperCase();
+        const url =
+          "https://web.archive.org/web/20220210233602if_/https://peoplepill.com/media/people/thumbs/" +
+          inital +
+          "/" +
+          node.data.peoplepillSlug +
+          ".jpg";
+        isValidImage(url).then((valid) => {
+          if (valid) {
+            const ppImage = {
+              url: url,
+              alt: `Taken from peoplepill`,
+            };
+            setThumbnails((images) => [ppImage, ...images]);
+            setImages((images) => [ppImage, ...images]);
+          }
+        });
+      }
 
       const geniId = getSimpleClaimValue(node.data.simpleClaims, GENI_ID);
       if (geniId) {

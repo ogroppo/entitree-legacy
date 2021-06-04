@@ -87,8 +87,10 @@ export default async function formatEntity(
   if (
     entity.sitelinks["enwiki"] &&
     simpleClaims[INSTANCE_OF_ID] &&
-    simpleClaims[INSTANCE_OF_ID][0].value === HUMAN_ID
+    simpleClaims[INSTANCE_OF_ID][0].value === HUMAN_ID &&
+    !entity.sitelinks["enwiki"].title.includes("(") //peoplePill uses a counter for same names
   ) {
+    //TODO: check for foreign characters
     formattedEntity.peoplepillSlug = entity.sitelinks["enwiki"].title
       .toLowerCase()
       .replaceAll(" ", "-")
