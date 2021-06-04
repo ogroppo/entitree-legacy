@@ -84,6 +84,28 @@ export default async function formatEntity(
       "/wiki/"
     )[1];
   }
+  if (
+    entity.sitelinks["enwiki"] &&
+    simpleClaims[INSTANCE_OF_ID] &&
+    simpleClaims[INSTANCE_OF_ID][0].value === HUMAN_ID &&
+    !entity.sitelinks["enwiki"].title.includes("(") //peoplePill uses a counter for same names
+  ) {
+    //TODO: check for foreign characters
+    formattedEntity.peoplepillSlug = entity.sitelinks["enwiki"].title
+      .toLowerCase()
+      .replaceAll(" ", "-")
+      .replaceAll(",", "")
+      .replaceAll(".", "")
+      .replaceAll("ñ", "n");
+
+    //web archive will redirect to last cached version
+    formattedEntity.peoplepillImageUrl =
+      "https://web.archive.org/web/20220210233602if_/https://peoplepill.com/media/people/thumbs/" +
+      formattedEntity.peoplepillSlug.substr(0, 1).toUpperCase() +
+      "/" +
+      formattedEntity.peoplepillSlug +
+      ".jpg";
+  }
 
   addExternalLinks(formattedEntity);
 
