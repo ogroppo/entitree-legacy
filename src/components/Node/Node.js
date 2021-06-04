@@ -136,11 +136,13 @@ export default memo(function Node({
           setFaceImage({
             url: `${IMAGE_SERVER_BASE_URL}/api/v1/image/facecrop/id/${dpImg.id}`,
             alt: descr,
+            imageDb: true,
           });
           setThumbnails((thumbnails) => [
             {
               url: `${IMAGE_SERVER_BASE_URL}/api/v1/image/thumbnail/id/${dpImg.id}`,
               alt: descr,
+              imageDb: true,
             },
             ...thumbnails, //as the imageServer assets might be more accurate, use them first
           ]);
@@ -148,6 +150,7 @@ export default memo(function Node({
             {
               url: `${IMAGE_SERVER_BASE_URL}/api/v1/image/thumbnail/id/${dpImg.id}`,
               alt: descr,
+              imageDb: true,
             },
             ...images, //as the imageServer assets might be more accurate, use them first
           ]);
@@ -335,7 +338,7 @@ export default memo(function Node({
             )}
             {currentThumbnail && (
               <>
-                {settings.showFace && faceImage ? (
+                {currentThumbnail.imageDb && settings.showFace && faceImage ? (
                   <img
                     alt={faceImage.alt}
                     src={
