@@ -16,6 +16,7 @@ export const MOTHER_ID = "P25";
 export const CHILD_ID = "P40";
 export const COUNTRY_OF_CITIZENSHIP = "P27";
 export const RELIGION_ID = "P140";
+export const OCCUPATION_ID = "P106";
 export const NUMBER_OF_CHILDREN_ID = "P1971";
 export const STUDENT_OF_ID = "P1066";
 export const STUDENT_ID = "P802";
@@ -224,6 +225,10 @@ export const EXTRA_INFO_OPTIONS = [
   {
     code: "religion",
     title: "religion",
+  },
+  {
+    code: "occupation",
+    title: "occupation",
   },
 ];
 
