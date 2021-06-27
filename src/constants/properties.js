@@ -20,6 +20,10 @@ export const INSTAGRAM_ID = "P2003";
 export const LOCATED_IN_ID = "P131";
 export const LOGO_ID = "P154";
 export const MOTHER_ID = "P25";
+export const CHILD_ID = "P40";
+export const COUNTRY_OF_CITIZENSHIP = "P27";
+export const RELIGION_ID = "P140";
+export const OCCUPATION_ID = "P106";
 export const NAME_IN_KANA_ID = "P1814";
 export const NICKNAME_ID = "P1449";
 export const NUMBER_OF_CHILDREN_ID = "P1971";
@@ -224,6 +228,10 @@ export const EXTRA_INFO_OPTIONS = [
   {
     code: "religion",
     title: "religion",
+  },
+  {
+    code: "occupation",
+    title: "occupation",
   },
 ];
 

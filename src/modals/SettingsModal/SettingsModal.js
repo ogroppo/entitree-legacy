@@ -230,30 +230,14 @@ export default function SettingsModal({ show, hideModal }) {
               }
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <Dropdown.Item
-                active={settings.extraInfo === "eyeColor"}
-                onClick={() => setSetting("extraInfo", "eyeColor")}
-              >
-                Eye color
-              </Dropdown.Item>
-              <Dropdown.Item
-                active={settings.extraInfo === "hairColor"}
-                onClick={() => setSetting("extraInfo", "hairColor")}
-              >
-                Hair color
-              </Dropdown.Item>
-              <Dropdown.Item
-                active={settings.extraInfo === "countryFlag"}
-                onClick={() => setSetting("extraInfo", "countryFlag")}
-              >
-                Country flag
-              </Dropdown.Item>
-              <Dropdown.Item
-                active={settings.extraInfo === "religion"}
-                onClick={() => setSetting("extraInfo", "religion")}
-              >
-                religion
-              </Dropdown.Item>
+              {EXTRA_INFO_OPTIONS.map((entry) => (
+                <Dropdown.Item
+                  active={settings.extraInfo === entry.code}
+                  onClick={() => setSetting("extraInfo", entry.code)}
+                >
+                  {entry.title}
+                </Dropdown.Item>
+              ))}
             </Dropdown.Menu>
           </Dropdown>
           <Form.Text className="text-muted pl-4">
