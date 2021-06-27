@@ -5,8 +5,7 @@ export default function occupationByQid(id) {
     return [];
   }
   const result = [];
-  id.forEach((occ, index) => {
-    console.log(occ);
+  id.forEach((occ) => {
     if (occ.value) {
       const search = OCCUPATIONS.find(
         (c) => c.item === "http://www.wikidata.org/entity/" + occ.value
