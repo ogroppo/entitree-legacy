@@ -9,6 +9,7 @@ import {
   WIKITREE_ID,
   COUNTRY_OF_CITIZENSHIP,
   RELIGION_ID,
+  OCCUPATION_ID,
 } from "../../constants/properties";
 import {
   DOWN_SYMBOL,
@@ -46,6 +47,7 @@ import { useLocation } from "react-router-dom";
 import addLifeSpan from "../../lib/addLifeSpan";
 import religionByQid from "../../wikidata/religionByQid";
 import { isValidImage } from "../../lib/isValidImage";
+import occupationByQid from "../../wikidata/occupationByQid";
 
 export default memo(function Node({
   node,
@@ -96,6 +98,27 @@ export default memo(function Node({
     () => religionByQid(node.data.simpleClaims[RELIGION_ID]),
     [node.data.simpleClaims]
   );
+
+  const occupation = useMemo(
+    () =>
+      renderOccupations(occupationByQid(node.data.simpleClaims[OCCUPATION_ID])),
+    [node.data.simpleClaims]
+  );
+
+  function renderOccupations(occ) {
+    console.log(occ);
+    const listItems = occ.map((entry) => (
+      <span title={entry.itemLabel}>{entry.emoji}</span>
+    ));
+    return <div>{listItems}</div>;
+  }
+
+  const getFlag = (c) =>
+    String.fromCodePoint(
+      ...[...c.toUpperCase()].map((x) => 0x1f1a5 + x.charCodeAt())
+    );
+
+  const useEmoji = false;
 
   useEffect(() => {
     // check if node QID is in url params and toggle accrodingly
@@ -385,11 +408,13 @@ export default memo(function Node({
                   overlay={<Tooltip>{birthCountry.text}</Tooltip>}
                 >
                   <span>
-                    <img
-                      alt=""
-                      src={`https://www.countryflags.io/${birthCountry.code}/flat/32.png`}
-                      title={birthCountry.name}
-                    />
+                    {!useEmoji && (
+                      <img
+                        alt=""
+                        src={`https://www.countryflags.io/${birthCountry.code}/flat/32.png`}
+                      />
+                    )}
+                    {useEmoji && <>{getFlag(birthCountry.code)}</>}
                   </span>
                 </OverlayTrigger>
               </div>
@@ -494,6 +519,9 @@ export default memo(function Node({
                 </span>
               </>
             )}
+            {settings.showExtraInfo &&
+              settings.extraInfo === "occupation" &&
+              occupation && <div className="occupation">{occupation}</div>}
           </div>
           <div className="dates">
             {node.data.lifeSpan || lifeSpanInYears

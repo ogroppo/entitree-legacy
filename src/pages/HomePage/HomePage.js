@@ -6,7 +6,6 @@ import React, { useContext } from "react";
 import { AppContext } from "../../App";
 import Div100vh from "react-div-100vh";
 import Footer from "../../layout/Footer/Footer";
-import { GiFamilyTree } from "react-icons/gi";
 import Graph from "../../components/Graph/Graph";
 import Header from "../../layout/Header/Header";
 import { Helmet } from "react-helmet";
