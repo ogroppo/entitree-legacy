@@ -35,6 +35,7 @@ export const WEBSITE_ID = "P856";
 export const SOURCING_CIRCUMSTANCES_ID = "P1480";
 export const WIKITREE_ID = "P2949";
 export const GENI_ID = "P2600";
+export const FANDOM_ARTICLE_ID = "P6262";
 
 export const FAMILY_IDS_MAP = {
   [CHILD_ID]: true,

@@ -40,6 +40,7 @@ import clsx from "clsx";
 import colorByProperty from "../../wikidata/colorByProperty";
 import countryByQid from "../../wikidata/countryByQid";
 import getGeniData from "../../geni/getGeniData";
+import { getFandomPageProps } from "../../wikidata/getFandomImages";
 import getSimpleClaimValue from "../../lib/getSimpleClaimValue";
 // import getWikitreeImageUrl from "../../wikitree/getWikitreeImageUrl";
 import queryString from "query-string";
@@ -106,7 +107,6 @@ export default memo(function Node({
   );
 
   function renderOccupations(occ) {
-    console.log(occ);
     const listItems = occ.map((entry) => (
       <span title={entry.itemLabel}>{entry.emoji}</span>
     ));
@@ -181,6 +181,79 @@ export default memo(function Node({
       .catch();
 
     if (settings.showExternalImages) {
+      //user all images
+      // if(node.data.fandomHost){
+      //   getFandomImages(node.data.fandomHost,node.data.fandomId)
+      //     .then((fandomData) => {
+      //       // console.log(fandomData);
+      //       if (
+      //         fandomData &&
+      //         fandomData.query &&
+      //         fandomData.query.pages &&
+      //         fandomData.query.pages
+      //       ) {
+      //         const page = Object.values(fandomData.query.pages)[0];
+      //
+      //
+      //         // page.images.forEach((oneImage) => {
+      //         if (page.images &&
+      //           page.images[0].title) {
+      //           const allFilenames = page.images.map(key => key.title).join("|");
+      //           console.log(allFilenames);
+      //           getFandomImageUrl(node.data.fandomHost, allFilenames).then((fandomImageData) => {
+      //             console.log(fandomImageData);
+      //             Object.values(fandomImageData.query.pages).forEach((oneImage) => {
+      //               if(oneImage.imageinfo && oneImage.imageinfo[0]){
+      //               const fandomImage = {
+      //                 url: oneImage.imageinfo[0].url.split("/revision/")[0],
+      //                 alt: `Fandom image, ${oneImage.title}`,
+      //                 source: node.data.fandomUrl
+      //               };
+      //               setThumbnails((thumbnails) => thumbnails.concat(fandomImage));
+      //               setImages((images) => images.concat(fandomImage));
+      //               }
+      //             });
+      //           });
+      //         }
+      //       }
+      //     });
+      // }
+
+      if (node.data.fandomHost) {
+        getFandomPageProps(node.data.fandomHost, node.data.fandomId).then(
+          (fandomData) => {
+            // console.log(fandomData);
+            if (fandomData && fandomData.query && fandomData.query.pages) {
+              const page = Object.values(fandomData.query.pages)[0];
+              console.log(page);
+
+              // page.images.forEach((oneImage) => {
+              if (page.pageprops) {
+                const pageprops = JSON.parse(page.pageprops.infoboxes);
+                console.log(pageprops);
+                if (pageprops[0] && pageprops[0].data) {
+                  const image = pageprops[0].data.find(
+                    (entry) => entry.type === "image"
+                  ).data[0];
+                  console.log(image);
+
+                  if (image) {
+                    const fandomImage = {
+                      url: image.url.split("/revision/")[0],
+                      alt: `Fandom image, ${image.name}`,
+                      source: node.data.fandomUrl,
+                    };
+                    setThumbnails((thumbnails) =>
+                      thumbnails.concat(fandomImage)
+                    );
+                    setImages((images) => images.concat(fandomImage));
+                  }
+                }
+              }
+            }
+          }
+        );
+      }
       /* DISABLE WIKITREE, SINCE CORS DOESN'T WORK
       const wikitreeId = getSimpleClaimValue(
         node.data.simpleClaims,
