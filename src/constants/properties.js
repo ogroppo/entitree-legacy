@@ -35,6 +35,7 @@ export const STUDENT_OF_ID = "P1066";
 export const TWITTER_ID = "P2002";
 export const WEBSITE_ID = "P856";
 export const WIKITREE_ID = "P2949";
+export const FANDOM_ARTICLE_ID = "P6262";
 
 export const FAMILY_IDS_MAP = {
   [CHILD_ID]: true,

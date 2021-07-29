@@ -1,6 +1,11 @@
 //import formatDateClaim from "./formatDateClaim";
 import addEntityImages from "../wikidata/addEntityImages";
-import { GENDER_ID, WEBSITE_ID, INSTANCE_OF_ID } from "../constants/properties";
+import {
+  GENDER_ID,
+  WEBSITE_ID,
+  INSTANCE_OF_ID,
+  FANDOM_ARTICLE_ID,
+} from "../constants/properties";
 import {
   HUMAN_MALE_ID,
   ANIMAL_FEMALE_ID,
@@ -105,6 +110,28 @@ export default async function formatEntity(
       "/" +
       formattedEntity.peoplepillSlug +
       ".jpg";
+  }
+
+  if (
+    // fandom articles may have fictional animal or other instance
+    // simpleClaims[INSTANCE_OF_ID] &&
+    // simpleClaims[INSTANCE_OF_ID][0].value === FICTIONAL_HUMAN_ID &&
+    simpleClaims[FANDOM_ARTICLE_ID] &&
+    simpleClaims[FANDOM_ARTICLE_ID][0].value
+  ) {
+    const englishArticle = simpleClaims[FANDOM_ARTICLE_ID].find(
+      (entry) =>
+        entry.qualifiers &&
+        entry.qualifiers.P407 &&
+        entry.qualifiers.P407[0] === "Q1860"
+    );
+    if (englishArticle) {
+      simpleClaims[FANDOM_ARTICLE_ID][0] = englishArticle;
+    }
+    const fandomId = simpleClaims[FANDOM_ARTICLE_ID][0].value.split(":");
+    formattedEntity.fandomHost = fandomId[0];
+    formattedEntity.fandomId = fandomId[1];
+    formattedEntity.fandomUrl = `https://${formattedEntity.fandomHost}.fandom.com/wiki/${formattedEntity.fandomId}`;
   }
 
   addExternalLinks(formattedEntity);
