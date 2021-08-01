@@ -1,4 +1,4 @@
-# EntiTree.com
+## WARNING: The development has moved to https://github.com/codeledge/entitree-next
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
